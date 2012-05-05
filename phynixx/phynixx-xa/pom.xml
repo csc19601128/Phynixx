@@ -94,6 +94,12 @@
 			<artifactId>jotm</artifactId>
 	      	<scope>test</scope>
 	    </dependency>	    
+	    
+	    
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+		</dependency>
       		
   </dependencies>
   
