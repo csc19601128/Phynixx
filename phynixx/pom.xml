@@ -13,6 +13,7 @@
   	<module>phynixx-xa</module>
   	<module>phynixx-jmx</module>
   	<module>phynixx-howl</module>
+  	<module>phynixx-test</module>
   </modules>
   
    <properties>

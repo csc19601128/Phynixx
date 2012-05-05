@@ -14,6 +14,23 @@
 	<description>using the howl-framework for logging</description>
 	<url>http://phynixx.codematters.org/phynixx-howl</url>
 
+	<scm>
+		<connection>scm:svn:https://svn.codematters.org/phynixx/phynixx-howl/trunk</connection>
+		<developerConnection>scm:svn:https://svn.codematters.org/phynixx/phynixx-howl/trunk</developerConnection>
+		<url>https://svn.codematters.org/phynixx/phynixx-howl/trunk</url>
+	</scm>
+	<distributionManagement>
+		<!-- use the following if you're not using a snapshot version. -->
+		<repository>
+			<id>file-repository</id>
+			<url>file://localhost/Y:/maven_repository</url>
+		</repository>
+		<site>
+			<id>codematters scp</id>
+			<url>scp://svn.codematters.org/phynixx/phynixx-howl</url>
+		</site>
+	</distributionManagement>
+
 
 	<dependencies>
 
