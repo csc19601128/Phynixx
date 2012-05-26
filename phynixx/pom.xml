@@ -14,6 +14,7 @@
 		<module>phynixx-xa</module>
 		<module>phynixx-jmx</module>
 		<module>phynixx-howl</module>
+		<module>phynixx-doc</module>
 	</modules>
 
 	<properties>
@@ -84,7 +85,7 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>3.8.1</version>
+				<version>3.8.2</version>
 				<scope>test</scope>
 			</dependency>
 
@@ -94,24 +95,23 @@
 				<version>1.0.1-1</version>
 			</dependency>
 
-			<dependency>
-				<groupId>commons-pool</groupId>
-				<artifactId>commons-pool</artifactId>
-				<version>1.4</version>
-			</dependency>
-
 
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<version>1.4</version>
+				<version>2.3</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-pool</groupId>
+				<artifactId>commons-pool</artifactId>
+				<version>1.6</version>
 			</dependency>
 
 
 			<dependency>
 				<groupId>log4j</groupId>
 				<artifactId>log4j</artifactId>
-				<version>1.2.13</version>
+				<version>1.2.16</version>
 			</dependency>
 
 
@@ -144,10 +144,24 @@
 				<artifactId>jotm</artifactId>
 				<version>2.0.10</version>
 			</dependency>
+
 			<dependency>
-				<groupId>commons-pool</groupId>
-				<artifactId>commons-pool</artifactId>
-				<version>1.6</version>
+				<groupId>org.ow2.jotm</groupId>
+				<artifactId>jotm-standalone</artifactId>
+				<version>2.2.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.6.4</version>
+			</dependency>
+
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>1.6.4</version>
 			</dependency>
 
 
@@ -242,6 +256,19 @@
 		<pluginManagement>
 
 			<plugins>
+
+				<plugin>
+					<artifactId>maven-resource-plugin</artifactId>
+					<version>2.5</version>
+					<configuration>
+						<encoding>UTF-8</encoding>
+						 <includes>
+         					<include> **/*.odt </include>
+         					<include> **/*.odt </include>
+         					<include> **/*.pdf </include>
+        				</includes>
+					</configuration>
+				</plugin>
 				<plugin>
 					<artifactId>maven-release-plugin</artifactId>
 					<version>2.0-beta-8</version>
