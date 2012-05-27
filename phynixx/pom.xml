@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.csc.phynixx</groupId>
 	<artifactId>phynixx</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>phynixx parent</name>
 	<description>Parent project for Phynixx</description>
