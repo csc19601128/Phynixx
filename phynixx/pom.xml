@@ -46,36 +46,48 @@
 		<url>http://jira.codematters.org/jira/browse/PHYNIXX</url>
 	</issueManagement>
 
-	<developers>
-		<developer>
-			<id>csc</id>
-			<name>Christoph Schmidt-Casdorff</name>
-			<roles>
-				<role>Founder</role>
-				<role>Committer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
-	</developers>
+    <repositories>
+        <repository>
+            <id>maven repo 1</id>
+            <name>Repository for JDK 1.4 builds</name>
+            <url>http://maven.sourcelabs.com/sash-2.0/nonbuilt/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>java.net.1</id>
+            <name>java.net Maven Repository</name>
+            <url>http://download.java.net/maven/1</url>
+            <layout>legacy</layout>
+        </repository>
+        <repository>
+            <id>java.net.2</id>
+            <name>java.net Maven Repository</name>
+            <url>http://download.java.net/maven/2</url>
+            <layout>legacy</layout>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>http://repo1.maven.org/maven2</name>
+            <url>http://download.java.net/maven/2</url>
+            <layout>legacy</layout>
+        </repository>
+    </repositories>
 
-	<repositories>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>sun-artifacts</id>
-			<name>sun artifacts</name>
-			<url>http://download.java.net/maven/2/</url>
-			<layout>default</layout>
-		</repository>
-	</repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>ibiblio1</id>
+            <name>ibiblio1</name>
+            <url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
+            <layout>default</layout>
+        </pluginRepository>
+
+        <pluginRepository>
+            <id>repo1</id>
+            <name>maven repo 1</name>
+            <url>http://repo1.maven.org/maven2/</url>
+            <layout>default</layout>
+        </pluginRepository>
+    </pluginRepositories>
 
 
 	<dependencyManagement>
