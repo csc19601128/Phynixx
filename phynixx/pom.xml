@@ -23,9 +23,7 @@
 
 	<scm>
 		<connection>scm:svn:https://svn.codematters.org/phynixx/${artifactId}/trunk</connection>
-
 		<developerConnection>scm:svn:https://svn.codematters.org/phynixx/${artifactId}/trunk</developerConnection>
-
 		<url>https://svn.codematters.org/phynixx/${artifactId}/trunk</url>
 	</scm>
 
@@ -36,10 +34,11 @@
 			<url>scp://svn.codematters.org/home/csc/maven_repository/</url>
 		</repository>
 		<site>
-			<id>svn.codematters.org</id>
-			<url>scp://svn.codematters.org/home/csc/phynixx/sites/${artifactId}</url>
-		</site>
-	</distributionManagement>
+            <id>github-pages-site</id>
+            <name>Deployment through GitHub's site deployment plugin</name>
+            <url>site/${project.version}</url>
+        </site>
+    </distributionManagement>
 
 	<issueManagement>
 		<system>jira</system>
@@ -47,33 +46,20 @@
 	</issueManagement>
 
     <repositories>
+
+        <!-- Repo for javx.* see http://maven.apache.org/guides/mini/guide-coping-with-sun-jars.html -->
         <repository>
-            <id>maven repo 1</id>
-            <name>Repository for JDK 1.4 builds</name>
-            <url>http://maven.sourcelabs.com/sash-2.0/nonbuilt/</url>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven</name>
+            <url>http://download.java.net/maven/2/</url>
             <layout>default</layout>
         </repository>
-        <repository>
-            <id>java.net.1</id>
-            <name>java.net Maven Repository</name>
-            <url>http://download.java.net/maven/1</url>
-            <layout>legacy</layout>
-        </repository>
-        <repository>
-            <id>java.net.2</id>
-            <name>java.net Maven Repository</name>
-            <url>http://download.java.net/maven/2</url>
-            <layout>legacy</layout>
-        </repository>
-        <repository>
-            <id>central</id>
-            <name>http://repo1.maven.org/maven2</name>
-            <url>http://download.java.net/maven/2</url>
-            <layout>legacy</layout>
-        </repository>
+
+
     </repositories>
 
     <pluginRepositories>
+        <!--
         <pluginRepository>
             <id>ibiblio1</id>
             <name>ibiblio1</name>
@@ -87,6 +73,7 @@
             <url>http://repo1.maven.org/maven2/</url>
             <layout>default</layout>
         </pluginRepository>
+        -->
     </pluginRepositories>
 
 
@@ -181,37 +168,6 @@
 
 	</dependencyManagement>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.5</version>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.1</version>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>dependencies</report>
-							<report>project-team</report>
-							<report>mailing-list</report>
-							<!-- <report>cim</report> -->
-							<report>issue-tracking</report>
-							<report>license</report>
-							<report>scm</report>
-							<report>javadoc</report>
-						</reports>
-						<!-- children should use the reporting config -->
-						<inherited>true</inherited>
-					</reportSet>
-				</reportSets>
-			</plugin>
-		</plugins>
-	</reporting>
 
 	<build>
 		<resources>
@@ -230,13 +186,166 @@
 			</testResource>
 		</testResources>
 
-		<plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.3</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.doxia</groupId>
+                            <artifactId>doxia-module-markdown</artifactId>
+                            <version>1.3</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <port>9000</port>
+                        <tempWebappDirectory>${basedir}/target/site/tempdir</tempWebappDirectory>
+                        <inputEncoding>UTF-8</inputEncoding>
+                        <outputEncoding>UTF-8</outputEncoding>
+                    </configuration>
+                    <!--
+                    <executions>
+                        <execution>
+                            <id>inherit sitexml</id>
+                            <goals>
+                                <goal>attach-descriptor</goal>
+                            </goals>
+                            <phase>package</phase>
+                        </execution>
+                        <execution>
+                            <id>generate site</id>
+                            <goals>
+                                <goal>site</goal>
+                            </goals>
+                            <phase>site</phase>
+                        </execution>
+                        <execution>
+                            <id>generate stage</id>
+                            <goals>
+                                <goal>stage</goal>
+                            </goals>
+                            <phase>site</phase>
+                        </execution>
+                    </executions>
+                    -->
+                </plugin>
 
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-clean-plugin</artifactId> 
-				<executions> <execution> <goals><goal>clean</goal></goals> <phase>validate</phase> 
-				</execution> </executions> </plugin> <plugin> <groupId>org.apache.maven.plugins</groupId> 
-				<artifactId>maven-site-plugin</artifactId> <configuration> <templateFile>${basedir}/src/site/phynixx-project-site.vm</templateFile> 
-				</configuration> </plugin> -->
+                <plugin>
+                    <groupId>com.github.github</groupId>
+                    <artifactId>site-maven-plugin</artifactId>
+                    <version>0.9</version>
+                    <configuration>
+                        <message>Creating site for ${project.version}</message>
+                        <server>github</server>
+                        <path>${project.distributionManagement.site.url}</path>
+                        <merge>true</merge>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>site</goal>
+                            </goals>
+                            <phase>site</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-resource-plugin</artifactId>
+                    <version>2.5</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                        <includes>
+                            <include>**/*.odt</include>
+                            <include>**/*.odt</include>
+                            <include>**/*.pdf</include>
+                        </includes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.0-beta-8</version>
+                    <configuration>
+                        <!-- During release:perform, enable the "release" profile <releaseProfiles>release</releaseProfiles> -->
+
+                        <goals>deploy</goals>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.0.2</version>
+                    <configuration>
+                        <source>1.4</source>
+                        <target>1.4</target>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <!-- version gt 2.0 has a blocking bug MSOURCES-13, 31 -->
+                    <version>2.0</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.2</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>jar</goal>
+                                <goal>test-jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <archive>
+                            <addMavenDescriptor>false</addMavenDescriptor>
+                            <index>true</index>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <classpathMavenRepositoryLayout/>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+
+            <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-clean-plugin</artifactId>
+                <executions> <execution> <goals><goal>clean</goal></goals> <phase>validate</phase>
+                </execution> </executions> </plugin> <plugin> <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId> <configuration> <templateFile>${basedir}/src/site/phynixx-project-site.vm</templateFile>
+                </configuration> </plugin> -->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -263,97 +372,107 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
 
-		</plugins>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+            </plugin>
 
-		<pluginManagement>
-
-			<plugins>
-
-				<plugin>
-					<artifactId>maven-resource-plugin</artifactId>
-					<version>2.5</version>
-					<configuration>
-						<encoding>UTF-8</encoding>
-						 <includes>
-         					<include> **/*.odt </include>
-         					<include> **/*.odt </include>
-         					<include> **/*.pdf </include>
-        				</includes>
-					</configuration>
-				</plugin>
-				<plugin>
-					<artifactId>maven-release-plugin</artifactId>
-					<version>2.0-beta-8</version>
-					<configuration>
-						<!-- During release:perform, enable the "release" profile <releaseProfiles>release</releaseProfiles> -->
-
-						<goals>deploy</goals>
-					</configuration>
-				</plugin>
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.0.2</version>
-					<configuration>
-						<source>1.4</source>
-						<target>1.4</target>
-					</configuration>
-				</plugin>
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<!-- version gt 2.0 has a blocking bug MSOURCES-13, 31 -->
-					<version>2.0</version>
-					<executions>
-						<execution>
-							<id>attach-sources</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
+        </plugins>
 
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.2</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>jar</goal>
-								<goal>test-jar</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<archive>
-							<addMavenDescriptor>false</addMavenDescriptor>
-							<index>true</index>
-							<manifest>
-								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-								<classpathMavenRepositoryLayout />
-							</manifest>
-						</archive>
-					</configuration>
-				</plugin>
+    </build>
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.4</version>
-				</plugin>
+    <reporting>
+        <plugins>
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.5</version>
+            </plugin>
+            -->
 
-			</plugins>
-		</pluginManagement>
-	</build>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.1</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <!--
+                            <report>dependencies</report>
+                            <report>project-team</report>
+                            <report>mailing-list</report>
+                            -->
+                            <!-- <report>cim</report> -->
+                            <!--
+                            <report>issue-tracking</report>
+                            <report>license</report>
+                            <report>scm</report>
+                             <report>javadoc</report>
+                            -->
 
-	<profiles>
-		<profile>
+
+                        </reports>
+                        <!-- children should use the reporting config -->
+                        <inherited>true</inherited>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <!--
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>taglist-maven-plugin</artifactId>
+                <version>2.4</version>
+                <reportSets>
+                    <reportSet>
+                        <id>aggregate</id>
+                        <inherited>false</inherited>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+                <configuration>
+                    <tagListOptions>
+                        <tagClasses>
+                            <tagClass>
+                                <displayName>Todo Work</displayName>
+                                <tags>
+                                    <tag>
+                                        <matchString>todo</matchString>
+                                        <matchType>ignoreCase</matchType>
+                                    </tag>
+                                    <tag>
+                                        <matchString>FIXME</matchString>
+                                        <matchType>exact</matchType>
+                                    </tag>
+                                </tags>
+                            </tagClass>
+                        </tagClasses>
+                    </tagListOptions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>2.3</version>
+                <reportSets>
+                    <reportSet>
+                        <id>aggregate</id>
+                        <inherited>false</inherited>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            -->
+        </plugins>
+    </reporting>
+
+    <profiles>
+    <profile>
 			<id>tests-included</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
