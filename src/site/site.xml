@@ -3,8 +3,8 @@
 
     <body>
 
-
         <menu name="Documentation">
+            <item name="Dokumentation" href="documentation.html"/>
             <item name="Phynixx" href="phynixx.html"/>
             <item name="Referenzen" href="references.html"/>
         </menu>
