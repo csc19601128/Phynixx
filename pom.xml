@@ -90,6 +90,7 @@
                         <merge>true</merge>
                         <repositoryName>Phynixx</repositoryName>
                         <repositoryOwner>csc19601128</repositoryOwner>
+                        <path>site</path>
                     </configuration>
                     <executions>
                         <execution>
