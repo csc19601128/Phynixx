@@ -26,7 +26,7 @@
 		<site>
             <id>github-pages-site</id>
             <name>Deployment through GitHub's site deployment plugin</name>
-            <url>${project.build.directory}/site</url>
+            <url>${project.build.directory}/site/${project.version}</url>
         </site>
     </distributionManagement>
 
@@ -65,7 +65,17 @@
                         <tempWebappDirectory>${basedir}/target/site/tempdir</tempWebappDirectory>
                         <inputEncoding>UTF-8</inputEncoding>
                         <outputEncoding>UTF-8</outputEncoding>
+                        <outputDirectory>${project.distributionManagement.site.url}</outputDirectory>
                     </configuration>
+                    <executions>
+                    <execution>
+                        <id>generate site</id>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>site</phase>
+                    </execution>
+                    </executions>
                     <!--
                     <executions>
                         <execution>
@@ -75,13 +85,7 @@
                             </goals>
                             <phase>package</phase>
                         </execution>
-                        <execution>
-                            <id>generate site</id>
-                            <goals>
-                                <goal>site</goal>
-                            </goals>
-                            <phase>site</phase>
-                        </execution>
+
                         <execution>
                             <id>generate stage</id>
                             <goals>
@@ -100,7 +104,7 @@
                     <configuration>
                         <message>Creating site for ${project.version}</message>
                         <server>github</server>
-                        <path>${project.distributionManagement.site.url}</path>
+                        <outputDirectory>${project.distributionManagement.site.url}</outputDirectory>
                         <merge>true</merge>
                         <repositoryName>Phynixx</repositoryName>
                         <repositoryOwner>csc19601128</repositoryOwner>
