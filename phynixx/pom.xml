@@ -394,7 +394,22 @@
                                 <licenseFile>${project.basedir}/src/license/LICENSE.TXT</licenseFile>
                                 <verbose>true</verbose>
                             </configuration>
-
+                        </execution>
+                        <execution>
+                            <id>update-file-header</id>
+                            <goals>
+                                <goal>update-file-header</goal>
+                            </goals>
+                            <phase>process-sources</phase>
+                            <configuration>
+                                <licenseName>apache_v2</licenseName>
+                                <organizationName>Christoph Schmidt-Casdorff</organizationName>
+                                <inceptionYear>2014</inceptionYear>
+                                <roots>
+                                    <root>src/main/java</root>
+                                    <root>src/test</root>
+                                </roots>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>

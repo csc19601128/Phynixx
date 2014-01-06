@@ -1,13 +1,29 @@
 package org.csc.phynixx.xa;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+/*
+ * #%L
+ * phynixx-xa
+ * %%
+ * Copyright (C) 2014 csc
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
+import java.util.*;
 
 
 /*
@@ -16,47 +32,44 @@ import javax.transaction.xa.Xid;
  * @see  XAResoXAResourceTxState
  */
 class XAResourceTxStateManager {
-	
-	private Map xidConnections= new HashMap();
-	
-	XAResourceTxState getXAResourceTxState(Xid xid) {
-		synchronized(xidConnections) {
-			return (XAResourceTxState)xidConnections.get(xid);
-		}
-	}
-	
-	void registerConnection(XAResourceTxState txState)
-	{
-		synchronized(xidConnections) {
-			xidConnections.put(txState.getXid(), txState);
-		}
-	}
-	
-	XAResourceTxState deregisterConnection(Xid xid)
-	{
-		synchronized(xidConnections) {
-			XAResourceTxState txState =(XAResourceTxState)xidConnections.get(xid);
-			xidConnections.remove(xid);
-			txState.close();
-			return txState; 
-		}
-	}
-	
-	List getXAResourceTxStates(XAResource xaresource) 
-	{	
-		List found;
-		synchronized (xidConnections) {
-			found = new ArrayList(xidConnections.size() / 2);
-			for (Iterator iterator = this.xidConnections.values().iterator(); iterator.hasNext();) {
-				XAResourceTxState txState = (XAResourceTxState) iterator.next();
-				if (txState.getXAConnectionHandle().getXAResource().equals(xaresource)) {
-					found.add(txState);
-				}
-			}
-		}
-		return found; 
-		
-	}
-	
-	
+
+    private Map xidConnections = new HashMap();
+
+    XAResourceTxState getXAResourceTxState(Xid xid) {
+        synchronized (xidConnections) {
+            return (XAResourceTxState) xidConnections.get(xid);
+        }
+    }
+
+    void registerConnection(XAResourceTxState txState) {
+        synchronized (xidConnections) {
+            xidConnections.put(txState.getXid(), txState);
+        }
+    }
+
+    XAResourceTxState deregisterConnection(Xid xid) {
+        synchronized (xidConnections) {
+            XAResourceTxState txState = (XAResourceTxState) xidConnections.get(xid);
+            xidConnections.remove(xid);
+            txState.close();
+            return txState;
+        }
+    }
+
+    List getXAResourceTxStates(XAResource xaresource) {
+        List found;
+        synchronized (xidConnections) {
+            found = new ArrayList(xidConnections.size() / 2);
+            for (Iterator iterator = this.xidConnections.values().iterator(); iterator.hasNext(); ) {
+                XAResourceTxState txState = (XAResourceTxState) iterator.next();
+                if (txState.getXAConnectionHandle().getXAResource().equals(xaresource)) {
+                    found.add(txState);
+                }
+            }
+        }
+        return found;
+
+    }
+
+
 }
