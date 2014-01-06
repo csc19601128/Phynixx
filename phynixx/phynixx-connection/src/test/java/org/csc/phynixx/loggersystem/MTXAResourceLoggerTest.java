@@ -89,8 +89,6 @@ public class MTXAResourceLoggerTest extends TestCase {
 
     }
 
-    ;
-
     private class MessageSampler implements Runnable {
         private String message = null;
         private int chunkSize;
@@ -144,8 +142,6 @@ public class MTXAResourceLoggerTest extends TestCase {
         }
 
     }
-
-    ;
 
     public void testMTLogging() throws Exception {
 

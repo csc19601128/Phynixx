@@ -100,7 +100,6 @@ public class XAResourceLoggerTest extends TestCase {
                 throw new AssertionFailedError("No more RB Data; Sequence is committing");
             } catch (Exception e) {
             }
-            ;
 
             // more commiting data are accepted
             logger.committingXA(seq, new byte[][]{});

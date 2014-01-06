@@ -169,7 +169,5 @@ public class HowlLogger extends Logger implements ILogger {
 
     }
 
-    ;
-
 
 }

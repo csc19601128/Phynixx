@@ -260,8 +260,6 @@ public class HowlEvaluateTest extends TestCase {
         }
     }
 
-    ;
-
 
     public void testMTLogging() throws Exception {
 

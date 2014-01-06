@@ -79,8 +79,6 @@ public class HowlLoggerSystemTest extends TestCase {
         }
     }
 
-    ;
-
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 

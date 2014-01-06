@@ -171,8 +171,6 @@ public class MTIntegrationScenarios extends TestCase {
         }
     }
 
-    ;
-
 
     private void start(int numbers) {
 

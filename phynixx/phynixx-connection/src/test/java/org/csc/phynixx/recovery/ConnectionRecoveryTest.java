@@ -115,8 +115,6 @@ public class ConnectionRecoveryTest extends TestCase {
         }
     }
 
-    ;
-
     private IRecordLogger provokeRecoverySituation(IActOnConnection actOnConnection) throws Exception {
 
         Runner runner = new Runner(actOnConnection);

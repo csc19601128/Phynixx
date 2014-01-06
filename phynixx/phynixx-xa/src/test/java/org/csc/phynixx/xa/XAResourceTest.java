@@ -596,7 +596,6 @@ public class XAResourceTest extends TestCase {
                 throw new AssertionFailedError("Exception expected");
             } catch (RollbackException e) {
             }
-            ;
         } finally {
             if (con1 != null) {
                 con1.close();

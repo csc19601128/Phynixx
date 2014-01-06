@@ -131,7 +131,6 @@ public class LogSystemRecoveryTest extends TestCase {
         TestCase.assertEquals(tmpDirectory.getDirectory(),
                 ((LoggerInfo) loggerInfos.get("howl_a")).getFile().getParentFile());
         TestCase.assertTrue(loggerInfos.get("howl_b") != null);
-        ;
         TestCase.assertEquals(tmpDirectory.getDirectory(),
                 ((LoggerInfo) loggerInfos.get("howl_b")).getFile().getParentFile());
 

@@ -54,8 +54,6 @@ public class WatchdogRegistry {
         void visit(IWatchdog th);
     }
 
-    ;
-
     private Watchdog watchTheWatchdogs = null;
     private Watchdog watchTheWatchdogWatcher = null;
 

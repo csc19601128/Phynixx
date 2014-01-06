@@ -128,8 +128,6 @@ public class PooledConnectionTest extends TestCase {
         }
     }
 
-    ;
-
     private void startRunners(IActOnConnection actOnConnection, int numThreads) throws Exception {
         exceptions.clear();
 

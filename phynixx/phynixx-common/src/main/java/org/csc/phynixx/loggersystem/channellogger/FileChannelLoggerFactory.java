@@ -39,7 +39,6 @@ public class FileChannelLoggerFactory implements ILoggerFactory {
         if (this.directory.exists() && !this.directory.isDirectory()) {
             throw new IllegalArgumentException("Argument 'directoryname' has to referece an existing directory");
         }
-        ;
     }
 
     public FileChannelLoggerFactory(String loggerSystemName, File directory) {
@@ -49,7 +48,6 @@ public class FileChannelLoggerFactory implements ILoggerFactory {
         if (this.directory.exists() && !this.directory.isDirectory()) {
             throw new IllegalArgumentException("Argument 'directory' has to be an existing directory");
         }
-        ;
     }
 
     public File getLoggingDirectory() {

@@ -81,7 +81,6 @@ public class MessageLoggerTest extends TestCase {
             throw new AssertionFailedError("No more RF Data; Sequence is committing");
         } catch (Exception e) {
         }
-        ;
 
 
         TestCase.assertTrue(seq.isCommitting());

@@ -184,7 +184,6 @@ public class LoggerSystem implements ILoggerListener {
             try {
                 logger.close();
             } catch (Exception e) {
-                ;
             }
             openLoggers.remove(logger);
         }

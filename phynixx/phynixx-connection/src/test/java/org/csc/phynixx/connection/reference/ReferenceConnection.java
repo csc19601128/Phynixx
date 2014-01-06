@@ -167,6 +167,4 @@ public class ReferenceConnection implements IReferenceConnection {
         }
     }
 
-    ;
-
 }

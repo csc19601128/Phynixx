@@ -509,6 +509,4 @@ public class XAResourceLogger
 
     }
 
-    ;
-
 }

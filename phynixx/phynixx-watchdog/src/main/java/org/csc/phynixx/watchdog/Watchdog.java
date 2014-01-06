@@ -70,8 +70,6 @@ class Watchdog implements Runnable, IWatchdog {
         }
     }
 
-    ;
-
 
     private Set conditions = new HashSet();
 
@@ -404,7 +402,6 @@ class Watchdog implements Runnable, IWatchdog {
             try {
                 Thread.currentThread().sleep(10);
             } catch (InterruptedException e) {
-                ;
                 continue; // interrupted and stopped ...
             }
         }
