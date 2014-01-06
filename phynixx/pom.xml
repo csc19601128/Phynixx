@@ -22,10 +22,10 @@
 	</properties>
 
 	<scm>
-		<connection>scm:svn:https://svn.codematters.org/phynixx/${artifactId}/trunk</connection>
-		<developerConnection>scm:svn:https://svn.codematters.org/phynixx/${artifactId}/trunk</developerConnection>
-		<url>https://svn.codematters.org/phynixx/${artifactId}/trunk</url>
-	</scm>
+        <connection>scm:git:https://github.com/csc19601128/Phynixx.git</connection>
+        <developerConnection>scm:svn:https://github.com/csc19601128/Phynixx.git</developerConnection>
+        <url>https://github.com/csc19601128/Phynixx.git</url>
+    </scm>
 
 	<distributionManagement>
 		<!-- use the following if you're not using a snapshot version. -->
@@ -36,7 +36,7 @@
 		<site>
             <id>github-pages-site</id>
             <name>Deployment through GitHub's site deployment plugin</name>
-            <url>site/${project.version}</url>
+            <url>${project.build.directory}/site</url>
         </site>
     </distributionManagement>
 
@@ -44,6 +44,15 @@
 		<system>jira</system>
 		<url>http://jira.codematters.org/jira/browse/PHYNIXX</url>
 	</issueManagement>
+
+    <licenses>
+        <license>
+            <name>Deutsche Post Renten Service Intern 1.0.0</name>
+            <url></url>
+            <distribution>repo</distribution>
+            <comments>DPRS Interne Lizenz</comments>
+        </license>
+    </licenses>
 
     <repositories>
 
@@ -188,6 +197,13 @@
 
         <pluginManagement>
             <plugins>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
@@ -256,6 +272,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
                     <version>2.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.9.1</version>
                 </plugin>
 
                 <plugin>
@@ -336,6 +357,47 @@
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.4</version>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>1.5</version>
+                    <executions>
+                        <execution>
+                            <id>add-third-party-licenses</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>aggregate-add-third-party</goal>
+                            </goals>
+                            <configuration>
+                                <licenseMerges>
+                                    <licenseMerge>The Apache Software License, Version 2.0|Apache License, Version
+                                        2.0|Apache Public License 2.0|Apache 2|Apache License 2.0
+                                    </licenseMerge>
+                                    <licenseMerge>GNU General Public License, Version 2 with the Classpath
+                                        Exception|GPLv2+CE
+                                    </licenseMerge>
+                                    <licenseMerge>Common Development and Distribution License|CDDL</licenseMerge>
+                                </licenseMerges>
+                                <useMissingFile>true</useMissingFile>
+                                <useRepositoryMissingFiles>false</useRepositoryMissingFiles>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>update-project-license</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>update-project-license</goal>
+                            </goals>
+                            <configuration>
+                                <licenseName>apache_v2</licenseName>
+                                <licenseFile>${project.basedir}/src/license/LICENSE.TXT</licenseFile>
+                                <verbose>true</verbose>
+                            </configuration>
+
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -373,9 +435,15 @@
 			</plugin>
 
             <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
             </plugin>
+
+
+            <!-- <plugin>
+                 <groupId>com.github.github</groupId>
+                 <artifactId>site-maven-plugin</artifactId>
+             </plugin>-->
 
         </plugins>
 
@@ -484,7 +552,8 @@
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-surefire-plugin</artifactId>
-							<configuration>
+                            <version>2.16</version>
+                            <configuration>
 								<includes>
 									<include implementation="java.lang.String">**/*Test.java</include>
 								</includes>
@@ -503,7 +572,8 @@
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-surefire-plugin</artifactId>
-							<configuration>
+                            <version>2.16</version>
+                            <configuration>
 								<skipTests>true</skipTests>
 							</configuration>
 						</plugin>
