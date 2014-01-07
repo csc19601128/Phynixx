@@ -14,9 +14,10 @@
     <url>https://phynixx.codematters.org/phynixx-xa</url>
 
     <scm>
-        <connection>scm:svn:https://svn.codematters.org/phynixx/${artifactId}/trunk</connection>
-        <developerConnection>scm:svn:https://svn.codematters.org/phynixx/${artifactId}/trunk</developerConnection>
-        <url>https://svn.codematters.org/phynixx/${artifactId}/trunk</url>
+        <connection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk</connection>
+        <developerConnection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk
+        </developerConnection>
+        <url>https://svn.codematters.org/phynixx/${project.artifactId}/trunk</url>
     </scm>
 
     <dependencies>

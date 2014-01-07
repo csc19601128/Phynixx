@@ -14,13 +14,14 @@
 
 	<name>phynixx-common</name>
 	<description>code common for all phynixx components</description>
-	<url>https://phynixx.codematters.org/${artifactId}</url>
+    <url>https://phynixx.codematters.org/${project.artifactId}</url>
 
-	<scm>
-		<connection>scm:svn:https://svn.codematters.org/phynixx/${artifactId}/trunk</connection>
-		<developerConnection>scm:svn:https://svn.codematters.org/phynixx/${artifactId}/trunk</developerConnection>
-		<url>https://svn.codematters.org/phynixx/${artifactId}/trunk</url>
-	</scm>
+    <scm>
+        <connection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk</connection>
+        <developerConnection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk
+        </developerConnection>
+        <url>https://svn.codematters.org/phynixx/${project.artifactId}/trunk</url>
+    </scm>
 
 	<distributionManagement>
 		<!-- use the following if you're not using a snapshot version. -->
@@ -30,8 +31,8 @@
 		</repository>
 		<site>
 			<id>svn.codematters.org</id>
-			<url>scp://svn.codematters.org/home/csc/phynixx/sites/${artifactId}</url>
-		</site>
+            <url>scp://svn.codematters.org/home/csc/phynixx/sites/${project.artifactId}</url>
+        </site>
 	</distributionManagement>
 
 	<dependencies>

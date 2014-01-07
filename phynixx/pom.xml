@@ -47,10 +47,9 @@
 
     <licenses>
         <license>
-            <name>Deutsche Post Renten Service Intern 1.0.0</name>
-            <url></url>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://github.com/csc19601128/Phynixx</url>
             <distribution>repo</distribution>
-            <comments>DPRS Interne Lizenz</comments>
         </license>
     </licenses>
 
@@ -68,8 +67,8 @@
     </repositories>
 
     <pluginRepositories>
-        <!--
-        <pluginRepository>
+
+    <pluginRepository>
             <id>ibiblio1</id>
             <name>ibiblio1</name>
             <url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
@@ -82,7 +81,7 @@
             <url>http://repo1.maven.org/maven2/</url>
             <layout>default</layout>
         </pluginRepository>
-        -->
+
     </pluginRepositories>
 
 
@@ -380,7 +379,7 @@
                                     <licenseMerge>Common Development and Distribution License|CDDL</licenseMerge>
                                 </licenseMerges>
                                 <useMissingFile>true</useMissingFile>
-                                <useRepositoryMissingFiles>false</useRepositoryMissingFiles>
+                                <missingFile>src/license/THIRD-PARTY.properties</missingFile>
                             </configuration>
                         </execution>
                         <execution>
@@ -409,6 +408,39 @@
                                     <root>src/main/java</root>
                                     <root>src/test</root>
                                 </roots>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.8</version>
+                    <executions>
+                        <execution>
+                            <id>add-resource</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>add-resource</goal>
+                            </goals>
+                            <configuration>
+                                <resources>
+                                    <resource>
+                                        <directory>
+                                            ${project.build.directory}/maven-shared-archive-resources/thirdparty-licenses
+                                        </directory>
+                                        <includes>
+                                            <include>*.txt</include>
+                                        </includes>
+                                        <targetPath>/thirdparty-licenses</targetPath>
+                                    </resource>
+                                    <resource>
+                                        <directory>${project.basedir}/src/license</directory>
+                                        <includes>
+                                            <include>LICENSE.txt</include>
+                                        </includes>
+                                    </resource>
+                                </resources>
                             </configuration>
                         </execution>
                     </executions>
@@ -452,6 +484,11 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
             </plugin>
 
 
