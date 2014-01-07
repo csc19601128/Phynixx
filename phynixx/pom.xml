@@ -427,7 +427,7 @@
                                 <resources>
                                     <resource>
                                         <directory>
-                                            ${project.build.directory}/maven-shared-archive-resources/thirdparty-licenses
+                                            ${project.build.directory}/generated-sources/license
                                         </directory>
                                         <includes>
                                             <include>*.txt</include>
