@@ -21,7 +21,7 @@ package org.csc.phynixx.loggersystem.logger;
  */
 
 
-import org.csc.phynixx.loggersystem.ILogRecordReplayListener;
+import org.csc.phynixx.loggersystem.messages.ILogRecordReplayListener;
 
 import java.io.IOException;
 
