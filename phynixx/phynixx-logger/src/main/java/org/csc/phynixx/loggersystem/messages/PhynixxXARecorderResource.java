@@ -26,7 +26,7 @@ import org.csc.phynixx.exceptions.ExceptionUtils;
 import org.csc.phynixx.generator.IDGenerator;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.logger.ILogger;
+import org.csc.phynixx.loggersystem.logger.IDataLogger;
 
 import java.io.*;
 import java.util.*;
@@ -86,7 +86,7 @@ class PhynixxXARecorderResource implements IXARecorderResource {
 
     private static int HEADER_SIZE = 8 + 4;
 
-    private ILogger logger = null;
+    private IDataLogger logger = null;
 
 
     /**
@@ -99,7 +99,7 @@ class PhynixxXARecorderResource implements IXARecorderResource {
     private IDGenerator messageSeqGenerator = new IDGenerator();
 
 
-    public PhynixxXARecorderResource(ILogger logger) throws IOException {
+    public PhynixxXARecorderResource(IDataLogger logger) throws IOException {
         this.logger = logger;
         if (this.logger == null) {
             throw new IllegalArgumentException("No logger set");
@@ -282,13 +282,13 @@ class PhynixxXARecorderResource implements IXARecorderResource {
 
     @Override
     public synchronized IDataRecordSequence createMessageSequence() {
-        PhynixxDataRecordSequence seq = new PhynixxDataRecordSequence(messageSeqGenerator.generateLong(), this);
+        PhynixxXADataRecorder seq = new PhynixxXADataRecorder(messageSeqGenerator.generateLong(), this);
         this.addMessageSequence(seq);
         return seq;
     }
 
-    private PhynixxDataRecordSequence recoverMessageSequence(Long messageSequenceId) {
-        PhynixxDataRecordSequence seq = new PhynixxDataRecordSequence(messageSequenceId, this);
+    private PhynixxXADataRecorder recoverMessageSequence(Long messageSequenceId) {
+        PhynixxXADataRecorder seq = new PhynixxXADataRecorder(messageSequenceId, this);
         this.addMessageSequence(seq);
         return seq;
     }
@@ -360,10 +360,10 @@ class PhynixxXARecorderResource implements IXARecorderResource {
 
 
             // try to find the messageSequence ....
-            PhynixxDataRecordSequence seq = null;
+            PhynixxXADataRecorder seq = null;
             Long msgID = new Long(messageSequenceId);
             if (PhynixxXARecorderResource.this.messageSequences.containsKey(msgID)) {
-                seq = (PhynixxDataRecordSequence) this.messageSequences.get(msgID);
+                seq = (PhynixxXADataRecorder) this.messageSequences.get(msgID);
             } else {
                 seq = this.recoverMessageSequence(msgID);
             }

@@ -24,7 +24,7 @@ package org.csc.phynixx.loggersystem.logger.channellogger;
 import org.apache.commons.io.FilenameUtils;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.logger.ILogger;
+import org.csc.phynixx.loggersystem.logger.IDataLogger;
 import org.csc.phynixx.loggersystem.logger.ILoggerFactory;
 
 import java.io.File;
@@ -71,7 +71,7 @@ public class FileChannelLoggerFactory implements ILoggerFactory {
      * @return
      * @throws IOException
      */
-    public ILogger instanciateLogger(String loggerName) throws IOException {
+    public IDataLogger instanciateLogger(String loggerName) throws IOException {
         return new FileChannelLogger(loggerName, this.directory);
     }
 

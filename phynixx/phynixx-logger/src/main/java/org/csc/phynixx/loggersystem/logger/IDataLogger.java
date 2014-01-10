@@ -25,7 +25,7 @@ import org.csc.phynixx.loggersystem.messages.ILogRecordReplayListener;
 
 import java.io.IOException;
 
-public interface ILogger {
+public interface IDataLogger {
 
     String getLoggerName();
 

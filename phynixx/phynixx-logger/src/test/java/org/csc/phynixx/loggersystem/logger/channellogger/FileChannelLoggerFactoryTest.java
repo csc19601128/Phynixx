@@ -25,7 +25,7 @@ import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.logger.ILogger;
+import org.csc.phynixx.loggersystem.logger.IDataLogger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -136,8 +136,8 @@ public class FileChannelLoggerFactoryTest {
         FileChannelLoggerFactory channelFactory =
                 new FileChannelLoggerFactory("howl", tmpDirectory.getDirectory().getAbsolutePath());
 
-        ILogger logger1 = channelFactory.instanciateLogger("a");
-        ILogger logger2 = channelFactory.instanciateLogger("a");
+        IDataLogger logger1 = channelFactory.instanciateLogger("a");
+        IDataLogger logger2 = channelFactory.instanciateLogger("a");
 
     }
 

@@ -35,7 +35,7 @@ public interface ILoggerFactory {
      * @return logger
      * @throws IOException
      */
-    ILogger instanciateLogger(String loggerName) throws IOException;
+    IDataLogger instanciateLogger(String loggerName) throws IOException;
 
     /**
      * Destroys all Logger matching the regex-pattern

@@ -96,7 +96,7 @@ public class MTXAResourceLoggerTest extends TestCase {
                                String message, int chunkSize) {
             this.message = message;
             this.chunkSize = chunkSize;
-            this.messageSequence = new PhynixxDataRecordSequence(id, );
+            this.messageSequence = new PhynixxXADataRecorder(id, );
             this.messageSequence.addLogRecordListener(logger);
 
         }

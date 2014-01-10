@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * thisclas is backwards bound to the PhynixxXARecorderResource. The current class manages LogEntries but not know the persistence logger.
  */
-public class PhynixxDataRecordSequence implements IDataRecordSequence {
+public class PhynixxXADataRecorder implements IXADataRecorder {
 
     private OrdinalGenerator ordinalGenerator = null;
 
@@ -46,10 +46,18 @@ public class PhynixxDataRecordSequence implements IDataRecordSequence {
     private transient boolean prepared = false;
 
 
-    PhynixxDataRecordSequence(long messageSequenceId, PhynixxXARecorderResource resourceLogger) {
+    PhynixxXADataRecorder(long messageSequenceId, PhynixxXARecorderResource resourceLogger) {
         this.resourceLogger = resourceLogger;
         this.messageSequenceId = new Long(messageSequenceId);
         this.ordinalGenerator = new OrdinalGenerator();
+    }
+
+
+    void reset() {
+        this.committing = false;
+        this.completed = false;
+        this.prepared = false;
+        messages.clear();
     }
 
     /* (non-Javadoc)
@@ -99,7 +107,7 @@ public class PhynixxDataRecordSequence implements IDataRecordSequence {
     }
 
     public synchronized void addMessage(IDataRecord message) {
-        this.checkState(message);
+        this.establishState(message);
         this.messages.add(message);
     }
 
@@ -129,13 +137,13 @@ public class PhynixxDataRecordSequence implements IDataRecordSequence {
         return msg;
     }
 
-    public IDataRecord recover(int ordinal, XALogRecordType logRecordType, byte[][] data) {
+    public IDataRecord recover1(int ordinal, XALogRecordType logRecordType, byte[][] data) {
         PhynixxDataRecord msg = new PhynixxDataRecord(this, ordinal, logRecordType, data);
         return msg;
     }
 
 
-    private void checkState(IDataRecord msg) {
+    private void establishState(IDataRecord msg) {
         XALogRecordType logRecordType = msg.getLogRecordType();
 
         if (this.isCommitting() && !logRecordType.equals(XALogRecordType.XA_DONE)) {
@@ -176,7 +184,7 @@ public class PhynixxDataRecordSequence implements IDataRecordSequence {
         if (getClass() != obj.getClass())
             return 1;
 
-        final PhynixxDataRecordSequence otherMsg = (PhynixxDataRecordSequence) obj;
+        final PhynixxXADataRecorder otherMsg = (PhynixxXADataRecorder) obj;
 
         long diff = this.getLogRecordSequenceId().longValue() - otherMsg.getLogRecordSequenceId().longValue();
         return (diff == 0) ? 0 : (diff < 0) ? -1 : 1;
@@ -190,7 +198,7 @@ public class PhynixxDataRecordSequence implements IDataRecordSequence {
         if (getClass() != obj.getClass())
             return false;
 
-        final PhynixxDataRecordSequence other = (PhynixxDataRecordSequence) obj;
+        final PhynixxXADataRecorder other = (PhynixxXADataRecorder) obj;
         if (messageSequenceId == null) {
             if (other.messageSequenceId != null)
                 return false;

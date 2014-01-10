@@ -37,7 +37,7 @@ class PhynixxDataRecord implements IDataRecord, Comparable<PhynixxDataRecord> {
     /**
      * backward reference to the owner of the log record
      */
-    private PhynixxDataRecordSequence messageSequence;
+    private PhynixxXADataRecorder messageSequence;
 
     /**
      * content
@@ -57,7 +57,7 @@ class PhynixxDataRecord implements IDataRecord, Comparable<PhynixxDataRecord> {
      * @param logRecordType
      * @param data
      */
-    public PhynixxDataRecord(PhynixxDataRecordSequence messageSequence, int ordinal, XALogRecordType logRecordType, byte[][] data) {
+    public PhynixxDataRecord(PhynixxXADataRecorder messageSequence, int ordinal, XALogRecordType logRecordType, byte[][] data) {
         this(messageSequence, ordinal, logRecordType);
         this.setData(data);
     }
@@ -67,7 +67,7 @@ class PhynixxDataRecord implements IDataRecord, Comparable<PhynixxDataRecord> {
      * @param ordinal         ordinal according to the messageSequence
      * @param logRecordType
      */
-    PhynixxDataRecord(PhynixxDataRecordSequence messageSequence, int ordinal, XALogRecordType logRecordType) {
+    PhynixxDataRecord(PhynixxXADataRecorder messageSequence, int ordinal, XALogRecordType logRecordType) {
         super();
         this.ordinal = new Integer(ordinal);
         this.messageSequence = messageSequence;

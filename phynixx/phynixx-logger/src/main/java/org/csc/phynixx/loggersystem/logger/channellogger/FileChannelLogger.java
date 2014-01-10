@@ -23,7 +23,7 @@ package org.csc.phynixx.loggersystem.logger.channellogger;
 
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.logger.ILogger;
+import org.csc.phynixx.loggersystem.logger.IDataLogger;
 import org.csc.phynixx.loggersystem.messages.ILogRecordReplayListener;
 import org.csc.phynixx.loggersystem.messages.XALogRecordType;
 
@@ -38,7 +38,7 @@ import java.io.RandomAccessFile;
  * <p/>
  * This class is not thread safe . Use facades to protect instances
  */
-public class FileChannelLogger implements ILogger {
+public class FileChannelLogger implements IDataLogger {
 
     /**
      * Open for reading and writing, as with "rw", and also require that every update to the file's content or metadata be written synchronously to the underlying storage device.
