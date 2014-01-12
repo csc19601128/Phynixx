@@ -21,12 +21,12 @@ package org.csc.phynixx.connection;
  */
 
 
+import org.csc.phynixx.connection.loggersystem.Dev0Strategy;
+import org.csc.phynixx.connection.loggersystem.ILoggerSystemStrategy;
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.Dev0Strategy;
-import org.csc.phynixx.loggersystem.ILoggerSystemStrategy;
-import org.csc.phynixx.loggersystem.messages.IRecordLogger;
+import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
 import java.util.List;
 
@@ -142,7 +142,7 @@ public class ConnectionFactory extends PhynixxConnectionProxyListenerAdapter imp
         IPhynixxConnection con = null;
         for (int i = 0; i < messageLoggers.size(); i++) {
             try {
-                IRecordLogger msgLogger = (IRecordLogger) messageLoggers.get(i);
+                IXADataRecorder msgLogger = (IXADataRecorder) messageLoggers.get(i);
                 con = this.getConnection();
                 if ((con instanceof IRecordLoggerAware)) {
                     ((IRecordLoggerAware) con).setRecordLogger(msgLogger);

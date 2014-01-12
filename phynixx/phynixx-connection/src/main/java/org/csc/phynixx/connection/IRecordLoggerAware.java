@@ -21,12 +21,12 @@ package org.csc.phynixx.connection;
  */
 
 
-import org.csc.phynixx.loggersystem.messages.IRecordLogger;
+import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
 public interface IRecordLoggerAware {
 
-    public abstract void setRecordLogger(IRecordLogger logger);
+    public abstract void setRecordLogger(IXADataRecorder logger);
 
-    public abstract IRecordLogger getRecordLogger();
+    public abstract IXADataRecorder getRecordLogger();
 
 }

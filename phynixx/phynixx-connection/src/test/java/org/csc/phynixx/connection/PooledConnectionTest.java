@@ -26,12 +26,12 @@ import junit.framework.TestCase;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
+import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.ILoggerFactory;
-import org.csc.phynixx.loggersystem.PerTransactionStrategy;
-import org.csc.phynixx.loggersystem.channellogger.FileChannelLoggerFactory;
+import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
+import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
 import org.csc.phynixx.test_connection.*;
 
 import java.util.*;
@@ -59,7 +59,7 @@ public class PooledConnectionTest extends TestCase {
         cfg.maxActive = POOL_SIZE;
         this.factory = new PooledConnectionFactory(new TestConnectionFactory(), cfg);
 
-        ILoggerFactory loggerFactory = new FileChannelLoggerFactory("mt", this.tmpDir.getDirectory());
+        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
         PerTransactionStrategy strategy = new PerTransactionStrategy("abcd", loggerFactory);
 
         this.factory.setLoggerSystemStrategy(strategy);

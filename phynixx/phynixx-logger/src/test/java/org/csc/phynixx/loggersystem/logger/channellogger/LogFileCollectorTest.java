@@ -163,9 +163,9 @@ public class LogFileCollectorTest {
         Assert.assertEquals(tmpDirectory.assertExitsDirectory("subdir"),
                 loggerInfos.get("howl_c").getFile().getParentFile());
 
-        FileChannelLoggerFactory channelFactory =
-                new FileChannelLoggerFactory("howl", tmpDirectory.getDirectory().getAbsolutePath());
-        Set<String> loggerNames = channelFactory.findLoggerNames(FORMAT_PATTERN);
+        FileChannelDataLoggerFactory channelFactory =
+                new FileChannelDataLoggerFactory("howl", tmpDirectory.getDirectory().getAbsolutePath());
+        Set<String> loggerNames = channelFactory.findLoggerNames();
         for (String loggerName : loggerNames) {
             System.out.println(loggerName);
         }

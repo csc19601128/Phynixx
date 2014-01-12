@@ -163,14 +163,14 @@ public class PooledConnectionFactory extends ConnectionFactory implements IPhyni
     }
 
 	/*
-	public void recover() {
+    public void recover() {
 		
 		// get all recoverable transaction data
 		List messageLoggers= this.loggerSystemStrategy.readIncompleteTransactions();
 		IPhynixxConnection con=null ;
 		for(int i=0; i < messageLoggers.size();i++) {
 			try {
-				IRecordLogger msgLogger= (IRecordLogger) messageLoggers.get(i);			
+				IXADataRecorder msgLogger= (IXADataRecorder) messageLoggers.get(i);
 				con= this.getConnection();
 				if( (con instanceof IRecordLoggerAware)) {
 					((IRecordLoggerAware)con).setRecordLogger(msgLogger);

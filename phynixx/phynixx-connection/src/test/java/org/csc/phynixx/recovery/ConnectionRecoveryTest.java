@@ -28,17 +28,17 @@ import org.csc.phynixx.connection.DynaProxyFactory;
 import org.csc.phynixx.connection.IPhynixxConnectionHandle;
 import org.csc.phynixx.connection.IPhynixxConnectionProxy;
 import org.csc.phynixx.connection.IPhynixxConnectionProxyFactory;
+import org.csc.phynixx.connection.loggersystem.Dev0Strategy;
+import org.csc.phynixx.connection.loggersystem.ILoggerSystemStrategy;
+import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.Dev0Strategy;
-import org.csc.phynixx.loggersystem.ILoggerFactory;
-import org.csc.phynixx.loggersystem.ILoggerSystemStrategy;
-import org.csc.phynixx.loggersystem.PerTransactionStrategy;
-import org.csc.phynixx.loggersystem.channellogger.FileChannelLoggerFactory;
-import org.csc.phynixx.loggersystem.messages.ILogRecord;
-import org.csc.phynixx.loggersystem.messages.ILogRecordReplay;
-import org.csc.phynixx.loggersystem.messages.IRecordLogger;
+import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
+import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
+import org.csc.phynixx.loggersystem.logrecord.IDataRecord;
+import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
+import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 import org.csc.phynixx.test_connection.*;
 
 import java.util.Properties;
@@ -81,7 +81,7 @@ public class ConnectionRecoveryTest extends TestCase {
     }
 
     private class Runner implements Runnable {
-        private IRecordLogger messageLogger = null;
+        private IXADataRecorder messageLogger = null;
         private IActOnConnection actOnConnection = null;
 
         public Runner(IActOnConnection actOnConnection) {
@@ -115,7 +115,7 @@ public class ConnectionRecoveryTest extends TestCase {
         }
     }
 
-    private IRecordLogger provokeRecoverySituation(IActOnConnection actOnConnection) throws Exception {
+    private IXADataRecorder provokeRecoverySituation(IActOnConnection actOnConnection) throws Exception {
 
         Runner runner = new Runner(actOnConnection);
 
@@ -131,7 +131,7 @@ public class ConnectionRecoveryTest extends TestCase {
     public void testGoodcase() throws Exception {
 
 
-        ILoggerFactory loggerFactory = new FileChannelLoggerFactory("mt", this.tmpDir.getDirectory());
+        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
         this.strategy = new PerTransactionStrategy("abcd", loggerFactory);
 
         final int[] counter = new int[1];
@@ -149,7 +149,7 @@ public class ConnectionRecoveryTest extends TestCase {
                 }
             }
         };
-        IRecordLogger messageLogger = this.provokeRecoverySituation(actOnConnection);
+        IXADataRecorder messageLogger = this.provokeRecoverySituation(actOnConnection);
 
         // As the TX is finished correctly the logger has to be null
 
@@ -162,7 +162,7 @@ public class ConnectionRecoveryTest extends TestCase {
 
     public void testInteruptedRollback() throws Exception {
 
-        ILoggerFactory loggerFactory = new FileChannelLoggerFactory("mt", this.tmpDir.getDirectory());
+        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
         this.strategy = new PerTransactionStrategy("abcd", loggerFactory);
 
         final int[] counter = new int[1];
@@ -180,7 +180,7 @@ public class ConnectionRecoveryTest extends TestCase {
                 con.rollback();
             }
         };
-        IRecordLogger messageLogger = this.provokeRecoverySituation(actOnConnection);
+        IXADataRecorder messageLogger = this.provokeRecoverySituation(actOnConnection);
 
         log.info(replayLogRecords(messageLogger));
 
@@ -196,7 +196,7 @@ public class ConnectionRecoveryTest extends TestCase {
 
     public void testInterruptedCommit() throws Exception {
 
-        ILoggerFactory loggerFactory = new FileChannelLoggerFactory("mt", this.tmpDir.getDirectory());
+        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
         this.strategy = new PerTransactionStrategy("abcd", loggerFactory);
 
         final int[] counter = new int[1];
@@ -214,7 +214,7 @@ public class ConnectionRecoveryTest extends TestCase {
                 con.commit();
             }
         };
-        IRecordLogger messageLogger = this.provokeRecoverySituation(actOnConnection);
+        IXADataRecorder messageLogger = this.provokeRecoverySituation(actOnConnection);
 
         log.info(replayLogRecords(messageLogger));
 
@@ -229,7 +229,7 @@ public class ConnectionRecoveryTest extends TestCase {
 
     public void testInterruptedExecution() throws Exception {
 
-        ILoggerFactory loggerFactory = new FileChannelLoggerFactory("mt", this.tmpDir.getDirectory());
+        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
         this.strategy = new PerTransactionStrategy("abcd", loggerFactory);
 
         final int[] counter = new int[1];
@@ -242,7 +242,7 @@ public class ConnectionRecoveryTest extends TestCase {
                 con.act(7);
             }
         };
-        IRecordLogger messageLogger = this.provokeRecoverySituation(actOnConnection);
+        IXADataRecorder messageLogger = this.provokeRecoverySituation(actOnConnection);
 
         log.info(replayLogRecords(messageLogger));
 
@@ -256,15 +256,15 @@ public class ConnectionRecoveryTest extends TestCase {
     }
 
 
-    private String replayLogRecords(IRecordLogger logger) {
+    private String replayLogRecords(IXADataRecorder logger) {
         final StringBuffer buffer = new StringBuffer();
-        ILogRecordReplay replay = new ILogRecordReplay() {
+        IDataRecordReplay replay = new IDataRecordReplay() {
 
-            public void replayRollback(ILogRecord message) {
+            public void replayRollback(IDataRecord message) {
                 buffer.append(message).append("\n");
             }
 
-            public void replayRollforward(ILogRecord message) {
+            public void replayRollforward(IDataRecord message) {
                 buffer.append(message).append("\n");
             }
         };

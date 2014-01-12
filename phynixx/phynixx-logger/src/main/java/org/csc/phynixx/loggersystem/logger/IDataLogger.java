@@ -21,13 +21,12 @@ package org.csc.phynixx.loggersystem.logger;
  */
 
 
-import org.csc.phynixx.loggersystem.messages.ILogRecordReplayListener;
+import org.csc.phynixx.loggersystem.logger.channellogger.AccessMode;
+import org.csc.phynixx.loggersystem.logrecord.ILogRecordReplayListener;
 
 import java.io.IOException;
 
 public interface IDataLogger {
-
-    String getLoggerName();
 
     /**
      * Sub-classes call this method to write log records with
@@ -53,7 +52,18 @@ public interface IDataLogger {
 
     boolean isClosed();
 
-    void open() throws IOException, InterruptedException;
+    /**
+     * <pre>
+     *    READ   - position to position 0
+     *    WRITE  - position to position 0 and resets the committed size to 0
+     *    APPEND - position to the committed size
+     * </pre>
+     *
+     * @param accessMode
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    void open(AccessMode accessMode) throws IOException, InterruptedException;
 
 
     /**

@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.csc.phynixx.connection.ConnectionFactory;
 import org.csc.phynixx.connection.PooledConnectionFactory;
+import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
 import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnectionFactory;
@@ -33,9 +34,8 @@ import org.csc.phynixx.connection.reference.ReferenceConnectionProxyFactory;
 import org.csc.phynixx.logger.PhynixxLogManager;
 import org.csc.phynixx.logger.PrintLogManager;
 import org.csc.phynixx.logger.PrintLogger;
-import org.csc.phynixx.loggersystem.ILoggerFactory;
-import org.csc.phynixx.loggersystem.PerTransactionStrategy;
-import org.csc.phynixx.loggersystem.channellogger.FileChannelLoggerFactory;
+import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
+import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
 
 import java.io.File;
 import java.util.Properties;
@@ -199,8 +199,8 @@ public class IntegrationScenarios extends TestCase {
         cfg.maxActive = maxActiveConnections;
         PooledConnectionFactory factory = new PooledConnectionFactory(new ReferenceConnectionFactory(), new ReferenceConnectionProxyFactory(), cfg);
 
-        ILoggerFactory loggerFactory = new FileChannelLoggerFactory("reference", this.tmpDirectory.getDirectory());
-        //ILoggerFactory loggerFactory= new HowlLoggerFactory("reference", this.loadHowlConfig(tmpDirectory.getDirectory()));
+        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
+        //IDataLoggerFactory loggerFactory= new HowlLoggerFactory("reference", this.loadHowlConfig(tmpDirectory.getDirectory()));
 
         factory.setLoggerSystemStrategy(new PerTransactionStrategy("reference", loggerFactory));
         return factory;
@@ -209,7 +209,7 @@ public class IntegrationScenarios extends TestCase {
     private ConnectionFactory createConnectionFactory() throws Exception {
 
         ConnectionFactory factory = new ConnectionFactory(new ReferenceConnectionFactory(), new ReferenceConnectionProxyFactory());
-        ILoggerFactory loggerFactory = new FileChannelLoggerFactory("reference", this.tmpDirectory.getDirectory());
+        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
         factory.setLoggerSystemStrategy(new PerTransactionStrategy("reference", loggerFactory));
 
 

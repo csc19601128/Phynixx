@@ -25,15 +25,15 @@ import junit.framework.TestCase;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.connection.PooledConnectionFactory;
+import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
 import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnectionFactory;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.ILoggerFactory;
-import org.csc.phynixx.loggersystem.ILoggerListener;
-import org.csc.phynixx.loggersystem.PerTransactionStrategy;
 import org.csc.phynixx.loggersystem.XAResourceLogger;
-import org.csc.phynixx.loggersystem.channellogger.FileChannelLoggerFactory;
+import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
+import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
+import org.csc.phynixx.loggersystem.logrecord.IXARecorderResourceListener;
 
 import java.util.*;
 
@@ -80,8 +80,8 @@ public class MTIntegrationScenarios extends TestCase {
         GenericObjectPool.Config cfg = new GenericObjectPool.Config();
         cfg.maxActive = 100;
         this.factory = new PooledConnectionFactory(new ReferenceConnectionFactory(), cfg);
-        ILoggerFactory loggerFactory = new FileChannelLoggerFactory("reference", this.tmpDirectory.getDirectory());
-        //ILoggerFactory loggerFactory= new HowlLoggerFactory("reference", this.loadHowlConfig());
+        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
+        //IDataLoggerFactory loggerFactory= new HowlLoggerFactory("reference", this.loadHowlConfig());
 
         PerTransactionStrategy loggingStrategy = new PerTransactionStrategy("reference", loggerFactory);
         loggingStrategy.addLoggerListener(loggerManagement);
@@ -211,7 +211,7 @@ public class MTIntegrationScenarios extends TestCase {
 
     }
 
-    public class LoggerSystemManagement implements ILoggerListener {
+    public class LoggerSystemManagement implements IXARecorderResourceListener {
 
         private int openLoggerCounter = 0;
 

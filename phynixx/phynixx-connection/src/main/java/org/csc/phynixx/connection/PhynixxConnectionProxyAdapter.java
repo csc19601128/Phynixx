@@ -23,7 +23,7 @@ package org.csc.phynixx.connection;
 
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.messages.IRecordLogger;
+import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +91,7 @@ public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectio
     }
 
 
-    public IRecordLogger getRecordLogger() {
+    public IXADataRecorder getRecordLogger() {
         if (this.getConnection() != null && this.getConnection() instanceof IRecordLoggerAware) {
             return ((IRecordLoggerAware) getConnection()).getRecordLogger();
         }
@@ -99,7 +99,7 @@ public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectio
 
     }
 
-    public void setRecordLogger(IRecordLogger messageLogger) {
+    public void setRecordLogger(IXADataRecorder messageLogger) {
         if (this.getConnection() != null && this.getConnection() instanceof IRecordLoggerAware) {
             ((IRecordLoggerAware) getConnection()).setRecordLogger(messageLogger);
         }
@@ -176,7 +176,7 @@ public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectio
 
     public void recover() {
         // the connection has to re establish the state of the message logger
-        IRecordLogger msgLogger = this.getRecordLogger();
+        IXADataRecorder msgLogger = this.getRecordLogger();
         if (msgLogger.isCompleted()) {
             return;
         }

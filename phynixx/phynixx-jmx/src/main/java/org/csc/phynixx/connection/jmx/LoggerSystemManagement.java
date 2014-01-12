@@ -21,10 +21,10 @@ package org.csc.phynixx.connection.jmx;
  */
 
 
-import org.csc.phynixx.loggersystem.ILoggerListener;
 import org.csc.phynixx.loggersystem.XAResourceLogger;
+import org.csc.phynixx.loggersystem.logrecord.IXARecorderResourceListener;
 
-public class LoggerSystemManagement implements LoggerSystemManagementMBean, ILoggerListener {
+public class LoggerSystemManagement implements LoggerSystemManagementMBean, IXARecorderResourceListener {
 
     private int openLoggerCounter = 0;
 

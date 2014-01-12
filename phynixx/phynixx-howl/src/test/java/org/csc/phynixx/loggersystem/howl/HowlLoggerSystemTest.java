@@ -29,7 +29,7 @@ import org.csc.phynixx.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.ILoggerFactory;
 import org.csc.phynixx.loggersystem.LoggerSystem;
 import org.csc.phynixx.loggersystem.XAResourceLogger;
-import org.csc.phynixx.loggersystem.messages.ILogRecordSequence;
+import org.csc.phynixx.loggersystem.logrecord.ILogRecordSequence;
 import org.objectweb.howl.log.InvalidFileSetException;
 import org.objectweb.howl.log.InvalidLogBufferException;
 import org.objectweb.howl.log.LogConfigurationException;

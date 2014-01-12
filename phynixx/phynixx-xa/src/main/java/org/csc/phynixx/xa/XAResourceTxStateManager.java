@@ -56,12 +56,12 @@ class XAResourceTxStateManager {
         }
     }
 
-    List getXAResourceTxStates(XAResource xaresource) {
-        List found;
+    List<XAResourceTxState> getXAResourceTxStates(XAResource xaresource) {
+        List<XAResourceTxState> found;
         synchronized (xidConnections) {
-            found = new ArrayList(xidConnections.size() / 2);
-            for (Iterator iterator = this.xidConnections.values().iterator(); iterator.hasNext(); ) {
-                XAResourceTxState txState = (XAResourceTxState) iterator.next();
+            found = new ArrayList<XAResourceTxState>(xidConnections.size() / 2);
+            for (Iterator<XAResourceTxState> iterator = this.xidConnections.values().iterator(); iterator.hasNext(); ) {
+                XAResourceTxState txState = iterator.next();
                 if (txState.getXAConnectionHandle().getXAResource().equals(xaresource)) {
                     found.add(txState);
                 }

@@ -255,7 +255,7 @@ public class PhynixxXAResource implements XAResource {
             }
 
 			/*else if ( flags==TMSUCCESS) {
-				factory.getXAResourceTxStateManager().deregisterConnection(xid);
+                factory.getXAResourceTxStateManager().deregisterConnection(xid);
 			}*/
 
         } catch (XAException xaExc) {
@@ -556,9 +556,9 @@ public class PhynixxXAResource implements XAResource {
 
             } else {
                 // check if there are any transaction contexts associated with the current XAResource
-                List statecons = factory.getXAResourceTxStateManager().getXAResourceTxStates(this);
+                List<XAResourceTxState> statecons = factory.getXAResourceTxStateManager().getXAResourceTxStates(this);
                 for (int i = 0; i < statecons.size(); i++) {
-                    XAResourceTxState sc = (XAResourceTxState) statecons.get(i);
+                    XAResourceTxState sc = statecons.get(i);
                     if (!sc.isSuspended()) {
                         throw new XAException(XAException.XA_RBINTEGRITY);
                     }
@@ -633,7 +633,7 @@ public class PhynixxXAResource implements XAResource {
     }
 
 	/*
-	public String toString() 
+    public String toString()
 	{
 		StringBuffer sb = new StringBuffer();
 		sb.append("SampleXAResource "+this.xaId+" :\n");

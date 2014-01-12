@@ -21,12 +21,12 @@ package org.csc.phynixx.test_connection;
  */
 
 
+import org.csc.phynixx.connection.loggersystem.Dev0Strategy;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.Dev0Strategy;
-import org.csc.phynixx.loggersystem.messages.ILogRecord;
-import org.csc.phynixx.loggersystem.messages.ILogRecordReplay;
-import org.csc.phynixx.loggersystem.messages.IRecordLogger;
+import org.csc.phynixx.loggersystem.logrecord.IDataRecord;
+import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
+import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
 
 /**
@@ -57,14 +57,14 @@ public class TestConnection implements ITestConnection {
 
     private int interruptCounter = -1;
 
-    private IRecordLogger messageLogger = Dev0Strategy.THE_DEV0_LOGGER;
+    private IXADataRecorder messageLogger = Dev0Strategy.THE_DEV0_LOGGER;
 
 
-    public IRecordLogger getRecordLogger() {
+    public IXADataRecorder getRecordLogger() {
         return messageLogger;
     }
 
-    public void setRecordLogger(IRecordLogger messageLogger) {
+    public void setRecordLogger(IXADataRecorder messageLogger) {
         this.messageLogger = messageLogger;
     }
 
@@ -159,15 +159,15 @@ public class TestConnection implements ITestConnection {
     }
 
 
-    private class MessageReplay implements ILogRecordReplay {
+    private class MessageReplay implements IDataRecordReplay {
 
-        public void replayRollback(ILogRecord message) {
+        public void replayRollback(IDataRecord message) {
             int inc = Integer.parseInt(new String(message.getData()[0]));
             TestConnection.this.currentCounter =
                     TestConnection.this.currentCounter + inc;
         }
 
-        public void replayRollforward(ILogRecord message) {
+        public void replayRollforward(IDataRecord message) {
             int inc = Integer.parseInt(new String(message.getData()[0]));
             TestConnection.this.currentCounter =
                     TestConnection.this.currentCounter + inc;

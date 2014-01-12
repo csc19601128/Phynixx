@@ -21,12 +21,12 @@ package org.csc.phynixx.connection.reference;
  */
 
 
+import org.csc.phynixx.connection.loggersystem.Dev0Strategy;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.Dev0Strategy;
-import org.csc.phynixx.loggersystem.messages.ILogRecord;
-import org.csc.phynixx.loggersystem.messages.ILogRecordReplay;
-import org.csc.phynixx.loggersystem.messages.IRecordLogger;
+import org.csc.phynixx.loggersystem.logrecord.IDataRecord;
+import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
+import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,7 +34,7 @@ import java.util.List;
 
 
 /**
- * this reference implementation of a {@link IPhynixxConnection } shows how to
+ * this reference implementation of a {@link org.csc.phynixx.connection.IPhynixxConnection } shows how to
  * implement your own recoverable connection
  * The business logic is kept quite simple. A counter is set to an initial value.
  * This value has to be restored when the connection is rollbacked or recovered.
@@ -60,13 +60,13 @@ public class ReferenceConnection implements IReferenceConnection {
 
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
-    private IRecordLogger recordLogger = Dev0Strategy.THE_DEV0_LOGGER;
+    private IXADataRecorder recordLogger = Dev0Strategy.THE_DEV0_LOGGER;
 
-    public IRecordLogger getRecordLogger() {
+    public IXADataRecorder getRecordLogger() {
         return recordLogger;
     }
 
-    public void setRecordLogger(IRecordLogger messageLogger) {
+    public void setRecordLogger(IXADataRecorder messageLogger) {
         this.recordLogger = messageLogger;
     }
 
@@ -148,9 +148,9 @@ public class ReferenceConnection implements IReferenceConnection {
         logger.error(this.getId() + " recovered with initial value=" + this.getCounter());
     }
 
-    private class MessageReplay implements ILogRecordReplay {
+    private class MessageReplay implements IDataRecordReplay {
 
-        public void replayRollback(ILogRecord message) {
+        public void replayRollback(IDataRecord message) {
             int initialCounter = Integer.parseInt(new String(message.getData()[0]));
             ReferenceConnection.this.counter = initialCounter;
         }
@@ -158,7 +158,7 @@ public class ReferenceConnection implements IReferenceConnection {
         /**
          * recover the increments
          */
-        public void replayRollforward(ILogRecord message) {
+        public void replayRollforward(IDataRecord message) {
             int inc = Integer.parseInt(new String(message.getData()[0]));
             Integer incObj = new Integer(inc);
             if (!incObj.equals(ERRONEOUS_VALUE)) {

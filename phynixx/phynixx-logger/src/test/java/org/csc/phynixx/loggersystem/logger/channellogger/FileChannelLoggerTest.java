@@ -24,8 +24,8 @@ package org.csc.phynixx.loggersystem.logger.channellogger;
 import junit.framework.TestCase;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.loggersystem.messages.ILogRecordReplayListener;
-import org.csc.phynixx.loggersystem.messages.XALogRecordType;
+import org.csc.phynixx.loggersystem.logrecord.ILogRecordReplayListener;
+import org.csc.phynixx.loggersystem.logrecord.XALogRecordType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,12 +57,12 @@ public class FileChannelLoggerTest {
     @Test
     public void testChannel() throws Exception {
 
-        FileChannelLoggerFactory loggerFactory =
-                new FileChannelLoggerFactory("test", this.tmpDir.getDirectory().getAbsolutePath());
-        FileChannelLogger logger = new FileChannelLogger("test", this.tmpDir.getDirectory());
-        // (FileChannelLogger) loggerFactory.instanciateLogger("logger_1234456");
+        FileChannelDataLoggerFactory loggerFactory =
+                new FileChannelDataLoggerFactory("test", this.tmpDir.getDirectory().getAbsolutePath());
+        FileChannelDataLogger logger = new FileChannelDataLogger(this.tmpDir.getDirectory());
+        // (FileChannelDataLogger) loggerFactory.instanciateLogger("logger_1234456");
 
-        logger.open();
+        logger.open(AccessMode.WRITE);
         byte[] data1 = "abcde".getBytes();
         byte[] data2 = "abcdef".getBytes();
         logger.write((short) 1, new byte[][]{data1});

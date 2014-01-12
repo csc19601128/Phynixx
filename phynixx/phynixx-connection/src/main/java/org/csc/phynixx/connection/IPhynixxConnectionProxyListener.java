@@ -21,13 +21,17 @@ package org.csc.phynixx.connection;
  */
 
 
+/**
+ * lifecycle listener of an Connection
+ */
+
 public interface IPhynixxConnectionProxyListener {
 
     /**
      * called when the connection is closed
      * Called after closing the connection
      *
-     * @param con current connection
+     * @param event current connection
      */
     void connectionClosed(IPhynixxConnectionProxyEvent event);
 
@@ -35,7 +39,7 @@ public interface IPhynixxConnectionProxyListener {
      * connectionErrorOccurred � triggered when a fatal error,
      * such as the server crashing, causes the connection to be lost
      *
-     * @param con current connection
+     * @param event current connection
      */
     void connectionErrorOccurred(IPhynixxConnectionProxyEvent event);
 
@@ -43,7 +47,7 @@ public interface IPhynixxConnectionProxyListener {
      * connectionRequiresTransaction - an action should be performed that
      * must be transactional
      *
-     * @param con current connection
+     * @param event current connection
      */
     void connectionRequiresTransaction(IPhynixxConnectionProxyEvent event);
 
