@@ -24,10 +24,13 @@ package org.csc.phynixx.connection.loggersystem;
 import org.csc.phynixx.connection.*;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.loggersystem.logrecord.IDataRecord;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
-import org.csc.phynixx.loggersystem.logrecord.IManagedDataRecordLogger;
+import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
+import org.csc.phynixx.loggersystem.logrecord.XALogRecordType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,7 +44,7 @@ public class Dev0Strategy extends PhynixxConnectionProxyListenerAdapter implemen
 
     public static final Dev0Logger THE_DEV0_LOGGER = new Dev0Logger();
 
-    private static class Dev0Logger implements IManagedDataRecordLogger {
+    private static class Dev0Logger implements IXADataRecorder {
 
         public void commitRollforwardData(byte[][] data) {
         }
@@ -64,6 +67,16 @@ public class Dev0Strategy extends PhynixxConnectionProxyListenerAdapter implemen
         public void replayRecords(IDataRecordReplay replay) {
         }
 
+        @Override
+        public boolean isClosed() {
+            return false;
+        }
+
+        @Override
+        public IDataRecord createDataRecord(XALogRecordType logRecordType, byte[][] recordData) {
+            return null;
+        }
+
         public void writeRollbackData(byte[] data) {
         }
 
@@ -76,6 +89,20 @@ public class Dev0Strategy extends PhynixxConnectionProxyListenerAdapter implemen
         public void destroy() {
         }
 
+        @Override
+        public List<IDataRecord> getDataRecords() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public long getXADataRecorderId() {
+            return -1;
+        }
+
+        @Override
+        public void recover() {
+
+        }
     }
 
     public void close() {
@@ -89,20 +116,20 @@ public class Dev0Strategy extends PhynixxConnectionProxyListenerAdapter implemen
 
     public void connectionRequiresTransaction(IPhynixxConnectionProxyEvent event) {
         IPhynixxConnection con = event.getConnectionProxy().getConnection();
-        if (con == null || !(con instanceof IRecordLoggerAware)) {
+        if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
         }
-        IRecordLoggerAware messageAwareConnection = (IRecordLoggerAware) con;
+        IXADataRecorderAware messageAwareConnection = (IXADataRecorderAware) con;
         // Transaction is close and the logger is destroyed ...
-        Dev0Logger logger = (Dev0Logger) messageAwareConnection.getRecordLogger();
+        Dev0Logger logger = (Dev0Logger) messageAwareConnection.getXADataRecorder();
         if (logger == null) {
-            messageAwareConnection.setRecordLogger(THE_DEV0_LOGGER);
+            messageAwareConnection.setXADataRecorder(THE_DEV0_LOGGER);
         }
         event.getConnectionProxy().addConnectionListener(this);
     }
 
 
-    public List<IManagedDataRecordLogger> readIncompleteTransactions() {
+    public List<IXADataRecorder> readIncompleteTransactions() {
         return new ArrayList(0);
     }
 

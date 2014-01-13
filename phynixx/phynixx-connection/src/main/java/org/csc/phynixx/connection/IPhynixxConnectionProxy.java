@@ -29,6 +29,7 @@ package org.csc.phynixx.connection;
  * @author christoph
  */
 public interface IPhynixxConnectionProxy extends IPhynixxConnection, IPhynixxConnectionHandle {
+
     void addConnectionListener(IPhynixxConnectionProxyListener listener);
 
     void removeConnectionListener(IPhynixxConnectionProxyListener listener);

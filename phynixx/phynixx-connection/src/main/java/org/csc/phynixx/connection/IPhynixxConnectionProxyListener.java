@@ -105,5 +105,11 @@ public interface IPhynixxConnectionProxyListener {
      */
     void connectionRecovered(IPhynixxConnectionProxyEvent event);
 
+    /**
+     * starts rolling back the connection
+     *
+     * @param event
+     */
+    void connectionRollingBack(IPhynixxConnectionProxyEvent event);
 
 }

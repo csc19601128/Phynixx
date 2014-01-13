@@ -1,4 +1,4 @@
-package org.csc.phynixx.connection.loggersystem;
+package org.csc.phynixx.loggersystem.logrecord;
 
 /*
  * #%L
@@ -25,29 +25,17 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.connection.ConnectionFactory;
-import org.csc.phynixx.connection.reference.ReferenceConnectionFactory;
-import org.csc.phynixx.connection.reference.ReferenceConnectionProxyFactory;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
-import org.csc.phynixx.loggersystem.logrecord.IDataRecord;
-import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
-import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
-import org.csc.phynixx.loggersystem.logrecord.PhynixxXADataRecorder;
-
-public class MessageLoggerTest extends TestCase {
-
-    private ConnectionFactory createConnectionFactory() throws Exception {
-
-        ConnectionFactory factory = new ConnectionFactory(new ReferenceConnectionFactory(), new ReferenceConnectionProxyFactory());
-        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", new TmpDirectory().getDirectory());
-        factory.setLoggerSystemStrategy(new PerTransactionStrategy("reference", loggerFactory));
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 
-        return factory;
-    }
+public class XADataRecorderTest {
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // configuring the log-system (e.g. log4j)
         TestUtils.configureLogging();
 
@@ -56,36 +44,41 @@ public class MessageLoggerTest extends TestCase {
 
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         // delete all tmp files ...
         new TmpDirectory().clear();
     }
 
+    @Test
     public void testMessageLogger() throws Exception {
-        PhynixxXADataRecorder seq = new PhynixxXADataRecorder(1L, );
 
-        IXADataRecorder msgLogger = seq;
+        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", new TmpDirectory().getDirectory());
+        PhynixxXARecorderResource xaResource = new PhynixxXARecorderResource(loggerFactory);
 
-        TestCase.assertTrue(!seq.isCommitting());
+        IXADataRecorder xaDataRecorder = xaResource.createXADataRecorder();
 
-        msgLogger.writeRollbackData("XYZ".getBytes());
-        msgLogger.writeRollbackData(new byte[][]{"XYZ".getBytes(), "ZYX".getBytes()});
 
-        TestCase.assertTrue(!seq.isCommitting());
-        msgLogger.commitRollforwardData(new byte[][]{"XYZ".getBytes(), "ZYX".getBytes()});
-        TestCase.assertTrue(seq.isCommitting());
+        TestCase.assertTrue(!xaDataRecorder.isCommitting());
 
-        msgLogger.commitRollforwardData(new byte[][]{"ABCD".getBytes()});
+        xaDataRecorder.writeRollbackData("XYZ".getBytes());
+        xaDataRecorder.writeRollbackData(new byte[][]{"XYZ".getBytes(), "ZYX".getBytes()});
+
+        TestCase.assertTrue(!xaDataRecorder.isCommitting());
+        xaDataRecorder.commitRollforwardData(new byte[][]{"XYZ".getBytes(), "ZYX".getBytes()});
+        TestCase.assertTrue(xaDataRecorder.isCommitting());
+
+        xaDataRecorder.commitRollforwardData(new byte[][]{"ABCD".getBytes()});
 
         try {
-            msgLogger.writeRollbackData(new byte[][]{});
+            xaDataRecorder.writeRollbackData(new byte[][]{});
             throw new AssertionFailedError("No more RF Data; Sequence is committing");
         } catch (Exception e) {
         }
 
 
-        TestCase.assertTrue(seq.isCommitting());
-        TestCase.assertTrue(!seq.isCompleted());
+        TestCase.assertTrue(xaDataRecorder.isCommitting());
+        TestCase.assertTrue(!xaDataRecorder.isCompleted());
 
 
         // reply the logrecord
@@ -117,7 +110,7 @@ public class MessageLoggerTest extends TestCase {
 
         };
 
-        msgLogger.replayRecords(replay);
+        xaDataRecorder.replayRecords(replay);
 
 
     }

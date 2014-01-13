@@ -82,7 +82,7 @@ import java.util.*;
  *
  * @author christoph
  */
-class PhynixxXARecorderResource implements IXARecorderResource {
+public class PhynixxXARecorderResource implements IXARecorderResource {
 
 
     public interface IEventDeliver {
@@ -99,16 +99,16 @@ class PhynixxXARecorderResource implements IXARecorderResource {
 
 
     /**
-     * ILoggereListeners watching the lifecycle of this logger
+     * ILoggerListeners watching the lifecycle of this logger
      */
-    private List listeners = new ArrayList();
+    private List<IXARecorderResourceListener> listeners = new ArrayList<IXARecorderResourceListener>();
 
-    private SortedMap<Long, PhynixxXADataRecorder> messageSequences = new TreeMap<Long, PhynixxXADataRecorder>();
+    private SortedMap<Long, PhynixxXADataRecorder> xaDataRecorder = new TreeMap<Long, PhynixxXADataRecorder>();
 
     private IDGenerator messageSeqGenerator = new IDGenerator();
 
 
-    public PhynixxXARecorderResource(IDataLoggerFactory dataLoggerFactory) throws IOException {
+    public PhynixxXARecorderResource(IDataLoggerFactory dataLoggerFactory) {
         this.dataLoggerFactory = dataLoggerFactory;
         if (this.dataLoggerFactory == null) {
             throw new IllegalArgumentException("No dataLoggerFactory set");
@@ -116,21 +116,28 @@ class PhynixxXARecorderResource implements IXARecorderResource {
     }
 
     @Override
-    public IXADataRecorder createXADataRecorder() throws IOException {
-        long xaDataRecorderId = this.messageSeqGenerator.generateLong();
 
-        // create a new Logger
-        IDataLogger dataLogger = this.dataLoggerFactory.instanciateLogger(Long.toString(xaDataRecorderId));
-
-        // create a new XADataLogger
-        XADataLogger xaDataLogger = new XADataLogger(dataLogger);
-
+    /**
+     * opens a new Recorder for writing. The recorder gets a new ID.
+     * @return created dataRecorder
+     */
+    public IXADataRecorder createXADataRecorder() {
 
         try {
+            long xaDataRecorderId = this.messageSeqGenerator.generateLong();
+
+            // create a new Logger
+            IDataLogger dataLogger = this.dataLoggerFactory.instanciateLogger(Long.toString(xaDataRecorderId));
+
+            // create a new XADataLogger
+            XADataLogger xaDataLogger = new XADataLogger(dataLogger);
+
+
             PhynixxXADataRecorder xaDataRecorder = PhynixxXADataRecorder.openRecorderForWrite(xaDataRecorderId, xaDataLogger, this);
-            this.messageSequences.put(xaDataRecorderId, xaDataRecorder);
+            addXADataRecorder(xaDataRecorder);
             return xaDataRecorder;
-        } catch (InterruptedException e) {
+
+        } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
         }
 
@@ -178,8 +185,8 @@ class PhynixxXARecorderResource implements IXARecorderResource {
      * logs user data into the message sequence
      */
     @Override
-    public void logUserData(IXADataRecorder sequence, byte[][] data) throws InterruptedException, IOException {
-        IDataRecord message = sequence.createDataRecord(XALogRecordType.USER, data);
+    public void logUserData(IXADataRecorder xaDataRecorder, byte[][] data) {
+        IDataRecord message = xaDataRecorder.createDataRecord(XALogRecordType.USER, data);
     }
 
     @Override
@@ -281,14 +288,14 @@ class PhynixxXARecorderResource implements IXARecorderResource {
         if (this.dataLoggerFactory == null) {
             throw new IllegalStateException("No logger set");
         }
-        // messageSequences.clear();
+        // xaDataRecorder.clear();
         fireXARecorderResourceOpened();
     }
 
     @Override
-    public synchronized void close() throws IOException, InterruptedException {
+    public synchronized void close() {
         if (!isClosed()) {
-            messageSequences.clear();
+            xaDataRecorder.clear();
             fireXARecorderResourceClosed();
         }
     }
@@ -301,103 +308,49 @@ class PhynixxXARecorderResource implements IXARecorderResource {
         this.messageSeqGenerator = null;
     }
 
-
-    /*
+    /**
+     * recovers all dataRecorder of the loggerSystem. All open dataRecorders are closed and all dataRecorder that can be recovered are opend for reading
+     *
+     * @see #getXADataRecorders()
+     */
     @Override
-    public void writeData(IDataRecord message) throws IOException {
-        DataOutputStream io = null;
-        try {
-
-            ByteArrayOutputStream byteIO = new ByteArrayOutputStream(HEADER_SIZE);
-            io = new DataOutputStream(byteIO);
-
-            io.writeLong(message.getXADataRecorderId().longValue());
-            io.writeInt(message.getOrdinal().intValue());
-            byte[] header = byteIO.toByteArray();
-
-            byte[][] data = message.getData();
-            byte[][] content = null;
-            if (data == null) {
-                content = new byte[][]{header};
-            } else {
-                content = new byte[data.length + 1][];
-                content[0] = header;
-                for (int i = 0; i < data.length; i++) {
-                    content[i + 1] = data[i];
-                }
-            }
-
-            try {
-                this.logger.write(message.getLogRecordType().getType(), content);
-            } catch (Exception e) {
-                throw new DelegatedRuntimeException("writing message " + message + "\n" + ExceptionUtils.getStackTrace(e), e);
-            }
-        } finally {
-            if (io != null) {
-                io.close();
-            }
-        }
-
-        // Add the messageSequence to the set og messageSequences ...
-    }
-
-
-    private IDataRecord recoverData(XALogRecordType logRecordType, byte[][] fieldData) {
-        if (log.isDebugEnabled()) {
-            if (fieldData == null || fieldData.length == 0) {
-                throw new IllegalArgumentException("Record fields are empty");
-            }
-        }
+    public void recover() {
 
         try {
 
-            // field 0 is header
-            byte[] headerData = fieldData[0];
-            DataInputStream io = new DataInputStream(new ByteArrayInputStream(headerData));
-            long messageSequenceId = io.readLong();
-            int ordinal = io.readInt();
+            // close all open dataRecorders
+            this.close();
 
-            byte[][] content = null;
+            Set<String> loggerNames = this.dataLoggerFactory.findLoggerNames();
 
-            if (fieldData.length > 1) {
-                content = new byte[fieldData.length - 1][];
-                for (int i = 0; i < fieldData.length - 1; i++) {
-                    content[i] = fieldData[i + 1];
-                }
-            } else {
-                content = new byte[][]{};
+            // recover all logs
+            for (String loggerName : loggerNames) {
+
+                IDataLogger dataLogger = this.dataLoggerFactory.instanciateLogger(loggerName);
+                XADataLogger xaLogger = new XADataLogger(dataLogger);
+
+                PhynixxXADataRecorder phynixxXADataRecorder = PhynixxXADataRecorder.recoverDataRecorder(xaLogger, this);
+                this.addXADataRecorder(phynixxXADataRecorder);
+
             }
-
-
-            // try to find the messageSequence ....
-            PhynixxXADataRecorder seq = null;
-            Long msgID = new Long(messageSequenceId);
-            if (PhynixxXARecorderResource.this.messageSequences.containsKey(msgID)) {
-                seq = (PhynixxXADataRecorder) this.messageSequences.get(msgID);
-            } else {
-                seq = this.recoverMessageSequence(msgID);
-            }
-
-            // recover the message
-            IDataRecord msg = seq.recover(ordinal, logRecordType, content);
-
-            return msg;
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
         }
 
+
     }
-*/
-    private void addMessageSequence(PhynixxXADataRecorder xaDataRecorder) {
-        if (!this.messageSequences.containsKey(xaDataRecorder.getXADataRecorderId())) {
-            this.messageSequences.put(xaDataRecorder.getXADataRecorderId(), xaDataRecorder);
+
+
+    private void addXADataRecorder(PhynixxXADataRecorder xaDataRecorder) {
+        if (!this.xaDataRecorder.containsKey(xaDataRecorder.getXADataRecorderId())) {
+            this.xaDataRecorder.put(xaDataRecorder.getXADataRecorderId(), xaDataRecorder);
         }
     }
 
     @Override
     public Set<IXADataRecorder> getXADataRecorders() {
-        Set<IXADataRecorder> seqs = new HashSet<IXADataRecorder>(this.messageSequences.size());
-        for (Iterator<PhynixxXADataRecorder> iterator = messageSequences.values().iterator(); iterator.hasNext(); ) {
+        Set<IXADataRecorder> seqs = new HashSet<IXADataRecorder>(this.xaDataRecorder.size());
+        for (Iterator<PhynixxXADataRecorder> iterator = xaDataRecorder.values().iterator(); iterator.hasNext(); ) {
             seqs.add(iterator.next());
         }
         return seqs;
@@ -406,7 +359,7 @@ class PhynixxXARecorderResource implements IXARecorderResource {
 
     @Override
     public void recorderDataRecorderClosed(IXADataRecorder xaDataRecorder) {
-        this.removeMessageSequence(xaDataRecorder);
+        this.removeXADataRecoder(xaDataRecorder);
     }
 
     @Override
@@ -414,8 +367,8 @@ class PhynixxXARecorderResource implements IXARecorderResource {
 
     }
 
-    private void removeMessageSequence(IDataRecordSequence sequence) {
-        this.messageSequences.remove(sequence.getXADataRecorderId());
+    private void removeXADataRecoder(IXADataRecorder xaDataRecorder) {
+        this.xaDataRecorder.remove(xaDataRecorder.getXADataRecorderId());
     }
 
     private void fireEvents(IEventDeliver deliver) {
@@ -425,9 +378,9 @@ class PhynixxXARecorderResource implements IXARecorderResource {
         }
 
         // copy all listeners as the callback may change the list of listeners ...
-        List tmp = new ArrayList(this.listeners);
+        List<IXARecorderResourceListener> tmp = new ArrayList<IXARecorderResourceListener>(this.listeners);
         for (int i = 0; i < tmp.size(); i++) {
-            IXARecorderResourceListener listener = (IXARecorderResourceListener) tmp.get(i);
+            IXARecorderResourceListener listener = tmp.get(i);
             deliver.fireEvent(listener);
         }
     }
@@ -451,37 +404,5 @@ class PhynixxXARecorderResource implements IXARecorderResource {
         fireEvents(deliver);
     }
 
-
-/*
-    private class RecoverReplayListener implements ILogRecordReplayListener {
-
-        private int count = 0;
-
-        public int getCountLogRecords() {
-            return count;
-        }
-
-        public void onRecord(XALogRecordType recordType, byte[][] fields) {
-
-            short typeId = recordType.getType();
-            count++;
-            switch (typeId) {public void instanciateDataLogger() {
-
-    }
-                case XALogRecordType.XA_START_TYPE:
-                case XALogRecordType.XA_PREPARED_TYPE:
-                case XALogRecordType.XA_COMMIT_TYPE:
-                case XALogRecordType.XA_DONE_TYPE:
-                case XALogRecordType.USER_TYPE:
-                    PhynixxXARecorderResource.this.recoverData(recordType, fields);
-                    break;
-                default:
-                    log.error("Unknown LogRecordtype " + recordType);
-                    break;
-            }
-        }
-
-    }
-    */
 
 }

@@ -110,7 +110,7 @@ public class ConnectionRecoveryTest extends TestCase {
                 if (con != null) {
                     con.close();
                 }
-                messageLogger = con.getRecordLogger();
+                messageLogger = con.getXADataRecorder();
             }
         }
     }
@@ -132,7 +132,7 @@ public class ConnectionRecoveryTest extends TestCase {
 
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        this.strategy = new PerTransactionStrategy("abcd", loggerFactory);
+        this.strategy = new PerTransactionStrategy(loggerFactory);
 
         final int[] counter = new int[1];
 
@@ -163,7 +163,7 @@ public class ConnectionRecoveryTest extends TestCase {
     public void testInteruptedRollback() throws Exception {
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        this.strategy = new PerTransactionStrategy("abcd", loggerFactory);
+        this.strategy = new PerTransactionStrategy(loggerFactory);
 
         final int[] counter = new int[1];
 
@@ -187,7 +187,7 @@ public class ConnectionRecoveryTest extends TestCase {
         TestCase.assertEquals(5 + 7, counter[0]);
 
         TestConnection con = (TestConnection) ConnectionRecoveryTest.this.factory.getConnection();
-        con.setRecordLogger(messageLogger);
+        con.setXADataRecorder(messageLogger);
         con.recover();
         TestCase.assertEquals(5 + 7, con.getCurrentCounter());
 
@@ -197,7 +197,7 @@ public class ConnectionRecoveryTest extends TestCase {
     public void testInterruptedCommit() throws Exception {
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        this.strategy = new PerTransactionStrategy("abcd", loggerFactory);
+        this.strategy = new PerTransactionStrategy(loggerFactory);
 
         final int[] counter = new int[1];
 
@@ -220,7 +220,7 @@ public class ConnectionRecoveryTest extends TestCase {
 
         // Recover the Connection
         TestConnection con = (TestConnection) ConnectionRecoveryTest.this.factory.getConnection();
-        con.setRecordLogger(messageLogger);
+        con.setXADataRecorder(messageLogger);
         con.recover();
         TestCase.assertEquals(5 + 7 + TestConnection.RF_INCREMENT, con.getCurrentCounter());
 
@@ -230,7 +230,7 @@ public class ConnectionRecoveryTest extends TestCase {
     public void testInterruptedExecution() throws Exception {
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        this.strategy = new PerTransactionStrategy("abcd", loggerFactory);
+        this.strategy = new PerTransactionStrategy(loggerFactory);
 
         final int[] counter = new int[1];
 
@@ -248,7 +248,7 @@ public class ConnectionRecoveryTest extends TestCase {
 
         // Recover the Connection
         TestConnection con = (TestConnection) ConnectionRecoveryTest.this.factory.getConnection();
-        con.setRecordLogger(messageLogger);
+        con.setXADataRecorder(messageLogger);
         con.recover();
         TestCase.assertEquals(5 + 7, con.getCurrentCounter());
 

@@ -62,6 +62,8 @@ public interface IXADataRecorder extends IDataRecordSequence {
      */
     void commitRollforwardData(byte[] data);
 
+    void recover();
+
     /**
      * @return indicates that current sequence has received a XA_COMMIT message no more logrecord are
      * accepted except XA_DONE to complete the sequence ....
@@ -79,4 +81,22 @@ public interface IXADataRecorder extends IDataRecordSequence {
      * @param replay
      */
     void replayRecords(IDataRecordReplay replay);
+
+
+    boolean isClosed();
+
+
+    IDataRecord createDataRecord(XALogRecordType logRecordType, byte[][] recordData);
+
+    /**
+     * closes the dataLogger, but keeps all resorces, so the dataLogger can be re-opended
+     */
+    void close();
+
+    /**
+     * closes the dataRecorder an destroys all resources
+     */
+    void destroy();
+
+
 }

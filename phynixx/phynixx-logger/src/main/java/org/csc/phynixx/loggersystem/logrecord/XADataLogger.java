@@ -1,5 +1,26 @@
 package org.csc.phynixx.loggersystem.logrecord;
 
+/*
+ * #%L
+ * phynixx-logger
+ * %%
+ * Copyright (C) 2014 Christoph Schmidt-Casdorff
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+
 import org.apache.commons.io.IOUtils;
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.exceptions.ExceptionUtils;
@@ -15,6 +36,14 @@ import java.io.*;
  * Created by christoph on 10.01.14.
  */
 public class XADataLogger {
+
+    public boolean isClosed() {
+        return this.dataLogger.isClosed();
+    }
+
+    public void destroy() throws IOException {
+        this.dataLogger.destroy();
+    }
 
     private class RecoverReplayListener implements ILogRecordReplayListener {
 
@@ -34,7 +63,7 @@ public class XADataLogger {
 
         public void onRecord(XALogRecordType recordType, byte[][] fieldData) {
             if (count == 0) {
-                recoverMessageSequenceId(fieldData[0]);
+                dataRecorder.setMessageSequenceId(recoverMessageSequenceId(fieldData[0]));
             } else {
                 short typeId = recordType.getType();
                 switch (typeId) {
@@ -152,7 +181,7 @@ public class XADataLogger {
                 throw new IllegalArgumentException("Record fields are empty");
             }
         }
-            // field 0 is header
+        // field 0 is header
         byte[] headerData = fieldData[0];
         DataInputStream io = new DataInputStream(new ByteArrayInputStream(headerData));
         try {

@@ -95,9 +95,11 @@ public interface IXARecorderResource extends IXADataRecorderLifecycleListener {
 
     void open() throws IOException, InterruptedException;
 
-    void close() throws IOException, InterruptedException;
+    void close();
 
     void destroy() throws IOException, InterruptedException;
+
+    void recover();
 
     /**
      *

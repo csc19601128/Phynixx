@@ -22,14 +22,14 @@ package org.csc.phynixx.test_connection;
 
 
 import org.csc.phynixx.connection.IPhynixxConnection;
-import org.csc.phynixx.connection.IRecordLoggerAware;
+import org.csc.phynixx.connection.IXADataRecorderAware;
 
 /**
  * the current implementation manages a internal counter which can be incremented
  *
  * @author christoph
  */
-public interface ITestConnection extends IPhynixxConnection, IRecordLoggerAware {
+public interface ITestConnection extends IPhynixxConnection, IXADataRecorderAware {
 
 
     public static final int RF_INCREMENT = 17;

@@ -29,11 +29,15 @@ package org.csc.phynixx.loggersystem.logrecord;
 public interface IDataRecordReplay {
 
     /**
+     * rolls back
+     *
      * @param record ILogMessage to be rollbacked
      */
     void replayRollback(IDataRecord record);
 
     /**
+     * rollforward moves from prepared to committed
+     *
      * @param record to be rollforwared
      */
     void replayRollforward(IDataRecord record);

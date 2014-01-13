@@ -54,17 +54,36 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     /**
      * opens an Recorder for read. If no recorder with the given ID exists recorder with no data is returned
      *
-     * @param messageSequenceId
-     * @param xaDataLogger      Strategy to persist the records
+     * @param xaDataLogger Strategy to persist the records
      * @return
      * @throws IOException
      * @throws InterruptedException
      */
-    static PhynixxXADataRecorder recoverDataRecorder(long messageSequenceId, XADataLogger xaDataLogger, IXADataRecorderLifecycleListener dataRecorderLifycycleListner) throws IOException, InterruptedException {
-        PhynixxXADataRecorder dataRecorder = new PhynixxXADataRecorder(messageSequenceId, xaDataLogger, dataRecorderLifycycleListner);
-        dataRecorder.dataLogger.prepareForRead(dataRecorder);
-        dataRecorder.dataLogger.recover(dataRecorder);
-        return dataRecorder;
+    static PhynixxXADataRecorder recoverDataRecorder(XADataLogger xaDataLogger, IXADataRecorderLifecycleListener dataRecorderLifycycleListner) {
+        try {
+            PhynixxXADataRecorder dataRecorder = new PhynixxXADataRecorder(-1, xaDataLogger, dataRecorderLifycycleListner);
+            dataRecorder.recover();
+            return dataRecorder;
+        } catch (Exception e) {
+            throw new DelegatedRuntimeException(e);
+        }
+
+    }
+
+
+    /**
+     * recovers the dataRecorder
+     * all messages are removed and all the messsages of the logger are recoverd
+     */
+    @Override
+    public void recover() {
+        try {
+            this.messages.clear();
+            this.dataLogger.prepareForRead(this);
+            this.dataLogger.recover(this);
+        } catch (Exception e) {
+            throw new DelegatedRuntimeException(e);
+        }
     }
 
     /**
@@ -76,10 +95,14 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
      * @throws IOException
      * @throws InterruptedException
      */
-    static PhynixxXADataRecorder openRecorderForWrite(long messageSequenceId, XADataLogger xaDataLogger, IXADataRecorderLifecycleListener dataRecorderLifycycleListner) throws IOException, InterruptedException {
+    static PhynixxXADataRecorder openRecorderForWrite(long messageSequenceId, XADataLogger xaDataLogger, IXADataRecorderLifecycleListener dataRecorderLifycycleListner) {
         PhynixxXADataRecorder dataRecorder = new PhynixxXADataRecorder(messageSequenceId, xaDataLogger, dataRecorderLifycycleListner);
-        dataRecorder.dataLogger.prepareForWrite(dataRecorder);
-        return dataRecorder;
+        try {
+            dataRecorder.dataLogger.prepareForWrite(dataRecorder);
+            return dataRecorder;
+        } catch (Exception e) {
+            throw new DelegatedRuntimeException(e);
+        }
     }
 
     /**
@@ -109,7 +132,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     /* (non-Javadoc)
      * @see de.csc.xaresource.sample.loggersystem.ILogMessageSequence#getMessages()
      */
-    public List<IDataRecord> getMessages() {
+    public List<IDataRecord> getDataRecords() {
         return messages;
     }
 
@@ -138,11 +161,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
      * create a new Message with the given data
      */
     public synchronized void writeRollbackData(byte[][] data) {
-        try {
-            this.createDataRecord(XALogRecordType.USER, data);
-        } catch (IOException e) {
-            throw new DelegatedRuntimeException(e);
-        }
+        this.createDataRecord(XALogRecordType.USER, data);
     }
 
 
@@ -178,16 +197,16 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         }
     }
 
-    public synchronized IDataRecord createDataRecord(XALogRecordType logRecordType, byte[][] recordData) throws IOException {
+    @Override
+    public IDataRecord createDataRecord(XALogRecordType logRecordType, byte[][] recordData) {
         PhynixxDataRecord msg = new PhynixxDataRecord(this.getXADataRecorderId(), this.ordinalGenerator.generate(), logRecordType, recordData);
-        this.dataLogger.writeData(this, msg);
-        this.addMessage(msg);
-        return msg;
-    }
-
-    public synchronized IDataRecord createDataRecord(XALogRecordType logRecordType, byte[] recordData) throws IOException {
-        byte[][] message = toBytesBytes(recordData);
-        return this.createDataRecord(logRecordType, message);
+        try {
+            this.dataLogger.writeData(this, msg);
+            this.addMessage(msg);
+            return msg;
+        } catch (Exception e) {
+            throw new DelegatedRuntimeException(e);
+        }
     }
 
     private byte[][] toBytesBytes(byte[] recordData) {
@@ -196,13 +215,13 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         return message;
     }
 
-
-    public IDataRecord recover1(int ordinal, XALogRecordType logRecordType, byte[][] data) {
-        PhynixxDataRecord msg = new PhynixxDataRecord(this.getXADataRecorderId(), ordinal, logRecordType, data);
-        this.addMessage(msg);
-        return msg;
+    public long getMessageSequenceId() {
+        return messageSequenceId;
     }
 
+    void setMessageSequenceId(long messageSequenceId) {
+        this.messageSequenceId = messageSequenceId;
+    }
 
     private void establishState(IDataRecord msg) {
         XALogRecordType logRecordType = msg.getLogRecordType();
@@ -297,9 +316,23 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         this.dataLogger.close();
     }
 
+    @Override
+    public boolean isClosed() {
+        return this.dataLogger.isClosed();
+    }
+
+    @Override
+    public void destroy() {
+        try {
+            this.dataLogger.destroy();
+        } catch (IOException e) {
+            throw new DelegatedRuntimeException(e);
+        }
+    }
 
     public void messageSequenceCreated() {
         this.dataRecorderLifycycleListner.recorderDataRecorderOpened(this);
     }
+
 
 }

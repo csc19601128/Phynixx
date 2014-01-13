@@ -23,10 +23,10 @@ package org.csc.phynixx.connection;
 
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
-public interface IRecordLoggerAware {
+public interface IXADataRecorderAware {
 
-    public abstract void setRecordLogger(IXADataRecorder logger);
+    void setXADataRecorder(IXADataRecorder logger);
 
-    public abstract IXADataRecorder getRecordLogger();
+    IXADataRecorder getXADataRecorder();
 
 }

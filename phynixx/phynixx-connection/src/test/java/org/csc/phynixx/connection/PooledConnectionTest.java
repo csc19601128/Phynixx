@@ -60,7 +60,7 @@ public class PooledConnectionTest extends TestCase {
         this.factory = new PooledConnectionFactory(new TestConnectionFactory(), cfg);
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        PerTransactionStrategy strategy = new PerTransactionStrategy("abcd", loggerFactory);
+        PerTransactionStrategy strategy = new PerTransactionStrategy(loggerFactory);
 
         this.factory.setLoggerSystemStrategy(strategy);
         this.recoveryListner = new RecoveryListener();

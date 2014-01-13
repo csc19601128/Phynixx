@@ -60,6 +60,10 @@ public class PhynixxConnectionProxyListenerAdapter implements IPhynixxConnection
     public void connectionCommitted(IPhynixxConnectionProxyEvent event) {
     }
 
+    @Override
+    public void connectionRollingBack(IPhynixxConnectionProxyEvent event) {
+
+    }
 
     /**
      * NOOP

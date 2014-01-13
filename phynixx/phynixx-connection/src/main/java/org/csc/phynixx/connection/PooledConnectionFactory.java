@@ -172,8 +172,8 @@ public class PooledConnectionFactory extends ConnectionFactory implements IPhyni
 			try {
 				IXADataRecorder msgLogger= (IXADataRecorder) messageLoggers.get(i);
 				con= this.getConnection();
-				if( (con instanceof IRecordLoggerAware)) {
-					((IRecordLoggerAware)con).setRecordLogger(msgLogger);
+				if( (con instanceof IXADataRecorderAware)) {
+					((IXADataRecorderAware)con).setRecordLogger(msgLogger);
 				}
 				con.recover();
 			} finally {

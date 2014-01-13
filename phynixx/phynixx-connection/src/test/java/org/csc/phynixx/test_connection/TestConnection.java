@@ -60,11 +60,11 @@ public class TestConnection implements ITestConnection {
     private IXADataRecorder messageLogger = Dev0Strategy.THE_DEV0_LOGGER;
 
 
-    public IXADataRecorder getRecordLogger() {
+    public IXADataRecorder getXADataRecorder() {
         return messageLogger;
     }
 
-    public void setRecordLogger(IXADataRecorder messageLogger) {
+    public void setXADataRecorder(IXADataRecorder messageLogger) {
         this.messageLogger = messageLogger;
     }
 
@@ -101,7 +101,7 @@ public class TestConnection implements ITestConnection {
      * @see de.csc.xaresource.sample.ITestConnection#act()
      */
     public void act(int inc) {
-        this.getRecordLogger().writeRollbackData(Integer.toString(inc).getBytes());
+        this.getXADataRecorder().writeRollbackData(Integer.toString(inc).getBytes());
         interrupt();
         this.currentCounter = this.currentCounter + inc;
         log.info("TestConnection " + id + " counter incremented to " + inc + " counter=" + this.getCurrentCounter());
@@ -120,7 +120,7 @@ public class TestConnection implements ITestConnection {
     }
 
     public void commit() {
-        this.getRecordLogger().commitRollforwardData(Integer.toString(RF_INCREMENT).getBytes());
+        this.getXADataRecorder().commitRollforwardData(Integer.toString(RF_INCREMENT).getBytes());
         interrupt();
         this.currentCounter = this.currentCounter + RF_INCREMENT;
         TestConnectionStatusManager.getStatusStack(this.getId()).addStatus(TestConnectionStatus.COMMITTED);
@@ -155,22 +155,31 @@ public class TestConnection implements ITestConnection {
     }
 
     public void recover() {
-        this.getRecordLogger().replayRecords(new MessageReplay());
+        this.getXADataRecorder().replayRecords(new MessageReplay(this));
     }
 
 
-    private class MessageReplay implements IDataRecordReplay {
+    /**
+     * for debugging purpose
+     */
+    static class MessageReplay implements IDataRecordReplay {
+
+        private TestConnection con;
+
+        MessageReplay(TestConnection con) {
+            this.con = con;
+        }
 
         public void replayRollback(IDataRecord message) {
             int inc = Integer.parseInt(new String(message.getData()[0]));
-            TestConnection.this.currentCounter =
-                    TestConnection.this.currentCounter + inc;
+            this.con.currentCounter =
+                    this.con.currentCounter + inc;
         }
 
         public void replayRollforward(IDataRecord message) {
             int inc = Integer.parseInt(new String(message.getData()[0]));
-            TestConnection.this.currentCounter =
-                    TestConnection.this.currentCounter + inc;
+            this.con.currentCounter =
+                    this.con.currentCounter + inc;
         }
 
     }

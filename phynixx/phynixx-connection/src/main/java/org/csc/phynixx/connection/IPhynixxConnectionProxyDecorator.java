@@ -27,7 +27,7 @@ public interface IPhynixxConnectionProxyDecorator {
      * installs this strategy to the given connection
      *
      * @param connectionProxy
-     * @return TODO
+     * @return decorated Proxy
      */
     public IPhynixxConnectionProxy decorate(IPhynixxConnectionProxy connectionProxy);
 

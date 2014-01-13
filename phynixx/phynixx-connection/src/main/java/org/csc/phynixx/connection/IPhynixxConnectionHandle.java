@@ -20,7 +20,9 @@ package org.csc.phynixx.connection;
  * #L%
  */
 
-
+/**
+ *
+ */
 public interface IPhynixxConnectionHandle {
 
     void setConnection(IPhynixxConnection connection);

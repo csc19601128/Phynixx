@@ -107,6 +107,9 @@ public class ConnectionFactory extends PhynixxConnectionProxyListenerAdapter imp
                 IPhynixxConnection connection =
                         ConnectionFactory.this.getConnectionFactory().getConnection();
 
+                /**
+                 * returns empty Proxy
+                 */
                 proxy = ConnectionFactory.this.connectionProxyFactory.getConnectionProxy();
 
                 proxy.setConnection(connection);
@@ -138,14 +141,14 @@ public class ConnectionFactory extends PhynixxConnectionProxyListenerAdapter imp
     public void recover() {
 
         // get all recoverable transaction data
-        List messageLoggers = this.loggerSystemStrategy.readIncompleteTransactions();
+        List<IXADataRecorder> messageLoggers = this.loggerSystemStrategy.readIncompleteTransactions();
         IPhynixxConnection con = null;
         for (int i = 0; i < messageLoggers.size(); i++) {
             try {
-                IXADataRecorder msgLogger = (IXADataRecorder) messageLoggers.get(i);
+                IXADataRecorder msgLogger = messageLoggers.get(i);
                 con = this.getConnection();
-                if ((con instanceof IRecordLoggerAware)) {
-                    ((IRecordLoggerAware) con).setRecordLogger(msgLogger);
+                if ((con instanceof IXADataRecorderAware)) {
+                    ((IXADataRecorderAware) con).setXADataRecorder(msgLogger);
                 }
                 con.recover();
             } finally {

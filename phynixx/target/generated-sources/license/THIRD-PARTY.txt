@@ -1,5 +1,5 @@
 
-Lists of 20 third-party dependencies.
+Lists of 21 third-party dependencies.
      (The Apache Software License, Version 2.0) Commons IO (commons-io:commons-io:2.4 - http://commons.apache.org/io/)
      (The Apache Software License, Version 2.0) Logging (commons-logging:commons-logging:1.0.3 - http://jakarta.apache.org/commons/logging/)
      (The Apache Software License, Version 2.0) Commons Pool (commons-pool:commons-pool:1.6 - http://commons.apache.org/pool/)
@@ -20,3 +20,4 @@ Lists of 20 third-party dependencies.
      (New BSD License) Hamcrest Core (org.hamcrest:hamcrest-core:1.3 - https://github.com/hamcrest/JavaHamcrest/hamcrest-core)
      (The MIT License) Mockito (org.mockito:mockito-all:1.9.5 - http://www.mockito.org)
      (BSD) carol (org.objectweb.carol:carol:2.0.5 - no url defined)
+     (BSD) HOWL logger (org.objectweb.howl:howl:1.0.1-1 - http://forge.objectweb.org/projects/howl/)

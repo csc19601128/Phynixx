@@ -49,11 +49,11 @@ public class TestRecoveryConnection implements ITestConnection {
     private IXADataRecorder messageLogger = Dev0Strategy.THE_DEV0_LOGGER;
 
 
-    public IXADataRecorder getRecordLogger() {
+    public IXADataRecorder getXADataRecorder() {
         return messageLogger;
     }
 
-    public void setRecordLogger(IXADataRecorder messageLogger) {
+    public void setXADataRecorder(IXADataRecorder messageLogger) {
         this.messageLogger = messageLogger;
     }
 
@@ -91,7 +91,7 @@ public class TestRecoveryConnection implements ITestConnection {
      * @see de.csc.xaresource.sample.ITestConnection#act()
      */
     public void act(int inc) {
-        this.getRecordLogger().writeRollbackData(Integer.toString(inc).getBytes());
+        this.getXADataRecorder().writeRollbackData(Integer.toString(inc).getBytes());
         interrupt();
         this.currentCounter = this.currentCounter + inc;
         log.info("TestConnection " + id + " counter incremented to " + inc + " counter=" + this.getCurrentCounter());
@@ -110,7 +110,7 @@ public class TestRecoveryConnection implements ITestConnection {
     }
 
     public void commit() {
-        this.getRecordLogger().commitRollforwardData(Integer.toString(RF_INCREMENT).getBytes());
+        this.getXADataRecorder().commitRollforwardData(Integer.toString(RF_INCREMENT).getBytes());
         interrupt();
         this.currentCounter = this.currentCounter + RF_INCREMENT;
         TestConnectionStatusManager.getStatusStack(this.getId()).addStatus(TestConnectionStatus.COMMITTED);
@@ -145,7 +145,7 @@ public class TestRecoveryConnection implements ITestConnection {
     }
 
     public void recover() {
-        this.getRecordLogger().replayRecords(new MessageReplay());
+        this.getXADataRecorder().replayRecords(new MessageReplay());
     }
 
 

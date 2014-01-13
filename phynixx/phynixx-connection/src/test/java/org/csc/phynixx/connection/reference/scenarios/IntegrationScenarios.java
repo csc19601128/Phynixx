@@ -21,7 +21,6 @@ package org.csc.phynixx.connection.reference.scenarios;
  */
 
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.csc.phynixx.connection.ConnectionFactory;
@@ -36,6 +35,7 @@ import org.csc.phynixx.logger.PrintLogManager;
 import org.csc.phynixx.logger.PrintLogger;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
+import org.junit.Assert;
 
 import java.io.File;
 import java.util.Properties;
@@ -202,7 +202,7 @@ public class IntegrationScenarios extends TestCase {
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
         //IDataLoggerFactory loggerFactory= new HowlLoggerFactory("reference", this.loadHowlConfig(tmpDirectory.getDirectory()));
 
-        factory.setLoggerSystemStrategy(new PerTransactionStrategy("reference", loggerFactory));
+        factory.setLoggerSystemStrategy(new PerTransactionStrategy(loggerFactory));
         return factory;
     }
 
@@ -210,7 +210,7 @@ public class IntegrationScenarios extends TestCase {
 
         ConnectionFactory factory = new ConnectionFactory(new ReferenceConnectionFactory(), new ReferenceConnectionProxyFactory());
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
-        factory.setLoggerSystemStrategy(new PerTransactionStrategy("reference", loggerFactory));
+        factory.setLoggerSystemStrategy(new PerTransactionStrategy(loggerFactory));
 
 
         return factory;

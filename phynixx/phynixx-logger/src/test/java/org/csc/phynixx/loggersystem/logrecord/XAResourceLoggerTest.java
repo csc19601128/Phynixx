@@ -127,7 +127,7 @@ public class XAResourceLoggerTest {
             TestCase.assertTrue(xaDataRecorder1.isCompleted());
 
 
-            countMessages = xaDataRecorder1.getMessages().size();
+            countMessages = xaDataRecorder1.getDataRecords().size();
 
 
             xaRecorderResource.open();
@@ -140,7 +140,7 @@ public class XAResourceLoggerTest {
             TestCase.assertEquals(1, xaDataRecorders.size());
 
             IXADataRecorder dataRecorder2 = xaDataRecorders.iterator().next();
-            List<IDataRecord> messages = dataRecorder2.getMessages();
+            List<IDataRecord> messages = dataRecorder2.getDataRecords();
 
             TestCase.assertTrue(dataRecorder2.isCompleted());
             TestCase.assertEquals(countMessages, messages.size());

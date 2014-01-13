@@ -23,10 +23,11 @@ package org.csc.phynixx.connection.loggersystem;
 
 import org.csc.phynixx.connection.*;
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.loggersystem.IXAResourceLogger;
-import org.csc.phynixx.loggersystem.RecordLoggerSystem;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
-import org.csc.phynixx.loggersystem.logrecord.*;
+import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
+import org.csc.phynixx.loggersystem.logrecord.IXARecorderResource;
+import org.csc.phynixx.loggersystem.logrecord.IXARecorderResourceListener;
+import org.csc.phynixx.loggersystem.logrecord.PhynixxXARecorderResource;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,108 +35,19 @@ import java.util.List;
 import java.util.Set;
 
 
+/**
+ * this listener observes the lifecycle of a connection and associates a xaDataRecorder is neccessary
+ */
 public class PerTransactionStrategy extends PhynixxConnectionProxyListenerAdapter implements ILoggerSystemStrategy, IPhynixxConnectionProxyListener {
 
-    private RecordLoggerSystem loggerSystem = null;
 
-    class MessageLoggerWrapperData implements IManagedDataRecordLogger {
-        private IXAResourceLogger xaresourceLogger = null;
-        private IDataRecordSequence msgSeq = null;
-
-        public MessageLoggerWrapperData(IXAResourceLogger xaresourceLogger) {
-            super();
-            this.xaresourceLogger = xaresourceLogger;
-            this.msgSeq = this.xaresourceLogger.createMessageSequence();
-        }
-
-        public MessageLoggerWrapperData(IXAResourceLogger xaresourceLogger, IDataRecordSequence seq) {
-            super();
-            this.xaresourceLogger = xaresourceLogger;
-            this.msgSeq = seq;
-        }
-
-        public IXAResourceLogger getXAResourceLogger() {
-            return xaresourceLogger;
-        }
-
-        public IDataRecordSequence getMsgSeq() {
-            return msgSeq;
-        }
-
-        public void commitRollforwardData(byte[] data) {
-            this.msgSeq.commitRollforwardData(data);
-        }
-
-        public void commitRollforwardData(byte[][] data) {
-            this.msgSeq.commitRollforwardData(data);
-        }
-
-        public boolean isCommitting() {
-            return this.msgSeq.isCommitting();
-        }
-
-        public boolean isCompleted() {
-            return this.msgSeq.isCompleted();
-        }
-
-        public boolean isPrepared() {
-            return this.msgSeq.isPrepared();
-        }
-
-        public void replayRecords(IDataRecordReplay replay) {
-            this.msgSeq.replayRecords(replay);
-
-        }
-
-        public void writeRollbackData(byte[] data) {
-            this.msgSeq.writeRollbackData(data);
-
-        }
-
-        public void writeRollbackData(byte[][] data) {
-            this.msgSeq.writeRollbackData(data);
-
-        }
-
-        /**
-         * releases the connections
-         * the log files are nortt destroyed as they could be part of an incomplete transaction
-         * To complete a transaction call @link {@link #destroy()}
-         */
-        public void close() {
-            synchronized (xaresourceLogger) {
-                if (!xaresourceLogger.isClosed()) {
-                    try {
-                        xaresourceLogger.close();
-                    } catch (Exception e) {
-                        throw new DelegatedRuntimeException("closing " + xaresourceLogger, e);
-                    }
-                }
-            }
-        }
-
-        /**
-         * releases the connection an destroys the logfiles
-         */
-        public void destroy() {
-            synchronized (xaresourceLogger) {
-                try {
-                    xaresourceLogger.destroy();
-                } catch (Exception e) {
-                    throw new DelegatedRuntimeException("closing " + xaresourceLogger, e);
-                }
-                PerTransactionStrategy.this.loggerSystem.destroy(xaresourceLogger);
-            }
-        }
-
-
-    }
+    private IXARecorderResource xaRecorderResource;
 
     /**
      * the logger is added to all instanciated Loggers
      */
     public void addLoggerListener(IXARecorderResourceListener listener) {
-        this.loggerSystem.addListener(listener);
+        // this.xaRecorderResource.addListener(listener);
 
     }
 
@@ -143,12 +55,12 @@ public class PerTransactionStrategy extends PhynixxConnectionProxyListenerAdapte
     /**
      * per thread a new Logger cpould be instanciated with aid of the loggerFacrory
      *
-     * @param loggersystemName
+     *
      * @param loggerFactory
      * @throws Exception
      */
-    public PerTransactionStrategy(String loggersystemName, IDataLoggerFactory loggerFactory) throws Exception {
-        this.loggerSystem = new RecordLoggerSystem(loggersystemName, loggerFactory);
+    public PerTransactionStrategy(IDataLoggerFactory loggerFactory) {
+        this.xaRecorderResource = new PhynixxXARecorderResource(loggerFactory);
     }
 
 
@@ -158,7 +70,7 @@ public class PerTransactionStrategy extends PhynixxConnectionProxyListenerAdapte
     }
 
     public void close() {
-        this.loggerSystem.close();
+        this.xaRecorderResource.close();
     }
 
 
@@ -171,46 +83,39 @@ public class PerTransactionStrategy extends PhynixxConnectionProxyListenerAdapte
     public void connectionClosed(IPhynixxConnectionProxyEvent event) {
 
         IPhynixxConnection con = event.getConnectionProxy().getConnection();
-        if (con == null || !(con instanceof IRecordLoggerAware)) {
+        if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
         }
 
-        IRecordLoggerAware messageAwareConnection = (IRecordLoggerAware) con;
-        // Transaction is closed and the logger is destroyed ...
-        IXADataRecorder logger = messageAwareConnection.getRecordLogger();
-        if (logger == null) {
+        IXADataRecorderAware messageAwareConnection = (IXADataRecorderAware) con;
+        // Transaction is closed and the xaDataRecorder is destroyed ...
+        IXADataRecorder xaDataRecorder = messageAwareConnection.getXADataRecorder();
+        if (xaDataRecorder == null) {
             return;
         }
-        if (!(logger instanceof IManagedDataRecordLogger)) {
-            throw new IllegalStateException("Logger " + logger + " has to implement the IF IManagedMessageLogger");
-        }
-        IManagedDataRecordLogger managedLogger = (IManagedDataRecordLogger) logger;
-        managedLogger.close();
-        messageAwareConnection.setRecordLogger(null);
+        xaDataRecorder.close();
+        messageAwareConnection.setXADataRecorder(null);
 
     }
 
     public void connectionRolledback(IPhynixxConnectionProxyEvent event) {
         IPhynixxConnection con = event.getConnectionProxy().getConnection();
-        if (con == null || !(con instanceof IRecordLoggerAware)) {
+        if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
         }
 
-        IRecordLoggerAware messageAwareConnection = (IRecordLoggerAware) con;
+        IXADataRecorderAware messageAwareConnection = (IXADataRecorderAware) con;
 
         // Transaction is closed and the logger is destroyed ...
-        IXADataRecorder logger = messageAwareConnection.getRecordLogger();
-        if (logger == null) {
+        IXADataRecorder xaDataRecorder = messageAwareConnection.getXADataRecorder();
+        if (xaDataRecorder == null) {
             return;
         }
-        if (!(logger instanceof IManagedDataRecordLogger)) {
-            throw new IllegalStateException("Logger " + logger + " has to implement the IF IManagedMessageLogger");
-        }
-        IManagedDataRecordLogger managedLogger = (IManagedDataRecordLogger) logger;
 
-        managedLogger.destroy();
+        // if the rollback is completed the rollback data isn't needed
+        xaDataRecorder.destroy();
 
-        messageAwareConnection.setRecordLogger(null);
+        messageAwareConnection.setXADataRecorder(null);
 
         event.getConnectionProxy().addConnectionListener(this);
     }
@@ -218,25 +123,20 @@ public class PerTransactionStrategy extends PhynixxConnectionProxyListenerAdapte
 
     public void connectionCommitted(IPhynixxConnectionProxyEvent event) {
         IPhynixxConnection con = event.getConnectionProxy().getConnection();
-        if (con == null || !(con instanceof IRecordLoggerAware)) {
+        if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
         }
 
-        IRecordLoggerAware messageAwareConnection = (IRecordLoggerAware) con;
+        IXADataRecorderAware messageAwareConnection = (IXADataRecorderAware) con;
 
 
         // Transaction is close and the logger is destroyed ...
-        IXADataRecorder logger = messageAwareConnection.getRecordLogger();
-        if (logger == null) {
+        IXADataRecorder xaDataRecorder = messageAwareConnection.getXADataRecorder();
+        if (xaDataRecorder == null) {
             return;
         }
-        if (!(logger instanceof IManagedDataRecordLogger)) {
-            throw new IllegalStateException("Logger " + logger + " has to implement the IF IManagedMessageLogger");
-        }
-        IManagedDataRecordLogger managedLogger = (IManagedDataRecordLogger) logger;
-
-        managedLogger.destroy();
-        messageAwareConnection.setRecordLogger(null);
+        xaDataRecorder.destroy();
+        messageAwareConnection.setXADataRecorder(null);
 
         event.getConnectionProxy().addConnectionListener(this);
     }
@@ -244,40 +144,29 @@ public class PerTransactionStrategy extends PhynixxConnectionProxyListenerAdapte
 
     public void connectionRequiresTransaction(IPhynixxConnectionProxyEvent event) {
         IPhynixxConnection con = event.getConnectionProxy().getConnection();
-        if (con == null || !(con instanceof IRecordLoggerAware)) {
+        if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
         }
 
-        IRecordLoggerAware messageAwareConnection = (IRecordLoggerAware) con;
+        IXADataRecorderAware messageAwareConnection = (IXADataRecorderAware) con;
 
 
         // Transaction is close and the logger is destroyed ...
-        IXADataRecorder logger = messageAwareConnection.getRecordLogger();
-        if (logger == null) {
+        IXADataRecorder xaDataRecorder = messageAwareConnection.getXADataRecorder();
+        if (xaDataRecorder == null) {
         }
-
         // it's my logger ....
 
         // Transaction is closed and the logger is destroyed ...
-        else if (logger instanceof MessageLoggerWrapperData) {
-            MessageLoggerWrapperData wrapper = (MessageLoggerWrapperData) logger;
-            if (wrapper != null && wrapper.getXAResourceLogger().isClosed()) {
-                logger = null;
-            }
-        } else {
-            if (!(logger instanceof IManagedDataRecordLogger)) {
-                throw new IllegalStateException("Logger " + logger + " has to implement the IF IManagedDataRecordLogger");
-            }
-            IManagedDataRecordLogger managedLogger = (IManagedDataRecordLogger) logger;
-            managedLogger.destroy();
-            logger = null;
+        else if (xaDataRecorder.isClosed()) {
+            xaDataRecorder = null;
+            xaDataRecorder.destroy();
         }
 
-        if (logger == null) {
+        if (xaDataRecorder == null) {
             try {
-                IXAResourceLogger xaLogger = this.loggerSystem.instanciateLogger();
-                MessageLoggerWrapperData wrapper = new MessageLoggerWrapperData(xaLogger);
-                messageAwareConnection.setRecordLogger(wrapper);
+                IXADataRecorder xaLogger = this.xaRecorderResource.createXADataRecorder();
+                messageAwareConnection.setXADataRecorder(xaLogger);
             } catch (Exception e) {
                 // retry ...
                 try {
@@ -285,10 +174,8 @@ public class PerTransactionStrategy extends PhynixxConnectionProxyListenerAdapte
                 } catch (InterruptedException e1) {
                 }
                 try {
-                    IXAResourceLogger xaLogger = this.loggerSystem.instanciateLogger();
-                    IDataRecordSequence seq = xaLogger.createMessageSequence();
-                    MessageLoggerWrapperData wrapper = new MessageLoggerWrapperData(xaLogger);
-                    messageAwareConnection.setRecordLogger(wrapper);
+                    IXADataRecorder xaLogger = this.xaRecorderResource.createXADataRecorder();
+                    messageAwareConnection.setXADataRecorder(xaLogger);
                 } catch (Exception ee) {
                     throw new DelegatedRuntimeException("creating new Logger for " + con, ee);
                 }
@@ -299,30 +186,28 @@ public class PerTransactionStrategy extends PhynixxConnectionProxyListenerAdapte
     }
 
 
-    public List<IManagedDataRecordLogger> readIncompleteTransactions() {
-        List messageSequences = new ArrayList();
+    /**
+     * recovers all incomplete dataRecorders {@link org.csc.phynixx.loggersystem.logrecord.IXADataRecorder#isCompleted()} and destroys all complete dataRecorders
+     *
+     * @return incomplete dataRecorders
+     */
+    public List<IXADataRecorder> readIncompleteTransactions() {
+        List<IXADataRecorder> messageSequences = new ArrayList<IXADataRecorder>();
         // recover all loggers ....
         try {
-            Set<IXAResourceLogger> loggers = this.loggerSystem.recover();
-            for (Iterator<IXAResourceLogger> iterator = loggers.iterator(); iterator.hasNext(); ) {
-                IXAResourceLogger xaLogger = iterator.next();
 
-                // recover the message sequences
-                xaLogger.readMessageSequences();
-                // read all open message sequences of the logger ...
-                List<IDataRecordSequence> seqs = xaLogger.getOpenMessageSequences();
-                boolean hasIncompleteSequences = false;
-                for (int i = 0; i < seqs.size(); i++) {
-                    IDataRecordSequence seq = seqs.get(i);
-                    if (!seq.isCompleted()) {
-                        hasIncompleteSequences = true;
-                        MessageLoggerWrapperData wrapper = new MessageLoggerWrapperData(xaLogger, seq);
-                        messageSequences.add(wrapper);
-                    }
+            this.xaRecorderResource.recover();
+            Set<IXADataRecorder> xaDataRecorders = this.xaRecorderResource.getXADataRecorders();
+
+            for (Iterator<IXADataRecorder> iterator = xaDataRecorders.iterator(); iterator.hasNext(); ) {
+                IXADataRecorder dataRecorder = iterator.next();
+
+                if (!dataRecorder.isCompleted()) {
+                    messageSequences.add(dataRecorder);
+                } else {
+                    dataRecorder.destroy();
                 }
-                if (!hasIncompleteSequences) {
-                    xaLogger.destroy();
-                }
+
             }
             return messageSequences;
         } catch (Exception e) {

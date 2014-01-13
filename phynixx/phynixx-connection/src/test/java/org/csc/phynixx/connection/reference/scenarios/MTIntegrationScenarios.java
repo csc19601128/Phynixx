@@ -30,9 +30,9 @@ import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnectionFactory;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.XAResourceLogger;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
+import org.csc.phynixx.loggersystem.logrecord.IXARecorderResource;
 import org.csc.phynixx.loggersystem.logrecord.IXARecorderResourceListener;
 
 import java.util.*;
@@ -83,7 +83,7 @@ public class MTIntegrationScenarios extends TestCase {
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
         //IDataLoggerFactory loggerFactory= new HowlLoggerFactory("reference", this.loadHowlConfig());
 
-        PerTransactionStrategy loggingStrategy = new PerTransactionStrategy("reference", loggerFactory);
+        PerTransactionStrategy loggingStrategy = new PerTransactionStrategy(loggerFactory);
         loggingStrategy.addLoggerListener(loggerManagement);
         this.factory.setLoggerSystemStrategy(loggingStrategy);
     }
@@ -219,18 +219,21 @@ public class MTIntegrationScenarios extends TestCase {
             return this.openLoggerCounter;
         }
 
-        public synchronized void loggerClosed(XAResourceLogger logger) {
+
+        @Override
+        public void recorderResourceClosed(IXARecorderResource recorderResource) {
+
             this.openLoggerCounter--;
             //System.out.println("Logger "+logger + " closed - No of open Threads " + openLoggerCounter);
 
         }
 
-        public synchronized void loggerOpened(XAResourceLogger logger) {
+        @Override
+        public void recorderResourceOpened(IXARecorderResource recorderResource) {
             this.openLoggerCounter++;
-            //System.out.println("Logger "+logger + " opened - No of open Threads " + openLoggerCounter);
+            System.out.println("Logger " + logger + " opened - No of open Threads " + openLoggerCounter);
+
         }
-
-
     }
 
 

@@ -23,7 +23,7 @@ package org.csc.phynixx.connection.loggersystem;
 
 import org.csc.phynixx.connection.IPhynixxConnectionProxyDecorator;
 import org.csc.phynixx.connection.IPhynixxConnectionProxyListener;
-import org.csc.phynixx.loggersystem.logrecord.IManagedDataRecordLogger;
+import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
 import java.util.List;
 
@@ -52,7 +52,7 @@ public interface ILoggerSystemStrategy extends IPhynixxConnectionProxyListener, 
      *
      * @return list of Objects of type IMessageLogger
      */
-    List<IManagedDataRecordLogger> readIncompleteTransactions();
+    List<IXADataRecorder> readIncompleteTransactions();
 
 
 }

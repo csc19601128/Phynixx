@@ -47,7 +47,7 @@ public class PooledDynaProxyFactory extends AbstractDynaProxyFactory implements 
     public PooledDynaProxyFactory(Class[] supportedInterfaces) {
         super(supportedInterfaces,
                 new Class[]{IPhynixxConnection.class, IPhynixxConnectionProxy.class, IPhynixxConnectionHandle.class},
-                new Class[]{IRecordLoggerAware.class},
+                new Class[]{IXADataRecorderAware.class},
                 true);
     }
 

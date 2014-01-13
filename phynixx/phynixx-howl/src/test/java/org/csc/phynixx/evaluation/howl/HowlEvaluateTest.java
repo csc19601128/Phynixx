@@ -26,7 +26,6 @@ import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.generator.IDGenerator;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.objectweb.howl.log.*;
 import org.objectweb.howl.log.xa.XACommittingTx;
 import org.objectweb.howl.log.xa.XALogger;
 

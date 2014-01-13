@@ -50,24 +50,32 @@ import java.util.List;
 
 public class ReferenceConnection implements IReferenceConnection {
 
-    public static final int ERRONEOUS_INC = Integer.MAX_VALUE;
+    public static final int ERRONEOUS_INC = -1;
+
     private static final Integer ERRONEOUS_VALUE = new Integer(ERRONEOUS_INC);
+
     private Object id = null;
+
     private int counter = 0;
+
     private volatile boolean close = false;
-    private List increments = new ArrayList();
+
+    /**
+     * store the increments as compensations for rollforward
+     */
+    private List<Integer> increments = new ArrayList<Integer>();
 
 
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
-    private IXADataRecorder recordLogger = Dev0Strategy.THE_DEV0_LOGGER;
+    private IXADataRecorder xaDataRecorder = Dev0Strategy.THE_DEV0_LOGGER;
 
-    public IXADataRecorder getRecordLogger() {
-        return recordLogger;
+    public IXADataRecorder getXADataRecorder() {
+        return xaDataRecorder;
     }
 
-    public void setRecordLogger(IXADataRecorder messageLogger) {
-        this.recordLogger = messageLogger;
+    public void setXADataRecorder(IXADataRecorder dataRecorder) {
+        this.xaDataRecorder = dataRecorder;
     }
 
     public ReferenceConnection(Object id) {
@@ -86,13 +94,21 @@ public class ReferenceConnection implements IReferenceConnection {
     }
 
 
+    /**
+     * sets the initial value
+     *
+     * @param value
+     */
     public void setInitialCounter(int value) {
         this.counter = value;
-        this.getRecordLogger().writeRollbackData(Integer.toString(value).getBytes());
+        this.getXADataRecorder().writeRollbackData(Integer.toString(value).getBytes());
     }
 
     /**
-     * Increments are stored an executed during commit
+     * Increments are stored and executed during commit
+     * <p/>
+     * For test test purpose only : if you increment {@link #ERRONEOUS_VALUE} the commit phase is interrupted.
+     * This scenario shows the recovery from interrupted commits
      */
     public void incCounter(int inc) {
         this.increments.add(new Integer(inc));
@@ -108,14 +124,19 @@ public class ReferenceConnection implements IReferenceConnection {
         return this.close;
     }
 
+    /**
+     * commit stores the increments as rollforward info.
+     * If the incremets contain {@link #ERRONEOUS_VALUE}  the commit is interrupted after the rollforward data is written.
+     * A recover completes the commit.
+     */
     public void commit() {
         /**
          * All increments are stored as rollforward data to recover the commit
          */
         for (Iterator iterator = this.increments.iterator(); iterator.hasNext(); ) {
             Integer inc = (Integer) iterator.next();
-            // the data is stored for recoverinmg the commiting phase
-            this.getRecordLogger().commitRollforwardData(inc.toString().getBytes());
+            // the data is stored for recovering the committing phase
+            this.getXADataRecorder().commitRollforwardData(inc.toString().getBytes());
             this.counter = this.counter + inc.intValue();
         }
         /**
@@ -136,7 +157,7 @@ public class ReferenceConnection implements IReferenceConnection {
 
     public void rollback() {
         // use the recovery data to rollback the connection ....
-        this.getRecordLogger().replayRecords(new MessageReplay());
+        this.getXADataRecorder().replayRecords(new MessageReplay(this));
     }
 
     public String toString() {
@@ -144,15 +165,22 @@ public class ReferenceConnection implements IReferenceConnection {
     }
 
     public void recover() {
-        this.getRecordLogger().replayRecords(new MessageReplay());
-        logger.error(this.getId() + " recovered with initial value=" + this.getCounter());
+
+        this.getXADataRecorder().replayRecords(new MessageReplay(this));
+        logger.error(this.getId() + " recovered with value=" + this.getCounter());
     }
 
-    private class MessageReplay implements IDataRecordReplay {
+    static class MessageReplay implements IDataRecordReplay {
+
+        private ReferenceConnection con;
+
+        MessageReplay(ReferenceConnection con) {
+            this.con = con;
+        }
 
         public void replayRollback(IDataRecord message) {
             int initialCounter = Integer.parseInt(new String(message.getData()[0]));
-            ReferenceConnection.this.counter = initialCounter;
+            this.con.counter = initialCounter;
         }
 
         /**
@@ -162,7 +190,7 @@ public class ReferenceConnection implements IReferenceConnection {
             int inc = Integer.parseInt(new String(message.getData()[0]));
             Integer incObj = new Integer(inc);
             if (!incObj.equals(ERRONEOUS_VALUE)) {
-                ReferenceConnection.this.increments.add(incObj);
+                this.con.increments.add(incObj);
             }
         }
     }

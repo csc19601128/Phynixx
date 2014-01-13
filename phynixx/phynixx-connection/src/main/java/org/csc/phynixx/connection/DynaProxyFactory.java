@@ -37,7 +37,7 @@ public class DynaProxyFactory extends AbstractDynaProxyFactory implements IPhyni
     public DynaProxyFactory(Class[] supportedInterfaces, boolean synchronize) {
         super(supportedInterfaces,
                 new Class[]{IPhynixxConnection.class, IPhynixxConnectionProxy.class, IPhynixxConnectionHandle.class},
-                new Class[]{IRecordLoggerAware.class},
+                new Class[]{IXADataRecorderAware.class},
                 synchronize);
 
     }

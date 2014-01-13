@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectionProxy, IRecordLoggerAware {
+public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectionProxy, IXADataRecorderAware {
 
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
@@ -91,17 +91,17 @@ public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectio
     }
 
 
-    public IXADataRecorder getRecordLogger() {
-        if (this.getConnection() != null && this.getConnection() instanceof IRecordLoggerAware) {
-            return ((IRecordLoggerAware) getConnection()).getRecordLogger();
+    public IXADataRecorder getXADataRecorder() {
+        if (this.getConnection() != null && this.getConnection() instanceof IXADataRecorderAware) {
+            return ((IXADataRecorderAware) getConnection()).getXADataRecorder();
         }
         return null;
 
     }
 
-    public void setRecordLogger(IXADataRecorder messageLogger) {
-        if (this.getConnection() != null && this.getConnection() instanceof IRecordLoggerAware) {
-            ((IRecordLoggerAware) getConnection()).setRecordLogger(messageLogger);
+    public void setXADataRecorder(IXADataRecorder dataRecorder) {
+        if (this.getConnection() != null && this.getConnection() instanceof IXADataRecorderAware) {
+            ((IXADataRecorderAware) getConnection()).setXADataRecorder(dataRecorder);
         }
     }
 
@@ -142,6 +142,7 @@ public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectio
     }
 
     public synchronized void commit() {
+        fireConnectionCommitting();
         if (this.getConnection() != null) {
             this.getConnection().commit();
         }
@@ -166,7 +167,7 @@ public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectio
     }
 
     public synchronized void rollback() {
-
+        fireConnectionRollingBack();
         if (this.getConnection() != null) {
             this.getConnection().rollback();
         }
@@ -176,7 +177,7 @@ public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectio
 
     public void recover() {
         // the connection has to re establish the state of the message logger
-        IXADataRecorder msgLogger = this.getRecordLogger();
+        IXADataRecorder msgLogger = this.getXADataRecorder();
         if (msgLogger.isCompleted()) {
             return;
         }
@@ -402,6 +403,19 @@ public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectio
 
             public String toString() {
                 return "connectionRecovering";
+            }
+        };
+        fireEvents(deliver);
+    }
+
+    protected void fireConnectionRollingBack() {
+        IEventDeliver deliver = new IEventDeliver() {
+            public void fireEvent(IPhynixxConnectionProxyListener listener, IPhynixxConnectionProxyEvent event) {
+                listener.connectionRollingBack(event);
+            }
+
+            public String toString() {
+                return "connectionRollingBack";
             }
         };
         fireEvents(deliver);

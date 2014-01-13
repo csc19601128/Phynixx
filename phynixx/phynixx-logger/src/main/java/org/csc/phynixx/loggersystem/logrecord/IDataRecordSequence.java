@@ -21,21 +21,13 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 
 
-import java.io.IOException;
 import java.util.List;
 
 
 public interface IDataRecordSequence {
 
 
-    public List<IDataRecord> getMessages();
-
-    /**
-     * creates a new LogMessage containing user-data
-     *
-     * @return
-     */
-    public IDataRecord createDataRecord(XALogRecordType logRecordType, byte[][] recordData) throws IOException;
+    public List<IDataRecord> getDataRecords();
 
 
     /**
