@@ -77,6 +77,8 @@ public interface IXARecorderResource extends IXADataRecorderLifecycleListener {
 
     boolean isClosed();
 
+    IXADataRecorder createXADataRecorder() throws IOException;
+
     String getLoggerSystemName();
 
     void logUserData(IXADataRecorder dataRecorder, byte[][] data) throws InterruptedException, IOException;

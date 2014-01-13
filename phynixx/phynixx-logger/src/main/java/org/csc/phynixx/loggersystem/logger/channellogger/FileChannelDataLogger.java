@@ -118,8 +118,8 @@ public class FileChannelDataLogger implements IDataLogger {
         if (this.randomAccess == null) {
             throw new IllegalStateException("Channel is not open.");
         }
-        if (this.accessMode != AccessMode.READ) {
-            throw new IllegalStateException("Channel can not be written.");
+        if (this.accessMode == AccessMode.NONE) {
+            throw new IllegalStateException("Channel can not be read.");
         }
     }
 
@@ -129,25 +129,28 @@ public class FileChannelDataLogger implements IDataLogger {
         RandomAccessFile raf = new RandomAccessFile(logFileAccess.getFile(), FILE_MODE);
         this.randomAccess = new TAEnabledRandomAccessFile(raf);
 
+        this.accessMode = accessMode;
+
         // write start sequences ...
         switch (accessMode) {
             case READ:
+                maybeRead();
                 // wird auf erste Position gesetzt
                 this.randomAccess.position(0L);
                 break;
             case WRITE:
-                //
+                maybeWritten();
                 this.randomAccess.position(0L);
                 this.randomAccess.commit();
                 break;
             case APPEND:
+                maybeWritten();
                 this.randomAccess.position(this.randomAccess.getCommittedSize());
                 break;
             default:
                 throw new IllegalArgumentException("Invalid AccessMode " + accessMode);
         }
 
-        this.accessMode = accessMode;
 
     }
 

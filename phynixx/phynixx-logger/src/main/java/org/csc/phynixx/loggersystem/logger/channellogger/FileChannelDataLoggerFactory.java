@@ -54,7 +54,10 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
         this.loggerSystemName = loggerSystemName;
         this.directory = new File(directoryName);
         if (this.directory.exists() && !this.directory.isDirectory()) {
-            throw new IllegalArgumentException("Argument 'directoryname' has to referece an existing directory");
+            throw new IllegalArgumentException("Directory " + directory.getAbsolutePath() + " doesn't exist or is not a directory");
+        }
+        if (!this.directory.canExecute() && !this.directory.canWrite()) {
+            throw new IllegalArgumentException("Directory " + directory.getAbsolutePath() + " could not be written");
         }
     }
 

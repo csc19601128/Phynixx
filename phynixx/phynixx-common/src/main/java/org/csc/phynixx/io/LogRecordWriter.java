@@ -33,9 +33,9 @@ import java.io.IOException;
 public class LogRecordWriter {
 
 
-    ByteArrayOutputStream byteInput;
+    private ByteArrayOutputStream byteInput;
 
-    DataOutputStream io;
+    private DataOutputStream io;
 
     public LogRecordWriter() {
         this.byteInput = new ByteArrayOutputStream();
@@ -48,36 +48,44 @@ public class LogRecordWriter {
         return byteInput.toByteArray();
     }
 
-    public void writeChar(int v) throws IOException {
+    public LogRecordWriter writeChar(int v) throws IOException {
         io.writeChar(v);
+        return this;
     }
 
-    public void writeShort(int v) throws IOException {
+    public LogRecordWriter writeShort(int v) throws IOException {
         io.writeShort(v);
+        return this;
     }
 
-    public void writeInt(int v) throws IOException {
+    public LogRecordWriter writeInt(int v) throws IOException {
         io.writeInt(v);
+        return this;
     }
 
-    public void writeLong(long v) throws IOException {
+    public LogRecordWriter writeLong(long v) throws IOException {
         io.writeLong(v);
+        return this;
     }
 
-    public void writeFloat(float v) throws IOException {
+    public LogRecordWriter writeFloat(float v) throws IOException {
         io.writeFloat(v);
+        return this;
     }
 
-    public void writeDouble(double v) throws IOException {
+    public LogRecordWriter writeDouble(double v) throws IOException {
         io.writeDouble(v);
+        return this;
     }
 
-    public void writeUTF(String str) throws IOException {
+    public LogRecordWriter writeUTF(String str) throws IOException {
         io.writeUTF(str);
+        return this;
     }
 
-    public void writeBoolean(boolean v) throws IOException {
+    public LogRecordWriter writeBoolean(boolean v) throws IOException {
         io.writeBoolean(v);
+        return this;
     }
 
     public void close() {

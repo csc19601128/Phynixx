@@ -21,9 +21,11 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 
 
+import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.generator.IDGenerator;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.loggersystem.logger.IDataLogger;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 
 import java.io.ByteArrayOutputStream;
@@ -101,7 +103,7 @@ class PhynixxXARecorderResource implements IXARecorderResource {
      */
     private List listeners = new ArrayList();
 
-    private SortedMap messageSequences = new TreeMap();
+    private SortedMap<Long, PhynixxXADataRecorder> messageSequences = new TreeMap<Long, PhynixxXADataRecorder>();
 
     private IDGenerator messageSeqGenerator = new IDGenerator();
 
@@ -111,6 +113,27 @@ class PhynixxXARecorderResource implements IXARecorderResource {
         if (this.dataLoggerFactory == null) {
             throw new IllegalArgumentException("No dataLoggerFactory set");
         }
+    }
+
+    @Override
+    public IXADataRecorder createXADataRecorder() throws IOException {
+        long xaDataRecorderId = this.messageSeqGenerator.generateLong();
+
+        // create a new Logger
+        IDataLogger dataLogger = this.dataLoggerFactory.instanciateLogger(Long.toString(xaDataRecorderId));
+
+        // create a new XADataLogger
+        XADataLogger xaDataLogger = new XADataLogger(dataLogger);
+
+
+        try {
+            PhynixxXADataRecorder xaDataRecorder = PhynixxXADataRecorder.openRecorderForWrite(xaDataRecorderId, xaDataLogger, this);
+            this.messageSequences.put(xaDataRecorderId, xaDataRecorder);
+            return xaDataRecorder;
+        } catch (InterruptedException e) {
+            throw new DelegatedRuntimeException(e);
+        }
+
     }
 
     @Override
@@ -259,14 +282,14 @@ class PhynixxXARecorderResource implements IXARecorderResource {
             throw new IllegalStateException("No logger set");
         }
         // messageSequences.clear();
-        fireConnectionOpened();
+        fireXARecorderResourceOpened();
     }
 
     @Override
     public synchronized void close() throws IOException, InterruptedException {
         if (!isClosed()) {
             messageSequences.clear();
-            fireConnectionClosed();
+            fireXARecorderResourceClosed();
         }
     }
 
@@ -365,16 +388,16 @@ class PhynixxXARecorderResource implements IXARecorderResource {
 
     }
 */
-    private void addMessageSequence(IDataRecordSequence sequence) {
-        if (!this.messageSequences.containsKey(sequence.getXADataRecorderId())) {
-            this.messageSequences.put(sequence.getXADataRecorderId(), sequence);
+    private void addMessageSequence(PhynixxXADataRecorder xaDataRecorder) {
+        if (!this.messageSequences.containsKey(xaDataRecorder.getXADataRecorderId())) {
+            this.messageSequences.put(xaDataRecorder.getXADataRecorderId(), xaDataRecorder);
         }
     }
 
     @Override
     public Set<IXADataRecorder> getXADataRecorders() {
         Set<IXADataRecorder> seqs = new HashSet<IXADataRecorder>(this.messageSequences.size());
-        for (Iterator<IXADataRecorder> iterator = messageSequences.values().iterator(); iterator.hasNext(); ) {
+        for (Iterator<PhynixxXADataRecorder> iterator = messageSequences.values().iterator(); iterator.hasNext(); ) {
             seqs.add(iterator.next());
         }
         return seqs;
@@ -410,7 +433,7 @@ class PhynixxXARecorderResource implements IXARecorderResource {
     }
 
 
-    protected void fireConnectionClosed() {
+    protected void fireXARecorderResourceClosed() {
         IEventDeliver deliver = new IEventDeliver() {
             public void fireEvent(IXARecorderResourceListener listener) {
                 listener.recorderResourceClosed(PhynixxXARecorderResource.this);
@@ -419,7 +442,7 @@ class PhynixxXARecorderResource implements IXARecorderResource {
         fireEvents(deliver);
     }
 
-    protected void fireConnectionOpened() {
+    protected void fireXARecorderResourceOpened() {
         IEventDeliver deliver = new IEventDeliver() {
             public void fireEvent(IXARecorderResourceListener listener) {
                 listener.recorderResourceOpened(PhynixxXARecorderResource.this);
