@@ -30,6 +30,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+
 public class FileChannelLoggerTest {
 
 
@@ -59,8 +61,9 @@ public class FileChannelLoggerTest {
 
         FileChannelDataLoggerFactory loggerFactory =
                 new FileChannelDataLoggerFactory("test", this.tmpDir.getDirectory().getAbsolutePath());
-        FileChannelDataLogger logger = new FileChannelDataLogger(this.tmpDir.getDirectory());
-        // (FileChannelDataLogger) loggerFactory.instanciateLogger("logger_1234456");
+
+        File loggerFile = new File(this.tmpDir.getDirectory().getAbsolutePath() + "/+logger_1.log");
+        FileChannelDataLogger logger = new FileChannelDataLogger(loggerFile);
 
         logger.open(AccessMode.WRITE);
         byte[] data1 = "abcde".getBytes();

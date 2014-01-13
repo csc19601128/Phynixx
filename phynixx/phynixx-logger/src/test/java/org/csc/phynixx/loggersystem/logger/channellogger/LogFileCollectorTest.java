@@ -169,12 +169,10 @@ public class LogFileCollectorTest {
         for (String loggerName : loggerNames) {
             System.out.println(loggerName);
         }
-        Assert.assertEquals(5, loggerNames.size());
-        Assert.assertTrue(loggerNames.contains("howl_a_1"));
-        Assert.assertTrue(loggerNames.contains("howl_a_2"));
-        Assert.assertTrue(loggerNames.contains("howl_a_3"));
-        Assert.assertTrue(loggerNames.contains("howl_c_12345"));
-        Assert.assertTrue(loggerNames.contains("howl_b_12345"));
+        Assert.assertEquals(3, loggerNames.size());
+        Assert.assertTrue(loggerNames.contains("howl_a"));
+        Assert.assertTrue(loggerNames.contains("howl_c"));
+        Assert.assertTrue(loggerNames.contains("howl_b"));
 
     }
 
