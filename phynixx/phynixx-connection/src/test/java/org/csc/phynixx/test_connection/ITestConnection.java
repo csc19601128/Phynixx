@@ -35,6 +35,13 @@ public interface ITestConnection extends IPhynixxConnection, IXADataRecorderAwar
     public static final int RF_INCREMENT = 17;
 
     /**
+     * sets the counter to the initial value
+     * this value has to be restored if the connection is rollbacked
+     */
+    void setInitialCounter(int value);
+
+
+    /**
      * @return current ID of the connection
      */
     public Object getId();

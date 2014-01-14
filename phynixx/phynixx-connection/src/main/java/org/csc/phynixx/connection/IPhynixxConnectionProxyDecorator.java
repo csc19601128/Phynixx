@@ -21,7 +21,7 @@ package org.csc.phynixx.connection;
  */
 
 
-public interface IPhynixxConnectionProxyDecorator {
+public interface IPhynixxConnectionProxyDecorator<C extends IPhynixxConnection> {
 
     /**
      * installs this strategy to the given connection
@@ -29,6 +29,6 @@ public interface IPhynixxConnectionProxyDecorator {
      * @param connectionProxy
      * @return decorated Proxy
      */
-    public IPhynixxConnectionProxy decorate(IPhynixxConnectionProxy connectionProxy);
+    public IPhynixxConnectionProxy<C> decorate(IPhynixxConnectionProxy<C> connectionProxy);
 
 }

@@ -24,47 +24,47 @@ package org.csc.phynixx.recovery;
 import junit.framework.TestCase;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.connection.DynaProxyFactory;
 import org.csc.phynixx.connection.IPhynixxConnectionHandle;
 import org.csc.phynixx.connection.IPhynixxConnectionProxy;
-import org.csc.phynixx.connection.IPhynixxConnectionProxyFactory;
-import org.csc.phynixx.connection.loggersystem.Dev0Strategy;
-import org.csc.phynixx.connection.loggersystem.ILoggerSystemStrategy;
+import org.csc.phynixx.connection.ManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.loggersystem.logger.IDataLogger;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecord;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 import org.csc.phynixx.test_connection.*;
+import org.junit.Before;
 
 import java.util.Properties;
+
 
 public class ConnectionRecoveryTest extends TestCase {
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
-    private TestConnectionFactory factory = null;
-
-    private IPhynixxConnectionProxyFactory proxyFactory = null;
-
-    private ILoggerSystemStrategy strategy = null;
+    private ManagedConnectionFactory<ITestConnection> factory = null;
+    IDataLoggerFactory loggerFactory = null;
 
     private TmpDirectory tmpDir = null;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // configuring the log-system (e.g. log4j)
         TestUtils.configureLogging();
 
         // delete all tmp files ...
         this.tmpDir = new TmpDirectory("howllogger");
 
-        this.factory = new TestConnectionFactory();
-        this.proxyFactory = new DynaProxyFactory(new Class[]{ITestConnection.class});
 
-        this.strategy = new Dev0Strategy();
+        this.loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
+
+        this.factory = new ManagedConnectionFactory<ITestConnection>(new TestConnectionFactory());
+        factory.setLoggerSystemStrategy(new PerTransactionStrategy(loggerFactory));
+
     }
 
     protected void tearDown() throws Exception {
@@ -73,7 +73,6 @@ public class ConnectionRecoveryTest extends TestCase {
         // delete all tmp files ...
         this.tmpDir.clear();
         this.factory = null;
-        this.strategy = new Dev0Strategy();
     }
 
     private static interface IActOnConnection {
@@ -81,7 +80,7 @@ public class ConnectionRecoveryTest extends TestCase {
     }
 
     private class Runner implements Runnable {
-        private IXADataRecorder messageLogger = null;
+        private IDataLogger messageLogger = null;
         private IActOnConnection actOnConnection = null;
 
         public Runner(IActOnConnection actOnConnection) {
@@ -90,14 +89,15 @@ public class ConnectionRecoveryTest extends TestCase {
 
         public void run() {
             ITestConnection con = null;
-
+            final long[] dataRecorderId = new long[]{-1};
             try {
-                con = (ITestConnection) ConnectionRecoveryTest.this.factory.getConnection();
-                IPhynixxConnectionProxy proxy = ConnectionRecoveryTest.this.proxyFactory.getConnectionProxy();
-                proxy.addConnectionListener(ConnectionRecoveryTest.this.strategy);
-                proxy.setConnection(con);
-
-                this.actOnConnection.doWork((ITestConnection) proxy);
+                con = ConnectionRecoveryTest.this.factory.getConnection();
+                this.actOnConnection.doWork(con);
+                TestConnection coreCon = (TestConnection) ((IPhynixxConnectionHandle) con).getConnection();
+                IXADataRecorder xaDataRecorder = coreCon.getXADataRecorder();
+                if (xaDataRecorder != null) {
+                    dataRecorderId[0] = xaDataRecorder.getXADataRecorderId();
+                }
             } catch (ActionInterruptedException ex) {
                 log.info("interrupted by testcase");
             } catch (DelegatedRuntimeException dlg) {
@@ -110,12 +110,18 @@ public class ConnectionRecoveryTest extends TestCase {
                 if (con != null) {
                     con.close();
                 }
-                messageLogger = con.getXADataRecorder();
+                if (dataRecorderId[0] > 0) {
+                    try {
+                        messageLogger = ConnectionRecoveryTest.this.loggerFactory.instanciateLogger(Long.toString(dataRecorderId[0]));
+                    } catch (Exception e) {
+                        throw new DelegatedRuntimeException(e);
+                    }
+                }
             }
         }
     }
 
-    private IXADataRecorder provokeRecoverySituation(IActOnConnection actOnConnection) throws Exception {
+    private IDataLogger provokeRecoverySituation(IActOnConnection actOnConnection) throws Exception {
 
         Runner runner = new Runner(actOnConnection);
 
@@ -124,15 +130,12 @@ public class ConnectionRecoveryTest extends TestCase {
 
         th.join();
 
-        return runner.messageLogger;
+        return (runner.messageLogger == null) ? null :;
 
     }
 
     public void testGoodcase() throws Exception {
 
-
-        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        this.strategy = new PerTransactionStrategy(loggerFactory);
 
         final int[] counter = new int[1];
 
@@ -149,7 +152,7 @@ public class ConnectionRecoveryTest extends TestCase {
                 }
             }
         };
-        IXADataRecorder messageLogger = this.provokeRecoverySituation(actOnConnection);
+        IDataLogger messageLogger = this.provokeRecoverySituation(actOnConnection);
 
         // As the TX is finished correctly the logger has to be null
 
@@ -162,13 +165,11 @@ public class ConnectionRecoveryTest extends TestCase {
 
     public void testInteruptedRollback() throws Exception {
 
-        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        this.strategy = new PerTransactionStrategy(loggerFactory);
-
         final int[] counter = new int[1];
 
         IActOnConnection actOnConnection = new IActOnConnection() {
             public void doWork(ITestConnection con) {
+                con.setInitialCounter(7);
                 con.act(5);
                 con.act(7);
                 synchronized (counter) {
@@ -184,25 +185,24 @@ public class ConnectionRecoveryTest extends TestCase {
 
         log.info(replayLogRecords(messageLogger));
 
-        TestCase.assertEquals(5 + 7, counter[0]);
+        TestCase.assertEquals(7 + 5 + 7, counter[0]);
 
         TestConnection con = (TestConnection) ConnectionRecoveryTest.this.factory.getConnection();
         con.setXADataRecorder(messageLogger);
         con.recover();
-        TestCase.assertEquals(5 + 7, con.getCurrentCounter());
+        TestCase.assertEquals(0, con.getCurrentCounter());
 
 
     }
 
     public void testInterruptedCommit() throws Exception {
 
-        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        this.strategy = new PerTransactionStrategy(loggerFactory);
-
         final int[] counter = new int[1];
+
 
         IActOnConnection actOnConnection = new IActOnConnection() {
             public void doWork(ITestConnection con) {
+                con.setInitialCounter(7);
                 con.act(5);
                 con.act(7);
                 synchronized (counter) {
@@ -228,9 +228,6 @@ public class ConnectionRecoveryTest extends TestCase {
     }
 
     public void testInterruptedExecution() throws Exception {
-
-        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        this.strategy = new PerTransactionStrategy(loggerFactory);
 
         final int[] counter = new int[1];
 

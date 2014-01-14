@@ -37,7 +37,7 @@ import java.util.List;
  * written data are fired an forgotten. Their are not stored as if wriiten to dev0.
  */
 
-public class Dev0Strategy extends PhynixxConnectionProxyListenerAdapter implements ILoggerSystemStrategy {
+public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxConnectionProxyListenerAdapter<C> implements ILoggerSystemStrategy<C> {
 
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
@@ -46,24 +46,30 @@ public class Dev0Strategy extends PhynixxConnectionProxyListenerAdapter implemen
 
     private static class Dev0Logger implements IXADataRecorder {
 
+        @Override
         public void commitRollforwardData(byte[][] data) {
         }
 
+        @Override
         public void commitRollforwardData(byte[] data) {
         }
 
+        @Override
         public boolean isCommitting() {
             return false;
         }
 
+        @Override
         public boolean isCompleted() {
             return false;
         }
 
+        @Override
         public boolean isPrepared() {
             return false;
         }
 
+        @Override
         public void replayRecords(IDataRecordReplay replay) {
         }
 
@@ -77,15 +83,19 @@ public class Dev0Strategy extends PhynixxConnectionProxyListenerAdapter implemen
             return null;
         }
 
+        @Override
         public void writeRollbackData(byte[] data) {
         }
 
+        @Override
         public void writeRollbackData(byte[][] data) {
         }
 
+        @Override
         public void close() {
         }
 
+        @Override
         public void destroy() {
         }
 
@@ -105,16 +115,19 @@ public class Dev0Strategy extends PhynixxConnectionProxyListenerAdapter implemen
         }
     }
 
+    @Override
     public void close() {
     }
 
-    public IPhynixxConnectionProxy decorate(IPhynixxConnectionProxy connectionProxy) {
+    @Override
+    public IPhynixxConnectionProxy<C> decorate(IPhynixxConnectionProxy<C> connectionProxy) {
         connectionProxy.addConnectionListener(this);
         return connectionProxy;
     }
 
 
-    public void connectionRequiresTransaction(IPhynixxConnectionProxyEvent event) {
+    @Override
+    public void connectionRequiresTransaction(IPhynixxConnectionProxyEvent<C> event) {
         IPhynixxConnection con = event.getConnectionProxy().getConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
@@ -129,6 +142,7 @@ public class Dev0Strategy extends PhynixxConnectionProxyListenerAdapter implemen
     }
 
 
+    @Override
     public List<IXADataRecorder> readIncompleteTransactions() {
         return new ArrayList(0);
     }

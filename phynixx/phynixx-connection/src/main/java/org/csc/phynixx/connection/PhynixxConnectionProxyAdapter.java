@@ -29,7 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectionProxy, IXADataRecorderAware {
+/**
+ * @param <C> Typ of the connection
+ */
+public abstract class PhynixxConnectionProxyAdapter<C extends IPhynixxConnection> implements IPhynixxConnectionProxy<C>, IXADataRecorderAware {
 
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
@@ -50,7 +53,7 @@ public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectio
         protected abstract Object call() throws Exception;
     }
 
-    private IPhynixxConnection connection = null;
+    private C connection = null;
 
     // indicates, that the core connection is executing
     private volatile boolean executing = false;
@@ -73,7 +76,7 @@ public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectio
         return this;
     }
 
-    public synchronized void setConnection(IPhynixxConnection con) {
+    public synchronized void setConnection(C con) {
         if ((this.connection == null && con == null) ||
                 (this.connection != null && this.connection.equals(con))
                 ) {
@@ -126,7 +129,7 @@ public abstract class PhynixxConnectionProxyAdapter implements IPhynixxConnectio
     }
 
 
-    public synchronized IPhynixxConnection getConnection() {
+    public synchronized C getConnection() {
         return this.connection;
     }
 

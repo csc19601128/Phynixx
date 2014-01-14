@@ -24,22 +24,22 @@ package org.csc.phynixx.connection;
 public abstract class PooledConnectionProxyAdapter extends PhynixxConnectionProxyAdapter implements IPhynixxConnectionProxy, IPooledConnection {
 
 
-    private PooledConnectionFactory pooledConnectionFactory = null;
+    private PooledManagedConnectionFactory pooledConnectionFactory = null;
 
 
     /* (non-Javadoc)
      * @see de.csc.xaresource.sample.connection.IPooledConnection#getPooledConnectionFactory()
      */
-    public PooledConnectionFactory getPooledConnectionFactory() {
+    public PooledManagedConnectionFactory getPooledConnectionFactory() {
         return pooledConnectionFactory;
     }
 
 
     /* (non-Javadoc)
-     * @see de.csc.xaresource.sample.connection.IPooledConnection#setPooledConnectionFactory(de.csc.xaresource.sample.connection.PooledConnectionFactory)
+     * @see de.csc.xaresource.sample.connection.IPooledConnection#setPooledConnectionFactory(de.csc.xaresource.sample.connection.PooledManagedConnectionFactory)
      */
     public void setPooledConnectionFactory(
-            PooledConnectionFactory pooledConnectionFactory) {
+            PooledManagedConnectionFactory pooledConnectionFactory) {
         this.pooledConnectionFactory = pooledConnectionFactory;
     }
 

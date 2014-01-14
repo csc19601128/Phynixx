@@ -73,6 +73,15 @@ public class TestConnection implements ITestConnection {
         TestConnectionStatusManager.addStatusStack(this.getId());
     }
 
+    /**
+     * sets the counter to the initial value
+     * this value has to be restored if the connection is rollbacked
+     */
+    public void setInitialCounter(int value) {
+        this.currentCounter = this.currentCounter + value;
+        this.getXADataRecorder().writeRollbackData(Integer.toString(this.currentCounter).getBytes());
+    }
+
 
     public boolean isInterruptFlag() {
         return interruptCounter == 0;

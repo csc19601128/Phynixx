@@ -24,7 +24,7 @@ package org.csc.phynixx.connection.reference.scenarios;
 import junit.framework.TestCase;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.csc.phynixx.common.TestUtils;
-import org.csc.phynixx.connection.PooledConnectionFactory;
+import org.csc.phynixx.connection.PooledManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
 import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnectionFactory;
@@ -42,7 +42,7 @@ public class MTIntegrationScenarios extends TestCase {
     private static final int NUMBER_OF_THREADS = 5;
     private static final int NUMBER_OPF_TRIALS = 25;
 
-    private PooledConnectionFactory factory = null;
+    private PooledManagedConnectionFactory factory = null;
 
     private TmpDirectory tmpDirectory = null;
 
@@ -79,7 +79,7 @@ public class MTIntegrationScenarios extends TestCase {
         // instanciate a connection pool
         GenericObjectPool.Config cfg = new GenericObjectPool.Config();
         cfg.maxActive = 100;
-        this.factory = new PooledConnectionFactory(new ReferenceConnectionFactory(), cfg);
+        this.factory = new PooledManagedConnectionFactory(new ReferenceConnectionFactory(), cfg);
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
         //IDataLoggerFactory loggerFactory= new HowlLoggerFactory("reference", this.loadHowlConfig());
 

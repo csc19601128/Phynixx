@@ -63,6 +63,12 @@ public class TestRecoveryConnection implements ITestConnection {
         TestConnectionStatusManager.addStatusStack(this.getId());
     }
 
+    @Override
+    public void setInitialCounter(int value) {
+        this.currentCounter = this.currentCounter + value;
+        this.getXADataRecorder().writeRollbackData(Integer.toString(this.currentCounter).getBytes());
+
+    }
 
     public boolean isInterruptFlag() {
         return interruptCounter > 0;

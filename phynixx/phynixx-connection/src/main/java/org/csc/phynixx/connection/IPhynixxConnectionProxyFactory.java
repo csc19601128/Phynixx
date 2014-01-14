@@ -21,7 +21,7 @@ package org.csc.phynixx.connection;
  */
 
 
-public interface IPhynixxConnectionProxyFactory {
+public interface IPhynixxConnectionProxyFactory<C extends IPhynixxConnection> {
 
-    IPhynixxConnectionProxy getConnectionProxy();
+    IPhynixxConnectionProxy<C> getConnectionProxy();
 }

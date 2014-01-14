@@ -24,7 +24,7 @@ package org.csc.phynixx.connection;
 import java.util.EventObject;
 
 
-public class PhynixxConnectionProxyEvent extends EventObject implements IPhynixxConnectionProxyEvent {
+public class PhynixxConnectionProxyEvent<C extends IPhynixxConnection> extends EventObject implements IPhynixxConnectionProxyEvent<C> {
 
     private Exception exception = null;
 
@@ -33,12 +33,12 @@ public class PhynixxConnectionProxyEvent extends EventObject implements IPhynixx
      */
     private static final long serialVersionUID = 2146374246818609618L;
 
-    public PhynixxConnectionProxyEvent(IPhynixxConnectionHandle source) {
+    public PhynixxConnectionProxyEvent(IPhynixxConnectionHandle<C> source) {
         super(source);
     }
 
 
-    public PhynixxConnectionProxyEvent(IPhynixxConnectionHandle source, Exception exception) {
+    public PhynixxConnectionProxyEvent(IPhynixxConnectionHandle<C> source, Exception exception) {
         super(source);
         this.exception = exception;
     }
@@ -48,7 +48,7 @@ public class PhynixxConnectionProxyEvent extends EventObject implements IPhynixx
         return exception;
     }
 
-    public IPhynixxConnectionProxy getConnectionProxy() {
+    public IPhynixxConnectionProxy<C> getConnectionProxy() {
         return (IPhynixxConnectionProxy) this.getSource();
     }
 

@@ -21,18 +21,18 @@ package org.csc.phynixx.connection;
  */
 
 
-public interface IPhynixxConnectionFactory {
+public interface IPhynixxConnectionFactory<C extends IPhynixxConnection> {
 
     /**
      * gets an new instance of the connection
      */
-    IPhynixxConnection getConnection();
+    C getConnection();
 
 
     /**
      * @return the class of the connection's interface
      */
-    Class connectionInterface();
+    Class<C> connectionInterface();
 
 
     /**

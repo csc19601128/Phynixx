@@ -32,7 +32,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 
-public class DynaProxyFactory extends AbstractDynaProxyFactory implements IPhynixxConnectionProxyFactory {
+public class DynaProxyFactory<C extends IPhynixxConnection> extends AbstractDynaProxyFactory implements IPhynixxConnectionProxyFactory<C> {
 
     public DynaProxyFactory(Class[] supportedInterfaces, boolean synchronize) {
         super(supportedInterfaces,
@@ -46,9 +46,9 @@ public class DynaProxyFactory extends AbstractDynaProxyFactory implements IPhyni
         this(supportedInterfaces, true);
     }
 
-    public IPhynixxConnectionProxy getConnectionProxy() {
+    public IPhynixxConnectionProxy<C> getConnectionProxy() {
         ConnectionProxy proxy = new ConnectionProxy();
-        IPhynixxConnectionProxy proxied = (IPhynixxConnectionProxy)
+        IPhynixxConnectionProxy<C> proxied = (IPhynixxConnectionProxy<C>)
                 Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
                         this.getImplementedInterfaces(), proxy);
         proxy.proxiedObject = proxied;
@@ -56,7 +56,7 @@ public class DynaProxyFactory extends AbstractDynaProxyFactory implements IPhyni
     }
 
 
-    class ConnectionProxy extends PhynixxConnectionProxyAdapter implements IPhynixxConnectionHandle, InvocationHandler {
+    class ConnectionProxy<C extends IPhynixxConnection> extends PhynixxConnectionProxyAdapter<C> implements IPhynixxConnectionHandle<C>, InvocationHandler {
 
 
         private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
@@ -64,7 +64,7 @@ public class DynaProxyFactory extends AbstractDynaProxyFactory implements IPhyni
          * As the proxy contains more information than the current implentation we have to store
          * the proxy an use it in all call backs
          */
-        private IPhynixxConnectionProxy proxiedObject = null;
+        private IPhynixxConnectionProxy<C> proxiedObject = null;
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             Object target = null;
@@ -129,7 +129,7 @@ public class DynaProxyFactory extends AbstractDynaProxyFactory implements IPhyni
         }
 
 
-        protected IPhynixxConnectionProxy getObservableProxy() {
+        protected IPhynixxConnectionProxy<C> getObservableProxy() {
             return (IPhynixxConnectionProxy) proxiedObject;
         }
 

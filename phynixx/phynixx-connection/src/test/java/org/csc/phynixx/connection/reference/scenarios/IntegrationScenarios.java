@@ -23,8 +23,8 @@ package org.csc.phynixx.connection.reference.scenarios;
 
 import junit.framework.TestCase;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.csc.phynixx.connection.ConnectionFactory;
-import org.csc.phynixx.connection.PooledConnectionFactory;
+import org.csc.phynixx.connection.ManagedConnectionFactory;
+import org.csc.phynixx.connection.PooledManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
 import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnection;
@@ -57,7 +57,7 @@ public class IntegrationScenarios extends TestCase {
 
     public void testSampleConnectionFactory() throws Exception {
         // instanciate a connection pool
-        ConnectionFactory factory = this.createConnectionFactory();
+        ManagedConnectionFactory factory = this.createConnectionFactory();
 
         IReferenceConnection con = null;
         try {
@@ -88,7 +88,7 @@ public class IntegrationScenarios extends TestCase {
     public void testSampleConnectionPool() throws Exception {
         // instanciate a connection pool
 
-        PooledConnectionFactory factory = createConnectionFactory(5);
+        PooledManagedConnectionFactory factory = createConnectionFactory(5);
 
         IReferenceConnection con = null;
         try {
@@ -119,7 +119,7 @@ public class IntegrationScenarios extends TestCase {
 
     public void testDecorationConnections() throws Exception {
         // instanciate a connection pool
-        PooledConnectionFactory factory = createConnectionFactory(5);
+        PooledManagedConnectionFactory factory = createConnectionFactory(5);
         EventListener eventListener = new EventListener();
         factory.setConnectionProxyDecorator(eventListener);
 
@@ -155,7 +155,7 @@ public class IntegrationScenarios extends TestCase {
 
     public void testRecovery() throws Exception {
         // instanciate a connection pool
-        PooledConnectionFactory factory = createConnectionFactory(5);
+        PooledManagedConnectionFactory factory = createConnectionFactory(5);
         IReferenceConnection con = null;
         try {
             // get a connection ....
@@ -192,12 +192,12 @@ public class IntegrationScenarios extends TestCase {
 
     }
 
-    private PooledConnectionFactory createConnectionFactory(int maxActiveConnections) throws Exception {
+    private PooledManagedConnectionFactory createConnectionFactory(int maxActiveConnections) throws Exception {
 
 
         GenericObjectPool.Config cfg = new GenericObjectPool.Config();
         cfg.maxActive = maxActiveConnections;
-        PooledConnectionFactory factory = new PooledConnectionFactory(new ReferenceConnectionFactory(), new ReferenceConnectionProxyFactory(), cfg);
+        PooledManagedConnectionFactory factory = new PooledManagedConnectionFactory(new ReferenceConnectionFactory(), new ReferenceConnectionProxyFactory(), cfg);
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
         //IDataLoggerFactory loggerFactory= new HowlLoggerFactory("reference", this.loadHowlConfig(tmpDirectory.getDirectory()));
@@ -206,9 +206,9 @@ public class IntegrationScenarios extends TestCase {
         return factory;
     }
 
-    private ConnectionFactory createConnectionFactory() throws Exception {
+    private ManagedConnectionFactory createConnectionFactory() throws Exception {
 
-        ConnectionFactory factory = new ConnectionFactory(new ReferenceConnectionFactory(), new ReferenceConnectionProxyFactory());
+        ManagedConnectionFactory factory = new ManagedConnectionFactory(new ReferenceConnectionFactory(), new ReferenceConnectionProxyFactory());
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
         factory.setLoggerSystemStrategy(new PerTransactionStrategy(loggerFactory));
 

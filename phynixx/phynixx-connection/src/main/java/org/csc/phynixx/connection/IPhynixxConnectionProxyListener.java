@@ -23,9 +23,13 @@ package org.csc.phynixx.connection;
 
 /**
  * lifecycle listener of an Connection
+ *
+ *
+ * @param <C> Typ of the connection
+ *
  */
 
-public interface IPhynixxConnectionProxyListener {
+public interface IPhynixxConnectionProxyListener<C extends IPhynixxConnection> {
 
     /**
      * called when the connection is closed
@@ -33,7 +37,7 @@ public interface IPhynixxConnectionProxyListener {
      *
      * @param event current connection
      */
-    void connectionClosed(IPhynixxConnectionProxyEvent event);
+    void connectionClosed(IPhynixxConnectionProxyEvent<C> event);
 
     /**
      * connectionErrorOccurred � triggered when a fatal error,
@@ -41,7 +45,7 @@ public interface IPhynixxConnectionProxyListener {
      *
      * @param event current connection
      */
-    void connectionErrorOccurred(IPhynixxConnectionProxyEvent event);
+    void connectionErrorOccurred(IPhynixxConnectionProxyEvent<C> event);
 
     /**
      * connectionRequiresTransaction - an action should be performed that
@@ -49,48 +53,48 @@ public interface IPhynixxConnectionProxyListener {
      *
      * @param event current connection
      */
-    void connectionRequiresTransaction(IPhynixxConnectionProxyEvent event);
+    void connectionRequiresTransaction(IPhynixxConnectionProxyEvent<C> event);
 
     /**
      * connectionRolledback
      */
-    void connectionRolledback(IPhynixxConnectionProxyEvent event);
+    void connectionRolledback(IPhynixxConnectionProxyEvent<C> event);
 
     /**
      * connection enters state 'committing'
      *
      * @param event
      */
-    void connectionCommitting(IPhynixxConnectionProxyEvent event);
+    void connectionCommitting(IPhynixxConnectionProxyEvent<C> event);
 
     /**
      * connectionCommitted
      */
-    void connectionCommitted(IPhynixxConnectionProxyEvent event);
+    void connectionCommitted(IPhynixxConnectionProxyEvent<C> event);
 
     /**
      * connection enters state 'preparing'
      *
      * @param event
      */
-    void connectionPreparing(IPhynixxConnectionProxyEvent event);
+    void connectionPreparing(IPhynixxConnectionProxyEvent<C> event);
 
 
     /**
      * connection is prepared
      */
-    void connectionPrepared(IPhynixxConnectionProxyEvent event);
+    void connectionPrepared(IPhynixxConnectionProxyEvent<C> event);
 
 
     /**
      * connection dereferenced
      */
-    void connectionDereferenced(IPhynixxConnectionProxyEvent event);
+    void connectionDereferenced(IPhynixxConnectionProxyEvent<C> event);
 
     /**
      * connection referenced
      */
-    void connectionReferenced(IPhynixxConnectionProxyEvent event);
+    void connectionReferenced(IPhynixxConnectionProxyEvent<C> event);
 
 
     /**
@@ -98,18 +102,18 @@ public interface IPhynixxConnectionProxyListener {
      *
      * @param event
      */
-    void connectionRecovering(IPhynixxConnectionProxyEvent event);
+    void connectionRecovering(IPhynixxConnectionProxyEvent<C> event);
 
     /**
      * connection recovered
      */
-    void connectionRecovered(IPhynixxConnectionProxyEvent event);
+    void connectionRecovered(IPhynixxConnectionProxyEvent<C> event);
 
     /**
      * starts rolling back the connection
      *
      * @param event
      */
-    void connectionRollingBack(IPhynixxConnectionProxyEvent event);
+    void connectionRollingBack(IPhynixxConnectionProxyEvent<C> event);
 
 }

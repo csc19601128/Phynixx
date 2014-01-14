@@ -23,16 +23,16 @@ package org.csc.phynixx.connection;
 /**
  *
  */
-public interface IPhynixxConnectionHandle {
+public interface IPhynixxConnectionHandle<C extends IPhynixxConnection> {
 
-    void setConnection(IPhynixxConnection connection);
+    void setConnection(C connection);
 
     /**
      * @return the core connection
      * @associates ICoreConnection
      * @supplierCardinality 0..1
      */
-    IPhynixxConnection getConnection();
+    C getConnection();
 
 
 }
