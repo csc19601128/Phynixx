@@ -161,7 +161,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
      * create a new Message with the given data
      */
     public synchronized void writeRollbackData(byte[][] data) {
-        this.createDataRecord(XALogRecordType.USER, data);
+        IDataRecord msg = this.createDataRecord(XALogRecordType.USER, data);
     }
 
 
@@ -170,11 +170,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     }
 
     public void commitRollforwardData(byte[][] data) {
-        try {
             IDataRecord msg = this.createDataRecord(XALogRecordType.XA_COMMIT, data);
-        } catch (Exception e) {
-            throw new DelegatedRuntimeException(e);
-        }
     }
 
     public synchronized void addMessage(IDataRecord message) {
@@ -190,9 +186,13 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         for (int i = 0; i < messages.size(); i++) {
             IDataRecord msg = this.messages.get(i);
             if (msg.getLogRecordType().equals(XALogRecordType.USER)) {
-                replay.replayRollback(msg);
+                if (!this.isCompleted() && !this.isCommitting()) {
+                    replay.replayRollback(msg);
+                }
             } else if (msg.getLogRecordType().equals(XALogRecordType.XA_COMMIT)) {
-                replay.replayRollforward(msg);
+                if (this.isCommitting()) {
+                    replay.replayRollforward(msg);
+                }
             }
         }
     }
@@ -203,6 +203,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         try {
             this.dataLogger.writeData(this, msg);
             this.addMessage(msg);
+
             return msg;
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);

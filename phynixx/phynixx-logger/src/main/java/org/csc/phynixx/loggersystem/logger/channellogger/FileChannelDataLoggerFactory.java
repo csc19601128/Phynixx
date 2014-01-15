@@ -40,7 +40,7 @@ import java.util.Set;
  */
 public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
 
-    private static final String LOGGERSYSTEM_FORMAT_PATTERN = "({0}_[a-z,A-Z,0-9]*[^_])_([0-9]*[^\\.])\\.[\\w]*";
+    private static final String LOGGERSYSTEM_FORMAT_PATTERN = "({0})_([a-z,A-Z,0-9]*[^_])_([0-9]*[^\\.])\\.[\\w]*";
 
     private static final String LOGGER_FORMAT_PATTERN = "({0})_([0-9]*[^\\.])\\.[\\w]*";
 

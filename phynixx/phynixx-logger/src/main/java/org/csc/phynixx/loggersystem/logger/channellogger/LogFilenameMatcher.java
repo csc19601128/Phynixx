@@ -28,13 +28,20 @@ class LogFilenameMatcher {
 
     static class LogFilenameParts {
         private String loggerName = null;
+        private String loggerSystemName = null;
         private int logfileIndex = -1;
 
-        private LogFilenameParts(String loggerName, int logfileIndex) {
+        private LogFilenameParts(String loggerSystemName, String loggerName, int logfileIndex) {
             super();
+            this.loggerSystemName = loggerSystemName;
             this.loggerName = loggerName;
             this.logfileIndex = logfileIndex;
         }
+
+        String getLoggerSystemName() {
+            return loggerSystemName;
+        }
+
 
         String getLoggerName() {
             return loggerName;
@@ -67,9 +74,10 @@ class LogFilenameMatcher {
         // JDK 1.5 MatchResult result= m.toMatchResult();
         String g1 = result.group(1);
         String g2 = result.group(2);
+        String g3 = result.group(3);
 
 
-        return new LogFilenameParts(g1, Integer.parseInt(g2));
+        return new LogFilenameParts(g1, g2, Integer.parseInt(g3));
     }
 
 }

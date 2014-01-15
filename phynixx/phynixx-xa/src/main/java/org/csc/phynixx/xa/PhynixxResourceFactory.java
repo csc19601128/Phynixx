@@ -21,9 +21,9 @@ package org.csc.phynixx.xa;
  */
 
 
+import org.csc.phynixx.connection.IManagedConnectionProxy;
 import org.csc.phynixx.connection.IPhynixxConnection;
 import org.csc.phynixx.connection.IPhynixxConnectionFactory;
-import org.csc.phynixx.connection.IPhynixxConnectionProxy;
 import org.csc.phynixx.connection.IPhynixxConnectionProxyFactory;
 import org.csc.phynixx.watchdog.IWatchdog;
 import org.csc.phynixx.watchdog.IWatchedCondition;
@@ -103,9 +103,9 @@ public class PhynixxResourceFactory implements IPhynixxXAResourceListener {
         this.idGenerator = idGenerator;
     }
 
-    synchronized IPhynixxConnectionProxy getConnection() {
+    synchronized IManagedConnectionProxy getConnection() {
         IPhynixxConnection con = this.connectionTray.getFreeConnenction();
-        IPhynixxConnectionProxy proxy = this.connectionProxyFactory.getConnectionProxy();
+        IManagedConnectionProxy proxy = this.connectionProxyFactory.getConnectionProxy();
 
         proxy.addConnectionListener(this.connectionTray);
         proxy.setConnection(con);
@@ -113,13 +113,13 @@ public class PhynixxResourceFactory implements IPhynixxXAResourceListener {
     }
 
     public final synchronized IPhynixxXAConnection getXAConnection() {
-        IPhynixxConnectionProxy proxy;
+        IManagedConnectionProxy proxy;
         proxy = this.getConnection();
         PhynixxXAResource xares = instanciateXAResource(proxy);
         return xares.getXAConnection();
     }
 
-    private PhynixxXAResource instanciateXAResource(IPhynixxConnectionProxy proxy) {
+    private PhynixxXAResource instanciateXAResource(IManagedConnectionProxy proxy) {
         PhynixxXAResource xares = new PhynixxXAResource(createXAResourceId(), this.transactionManager, this, proxy);
         xares.addXAResourceListener(this);
         this.xaresources.add(xares);

@@ -37,7 +37,7 @@ import java.util.List;
  * written data are fired an forgotten. Their are not stored as if wriiten to dev0.
  */
 
-public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxConnectionProxyListenerAdapter<C> implements ILoggerSystemStrategy<C> {
+public class Dev0Strategy<C extends IPhynixxConnection> extends ManagedConnectionListenerAdapter<C> implements ILoggerSystemStrategy<C> {
 
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
@@ -120,14 +120,14 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxConnectio
     }
 
     @Override
-    public IPhynixxConnectionProxy<C> decorate(IPhynixxConnectionProxy<C> connectionProxy) {
+    public IManagedConnectionProxy<C> decorate(IManagedConnectionProxy<C> connectionProxy) {
         connectionProxy.addConnectionListener(this);
         return connectionProxy;
     }
 
 
     @Override
-    public void connectionRequiresTransaction(IPhynixxConnectionProxyEvent<C> event) {
+    public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {
         IPhynixxConnection con = event.getConnectionProxy().getConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;

@@ -27,46 +27,55 @@ import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
 
+/**
+ * Factory pools the pure connection. before delivering the connection it ist decorate by the according to {@link org.csc.phynixx.connection.ManagedConnectionFactory}.
+ *
+ * @param <C> Typ of the pure connection
+ */
+public class PooledManagedConnectionFactory<C extends IPhynixxConnection> extends ManagedConnectionFactory<C> {
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PooledManagedConnectionFactory.class);
 
-public class PooledManagedConnectionFactory extends ManagedConnectionFactory implements IPhynixxConnectionFactory, IPhynixxConnectionProxyListener {
-    private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
-
-    private GenericObjectPool genericObjectPool = null;
+    private GenericObjectPool<C> genericObjectPool = null;
 
     /**
      * implementation of the contract of generic pools to manage pooled elements
      *
      * @author christoph
      */
-    private class MyPoolableObjectFactory implements PoolableObjectFactory {
+    private static class MyPoolableObjectFactory<X extends IPhynixxConnection> implements PoolableObjectFactory<X> {
 
+        PooledManagedConnectionFactory<X> managedConnectionFactory;
 
-        public void activateObject(Object obj) throws Exception {
+        private MyPoolableObjectFactory(PooledManagedConnectionFactory<X> managedConnectionFactory) {
+            this.managedConnectionFactory = managedConnectionFactory;
+        }
 
-            if (logger.isDebugEnabled()) {
-                logger.debug("Activated " + obj);
+        public void activateObject(X obj) throws Exception {
+            // opens the connection
+            obj.open();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Activated " + obj);
             }
         }
 
-        public void destroyObject(Object obj) throws Exception {
-            IPhynixxConnectionProxy ch = (IPhynixxConnectionProxy) obj;
+        public void destroyObject(X obj) throws Exception {
+            IManagedConnectionProxy ch = (IManagedConnectionProxy) obj;
             ch.getConnection().close();
         }
 
-        public Object makeObject() throws Exception {
-            IPhynixxConnection con = PooledManagedConnectionFactory.this.instanciateConnection();
+        public X makeObject() throws Exception {
+            X con = this.managedConnectionFactory.instantiateConnection();
             return con;
         }
 
-        public void passivateObject(Object obj) throws Exception {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Passivate " + obj);
+        public void passivateObject(X obj) throws Exception {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Passivated " + obj);
             }
         }
 
-        public boolean validateObject(Object obj) {
-
-            IPhynixxConnection con = ((IPhynixxConnectionProxy) obj).getConnection();
+        public boolean validateObject(X obj) {
+            X con = ((IManagedConnectionProxy<X>) obj).getConnection();
             return !(con.isClosed());
         }
 
@@ -78,23 +87,17 @@ public class PooledManagedConnectionFactory extends ManagedConnectionFactory imp
 
 
     public PooledManagedConnectionFactory(IPhynixxConnectionFactory connectionFactory) {
-        this(connectionFactory, null, null);
+        this(connectionFactory, null);
     }
 
-    public PooledManagedConnectionFactory(IPhynixxConnectionFactory connectionFactory,
+    public PooledManagedConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory,
                                           GenericObjectPool.Config genericPoolConfig) {
-        this(connectionFactory, null, genericPoolConfig);
-    }
-
-    public PooledManagedConnectionFactory(IPhynixxConnectionFactory connectionFactory,
-                                          IPhynixxConnectionProxyFactory connectionProxyFactory,
-                                          GenericObjectPool.Config genericPoolConfig) {
-        super(connectionFactory, connectionProxyFactory);
+        super(connectionFactory);
         GenericObjectPool.Config cfg = genericPoolConfig;
         if (cfg == null) {
             cfg = new GenericObjectPool.Config();
         }
-        this.genericObjectPool = new GenericObjectPool(new MyPoolableObjectFactory(), cfg);
+        this.genericObjectPool = new GenericObjectPool(new MyPoolableObjectFactory<C>(this), cfg);
     }
 
     /**
@@ -110,34 +113,40 @@ public class PooledManagedConnectionFactory extends ManagedConnectionFactory imp
         if (cfg == null) {
             cfg = new GenericObjectPool.Config();
         }
-        this.genericObjectPool = new GenericObjectPool(new MyPoolableObjectFactory(), cfg);
+        this.genericObjectPool = new GenericObjectPool(new MyPoolableObjectFactory<C>(this), cfg);
     }
 
 
-    public IPhynixxConnection getConnection() {
+    public C getConnection() {
         try {
-            return (IPhynixxConnection) this.genericObjectPool.borrowObject();
+            return this.genericObjectPool.borrowObject();
         } catch (Throwable e) {
-            throw new DelegatedRuntimeException("Instanciating new pooled Proxy", e);
+            throw new DelegatedRuntimeException("Instantiating new pooled Proxy", e);
         }
     }
 
-    public void releaseConnection(IPhynixxConnection connection) {
+    /**
+     * closes the connection an releases it to the pool
+     *
+     * @param connection
+     */
+    public void releaseConnection(C connection) {
         if (connection == null) {
             return;
         }
         try {
+            connection.close();
             this.genericObjectPool.returnObject(connection);
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Proxy " + connection + " returned to Pool");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Proxy " + connection + " returned to Pool");
         }
     }
 
-    public void destroyConnection(IPhynixxConnection connection) {
+    public void destroyConnection(C connection) {
         if (connection == null) {
             return;
         }
@@ -158,7 +167,7 @@ public class PooledManagedConnectionFactory extends ManagedConnectionFactory imp
 
     }
 
-    public Class connectionInterface() {
+    public Class<C> connectionInterface() {
         return this.getConnectionFactory().connectionInterface();
     }
 
@@ -189,20 +198,20 @@ public class PooledManagedConnectionFactory extends ManagedConnectionFactory imp
     /**
      * the connection is released to the pool
      */
-    public void connectionClosed(IPhynixxConnectionProxyEvent event) {
-        IPhynixxConnectionProxy proxy = event.getConnectionProxy();
+    public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
+        IManagedConnectionProxy<C> proxy = event.getConnectionProxy();
         if (proxy.getConnection() == null) {
             return;
         }
-        this.releaseConnection(proxy);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Proxy " + proxy + " released");
+        this.releaseConnection(proxy.getConnection());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Proxy " + proxy + " released");
         }
 
     }
 
-    public void connectionDereferenced(IPhynixxConnectionProxyEvent event) {
-        throw new IllegalStateException("Connection is bound to a proxy and cann't be released");
+    public void connectionDereferenced(IManagedConnectionProxyEvent event) {
+        throw new IllegalStateException("Connection is bound to a proxy and can't be released");
     }
 
 

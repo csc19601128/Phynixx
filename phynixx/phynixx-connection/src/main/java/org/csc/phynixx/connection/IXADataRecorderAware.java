@@ -21,6 +21,7 @@ package org.csc.phynixx.connection;
  */
 
 
+import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
 public interface IXADataRecorderAware {
@@ -28,5 +29,14 @@ public interface IXADataRecorderAware {
     void setXADataRecorder(IXADataRecorder logger);
 
     IXADataRecorder getXADataRecorder();
+
+
+    /**
+     * This callback delivers the from the persistence store if the transaction/connection
+     * has been interrupted an has ended abnormal. These data lets the connection recover its state at time time of interruption.
+     *
+     * @return callback for recovering data.
+     */
+    IDataRecordReplay recoverReplayListener();
 
 }

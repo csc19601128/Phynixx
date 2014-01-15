@@ -21,7 +21,7 @@ package org.csc.phynixx.xa;
  */
 
 
-import org.csc.phynixx.connection.IPhynixxConnectionProxy;
+import org.csc.phynixx.connection.IManagedConnectionProxy;
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.exceptions.ExceptionUtils;
 import org.csc.phynixx.logger.IPhynixxLogger;
@@ -66,7 +66,7 @@ public class PhynixxXAResource implements XAResource {
     /**
      * @supplierCardinality 0..1
      */
-    private PhynixxXAConnection currentXAConnectionHandle = null;
+    private ManagedXAConnection currentXAConnectionHandle = null;
 
     private volatile boolean closed = false;
 
@@ -83,12 +83,12 @@ public class PhynixxXAResource implements XAResource {
             Object xaId,
             TransactionManager tmMgr,
             PhynixxResourceFactory factory,
-            IPhynixxConnectionProxy connectionProxy) {
+            IManagedConnectionProxy connectionProxy) {
         this.xaId = xaId;
         this.tmMgr = tmMgr;
         this.factory = factory;
         if (connectionProxy != null) {
-            this.currentXAConnectionHandle = new PhynixxXAConnection(this, tmMgr, connectionProxy);
+            this.currentXAConnectionHandle = new ManagedXAConnection(this, tmMgr, connectionProxy);
         } else {
             this.currentXAConnectionHandle = null;
         }
@@ -132,7 +132,7 @@ public class PhynixxXAResource implements XAResource {
             for (int i = 0; i < statecons.size(); i++) {
                 XAResourceTxState statecon = (XAResourceTxState) statecons.get(i);
                 statecon.setRollbackOnly(true);
-                IPhynixxConnectionProxy ch =
+                IManagedConnectionProxy ch =
                         statecon.getXAConnectionHandle().getConnectionHandle();
 
             }
@@ -564,19 +564,19 @@ public class PhynixxXAResource implements XAResource {
                     }
                 }
 
-                PhynixxXAConnection handle = null;
+                ManagedXAConnection handle = null;
                 if (this.currentXAConnectionHandle != null) {
                     handle = this.currentXAConnectionHandle;
                     this.currentXAConnectionHandle = null; // used
                 } else {
                     // get a new connection
-                    IPhynixxConnectionProxy con;
+                    IManagedConnectionProxy con;
                     try {
                         con = this.factory.getConnection();
                     } catch (Exception e) {
                         throw new DelegatedRuntimeException(e);
                     }
-                    handle = new PhynixxXAConnection(this, this.tmMgr, con);
+                    handle = new ManagedXAConnection(this, this.tmMgr, con);
                 }
                 handle.associateTransaction();
                 statecon =

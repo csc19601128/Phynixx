@@ -22,14 +22,13 @@ package org.csc.phynixx.connection.reference;
 
 
 import org.csc.phynixx.connection.IPhynixxConnection;
-import org.csc.phynixx.connection.IXADataRecorderAware;
 
 /**
  * the current implementation manages a internal counter which can be incremented
  *
  * @author christoph
  */
-public interface IReferenceConnection extends IPhynixxConnection, IXADataRecorderAware {
+public interface IReferenceConnection extends IPhynixxConnection {
 
     /**
      * @return current ID of the connection

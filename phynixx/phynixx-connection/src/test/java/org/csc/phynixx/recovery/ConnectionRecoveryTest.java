@@ -21,22 +21,19 @@ package org.csc.phynixx.recovery;
  */
 
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
+import org.csc.phynixx.connection.IManagedConnectionProxy;
 import org.csc.phynixx.connection.IPhynixxConnectionHandle;
-import org.csc.phynixx.connection.IPhynixxConnectionProxy;
 import org.csc.phynixx.connection.ManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.logger.IDataLogger;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
-import org.csc.phynixx.loggersystem.logrecord.IDataRecord;
-import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
-import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 import org.csc.phynixx.test_connection.*;
 import org.junit.Before;
 
@@ -44,9 +41,11 @@ import java.util.Properties;
 
 
 public class ConnectionRecoveryTest extends TestCase {
+
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
     private ManagedConnectionFactory<ITestConnection> factory = null;
+
     IDataLoggerFactory loggerFactory = null;
 
     private TmpDirectory tmpDir = null;
@@ -57,13 +56,13 @@ public class ConnectionRecoveryTest extends TestCase {
         TestUtils.configureLogging();
 
         // delete all tmp files ...
-        this.tmpDir = new TmpDirectory("howllogger");
+        this.tmpDir = new TmpDirectory("test");
 
 
         this.loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
 
         this.factory = new ManagedConnectionFactory<ITestConnection>(new TestConnectionFactory());
-        factory.setLoggerSystemStrategy(new PerTransactionStrategy(loggerFactory));
+        this.factory.setLoggerSystemStrategy(new PerTransactionStrategy(loggerFactory));
 
     }
 
@@ -79,58 +78,25 @@ public class ConnectionRecoveryTest extends TestCase {
         void doWork(ITestConnection con);
     }
 
-    private class Runner implements Runnable {
-        private IDataLogger messageLogger = null;
-        private IActOnConnection actOnConnection = null;
 
-        public Runner(IActOnConnection actOnConnection) {
-            this.actOnConnection = actOnConnection;
-        }
-
-        public void run() {
-            ITestConnection con = null;
-            final long[] dataRecorderId = new long[]{-1};
-            try {
-                con = ConnectionRecoveryTest.this.factory.getConnection();
-                this.actOnConnection.doWork(con);
-                TestConnection coreCon = (TestConnection) ((IPhynixxConnectionHandle) con).getConnection();
-                IXADataRecorder xaDataRecorder = coreCon.getXADataRecorder();
-                if (xaDataRecorder != null) {
-                    dataRecorderId[0] = xaDataRecorder.getXADataRecorderId();
-                }
-            } catch (ActionInterruptedException ex) {
-                log.info("interrupted by testcase");
-            } catch (DelegatedRuntimeException dlg) {
-                if (!(dlg.getCause() instanceof ActionInterruptedException)) {
-                    throw dlg;
-                }
-            } catch (Throwable t) {
-                //t.printStackTrace();
-            } finally {
-                if (con != null) {
-                    con.close();
-                }
-                if (dataRecorderId[0] > 0) {
-                    try {
-                        messageLogger = ConnectionRecoveryTest.this.loggerFactory.instanciateLogger(Long.toString(dataRecorderId[0]));
-                    } catch (Exception e) {
-                        throw new DelegatedRuntimeException(e);
-                    }
-                }
+    private void provokeRecoverySituation(IActOnConnection actOnConnection) throws Exception {
+        ITestConnection con = null;
+        try {
+            con = ConnectionRecoveryTest.this.factory.getConnection();
+            actOnConnection.doWork(con);
+        } catch (ActionInterruptedException ex) {
+            log.info("interrupted by testcase");
+        } catch (DelegatedRuntimeException dlg) {
+            if (!(dlg.getCause() instanceof ActionInterruptedException)) {
+                throw dlg;
+            }
+        } catch (Throwable t) {
+            //t.printStackTrace();
+        } finally {
+            if (con != null) {
+                con.close();
             }
         }
-    }
-
-    private IDataLogger provokeRecoverySituation(IActOnConnection actOnConnection) throws Exception {
-
-        Runner runner = new Runner(actOnConnection);
-
-        Thread th = new Thread(runner);
-        th.start();
-
-        th.join();
-
-        return (runner.messageLogger == null) ? null :;
 
     }
 
@@ -147,16 +113,15 @@ public class ConnectionRecoveryTest extends TestCase {
                 con.commit();
 
                 synchronized (counter) {
-                    ITestConnection coreCon = (ITestConnection) ((IPhynixxConnectionProxy) con).getConnection();
+                    ITestConnection coreCon = (ITestConnection) ((IManagedConnectionProxy) con).getConnection();
                     counter[0] = coreCon.getCurrentCounter();
                 }
             }
         };
-        IDataLogger messageLogger = this.provokeRecoverySituation(actOnConnection);
+        this.provokeRecoverySituation(actOnConnection);
 
         // As the TX is finished correctly the logger has to be null
 
-        TestCase.assertTrue(messageLogger == null);
 
         // TestCase.assertTrue( messageLogger.isCommitting());
         TestCase.assertEquals(5 + 7 + ITestConnection.RF_INCREMENT, counter[0]);
@@ -173,24 +138,18 @@ public class ConnectionRecoveryTest extends TestCase {
                 con.act(5);
                 con.act(7);
                 synchronized (counter) {
-                    ITestConnection coreCon = (ITestConnection) ((IPhynixxConnectionProxy) con).getConnection();
+                    ITestConnection coreCon = (ITestConnection) ((IManagedConnectionProxy) con).getConnection();
                     counter[0] = coreCon.getCurrentCounter();
                 }
                 TestConnection coreCon = (TestConnection) ((IPhynixxConnectionHandle) con).getConnection();
-                coreCon.setInterruptFlag(true);
+                coreCon.setInterruptFlag(TestInterruptionPoint.ROLLBACK, 1);
                 con.rollback();
             }
         };
-        IXADataRecorder messageLogger = this.provokeRecoverySituation(actOnConnection);
+        this.provokeRecoverySituation(actOnConnection);
 
-        log.info(replayLogRecords(messageLogger));
 
         TestCase.assertEquals(7 + 5 + 7, counter[0]);
-
-        TestConnection con = (TestConnection) ConnectionRecoveryTest.this.factory.getConnection();
-        con.setXADataRecorder(messageLogger);
-        con.recover();
-        TestCase.assertEquals(0, con.getCurrentCounter());
 
 
     }
@@ -206,23 +165,28 @@ public class ConnectionRecoveryTest extends TestCase {
                 con.act(5);
                 con.act(7);
                 synchronized (counter) {
-                    ITestConnection coreCon = (ITestConnection) ((IPhynixxConnectionProxy) con).getConnection();
+                    ITestConnection coreCon = (ITestConnection) ((IManagedConnectionProxy) con).getConnection();
                     counter[0] = coreCon.getCurrentCounter();
                 }
                 TestConnection coreCon = (TestConnection) ((IPhynixxConnectionHandle) con).getConnection();
-                coreCon.setInterruptFlag(true);
+                coreCon.setInterruptFlag(TestInterruptionPoint.COMMIT);
                 con.commit();
             }
         };
-        IXADataRecorder messageLogger = this.provokeRecoverySituation(actOnConnection);
 
-        log.info(replayLogRecords(messageLogger));
+        this.provokeRecoverySituation(actOnConnection);
 
-        // Recover the Connection
-        TestConnection con = (TestConnection) ConnectionRecoveryTest.this.factory.getConnection();
-        con.setXADataRecorder(messageLogger);
-        con.recover();
-        TestCase.assertEquals(5 + 7 + TestConnection.RF_INCREMENT, con.getCurrentCounter());
+        ManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection> cb =
+                new ManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
+                    @Override
+                    public void managedConnectionRecovered(ITestConnection con) {
+
+                        Assert.assertEquals(19 + ITestConnection.RF_INCREMENT, con.getCurrentCounter());
+                    }
+                };
+
+
+        replayLogRecords(cb);
 
 
     }
@@ -235,38 +199,30 @@ public class ConnectionRecoveryTest extends TestCase {
             public void doWork(ITestConnection con) {
                 TestConnection coreCon = (TestConnection) ((IPhynixxConnectionHandle) con).getConnection();
                 con.act(5);
-                coreCon.setInterruptFlag(true);
+                coreCon.setInterruptFlag(TestInterruptionPoint.ACT);
                 con.act(7);
             }
         };
-        IXADataRecorder messageLogger = this.provokeRecoverySituation(actOnConnection);
 
-        log.info(replayLogRecords(messageLogger));
+        this.provokeRecoverySituation(actOnConnection);
 
-        // Recover the Connection
-        TestConnection con = (TestConnection) ConnectionRecoveryTest.this.factory.getConnection();
-        con.setXADataRecorder(messageLogger);
-        con.recover();
-        TestCase.assertEquals(5 + 7, con.getCurrentCounter());
+        ManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection> cb =
+                new ManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
+                    @Override
+                    public void managedConnectionRecovered(ITestConnection con) {
+                        Assert.assertEquals(12, con.getCurrentCounter());
+                    }
+                };
+
+        replayLogRecords(cb);
 
 
     }
 
 
-    private String replayLogRecords(IXADataRecorder logger) {
-        final StringBuffer buffer = new StringBuffer();
-        IDataRecordReplay replay = new IDataRecordReplay() {
+    private void replayLogRecords(ManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection> cb) {
 
-            public void replayRollback(IDataRecord message) {
-                buffer.append(message).append("\n");
-            }
-
-            public void replayRollforward(IDataRecord message) {
-                buffer.append(message).append("\n");
-            }
-        };
-        logger.replayRecords(replay);
-        return buffer.toString();
+        this.factory.recover(cb);
     }
 
     private Properties loadHowlConfig() throws Exception {

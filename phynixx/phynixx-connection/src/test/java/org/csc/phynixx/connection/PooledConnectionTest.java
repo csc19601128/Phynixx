@@ -189,15 +189,15 @@ public class PooledConnectionTest extends TestCase {
             public void doWork(ITestConnection con) {
                 con.act(5);
                 con.act(7);
-                TestConnection coreCon = (TestConnection) ((IPhynixxConnectionProxy) con).getConnection();
-                coreCon.setInterruptFlag(true);
+                TestConnection coreCon = (TestConnection) ((IManagedConnectionProxy) con).getConnection();
+                coreCon.setInterruptFlag(TestInterruptionPoint.ACT);
                 con.rollback();
             }
         };
 
         this.startRunners(actOnConnection, POOL_SIZE * 4);
 
-        this.factory.recover();
+        this.factory.recover(null);
 
         // nothing has to be recoverd ...
         this.recoveryListner.recoveredConnections = POOL_SIZE * 4;

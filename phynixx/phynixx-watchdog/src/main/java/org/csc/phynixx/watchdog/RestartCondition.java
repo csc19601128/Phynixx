@@ -45,7 +45,7 @@ class RestartCondition extends TimeoutCondition implements IWatchedCondition {
     /**
      * Not synchronized as to be meant for the watch dog exclusively
      * <p/>
-     * Do not call it unsynchronized
+     * Do not call it not synchronized
      */
     public boolean checkCondition() {
 

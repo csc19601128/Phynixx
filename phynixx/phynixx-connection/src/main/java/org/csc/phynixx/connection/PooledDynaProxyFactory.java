@@ -46,13 +46,13 @@ public class PooledDynaProxyFactory extends AbstractDynaProxyFactory implements 
 
     public PooledDynaProxyFactory(Class[] supportedInterfaces) {
         super(supportedInterfaces,
-                new Class[]{IPhynixxConnection.class, IPhynixxConnectionProxy.class, IPhynixxConnectionHandle.class},
+                new Class[]{IPhynixxConnection.class, IManagedConnectionProxy.class, IPhynixxConnectionHandle.class},
                 new Class[]{IXADataRecorderAware.class},
                 true);
     }
 
-    public IPhynixxConnectionProxy getConnectionProxy() {
-        return (IPhynixxConnectionProxy)
+    public IManagedConnectionProxy getConnectionProxy() {
+        return (IManagedConnectionProxy)
                 Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
                         this.getSupportedInterfaces(), new ConnectionProxy());
     }
@@ -60,7 +60,7 @@ public class PooledDynaProxyFactory extends AbstractDynaProxyFactory implements 
 
     private class ConnectionProxy extends PooledConnectionProxyAdapter implements IPhynixxConnectionHandle, IPooledConnection, InvocationHandler {
 
-        protected IPhynixxConnectionProxy getObservableProxy() {
+        protected IManagedConnectionProxy getObservableProxy() {
             // TODO Auto-generated method stub
             return null;
         }
@@ -85,7 +85,7 @@ public class PooledDynaProxyFactory extends AbstractDynaProxyFactory implements 
                     }
                     this.close();
                     return null;
-                } else if (method.getDeclaringClass().equals(IPhynixxConnectionProxy.class) ||
+                } else if (method.getDeclaringClass().equals(IManagedConnectionProxy.class) ||
                         method.getDeclaringClass().equals(IPhynixxConnection.class) ||
                         method.getDeclaringClass().equals(IPhynixxConnectionHandle.class) ||
                         method.getDeclaringClass().equals(IPooledConnection.class)) {

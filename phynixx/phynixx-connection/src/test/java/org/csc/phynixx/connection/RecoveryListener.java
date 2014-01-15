@@ -24,7 +24,7 @@ package org.csc.phynixx.connection;
  */
 
 
-class RecoveryListener extends PhynixxConnectionProxyListenerAdapter implements IPhynixxConnectionProxyDecorator {
+class RecoveryListener extends ManagedConnectionListenerAdapter implements IPhynixxConnectionProxyDecorator {
 
     int recoveredConnections = 0;
     private int commmittedConnections = 0;
@@ -42,20 +42,20 @@ class RecoveryListener extends PhynixxConnectionProxyListenerAdapter implements 
         return rollbackedConnections;
     }
 
-    public void connectionRecovered(IPhynixxConnectionProxyEvent event) {
+    public void connectionRecovered(IManagedConnectionProxyEvent event) {
         this.recoveredConnections++;
     }
 
 
-    public void connectionCommitted(IPhynixxConnectionProxyEvent event) {
+    public void connectionCommitted(IManagedConnectionProxyEvent event) {
         this.commmittedConnections++;
     }
 
-    public void connectionRollbacked(IPhynixxConnectionProxyEvent event) {
+    public void connectionRollbacked(IManagedConnectionProxyEvent event) {
         this.rollbackedConnections++;
     }
 
-    public IPhynixxConnectionProxy decorate(IPhynixxConnectionProxy connectionProxy) {
+    public IManagedConnectionProxy decorate(IManagedConnectionProxy connectionProxy) {
         connectionProxy.addConnectionListener(this);
         return connectionProxy;
 

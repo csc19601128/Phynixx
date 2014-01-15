@@ -24,7 +24,7 @@ package org.csc.phynixx.connection;
 import java.util.EventObject;
 
 
-public class PhynixxConnectionProxyEvent<C extends IPhynixxConnection> extends EventObject implements IPhynixxConnectionProxyEvent<C> {
+class PhynixxConnectionProxyEvent<C extends IPhynixxConnection> extends EventObject implements IManagedConnectionProxyEvent<C> {
 
     private Exception exception = null;
 
@@ -48,8 +48,8 @@ public class PhynixxConnectionProxyEvent<C extends IPhynixxConnection> extends E
         return exception;
     }
 
-    public IPhynixxConnectionProxy<C> getConnectionProxy() {
-        return (IPhynixxConnectionProxy) this.getSource();
+    public IManagedConnectionProxy<C> getConnectionProxy() {
+        return (IManagedConnectionProxy) this.getSource();
     }
 
 

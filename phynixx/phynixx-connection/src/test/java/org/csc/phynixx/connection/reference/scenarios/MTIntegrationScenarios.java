@@ -207,7 +207,7 @@ public class MTIntegrationScenarios extends TestCase {
 
 
     public void recover() {
-        this.factory.recover();
+        this.factory.recover(null);
 
     }
 

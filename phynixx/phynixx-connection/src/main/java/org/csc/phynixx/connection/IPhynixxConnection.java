@@ -26,6 +26,12 @@ import org.csc.phynixx.exceptions.SampleTransactionalException;
 
 public interface IPhynixxConnection extends IXADataRecorderAware {
 
+
+    /**
+     * opens a connection  for reuse. If it isn't close an Exception is thrown
+     */
+    void open();
+
     /**
      * @throws SampleTransactionalException
      */
@@ -53,9 +59,6 @@ public interface IPhynixxConnection extends IXADataRecorderAware {
      * @throws SampleTransactionalException
      */
     void prepare();
-
-
-    void recover();
 
 
 }

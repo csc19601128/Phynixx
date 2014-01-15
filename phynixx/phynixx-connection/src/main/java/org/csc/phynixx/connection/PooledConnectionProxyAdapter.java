@@ -21,7 +21,7 @@ package org.csc.phynixx.connection;
  */
 
 
-public abstract class PooledConnectionProxyAdapter extends PhynixxConnectionProxyAdapter implements IPhynixxConnectionProxy, IPooledConnection {
+public abstract class PooledConnectionProxyAdapter extends PhynixxManagedConnectionProxy implements IManagedConnectionProxy, IPooledConnection {
 
 
     private PooledManagedConnectionFactory pooledConnectionFactory = null;

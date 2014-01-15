@@ -29,7 +29,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 
-public class ConnectionTray extends PhynixxConnectionProxyListenerAdapter implements IPhynixxConnectionProxyListener {
+public class ConnectionTray extends ManagedConnectionListenerAdapter implements IManagedConnectionListener {
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
@@ -93,7 +93,7 @@ public class ConnectionTray extends PhynixxConnectionProxyListenerAdapter implem
 
     }
 
-    public synchronized void connectionDereferenced(IPhynixxConnectionProxyEvent event) {
+    public synchronized void connectionDereferenced(IManagedConnectionProxyEvent event) {
         IPhynixxConnection connection = event.getConnectionProxy().getConnection();
         if (connection != null) {
             RefCounter refCounter = (RefCounter) this.referencedConnections.get(connection);
@@ -113,7 +113,7 @@ public class ConnectionTray extends PhynixxConnectionProxyListenerAdapter implem
         }
     }
 
-    public synchronized void connectionReferenced(IPhynixxConnectionProxyEvent event) {
+    public synchronized void connectionReferenced(IManagedConnectionProxyEvent event) {
 
         IPhynixxConnection connection = event.getConnectionProxy().getConnection();
         if (connection != null) {
@@ -128,7 +128,7 @@ public class ConnectionTray extends PhynixxConnectionProxyListenerAdapter implem
         }
     }
 
-    public synchronized void connectionClosed(IPhynixxConnectionProxyEvent event) {
+    public synchronized void connectionClosed(IManagedConnectionProxyEvent event) {
 
         // dereference the connection
         event.getConnectionProxy().setConnection(null);

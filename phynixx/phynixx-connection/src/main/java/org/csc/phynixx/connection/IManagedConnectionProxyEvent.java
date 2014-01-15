@@ -21,7 +21,14 @@ package org.csc.phynixx.connection;
  */
 
 
-public interface IPhynixxConnectionProxyFactory<C extends IPhynixxConnection> {
+public interface IManagedConnectionProxyEvent<C extends IPhynixxConnection> {
 
     IManagedConnectionProxy<C> getConnectionProxy();
+
+    /**
+     * @return exception, that raises the event
+     */
+    Exception getException();
+
+
 }

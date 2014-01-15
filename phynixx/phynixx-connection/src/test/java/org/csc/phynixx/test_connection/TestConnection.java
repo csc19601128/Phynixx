@@ -21,12 +21,14 @@ package org.csc.phynixx.test_connection;
  */
 
 
-import org.csc.phynixx.connection.loggersystem.Dev0Strategy;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecord;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -34,18 +36,36 @@ import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
  * These points leads the current work to interrupt.
  * You can simulate abnormal situation like system crashes.
  * <p/>
- * The points of interruption are defined by the call of {@link #interrupt()}.
+ *
+ *
+ * The points of interruption are defined by the call of {@link #interrupt(org.csc.phynixx.test_connection.TestInterruptionPoint)}.
+ * You can define a gate value that define how often the interruption point is reached  till the exception is thrown.
+ *
+ * Feassable interruption pints are
+ *
+ * ACT       - after the rollback data is written and before the counter is incremented
+ * COMMIT    - after the rollforward dat is written
+ * ROLLBACK  -
+ * PREPARE
+ * CLOSE
+ *
  * <p/>
- * They can be activated by setting an interrupt flag which makes connection
- * interrupt the next time a interruption point is reached.
- * If you set an interrupt offset to <code>n</code>the connection will interrupt,
- * if it reaches the n-th interruption point.
- * Setting the interuption flag is equivalent to set the interruptin offeset to 1.
+ *
+ *
  *
  * @author christoph
  */
 
 public class TestConnection implements ITestConnection {
+
+    private Map<TestInterruptionPoint, Integer> interruptionFlags = new HashMap<TestInterruptionPoint, Integer>();
+
+    private void resetInterruptionFlags() {
+        TestInterruptionPoint[] values = TestInterruptionPoint.values();
+        for (int i = 0; i < values.length; i++) {
+            interruptionFlags.put(values[i], 0);
+        }
+    }
 
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger("test");
@@ -55,9 +75,9 @@ public class TestConnection implements ITestConnection {
 
     private int currentCounter = 0;
 
-    private int interruptCounter = -1;
+    private int initialValue = 0;
 
-    private IXADataRecorder messageLogger = Dev0Strategy.THE_DEV0_LOGGER;
+    private IXADataRecorder messageLogger = null;
 
 
     public IXADataRecorder getXADataRecorder() {
@@ -69,6 +89,7 @@ public class TestConnection implements ITestConnection {
     }
 
     public TestConnection(Object id) {
+        resetInterruptionFlags();
         this.id = id;
         TestConnectionStatusManager.addStatusStack(this.getId());
     }
@@ -79,21 +100,24 @@ public class TestConnection implements ITestConnection {
      */
     public void setInitialCounter(int value) {
         this.currentCounter = this.currentCounter + value;
-        this.getXADataRecorder().writeRollbackData(Integer.toString(this.currentCounter).getBytes());
+        this.getXADataRecorder().writeRollbackData(Integer.toString(-1 * this.currentCounter).getBytes());
+        this.getXADataRecorder().writeRollbackData(Integer.toString(value).getBytes());
+        this.initialValue = value;
     }
 
 
-    public boolean isInterruptFlag() {
-        return interruptCounter == 0;
+    public boolean isInterruptFlag(TestInterruptionPoint interruptionPoint) {
+        return this.interruptionFlags.get(interruptionPoint) <= 0;
     }
 
-    public void setInterruptFlag(boolean interruptFlag) {
-        this.interruptCounter = 1;
+    public void setInterruptFlag(TestInterruptionPoint interruptionPoint, int gate) {
+        interruptionFlags.put(interruptionPoint, gate);
     }
 
-    public void setInterruptOffset(int interruptOffset) {
-        this.interruptCounter = interruptOffset;
+    public void setInterruptFlag(TestInterruptionPoint interruptionPoint) {
+        this.setInterruptFlag(interruptionPoint, 1);
     }
+
 
     public int getCurrentCounter() {
         return currentCounter;
@@ -111,7 +135,7 @@ public class TestConnection implements ITestConnection {
      */
     public void act(int inc) {
         this.getXADataRecorder().writeRollbackData(Integer.toString(inc).getBytes());
-        interrupt();
+        interrupt(TestInterruptionPoint.ACT);
         this.currentCounter = this.currentCounter + inc;
         log.info("TestConnection " + id + " counter incremented to " + inc + " counter=" + this.getCurrentCounter());
 
@@ -122,15 +146,23 @@ public class TestConnection implements ITestConnection {
         return closed;
     }
 
+
+    @Override
+    public void open() {
+        resetInterruptionFlags();
+        currentCounter = 0;
+    }
+
     public void close() {
         TestConnectionStatusManager.getStatusStack(this.getId()).addStatus(TestConnectionStatus.CLOSED);
+        this.interrupt(TestInterruptionPoint.CLOSE);
         log.info("TestConnection " + id + " closed");
         this.closed = true;
     }
 
     public void commit() {
-        this.getXADataRecorder().commitRollforwardData(Integer.toString(RF_INCREMENT).getBytes());
-        interrupt();
+        this.getXADataRecorder().commitRollforwardData(Integer.toString(this.currentCounter + RF_INCREMENT).getBytes());
+        interrupt(TestInterruptionPoint.COMMIT);
         this.currentCounter = this.currentCounter + RF_INCREMENT;
         TestConnectionStatusManager.getStatusStack(this.getId()).addStatus(TestConnectionStatus.COMMITTED);
         log.info("TestConnection " + id + " is committed");
@@ -138,14 +170,14 @@ public class TestConnection implements ITestConnection {
     }
 
     public void prepare() {
-        interrupt();
+        interrupt(TestInterruptionPoint.PREPARE);
         TestConnectionStatusManager.getStatusStack(this.getId()).addStatus(TestConnectionStatus.PREPARED);
         log.info("TestConnection " + id + " is prepared");
     }
 
     public void rollback() {
-        interrupt();
-        this.currentCounter = 0;
+        interrupt(TestInterruptionPoint.ROLLBACK);
+        this.currentCounter = this.initialValue;
         TestConnectionStatusManager.getStatusStack(this.getId()).addStatus(TestConnectionStatus.ROLLBACKED);
         log.info("TestConnection " + id + " rollbacked");
     }
@@ -155,18 +187,23 @@ public class TestConnection implements ITestConnection {
     }
 
 
-    private void interrupt() {
-        this.interruptCounter--;
-
-        if (isInterruptFlag()) {
+    private void interrupt(TestInterruptionPoint interruptionPoint) {
+        Integer gate = this.interruptionFlags.get(interruptionPoint) - 1;
+        if (gate == 0) {
             throw new ActionInterruptedException();
         }
+        // refresh gate
+        this.interruptionFlags.put(interruptionPoint, gate);
     }
 
     public void recover() {
         this.getXADataRecorder().replayRecords(new MessageReplay(this));
     }
 
+    @Override
+    public IDataRecordReplay recoverReplayListener() {
+        return new MessageReplay(this);
+    }
 
     /**
      * for debugging purpose
@@ -181,14 +218,12 @@ public class TestConnection implements ITestConnection {
 
         public void replayRollback(IDataRecord message) {
             int inc = Integer.parseInt(new String(message.getData()[0]));
-            this.con.currentCounter =
-                    this.con.currentCounter + inc;
+            this.con.currentCounter = this.con.currentCounter + inc;
         }
 
         public void replayRollforward(IDataRecord message) {
             int inc = Integer.parseInt(new String(message.getData()[0]));
-            this.con.currentCounter =
-                    this.con.currentCounter + inc;
+            this.con.currentCounter = this.con.currentCounter + inc;
         }
 
     }

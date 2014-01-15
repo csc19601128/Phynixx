@@ -24,7 +24,6 @@ package org.csc.phynixx.connection;
 import junit.framework.AssertionFailedError;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.connection.loggersystem.Dev0Strategy;
 import org.csc.phynixx.connection.loggersystem.ILoggerSystemStrategy;
 import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
 import org.csc.phynixx.connection.reference.IReferenceConnection;
@@ -45,9 +44,7 @@ public class ReferenceConnectionTest {
     public static final String LOGGER = "logger";
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
-    private ReferenceConnectionFactory factory = null;
-
-    private IPhynixxConnectionProxyFactory proxyFactory = null;
+    private ManagedConnectionFactory<IReferenceConnection> connectionFactory = null;
 
     private ILoggerSystemStrategy strategy = null;
 
@@ -61,20 +58,25 @@ public class ReferenceConnectionTest {
         // delete all tmp files ...
         this.tmpDir = new TmpDirectory(LOGGER);
 
-        this.factory = new ReferenceConnectionFactory();
-        this.proxyFactory = new DynaProxyFactory(new Class[]{IReferenceConnection.class});
 
-        this.strategy = new Dev0Strategy();
+        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
+        ILoggerSystemStrategy strategy = new PerTransactionStrategy(loggerFactory);
+
+        this.connectionFactory =
+                new ManagedConnectionFactory<IReferenceConnection>(new ReferenceConnectionFactory());
+        connectionFactory.setLoggerSystemStrategy(strategy);
     }
 
     @After
     public void tearDown() throws Exception {
         TestConnectionStatusManager.clear();
 
+        if (connectionFactory != null) {
+            this.connectionFactory.close();
+        }
+
         // delete all tmp files ...
         this.tmpDir.clear();
-        this.factory = null;
-        this.strategy = new Dev0Strategy();
     }
 
 
@@ -82,13 +84,7 @@ public class ReferenceConnectionTest {
     public void testCommit() throws Exception {
 
 
-        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        this.strategy = new PerTransactionStrategy(loggerFactory);
-
-        IReferenceConnection con = (IReferenceConnection) ReferenceConnectionTest.this.factory.getConnection();
-        IPhynixxConnectionProxy proxy = ReferenceConnectionTest.this.proxyFactory.getConnectionProxy();
-        proxy.addConnectionListener(ReferenceConnectionTest.this.strategy);
-        proxy.setConnection(con);
+        IReferenceConnection con = connectionFactory.getConnection();
 
         con.setInitialCounter(13);
 
@@ -98,8 +94,6 @@ public class ReferenceConnectionTest {
         con.commit();
 
         con.close();
-
-        con.recover();
 
 
         Assert.assertEquals(37, con.getCounter());
@@ -111,13 +105,7 @@ public class ReferenceConnectionTest {
     public void testRollback() throws Exception {
 
 
-        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        this.strategy = new PerTransactionStrategy(loggerFactory);
-
-        IReferenceConnection con = (IReferenceConnection) ReferenceConnectionTest.this.factory.getConnection();
-        IPhynixxConnectionProxy proxy = ReferenceConnectionTest.this.proxyFactory.getConnectionProxy();
-        proxy.addConnectionListener(ReferenceConnectionTest.this.strategy);
-        proxy.setConnection(con);
+        IReferenceConnection con = connectionFactory.getConnection();
 
         con.setInitialCounter(13);
 
@@ -127,8 +115,6 @@ public class ReferenceConnectionTest {
         con.rollback();
 
         con.close();
-
-        con.recover();
         Assert.assertEquals(13, con.getCounter());
 
 
@@ -138,14 +124,7 @@ public class ReferenceConnectionTest {
     public void testCommitFailure() throws Exception {
 
 
-        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        this.strategy = new PerTransactionStrategy(loggerFactory);
-
-        IReferenceConnection con = (IReferenceConnection) ReferenceConnectionTest.this.factory.getConnection();
-        IPhynixxConnectionProxy proxy = ReferenceConnectionTest.this.proxyFactory.getConnectionProxy();
-        proxy.addConnectionListener(ReferenceConnectionTest.this.strategy);
-        proxy.setConnection(con);
-
+        IReferenceConnection con = connectionFactory.getConnection();
 
         con.setInitialCounter(13);
 
@@ -159,7 +138,6 @@ public class ReferenceConnectionTest {
         }
         con.close();
 
-        con.recover();
 
         Assert.assertEquals(20 + ReferenceConnection.ERRONEOUS_INC, con.getCounter());
 

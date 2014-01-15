@@ -21,9 +21,9 @@ package org.csc.phynixx.connection.loggersystem;
  */
 
 
+import org.csc.phynixx.connection.IManagedConnectionListener;
 import org.csc.phynixx.connection.IPhynixxConnection;
 import org.csc.phynixx.connection.IPhynixxConnectionProxyDecorator;
-import org.csc.phynixx.connection.IPhynixxConnectionProxyListener;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
 import java.util.List;
@@ -39,7 +39,7 @@ import java.util.List;
  *       one logger per System
  *  </pre>
  */
-public interface ILoggerSystemStrategy<C extends IPhynixxConnection> extends IPhynixxConnectionProxyListener<C>, IPhynixxConnectionProxyDecorator<C> {
+public interface ILoggerSystemStrategy<C extends IPhynixxConnection> extends IManagedConnectionListener<C>, IPhynixxConnectionProxyDecorator<C> {
 
     /**
      * closes the strategy including all resources

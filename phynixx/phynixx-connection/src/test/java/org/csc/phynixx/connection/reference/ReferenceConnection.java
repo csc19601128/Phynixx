@@ -54,6 +54,7 @@ public class ReferenceConnection implements IReferenceConnection {
 
     private static final Integer ERRONEOUS_VALUE = new Integer(ERRONEOUS_INC);
 
+
     private Object id = null;
 
     private int counter = 0;
@@ -114,6 +115,11 @@ public class ReferenceConnection implements IReferenceConnection {
         this.increments.add(new Integer(inc));
     }
 
+    public void open() {
+        increments.clear();
+        counter = 0;
+    }
+
     public void close() {
         if (!isClosed()) {
             this.close = true;
@@ -164,10 +170,10 @@ public class ReferenceConnection implements IReferenceConnection {
         return "ReferenceConnection " + id;
     }
 
-    public void recover() {
 
-        this.getXADataRecorder().replayRecords(new MessageReplay(this));
-        logger.error(this.getId() + " recovered with value=" + this.getCounter());
+    @Override
+    public IDataRecordReplay recoverReplayListener() {
+        return new MessageReplay(this);
     }
 
     static class MessageReplay implements IDataRecordReplay {

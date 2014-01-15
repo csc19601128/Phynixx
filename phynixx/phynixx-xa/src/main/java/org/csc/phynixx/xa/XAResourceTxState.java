@@ -21,10 +21,10 @@ package org.csc.phynixx.xa;
  */
 
 
+import org.csc.phynixx.connection.IManagedConnectionListener;
+import org.csc.phynixx.connection.IManagedConnectionProxyEvent;
 import org.csc.phynixx.connection.IPhynixxConnection;
-import org.csc.phynixx.connection.IPhynixxConnectionProxyEvent;
-import org.csc.phynixx.connection.IPhynixxConnectionProxyListener;
-import org.csc.phynixx.connection.PhynixxConnectionProxyListenerAdapter;
+import org.csc.phynixx.connection.ManagedConnectionListenerAdapter;
 import org.csc.phynixx.exceptions.SampleTransactionalException;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
@@ -64,7 +64,7 @@ import java.util.Set;
  *
  * @author zf4iks2
  */
-class XAResourceTxState extends PhynixxConnectionProxyListenerAdapter implements IPhynixxConnectionProxyListener {
+class XAResourceTxState extends ManagedConnectionListenerAdapter implements IManagedConnectionListener {
 
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
@@ -76,7 +76,7 @@ class XAResourceTxState extends PhynixxConnectionProxyListenerAdapter implements
 
     private Xid xid = null;
 
-    private PhynixxXAConnection xaConnectionHandle;
+    private ManagedXAConnection xaConnectionHandle;
 
     private Set joinedXAConnections = new HashSet();
 
@@ -85,7 +85,7 @@ class XAResourceTxState extends PhynixxConnectionProxyListenerAdapter implements
 
     private int heuristicState = 0;
 
-    XAResourceTxState(Xid xid, PhynixxXAConnection xaConnectionHandle) {
+    XAResourceTxState(Xid xid, ManagedXAConnection xaConnectionHandle) {
         super();
         this.xid = xid;
         this.xaConnectionHandle = xaConnectionHandle;
@@ -99,7 +99,7 @@ class XAResourceTxState extends PhynixxConnectionProxyListenerAdapter implements
         return xid;
     }
 
-    PhynixxXAConnection getXAConnectionHandle() {
+    ManagedXAConnection getXAConnectionHandle() {
         return xaConnectionHandle;
     }
 
@@ -110,7 +110,7 @@ class XAResourceTxState extends PhynixxConnectionProxyListenerAdapter implements
         return this.joinedXAConnections.contains(resouce);
     }
 
-    void join(PhynixxXAConnection xaConnectionHandle) {
+    void join(ManagedXAConnection xaConnectionHandle) {
 
         // join the connections ...
         xaConnectionHandle.setConnection(this.getXAConnectionHandle().getConnectionHandle().getConnection());
@@ -342,14 +342,14 @@ class XAResourceTxState extends PhynixxConnectionProxyListenerAdapter implements
         this.xaConnectionHandle.close();
         if (joinedXAConnections != null && joinedXAConnections.size() > 0) {
             for (Iterator iterator = joinedXAConnections.iterator(); iterator.hasNext(); ) {
-                PhynixxXAConnection handle = (PhynixxXAConnection) iterator.next();
+                ManagedXAConnection handle = (ManagedXAConnection) iterator.next();
                 handle.close();
             }
         }
     }
 
 
-    public synchronized void connectionRequiresTransaction(IPhynixxConnectionProxyEvent event) {
+    public synchronized void connectionRequiresTransaction(IManagedConnectionProxyEvent event) {
     }
 
     /**
@@ -357,7 +357,7 @@ class XAResourceTxState extends PhynixxConnectionProxyListenerAdapter implements
      *
      * @see IConnectionProxyListener.#connectionClosed(IConnectionProxyEvent)
      */
-    public synchronized void connectionClosed(IPhynixxConnectionProxyEvent event) {
+    public synchronized void connectionClosed(IManagedConnectionProxyEvent event) {
         heuristicState = XAException.XA_HEURMIX;
         this.xaConnectionHandle.getConnectionHandle().removeConnectionListener(this);
     }
@@ -369,7 +369,7 @@ class XAResourceTxState extends PhynixxConnectionProxyListenerAdapter implements
      *
      * @see IConnectionProxyListener.#connectionCommitted(IConnectionProxyEvent)
      */
-    public synchronized void connectionCommitted(IPhynixxConnectionProxyEvent event) {
+    public synchronized void connectionCommitted(IManagedConnectionProxyEvent event) {
         if (this.getProgressState() != Status.STATUS_COMMITTING &&
                 this.getProgressState() != Status.STATUS_COMMITTED) {
             heuristicState = XAException.XA_HEURCOM;
@@ -385,7 +385,7 @@ class XAResourceTxState extends PhynixxConnectionProxyListenerAdapter implements
      * @see IConnectionProxyListener.#connectionRolledback(IConnectionProxyEvent)
      */
 
-    public synchronized void connectionRolledback(IPhynixxConnectionProxyEvent event) {
+    public synchronized void connectionRolledback(IManagedConnectionProxyEvent event) {
         if (this.getProgressState() != Status.STATUS_ROLLING_BACK &&
                 this.getProgressState() != Status.STATUS_ROLLEDBACK) {
             heuristicState = XAException.XA_HEURRB;

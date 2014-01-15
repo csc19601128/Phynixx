@@ -26,7 +26,6 @@ import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
 import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnectionFactory;
-import org.csc.phynixx.connection.reference.ReferenceConnectionProxyFactory;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
@@ -49,7 +48,7 @@ public class ReferenceConnectionProxyTest {
 
     private ManagedConnectionFactory createConnectionFactory() throws Exception {
 
-        ManagedConnectionFactory factory = new ManagedConnectionFactory(new ReferenceConnectionFactory(), new ReferenceConnectionProxyFactory());
+        ManagedConnectionFactory factory = new ManagedConnectionFactory(new ReferenceConnectionFactory());
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
         factory.setLoggerSystemStrategy(new PerTransactionStrategy(loggerFactory));
 
@@ -99,7 +98,6 @@ public class ReferenceConnectionProxyTest {
 
         xaDataRecorder.recover();
         con.setXADataRecorder(xaDataRecorder);
-        con.recover();
 
 
         Assert.assertEquals(37, con.getCounter());
@@ -114,7 +112,7 @@ public class ReferenceConnectionProxyTest {
  this.strategy = new PerTransactionStrategy(loggerFactory);
 
  IReferenceConnection con = (IReferenceConnection) ReferenceConnectionProxyTest.this.factory.getConnection();
- IPhynixxConnectionProxy proxy = ReferenceConnectionProxyTest.this.proxyFactory.getConnectionProxy();
+ IManagedConnectionProxy proxy = ReferenceConnectionProxyTest.this.proxyFactory.getConnectionProxy();
  proxy.addConnectionListener(ReferenceConnectionProxyTest.this.strategy);
  proxy.setConnection(con);
 
@@ -140,7 +138,7 @@ public class ReferenceConnectionProxyTest {
  this.strategy = new PerTransactionStrategy(loggerFactory);
 
  IReferenceConnection con = (IReferenceConnection) ReferenceConnectionProxyTest.this.factory.getConnection();
- IPhynixxConnectionProxy proxy = ReferenceConnectionProxyTest.this.proxyFactory.getConnectionProxy();
+ IManagedConnectionProxy proxy = ReferenceConnectionProxyTest.this.proxyFactory.getConnectionProxy();
  proxy.addConnectionListener(ReferenceConnectionProxyTest.this.strategy);
  proxy.setConnection(con);
 

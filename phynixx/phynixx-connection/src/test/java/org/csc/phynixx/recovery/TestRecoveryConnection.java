@@ -115,6 +115,11 @@ public class TestRecoveryConnection implements ITestConnection {
         this.closed = true;
     }
 
+    @Override
+    public void open() {
+
+    }
+
     public void commit() {
         this.getXADataRecorder().commitRollforwardData(Integer.toString(RF_INCREMENT).getBytes());
         interrupt();

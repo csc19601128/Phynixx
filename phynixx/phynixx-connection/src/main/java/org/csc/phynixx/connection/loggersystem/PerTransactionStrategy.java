@@ -38,7 +38,7 @@ import java.util.Set;
 /**
  * this listener observes the lifecycle of a connection and associates a xaDataRecorder is neccessary
  */
-public class PerTransactionStrategy<C extends IPhynixxConnection> extends PhynixxConnectionProxyListenerAdapter<C> implements ILoggerSystemStrategy<C>, IPhynixxConnectionProxyListener<C> {
+public class PerTransactionStrategy<C extends IPhynixxConnection> extends ManagedConnectionListenerAdapter<C> implements ILoggerSystemStrategy<C>, IManagedConnectionListener<C> {
 
 
     private IXARecorderResource xaRecorderResource;
@@ -55,7 +55,6 @@ public class PerTransactionStrategy<C extends IPhynixxConnection> extends Phynix
     /**
      * per thread a new Logger cpould be instanciated with aid of the loggerFacrory
      *
-     *
      * @param loggerFactory
      * @throws Exception
      */
@@ -69,7 +68,7 @@ public class PerTransactionStrategy<C extends IPhynixxConnection> extends Phynix
     }
 
 
-    public void connectionRecovering(IPhynixxConnectionProxyEvent<C> event) {
+    public void connectionRecovering(IManagedConnectionProxyEvent<C> event) {
         this.connectionRequiresTransaction(event);
 
     }
@@ -80,7 +79,7 @@ public class PerTransactionStrategy<C extends IPhynixxConnection> extends Phynix
      *
      * @param event current connection
      */
-    public void connectionClosed(IPhynixxConnectionProxyEvent<C> event) {
+    public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
 
         C con = event.getConnectionProxy().getConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
@@ -98,7 +97,7 @@ public class PerTransactionStrategy<C extends IPhynixxConnection> extends Phynix
 
     }
 
-    public void connectionRolledback(IPhynixxConnectionProxyEvent<C> event) {
+    public void connectionRolledback(IManagedConnectionProxyEvent<C> event) {
         IPhynixxConnection con = event.getConnectionProxy().getConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
@@ -121,7 +120,7 @@ public class PerTransactionStrategy<C extends IPhynixxConnection> extends Phynix
     }
 
 
-    public void connectionCommitted(IPhynixxConnectionProxyEvent<C> event) {
+    public void connectionCommitted(IManagedConnectionProxyEvent<C> event) {
         IPhynixxConnection con = event.getConnectionProxy().getConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
@@ -142,7 +141,7 @@ public class PerTransactionStrategy<C extends IPhynixxConnection> extends Phynix
     }
 
 
-    public void connectionRequiresTransaction(IPhynixxConnectionProxyEvent<C> event) {
+    public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {
         IPhynixxConnection con = event.getConnectionProxy().getConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
@@ -216,7 +215,7 @@ public class PerTransactionStrategy<C extends IPhynixxConnection> extends Phynix
     }
 
 
-    public IPhynixxConnectionProxy<C> decorate(IPhynixxConnectionProxy<C> connectionProxy) {
+    public IManagedConnectionProxy<C> decorate(IManagedConnectionProxy<C> connectionProxy) {
         connectionProxy.addConnectionListener(this);
         return connectionProxy;
     }

@@ -29,6 +29,6 @@ public interface IPhynixxConnectionProxyDecorator<C extends IPhynixxConnection> 
      * @param connectionProxy
      * @return decorated Proxy
      */
-    public IPhynixxConnectionProxy<C> decorate(IPhynixxConnectionProxy<C> connectionProxy);
+    public IManagedConnectionProxy<C> decorate(IManagedConnectionProxy<C> connectionProxy);
 
 }

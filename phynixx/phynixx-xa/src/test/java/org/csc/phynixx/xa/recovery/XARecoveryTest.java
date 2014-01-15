@@ -26,7 +26,6 @@ import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.test_connection.TestConnectionProxy;
 import org.csc.phynixx.test_connection.TestConnectionStatusManager;
 import org.csc.phynixx.xa.IPhynixxXAConnection;
 import org.csc.phynixx.xa.TestResourceFactory;

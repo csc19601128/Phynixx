@@ -35,13 +35,13 @@ import java.util.List;
  * @param <C>
  */
 
-public class ManagedConnectionFactory<C extends IPhynixxConnection> extends PhynixxConnectionProxyListenerAdapter<C> implements IPhynixxConnectionFactory<C>, IPhynixxConnectionProxyListener<C> {
+public class ManagedConnectionFactory<C extends IPhynixxConnection> extends ManagedConnectionListenerAdapter<C> implements IPhynixxConnectionFactory<C>, IManagedConnectionListener<C> {
 
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
     private IPhynixxConnectionFactory<C> connectionFactory = null;
 
-    private IPhynixxConnectionProxyFactory<C> connectionProxyFactory = null;
+    private DynaManagedConnectionProxyFactory<C> connectionProxyFactory = null;
     private ILoggerSystemStrategy<C> loggerSystemStrategy = new Dev0Strategy();
     private IPhynixxConnectionProxyDecorator<C> connectionProxyDecorator = null;
 
@@ -50,18 +50,9 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Phyn
     }
 
     public ManagedConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory) {
-        this(connectionFactory, null);
-    }
-
-    public ManagedConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory,
-                                    IPhynixxConnectionProxyFactory<C> connectionProxyFactory) {
         this.connectionFactory = connectionFactory;
-        if (connectionProxyFactory == null) {
             this.connectionProxyFactory =
-                    new DynaProxyFactory<C>(new Class[]{connectionFactory.connectionInterface()});
-        } else {
-            this.connectionProxyFactory = connectionProxyFactory;
-        }
+                    new DynaManagedConnectionProxyFactory<C>(new Class[]{connectionFactory.connectionInterface()});
 
     }
 
@@ -70,19 +61,10 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Phyn
         this.connectionFactory = connectionFactory;
     }
 
-    public void setConnectionProxyFactory(
-            IPhynixxConnectionProxyFactory connectionProxyFactory) {
-        this.connectionProxyFactory = connectionProxyFactory;
-    }
 
     public IPhynixxConnectionFactory<C> getConnectionFactory() {
         return connectionFactory;
     }
-
-    public IPhynixxConnectionProxyFactory<C> getConnectionProxyFactory() {
-        return connectionProxyFactory;
-    }
-
 
     public IPhynixxConnectionProxyDecorator<C> getConnectionProxyDecorator() {
         return connectionProxyDecorator;
@@ -97,18 +79,18 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Phyn
         return loggerSystemStrategy;
     }
 
-    public void setLoggerSystemStrategy(
-            ILoggerSystemStrategy<C> loggerSystemStrategy) {
+    public void setLoggerSystemStrategy(ILoggerSystemStrategy<C> loggerSystemStrategy) {
         this.loggerSystemStrategy = loggerSystemStrategy;
     }
 
     public C getConnection() {
-        return this.instanciateConnection();
+        return this.instantiateConnection();
     }
 
-    protected C instanciateConnection() {
+
+    protected C instantiateConnection() {
         try {
-            IPhynixxConnectionProxy<C> proxy;
+            IManagedConnectionProxy<C> proxy;
             try {
                 C connection = ManagedConnectionFactory.this.getConnectionFactory().getConnection();
 
@@ -130,6 +112,9 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Phyn
                 if (ManagedConnectionFactory.this.connectionProxyDecorator != null) {
                     proxy = ManagedConnectionFactory.this.connectionProxyDecorator.decorate(proxy);
                 }
+
+                // Instantiate the connection
+                proxy.open();
             } catch (ClassCastException e) {
                 e.printStackTrace();
                 throw new DelegatedRuntimeException(e);
@@ -138,7 +123,7 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Phyn
             return ImplementorUtils.cast(proxy, connectionFactory.connectionInterface());
 
         } catch (Throwable e) {
-            throw new DelegatedRuntimeException("Instanciating new pooled Proxy", e);
+            throw new DelegatedRuntimeException("Instantiating new pooled Proxy", e);
         }
     }
 
@@ -147,7 +132,11 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Phyn
         return this.getConnectionFactory().connectionInterface();
     }
 
-    public void recover() {
+    public static interface IRecoveredManagedConnection<C> {
+        public void managedConnectionRecovered(C con);
+    }
+
+    public void recover(IRecoveredManagedConnection<C> recoveredManagedConnectionCallback) {
 
         // get all recoverable transaction data
         List<IXADataRecorder> messageLoggers = this.loggerSystemStrategy.readIncompleteTransactions();
@@ -156,10 +145,12 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Phyn
             try {
                 IXADataRecorder msgLogger = messageLoggers.get(i);
                 con = this.getConnection();
-                if ((con instanceof IXADataRecorderAware)) {
-                    ((IXADataRecorderAware) con).setXADataRecorder(msgLogger);
+                con.setXADataRecorder(msgLogger);
+                ((IManagedConnectionProxy<C>) con).recover();
+
+                if (recoveredManagedConnectionCallback != null) {
+                    recoveredManagedConnectionCallback.managedConnectionRecovered(con);
                 }
-                con.recover();
             } finally {
                 if (con != null) {
                     con.close();
@@ -183,8 +174,8 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Phyn
     /**
      * the connection is released to the pool
      */
-    public void connectionClosed(IPhynixxConnectionProxyEvent<C> event) {
-        IPhynixxConnectionProxy proxy = event.getConnectionProxy();
+    public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
+        IManagedConnectionProxy proxy = event.getConnectionProxy();
         if (proxy.getConnection() == null) {
             return;
         }
@@ -196,7 +187,7 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Phyn
         }
     }
 
-    public void connectionDereferenced(IPhynixxConnectionProxyEvent<C> event) {
+    public void connectionDereferenced(IManagedConnectionProxyEvent<C> event) {
         throw new IllegalStateException("Connection is bound to a proxy and can't be released");
     }
 

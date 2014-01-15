@@ -24,7 +24,7 @@ package org.csc.phynixx.xa;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.csc.phynixx.common.TestUtils;
-import org.csc.phynixx.connection.IPhynixxConnectionProxy;
+import org.csc.phynixx.connection.IManagedConnectionProxy;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
 import org.csc.phynixx.test_connection.ITestConnection;
@@ -129,12 +129,12 @@ public class XAResourceTest extends TestCase {
     public void testOnePhaseCommit2() throws Exception {
         IPhynixxXAConnection xaCon1 = factory1.getXAConnection();
         ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
-        ITestConnection coreCon1 = (ITestConnection) ((IPhynixxConnectionProxy) con1).getConnection();
+        ITestConnection coreCon1 = (ITestConnection) ((IManagedConnectionProxy) con1).getConnection();
         Object conId1 = con1.getId();
 
         IPhynixxXAConnection xaCon2 = factory2.getXAConnection();
         ITestConnection con2 = (ITestConnection) xaCon2.getConnection();
-        ITestConnection coreCon2 = (ITestConnection) ((IPhynixxConnectionProxy) con1).getConnection();
+        ITestConnection coreCon2 = (ITestConnection) ((IManagedConnectionProxy) con1).getConnection();
         Object conId2 = con2.getId();
 
         try {
@@ -187,7 +187,7 @@ public class XAResourceTest extends TestCase {
         ITestConnection con = (ITestConnection) xaCon.getConnection();
 
         // ... the real core connection is hidden by the proxy
-        ITestConnection coreCon = (ITestConnection) ((IPhynixxConnectionProxy) con).getConnection();
+        ITestConnection coreCon = (ITestConnection) ((IManagedConnectionProxy) con).getConnection();
         Object conId = con.getId();
 
         try {
@@ -219,12 +219,12 @@ public class XAResourceTest extends TestCase {
     public void testTwoPhaseCommit() throws Exception {
         IPhynixxXAConnection xaCon1 = factory1.getXAConnection();
         ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
-        ITestConnection coreCon1 = (ITestConnection) ((IPhynixxConnectionProxy) con1).getConnection();
+        ITestConnection coreCon1 = (ITestConnection) ((IManagedConnectionProxy) con1).getConnection();
         Object conId1 = con1.getId();
 
         IPhynixxXAConnection xaCon2 = factory2.getXAConnection();
         ITestConnection con2 = (ITestConnection) xaCon2.getConnection();
-        ITestConnection coreCon2 = (ITestConnection) ((IPhynixxConnectionProxy) con2).getConnection();
+        ITestConnection coreCon2 = (ITestConnection) ((IManagedConnectionProxy) con2).getConnection();
         Object conId2 = con2.getId();
 
         try {
@@ -268,13 +268,13 @@ public class XAResourceTest extends TestCase {
     public void testOnePhaseCommitOneRM_1() throws Exception {
         IPhynixxXAConnection xaCon1 = factory1.getXAConnection();
         ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
-        ITestConnection coreCon1 = (ITestConnection) ((IPhynixxConnectionProxy) con1).getConnection();
+        ITestConnection coreCon1 = (ITestConnection) ((IManagedConnectionProxy) con1).getConnection();
         Object conId1 = con1.getId();
 
 
         IPhynixxXAConnection xaCon2 = factory1.getXAConnection();
         ITestConnection con2 = (ITestConnection) xaCon2.getConnection();
-        ITestConnection coreCon2 = (ITestConnection) ((IPhynixxConnectionProxy) con2).getConnection();
+        ITestConnection coreCon2 = (ITestConnection) ((IManagedConnectionProxy) con2).getConnection();
         Object conId2 = con2.getId();
 
 
@@ -340,11 +340,11 @@ public class XAResourceTest extends TestCase {
 
 
             con1 = (ITestConnection) xares1.getXAConnection().getConnection();
-            coreCon1 = (ITestConnection) ((IPhynixxConnectionProxy) con1).getConnection();
+            coreCon1 = (ITestConnection) ((IManagedConnectionProxy) con1).getConnection();
             conId1 = con1.getId();
 
             con2 = (ITestConnection) xares2.getXAConnection().getConnection();
-            coreCon2 = (ITestConnection) ((IPhynixxConnectionProxy) con1).getConnection();
+            coreCon2 = (ITestConnection) ((IManagedConnectionProxy) con1).getConnection();
             conId2 = con2.getId();
 
             // act transactional and enlist the current resource
@@ -403,11 +403,11 @@ public class XAResourceTest extends TestCase {
 
 
             con1 = (ITestConnection) xares1.getXAConnection().getConnection();
-            coreCon1 = (ITestConnection) ((IPhynixxConnectionProxy) con1).getConnection();
+            coreCon1 = (ITestConnection) ((IManagedConnectionProxy) con1).getConnection();
             conId1 = coreCon1.getId();
 
             con2 = (ITestConnection) xares2.getXAConnection().getConnection();
-            coreCon2 = (ITestConnection) ((IPhynixxConnectionProxy) con2).getConnection();
+            coreCon2 = (ITestConnection) ((IManagedConnectionProxy) con2).getConnection();
             conId2 = coreCon2.getId();
 
             // act transactional and enlist the current resource
