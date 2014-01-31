@@ -22,7 +22,7 @@ package org.csc.phynixx.connection.reference.scenarios;
 
 
 import junit.framework.TestCase;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.connection.PooledManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
@@ -77,8 +77,8 @@ public class MTIntegrationScenarios extends TestCase {
         }
 
         // instanciate a connection pool
-        GenericObjectPool.Config cfg = new GenericObjectPool.Config();
-        cfg.maxActive = 100;
+        GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
+        cfg.setMaxTotal(100);
         this.factory = new PooledManagedConnectionFactory(new ReferenceConnectionFactory(), cfg);
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
         //IDataLoggerFactory loggerFactory= new HowlLoggerFactory("reference", this.loadHowlConfig());

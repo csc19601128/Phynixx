@@ -26,6 +26,7 @@ import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.test_connection.ITestConnection;
 import org.csc.phynixx.test_connection.TestConnectionStatusManager;
 import org.csc.phynixx.xa.IPhynixxXAConnection;
 import org.csc.phynixx.xa.TestResourceFactory;
@@ -173,7 +174,7 @@ public class XARecoveryTest extends TestCase {
         this.provokeRecoverySituation();
 
 
-        IPhynixxXAConnection xaCon1 = factory1.getXAConnection();
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
         TestConnectionProxy con1 = (TestConnectionProxy) xaCon1.getConnection();
 
         IPhynixxXAConnection xaCon2 = factory2.getXAConnection();

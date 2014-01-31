@@ -21,8 +21,12 @@ package org.csc.phynixx.connection;
  */
 
 
-import org.apache.commons.pool.PoolableObjectFactory;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.commons.pool2.BasePooledObjectFactory;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.PooledObjectFactory;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
@@ -42,7 +46,7 @@ public class PooledManagedConnectionFactory<C extends IPhynixxConnection> extend
      *
      * @author christoph
      */
-    private static class MyPoolableObjectFactory<X extends IPhynixxConnection> implements PoolableObjectFactory<X> {
+    private static class MyPoolableObjectFactory<X extends IPhynixxConnection> extends BasePooledObjectFactory<X> implements PooledObjectFactory<X> {
 
         PooledManagedConnectionFactory<X> managedConnectionFactory;
 
@@ -50,32 +54,37 @@ public class PooledManagedConnectionFactory<C extends IPhynixxConnection> extend
             this.managedConnectionFactory = managedConnectionFactory;
         }
 
-        public void activateObject(X obj) throws Exception {
+        public void activateObject(PooledObject<X> obj) throws Exception {
             // opens the connection
-            obj.open();
+            obj.getObject().open();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Activated " + obj);
             }
         }
 
-        public void destroyObject(X obj) throws Exception {
-            IManagedConnectionProxy ch = (IManagedConnectionProxy) obj;
+        public void destroyObject(PooledObject<X> obj) throws Exception {
+            IManagedConnectionProxy ch = (IManagedConnectionProxy) obj.getObject();
             ch.getConnection().close();
         }
 
-        public X makeObject() throws Exception {
-            X con = this.managedConnectionFactory.instantiateConnection();
-            return con;
+        @Override
+        public X create() throws Exception {
+            return this.managedConnectionFactory.instantiateConnection();
         }
 
-        public void passivateObject(X obj) throws Exception {
+        @Override
+        public PooledObject<X> wrap(X obj) {
+            return new DefaultPooledObject<X>(obj);
+        }
+
+        public void passivateObject(PooledObject<X> obj) throws Exception {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Passivated " + obj);
+                LOG.debug("Passivated " + obj.getObject());
             }
         }
 
-        public boolean validateObject(X obj) {
-            X con = ((IManagedConnectionProxy<X>) obj).getConnection();
+        public boolean validateObject(PooledObject<X> obj) {
+            X con = ((IManagedConnectionProxy<X>) obj.getObject()).getConnection();
             return !(con.isClosed());
         }
 
@@ -91,11 +100,11 @@ public class PooledManagedConnectionFactory<C extends IPhynixxConnection> extend
     }
 
     public PooledManagedConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory,
-                                          GenericObjectPool.Config genericPoolConfig) {
+                                          GenericObjectPoolConfig genericPoolConfig) {
         super(connectionFactory);
-        GenericObjectPool.Config cfg = genericPoolConfig;
+        GenericObjectPoolConfig cfg = genericPoolConfig;
         if (cfg == null) {
-            cfg = new GenericObjectPool.Config();
+            cfg = new GenericObjectPoolConfig();
         }
         this.genericObjectPool = new GenericObjectPool(new MyPoolableObjectFactory<C>(this), cfg);
     }
@@ -103,15 +112,16 @@ public class PooledManagedConnectionFactory<C extends IPhynixxConnection> extend
     /**
      * closes the current pool -if existing- and instanciates a new pool
      *
+     *
      * @param cfg
      * @throws Exception
      */
-    public void setGenericPoolConfig(GenericObjectPool.Config cfg) throws Exception {
+    public void setGenericPoolConfig(GenericObjectPoolConfig cfg) throws Exception {
         if (this.genericObjectPool != null) {
             this.genericObjectPool.close();
         }
         if (cfg == null) {
-            cfg = new GenericObjectPool.Config();
+            cfg = new GenericObjectPoolConfig();
         }
         this.genericObjectPool = new GenericObjectPool(new MyPoolableObjectFactory<C>(this), cfg);
     }

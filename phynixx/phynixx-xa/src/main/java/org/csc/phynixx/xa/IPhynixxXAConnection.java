@@ -31,9 +31,9 @@ import javax.transaction.xa.XAResource;
  *
  * @author christoph
  */
-public interface IPhynixxXAConnection {
+public interface IPhynixxXAConnection<C extends IPhynixxConnection> {
 
     public XAResource getXAResource();
 
-    public IPhynixxConnection getConnection();
+    public C getConnection();
 }

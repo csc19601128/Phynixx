@@ -34,6 +34,10 @@ import org.csc.phynixx.test_connection.TestConnectionStatusManager;
 
 
 public class TestRecoveryConnection implements ITestConnection {
+    @Override
+    public IDataRecordReplay recoverReplayListener() {
+        return null;
+    }
 
     public static final int RF_INCREMENT = 17;
 

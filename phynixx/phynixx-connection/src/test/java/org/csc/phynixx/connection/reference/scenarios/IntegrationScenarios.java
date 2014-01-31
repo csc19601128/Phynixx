@@ -22,7 +22,7 @@ package org.csc.phynixx.connection.reference.scenarios;
 
 
 import junit.framework.TestCase;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.csc.phynixx.connection.ManagedConnectionFactory;
 import org.csc.phynixx.connection.PooledManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
@@ -193,9 +193,8 @@ public class IntegrationScenarios extends TestCase {
 
     private PooledManagedConnectionFactory createConnectionFactory(int maxActiveConnections) throws Exception {
 
-
-        GenericObjectPool.Config cfg = new GenericObjectPool.Config();
-        cfg.maxActive = maxActiveConnections;
+        GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
+        cfg.setMaxTotal(maxActiveConnections);
         PooledManagedConnectionFactory factory = new PooledManagedConnectionFactory(new ReferenceConnectionFactory(), cfg);
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());

@@ -70,7 +70,7 @@ public class ConnectionTray extends ManagedConnectionListenerAdapter implements 
     }
 
     synchronized int freeConnectionSize() {
-        int maxCon = this.connectionFactory.getMaxActive();
+        int maxCon = this.connectionFactory.getMaxTotal();
         return maxCon - this.referencedConnections.size();
 
     }

@@ -21,72 +21,87 @@ package org.csc.phynixx.xa;
  */
 
 
-import org.apache.commons.pool.PoolableObjectFactory;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.commons.pool2.BasePooledObjectFactory;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.PooledObjectFactory;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.csc.phynixx.connection.IPhynixxConnection;
 import org.csc.phynixx.connection.IPhynixxConnectionFactory;
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 
 
-public class XAPooledConnectionFactory implements IPhynixxConnectionFactory {
+public class XAPooledConnectionFactory<C extends IPhynixxConnection> implements IPhynixxConnectionFactory<C> {
 
-    private IPhynixxConnectionFactory connectionFactory = null;
-    private GenericObjectPool genericObjectPool = null;
+    private class MyPoolableObjectFactory<X extends IPhynixxConnection> extends BasePooledObjectFactory<X> implements PooledObjectFactory<X> {
 
-    private class MyPoolableObjectFactory implements PoolableObjectFactory {
+        private IPhynixxConnectionFactory<X> connectionFactory = null;
 
-        public void activateObject(Object obj) throws Exception {
+        MyPoolableObjectFactory(IPhynixxConnectionFactory<X> connectionFactory) {
+            this.connectionFactory = connectionFactory;
         }
 
-        public void destroyObject(Object obj) throws Exception {
-            ((IPhynixxConnection) obj).close();
+        @Override
+        public X create() throws Exception {
+            return connectionFactory.getConnection();
         }
 
-        public Object makeObject() throws Exception {
-            return XAPooledConnectionFactory.this.getConnectionFactory().getConnection();
+        @Override
+        public PooledObject<X> wrap(X obj) {
+            return new DefaultPooledObject<X>(obj);
         }
 
-        public void passivateObject(Object obj) throws Exception {
+        public void activateObject(PooledObject<X> obj) throws Exception {
         }
 
-        public boolean validateObject(Object obj) {
-            IPhynixxConnection con = (IPhynixxConnection) obj;
-            return !(con.isClosed());
+        public void destroyObject(PooledObject<X> obj) throws Exception {
+            obj.getObject().close();
+        }
+
+        public void passivateObject(PooledObject<X> obj) throws Exception {
+        }
+
+        public boolean validateObject(PooledObject<X> obj) {
+            return !(obj.getObject().isClosed());
         }
 
     }
 
-    public XAPooledConnectionFactory(IPhynixxConnectionFactory connectionFactory) {
+    private IPhynixxConnectionFactory<C> connectionFactory = null;
+    private GenericObjectPool<C> genericObjectPool = null;
+
+    public XAPooledConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory) {
         this(connectionFactory, null);
     }
 
-    public XAPooledConnectionFactory(IPhynixxConnectionFactory connectionFactory,
-                                     GenericObjectPool.Config genericPoolConfig) {
+    public XAPooledConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory,
+                                     GenericObjectPoolConfig genericPoolConfig) {
         this.connectionFactory = connectionFactory;
-        GenericObjectPool.Config cfg = genericPoolConfig;
+        GenericObjectPoolConfig cfg = genericPoolConfig;
         if (cfg == null) {
-            cfg = new GenericObjectPool.Config();
+            cfg = new GenericObjectPoolConfig();
         }
-        this.genericObjectPool = new GenericObjectPool(new MyPoolableObjectFactory(), cfg);
+        this.genericObjectPool = new GenericObjectPool(new MyPoolableObjectFactory(connectionFactory), cfg);
     }
 
-    public IPhynixxConnectionFactory getConnectionFactory() {
+    public IPhynixxConnectionFactory<C> getConnectionFactory() {
         return connectionFactory;
     }
 
-    public int getMaxActive() {
-        return this.genericObjectPool.getMaxActive();
+    public int getMaxTotal() {
+        return this.genericObjectPool.getMaxTotal();
     }
 
-    public IPhynixxConnection getConnection() {
+    public C getConnection() {
         try {
-            return (IPhynixxConnection) this.genericObjectPool.borrowObject();
+            return this.genericObjectPool.borrowObject();
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
         }
     }
 
-    public void releaseConnection(IPhynixxConnection connection) {
+    public void releaseConnection(C connection) {
         if (connection == null) {
             return;
         }
@@ -97,7 +112,7 @@ public class XAPooledConnectionFactory implements IPhynixxConnectionFactory {
         }
     }
 
-    public void destroyConnection(IPhynixxConnection connection) {
+    public void destroyConnection(C connection) {
         if (connection == null) {
             return;
         }
@@ -116,7 +131,7 @@ public class XAPooledConnectionFactory implements IPhynixxConnectionFactory {
         }
     }
 
-    public Class connectionInterface() {
+    public Class<C> connectionInterface() {
         return this.getConnectionFactory().connectionInterface();
     }
 

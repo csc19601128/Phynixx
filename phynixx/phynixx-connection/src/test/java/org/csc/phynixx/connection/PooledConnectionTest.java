@@ -23,7 +23,7 @@ package org.csc.phynixx.connection;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
@@ -55,8 +55,8 @@ public class PooledConnectionTest extends TestCase {
 
         this.tmpDir = new TmpDirectory("howllogger");
 
-        GenericObjectPool.Config cfg = new GenericObjectPool.Config();
-        cfg.maxActive = POOL_SIZE;
+        GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
+        cfg.setMaxTotal(POOL_SIZE);
         this.factory = new PooledManagedConnectionFactory(new TestConnectionFactory(), cfg);
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
