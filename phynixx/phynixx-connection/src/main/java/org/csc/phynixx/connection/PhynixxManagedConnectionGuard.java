@@ -21,6 +21,7 @@ package org.csc.phynixx.connection;
  */
 
 
+import org.csc.phynixx.cast.ImplementorUtils;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
@@ -56,26 +57,18 @@ import java.util.List;
  *
  * @param <C> Typ of the connection
  */
-class PhynixxManagedConnectionProxy<C extends IPhynixxConnection> implements IManagedConnectionProxy<C>, IXADataRecorderAware {
+
+
+/**
+ * guards all calls to methods of {@link org.csc.phynixx.connection.IPhynixxConnection} and ensures that the correct events are deliverd to the listeners.
+ * This class has the character of an abstract class and should no be instanciated.
+ *
+ * @param <C>
+ */
+abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> implements IPhynixxManagedConnection<C>, IXADataRecorderAware {
 
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
-    abstract class ExecutionTemplate {
-        public Object run() throws Exception {
-            try {
-                PhynixxManagedConnectionProxy.this.prepareAction();
-                Object obj = this.call();
-                PhynixxManagedConnectionProxy.this.finishAction();
-                return obj;
-            } catch (Exception e) {
-                PhynixxManagedConnectionProxy.this.finishAction(e);
-                throw e;
-            }
-
-        }
-
-        protected abstract Object call() throws Exception;
-    }
 
     private C connection = null;
 
@@ -85,22 +78,54 @@ class PhynixxManagedConnectionProxy<C extends IPhynixxConnection> implements IMa
     // indicates that the connection is expired
     private volatile boolean expired = false;
 
+    final Long id;
+
+    protected PhynixxManagedConnectionGuard(long id) {
+        this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof IPhynixxManagedConnection)) return false;
+
+        IPhynixxManagedConnection that = (IPhynixxManagedConnection) o;
+        return that.getManagedConnectionId() == this.getManagedConnectionId();
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public long getManagedConnectionId() {
+        return id;
+    }
+
+    public String toString() {
+        if (this.getConnection() != null) {
+            return this.getConnection().toString();
+        }
+        return "no core connection";
+    }
+
 
     /**
      * If this proxy is implemented by a DynProxy. If a referene to this object has to be propagated
-     * ({@link #fireEvents(PhynixxManagedConnectionProxy.IEventDeliver)}, it would leads to invalid references
+     * ({@link #fireEvents(PhynixxManagedConnectionGuard.IEventDeliver)}, it would leads to invalid references
      * if <code>this</code> is returned but not the implementing DynaProxy.
      * <p/>
      * See the implementation of a java proxy.
      *
      * @return he object via <code>this</code> is accessible
-     * @see DynaManagedConnectionProxyFactory.ConnectionProxy
+     * @see org.csc.phynixx.connection.DynaPhynixxManagedConnectionFactory.ConnectionPhynixxGuard
      */
-    protected IManagedConnectionProxy getObservableProxy() {
+    protected IPhynixxManagedConnection<C> getObservableProxy() {
         return this;
     }
 
-    public synchronized void setConnection(C con) {
+    public void setConnection(C con) {
         if ((this.connection == null && con == null) ||
                 (this.connection != null && this.connection.equals(con))
                 ) {
@@ -119,8 +144,8 @@ class PhynixxManagedConnectionProxy<C extends IPhynixxConnection> implements IMa
 
 
     public IXADataRecorder getXADataRecorder() {
-        if (this.getConnection() != null) {
-            return getConnection().getXADataRecorder();
+        if (this.getConnection() != null && ImplementorUtils.isImplementationOf(getConnection(), IXADataRecorderAware.class)) {
+            return ImplementorUtils.cast(getConnection(), IXADataRecorderAware.class).getXADataRecorder();
         }
         return null;
 
@@ -128,12 +153,15 @@ class PhynixxManagedConnectionProxy<C extends IPhynixxConnection> implements IMa
 
     @Override
     public IDataRecordReplay recoverReplayListener() {
-        return this.getConnection().recoverReplayListener();
+        if (this.getConnection() != null && ImplementorUtils.isImplementationOf(getConnection(), IXADataRecorderAware.class)) {
+            return ImplementorUtils.cast(getConnection(), IXADataRecorderAware.class).recoverReplayListener();
+        }
+        return null;
     }
 
     public void setXADataRecorder(IXADataRecorder dataRecorder) {
-        if (this.getConnection() != null) {
-            getConnection().setXADataRecorder(dataRecorder);
+        if (this.getConnection() != null && ImplementorUtils.isImplementationOf(getConnection(), IXADataRecorderAware.class)) {
+            ImplementorUtils.cast(getConnection(), IXADataRecorderAware.class).setXADataRecorder(dataRecorder);
         }
     }
 
@@ -166,7 +194,7 @@ class PhynixxManagedConnectionProxy<C extends IPhynixxConnection> implements IMa
      * A xaresource's connection is  never closed but always dereferenced .
      * As a connection proxy shields a xa resource, the current connection is not closed but dereferenced (==released)
      */
-    public synchronized void close() {
+    public void close() {
         if (this.getConnection() != null) {
             this.getConnection().close();
             // notify the action
@@ -178,7 +206,7 @@ class PhynixxManagedConnectionProxy<C extends IPhynixxConnection> implements IMa
      * A xaresource's connection is  never closed but always dereferenced .
      * As a connection proxy shields a xa resource, the current connection is not closed but dereferenced (==released)
      */
-    public synchronized void open() {
+    public void open() {
         if (this.getConnection() != null) {
             this.getConnection().open();
             // notify the action
@@ -196,14 +224,14 @@ class PhynixxManagedConnectionProxy<C extends IPhynixxConnection> implements IMa
     }
 
 
-    public synchronized boolean isClosed() {
+    public boolean isClosed() {
         if (this.getConnection() != null) {
             return this.getConnection().isClosed();
         }
         return true;
     }
 
-    public synchronized void prepare() {
+    public void prepare() {
         this.fireConnectionPreparing();
         if (this.getConnection() != null) {
             this.getConnection().prepare();
@@ -212,7 +240,7 @@ class PhynixxManagedConnectionProxy<C extends IPhynixxConnection> implements IMa
     }
 
 
-    public synchronized void rollback() {
+    public void rollback() {
         fireConnectionRollingBack();
         if (this.getConnection() != null) {
             this.getConnection().rollback();
@@ -226,17 +254,19 @@ class PhynixxManagedConnectionProxy<C extends IPhynixxConnection> implements IMa
      */
     @Override
     public void recover() {
+
+        // not revoverable
+        if (this.getConnection() == null || !ImplementorUtils.isImplementationOf(getConnection(), IXADataRecorderAware.class)) {
+            return;
+        }
+
+        IXADataRecorderAware con = ImplementorUtils.cast(getConnection(), IXADataRecorderAware.class);
+
         // the connection has to re establish the state of the message logger
         IXADataRecorder msgLogger = this.getXADataRecorder();
         if (msgLogger.isCompleted()) {
             return;
         }
-
-        IPhynixxConnection con = this.getConnection();
-        if (con == null) {
-            return;
-        }
-
         this.fireConnectionRecovering();
         IDataRecordReplay dataRecordReplay = con.recoverReplayListener();
 
@@ -297,7 +327,7 @@ class PhynixxManagedConnectionProxy<C extends IPhynixxConnection> implements IMa
 
     private List listeners = new ArrayList();
 
-    public synchronized void addConnectionListener(IManagedConnectionListener listener) {
+    public void addConnectionListener(IManagedConnectionListener listener) {
         if (!listeners.contains(listener)) {
             this.listeners.add(listener);
         }
@@ -319,7 +349,7 @@ class PhynixxManagedConnectionProxy<C extends IPhynixxConnection> implements IMa
         for (int i = 0; i < tmp.size(); i++) {
             IManagedConnectionListener listener = (IManagedConnectionListener) tmp.get(i);
             if (logger.isDebugEnabled()) {
-                logger.debug("ConnectionProxy " + event + " called listener " + listener + " on " + deliver);
+                logger.debug("ConnectionPhynixxGuard " + event + " called listener " + listener + " on " + deliver);
             }
             deliver.fireEvent(listener, event);
         }
@@ -496,38 +526,6 @@ class PhynixxManagedConnectionProxy<C extends IPhynixxConnection> implements IMa
         fireEvents(deliver);
     }
 
-
-    public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof PhynixxManagedConnectionProxy)) {
-            return false;
-        }
-
-        PhynixxManagedConnectionProxy another = (PhynixxManagedConnectionProxy) obj;
-        if (another.getConnection() == null && getConnection() == null) {
-            return true;
-        }
-        if (another.getConnection() == null || getConnection() == null) {
-            return false;
-        }
-
-        return another.getConnection().equals(getConnection());
-
-
-    }
-
-    public int hashCode() {
-        if (this.getConnection() != null) {
-            return this.getConnection().hashCode();
-        }
-        return 0;
-    }
-
-    public String toString() {
-        if (this.getConnection() != null) {
-            return this.getConnection().toString();
-        }
-        return "no core connection";
-    }
 
 
 }

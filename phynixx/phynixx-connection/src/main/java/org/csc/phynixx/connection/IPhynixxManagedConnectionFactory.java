@@ -4,7 +4,7 @@ package org.csc.phynixx.connection;
  * #%L
  * phynixx-connection
  * %%
- * Copyright (C) 2014 csc
+ * Copyright (C) 2014 Christoph Schmidt-Casdorff
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,18 @@ package org.csc.phynixx.connection;
  */
 
 
-public interface IManagedConnectionProxyEvent<C extends IPhynixxConnection> {
-
-    IPhynixxManagedConnection<C> getConnectionProxy();
+public interface IPhynixxManagedConnectionFactory<C extends IPhynixxConnection> {
 
     /**
-     * @return exception, that raises the event
+     * Created by christoph on 02.02.14.
      */
-    Exception getException();
+    interface IRecoveredManagedConnection<C> {
+        public void managedConnectionRecovered(C con);
+    }
 
+    IPhynixxManagedConnection<C> getManagedConnection();
 
+    void recover(IRecoveredManagedConnection<C> recoveredManagedConnectionCallback);
+
+    void close();
 }

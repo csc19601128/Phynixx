@@ -21,6 +21,8 @@ package org.csc.phynixx.connection.reference;
  */
 
 
+import org.csc.phynixx.connection.IXADataRecorderAware;
+import org.csc.phynixx.connection.RequiresTransaction;
 import org.csc.phynixx.connection.loggersystem.Dev0Strategy;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
@@ -48,7 +50,7 @@ import java.util.List;
  * @author christoph
  */
 
-public class ReferenceConnection implements IReferenceConnection {
+public class ReferenceConnection implements IReferenceConnection, IXADataRecorderAware {
 
     public static final int ERRONEOUS_INC = -1;
 
@@ -100,6 +102,7 @@ public class ReferenceConnection implements IReferenceConnection {
      *
      * @param value
      */
+    @RequiresTransaction
     public void setInitialCounter(int value) {
         this.counter = value;
         this.getXADataRecorder().writeRollbackData(Integer.toString(value).getBytes());

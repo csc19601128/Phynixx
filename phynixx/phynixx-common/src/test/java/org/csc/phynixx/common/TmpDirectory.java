@@ -25,12 +25,15 @@ package org.csc.phynixx.common;
 
 
 import org.apache.commons.io.FilenameUtils;
+import org.csc.phynixx.logger.IPhynixxLogger;
+import org.csc.phynixx.logger.PhynixxLogManager;
 
 import java.io.File;
 import java.io.IOException;
 
 
 public class TmpDirectory {
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(TmpDirectory.class);
     private static final String MY_TMP = "de_csc_xaresource";
     private File dir = null;
 
@@ -41,6 +44,7 @@ public class TmpDirectory {
         if (!dir.exists()) {
             dir.mkdirs();
         }
+        dir.deleteOnExit();
     }
 
     public TmpDirectory() {
@@ -58,7 +62,9 @@ public class TmpDirectory {
         }
         File[] files = dir.listFiles();
         for (int i = 0; i < files.length; i++) {
-            files[i].delete();
+            if (!files[i].delete()) {
+                LOG.error("deleting " + files[i] + " fails");
+            }
         }
         this.dir.delete();
         this.dir = null;

@@ -37,7 +37,7 @@ public class ReferenceConnectionFactory implements IPhynixxConnectionFactory<IRe
         return new ReferenceConnection(connectionId);
     }
 
-    public Class connectionInterface() {
+    public Class getConnectionInterface() {
         return IReferenceConnection.class;
     }
 

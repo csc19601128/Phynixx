@@ -4,7 +4,7 @@ package org.csc.phynixx.connection;
  * #%L
  * phynixx-connection
  * %%
- * Copyright (C) 2014 csc
+ * Copyright (C) 2014 Christoph Schmidt-Casdorff
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,15 @@ package org.csc.phynixx.connection;
  */
 
 
-public interface IManagedConnectionProxyEvent<C extends IPhynixxConnection> {
+import java.lang.annotation.*;
 
-    IPhynixxManagedConnection<C> getConnectionProxy();
+/**
+ * should not be inherited
+ */
+@Target({ElementType.METHOD})
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+public @interface RequiresTransaction {
 
-    /**
-     * @return exception, that raises the event
-     */
-    Exception getException();
-
-
+    boolean value() default true;
 }

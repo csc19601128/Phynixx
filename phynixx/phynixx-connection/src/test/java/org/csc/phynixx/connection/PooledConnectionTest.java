@@ -21,26 +21,30 @@ package org.csc.phynixx.connection;
  */
 
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
-import org.csc.phynixx.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
-import org.csc.phynixx.test_connection.*;
+import org.csc.phynixx.test_connection.ITestConnection;
+import org.csc.phynixx.test_connection.TestConnectionFactory;
+import org.csc.phynixx.test_connection.TestConnectionStatusManager;
+import org.csc.phynixx.test_connection.TestInterruptionPoint;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-import java.util.*;
+import java.util.Properties;
 
 
-public class PooledConnectionTest extends TestCase {
+public class PooledConnectionTest {
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
-    private PooledManagedConnectionFactory factory = null;
+    private PooledPhynixxManagedConnectionFactory<ITestConnection> factory = null;
 
     private RecoveryListener recoveryListner = new RecoveryListener();
 
@@ -49,18 +53,19 @@ public class PooledConnectionTest extends TestCase {
 
     private TmpDirectory tmpDir = null;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // configuring the log-system (e.g. log4j)
         TestUtils.configureLogging();
 
-        this.tmpDir = new TmpDirectory("howllogger");
+        this.tmpDir = new TmpDirectory("test");
 
         GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
         cfg.setMaxTotal(POOL_SIZE);
-        this.factory = new PooledManagedConnectionFactory(new TestConnectionFactory(), cfg);
+        this.factory = new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        PerTransactionStrategy strategy = new PerTransactionStrategy(loggerFactory);
+        LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
         this.factory.setLoggerSystemStrategy(strategy);
         this.recoveryListner = new RecoveryListener();
@@ -68,139 +73,95 @@ public class PooledConnectionTest extends TestCase {
 
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         TestConnectionStatusManager.clear();
 
+        this.factory.close();
+        this.factory = null;
 
         // delete all tmp files ...
         this.tmpDir.clear();
 
-        this.factory = null;
     }
 
-    private static interface IActOnConnection {
-        void doWork(ITestConnection con);
+    @Test
+    public void testGoodCaseRollback() throws Exception {
+
+        ITestConnection con = PooledConnectionTest.this.factory.getConnection();
+
+        con.act(5);
+        con.act(7);
+        int counter = con.getCurrentCounter();
+        Assert.assertEquals(12, counter);
+
+        con.rollback();
+
+        con.close();
+
     }
 
+    @Test
+    public void testInterruptedCommit() throws Exception {
 
-    private static List exceptions = Collections.synchronizedList(new ArrayList());
+        ITestConnection con = PooledConnectionTest.this.factory.getConnection();
 
-    private class Runner implements Runnable {
+        int counterInitial = con.getCurrentCounter();
+        con.setInitialCounter(3);
+        con.act(2);
+        con.act(7);
+        con.setInterruptFlag(TestInterruptionPoint.COMMIT);
+        try {
+            con.commit();
 
-        private IActOnConnection actOnConnection = null;
-
-        public Runner(IActOnConnection actOnConnection) {
-            this.actOnConnection = actOnConnection;
+        } catch (Exception e) {
+            System.out.println(e.getClass());
         }
 
-        public void run() {
-            ITestConnection con = null;
-            int repeats = 1; //(int) (System.currentTimeMillis() % 13)+1;
-            try {
-                Object poolObj = PooledConnectionTest.this.factory.getConnection();
+        // Flag has not been set
+        Assert.assertFalse(con.isCommitted());
 
-                try {
-                    con = (ITestConnection) poolObj;
-                } catch (ClassCastException e) {
-                    throw new ClassCastException("Expected ITestConnection; return " + poolObj.getClass());
-                }
+        final ITestConnection[] recoveredConnection = new ITestConnection[1];
+        this.factory.recover(new IPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
 
-                for (int i = 0; i < repeats; i++) {
-                    long millis = (long) (System.currentTimeMillis() % 133);
-                    Thread.currentThread().sleep(millis);
-                    try {
-                        this.actOnConnection.doWork((ITestConnection) con);
-                    } catch (ActionInterruptedException e) {
-                    } catch (DelegatedRuntimeException e) {
-                        if (!(e.getRootCause() instanceof ActionInterruptedException)) {
-                            throw e;
-                        }
-                    }
-                }
-            } catch (Throwable ex) {
-                ex.printStackTrace();
-                exceptions.add(new DelegatedRuntimeException("Thread " + Thread.currentThread(), ex));
-            } finally {
-                if (con != null) {
-                    con.close();
-                }
+            @Override
+            public void managedConnectionRecovered(ITestConnection con) {
+                recoveredConnection[0] = con;
             }
-        }
-    }
-
-    private void startRunners(IActOnConnection actOnConnection, int numThreads) throws Exception {
-        exceptions.clear();
-
-        Set workers = new HashSet();
-        for (int i = 0; i < numThreads; i++) {
-            Runner runner = new Runner(actOnConnection);
-            Thread worker = new Thread(runner);
-            workers.add(worker);
-            worker.start();
-        }
-
-        // wait until all threads are ready ..
-        for (Iterator iterator = workers.iterator(); iterator.hasNext(); ) {
-            Thread worker = (Thread) iterator.next();
-            worker.join();
-        }
-
-        if (exceptions.size() > 0) {
-            for (int i = 0; i < exceptions.size(); i++) {
-                Exception ex = (Exception) exceptions.get(i);
-                ex.printStackTrace();
-            }
-            throw new AssertionFailedError("Error occurred");
-        }
+        });
+        Assert.assertEquals(12, recoveredConnection[0].getCurrentCounter());
 
 
     }
 
 
-    public void testGoodCase() throws Exception {
-
-        final int[] counter = new int[1];
-
-        IActOnConnection actOnConnection = new IActOnConnection() {
-            public void doWork(ITestConnection con) {
-                con.act(5);
-                con.act(7);
-                synchronized (counter) {
-                    counter[0] = con.getCurrentCounter();
-                }
-
-                con.rollback();
-            }
-        };
-
-        this.startRunners(actOnConnection, POOL_SIZE * 4);
-
-        // nothing has to be recoverd ...
-
-
-    }
-
-
+    @Test
     public void testInterruptedRollback() throws Exception {
 
-        final int[] counter = new int[1];
+        ITestConnection con = PooledConnectionTest.this.factory.getConnection();
 
-        IActOnConnection actOnConnection = new IActOnConnection() {
-            public void doWork(ITestConnection con) {
-                con.act(5);
-                con.act(7);
-                TestConnection coreCon = (TestConnection) ((IManagedConnectionProxy) con).getConnection();
-                coreCon.setInterruptFlag(TestInterruptionPoint.ACT);
-                con.rollback();
+        int counterInitial = con.getCurrentCounter();
+        con.setInitialCounter(3);
+        con.act(5);
+        con.act(4);
+        con.setInterruptFlag(TestInterruptionPoint.ROLLBACK);
+        try {
+            con.rollback();
+
+        } catch (Exception e) {
+            System.out.println(e.getClass());
+        }
+
+
+        final ITestConnection[] recoveredConnection = new ITestConnection[1];
+        this.factory.recover(new IPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
+
+            @Override
+            public void managedConnectionRecovered(ITestConnection con) {
+                recoveredConnection[0] = con;
             }
-        };
-
-        this.startRunners(actOnConnection, POOL_SIZE * 4);
-
-        this.factory.recover(null);
-
-        // nothing has to be recoverd ...
-        this.recoveryListner.recoveredConnections = POOL_SIZE * 4;
+        });
+        Assert.assertEquals(3, recoveredConnection[0].getCurrentCounter());
 
 
     }

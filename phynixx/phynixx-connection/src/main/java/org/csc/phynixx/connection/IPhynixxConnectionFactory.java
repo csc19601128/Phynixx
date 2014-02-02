@@ -32,7 +32,7 @@ public interface IPhynixxConnectionFactory<C extends IPhynixxConnection> {
     /**
      * @return the class of the connection's interface
      */
-    Class<C> connectionInterface();
+    Class<C> getConnectionInterface();
 
 
     /**

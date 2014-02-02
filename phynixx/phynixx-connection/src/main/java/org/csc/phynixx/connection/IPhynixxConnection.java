@@ -24,7 +24,7 @@ package org.csc.phynixx.connection;
 import org.csc.phynixx.exceptions.SampleTransactionalException;
 
 
-public interface IPhynixxConnection extends IXADataRecorderAware {
+public interface IPhynixxConnection {
 
 
     /**

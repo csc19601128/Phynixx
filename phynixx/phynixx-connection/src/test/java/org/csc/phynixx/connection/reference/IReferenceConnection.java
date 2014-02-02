@@ -22,13 +22,15 @@ package org.csc.phynixx.connection.reference;
 
 
 import org.csc.phynixx.connection.IPhynixxConnection;
+import org.csc.phynixx.connection.IXADataRecorderAware;
+import org.csc.phynixx.connection.RequiresTransaction;
 
 /**
  * the current implementation manages a internal counter which can be incremented
  *
  * @author christoph
  */
-public interface IReferenceConnection extends IPhynixxConnection {
+public interface IReferenceConnection extends IPhynixxConnection, IXADataRecorderAware {
 
     /**
      * @return current ID of the connection
@@ -39,6 +41,8 @@ public interface IReferenceConnection extends IPhynixxConnection {
      * sets the counter to the initial value
      * this value has to be restored if the connection is rollbacked
      */
+
+    @RequiresTransaction
     void setInitialCounter(int value);
 
     /**
@@ -46,6 +50,8 @@ public interface IReferenceConnection extends IPhynixxConnection {
      *
      * @param inc
      */
+
+    @RequiresTransaction
     public void incCounter(int inc);
 
 

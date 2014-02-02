@@ -23,7 +23,7 @@ package org.csc.phynixx.connection;
 
 import java.lang.reflect.Method;
 
-public class AbstractDynaProxyFactory {
+class AbstractDynaProxyFactory {
 
     private Class[] supportedInterfaces = null;
     private Class[] requiredInterfaces = null;
@@ -32,7 +32,13 @@ public class AbstractDynaProxyFactory {
 
     private boolean synchronize = false;
 
-    public AbstractDynaProxyFactory(Class[] supportedInterfaces, Class[] requiredInterfaces, Class[] optionalInterfaces, boolean synchronize) {
+    /**
+     * @param supportedInterfaces
+     * @param requiredInterfaces
+     * @param optionalInterfaces
+     * @param synchronize
+     */
+    protected AbstractDynaProxyFactory(Class[] supportedInterfaces, Class[] requiredInterfaces, Class[] optionalInterfaces, boolean synchronize) {
         this.synchronize = synchronize;
         if (supportedInterfaces == null || supportedInterfaces.length == 0) {
             throw new IllegalArgumentException("supportedInterfaces are missing");
@@ -50,7 +56,7 @@ public class AbstractDynaProxyFactory {
 
     }
 
-    public boolean isSynchronize() {
+    boolean isSynchronize() {
         return synchronize;
     }
 

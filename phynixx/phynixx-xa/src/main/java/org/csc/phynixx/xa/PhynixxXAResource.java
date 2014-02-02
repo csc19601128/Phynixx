@@ -21,7 +21,7 @@ package org.csc.phynixx.xa;
  */
 
 
-import org.csc.phynixx.connection.IManagedConnectionProxy;
+import org.csc.phynixx.connection.IPhynixxManagedConnection;
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.exceptions.ExceptionUtils;
 import org.csc.phynixx.logger.IPhynixxLogger;
@@ -83,7 +83,7 @@ public class PhynixxXAResource implements XAResource {
             Object xaId,
             TransactionManager tmMgr,
             PhynixxResourceFactory factory,
-            IManagedConnectionProxy connectionProxy) {
+            IPhynixxManagedConnection connectionProxy) {
         this.xaId = xaId;
         this.tmMgr = tmMgr;
         this.factory = factory;
@@ -132,7 +132,7 @@ public class PhynixxXAResource implements XAResource {
             for (int i = 0; i < statecons.size(); i++) {
                 XAResourceTxState statecon = (XAResourceTxState) statecons.get(i);
                 statecon.setRollbackOnly(true);
-                IManagedConnectionProxy ch =
+                IPhynixxManagedConnection ch =
                         statecon.getXAConnectionHandle().getConnectionHandle();
 
             }
@@ -570,7 +570,7 @@ public class PhynixxXAResource implements XAResource {
                     this.currentXAConnectionHandle = null; // used
                 } else {
                     // get a new connection
-                    IManagedConnectionProxy con;
+                    IPhynixxManagedConnection con;
                     try {
                         con = this.factory.getConnection();
                     } catch (Exception e) {

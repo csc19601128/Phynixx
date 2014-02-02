@@ -25,7 +25,7 @@ import junit.framework.AssertionFailedError;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.connection.loggersystem.ILoggerSystemStrategy;
-import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
+import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnectionFactory;
@@ -44,7 +44,7 @@ public class ReferenceConnectionTest {
     public static final String LOGGER = "logger";
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
-    private ManagedConnectionFactory<IReferenceConnection> connectionFactory = null;
+    private PhynixxManagedConnectionFactory<IReferenceConnection> connectionFactory = null;
 
     private ILoggerSystemStrategy strategy = null;
 
@@ -60,10 +60,10 @@ public class ReferenceConnectionTest {
 
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        ILoggerSystemStrategy strategy = new PerTransactionStrategy(loggerFactory);
+        ILoggerSystemStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
         this.connectionFactory =
-                new ManagedConnectionFactory<IReferenceConnection>(new ReferenceConnectionFactory());
+                new PhynixxManagedConnectionFactory<IReferenceConnection>(new ReferenceConnectionFactory());
         connectionFactory.setLoggerSystemStrategy(strategy);
     }
 

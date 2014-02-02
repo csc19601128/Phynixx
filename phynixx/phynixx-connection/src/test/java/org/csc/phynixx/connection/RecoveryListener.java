@@ -55,11 +55,18 @@ class RecoveryListener extends ManagedConnectionListenerAdapter implements IPhyn
         this.rollbackedConnections++;
     }
 
-    public IManagedConnectionProxy decorate(IManagedConnectionProxy connectionProxy) {
+    public IPhynixxManagedConnection decorate(IPhynixxManagedConnection connectionProxy) {
         connectionProxy.addConnectionListener(this);
         return connectionProxy;
 
     }
 
-
+    @Override
+    public String toString() {
+        return "RecoveryListener{" +
+                "recoveredConnections=" + recoveredConnections +
+                ", commmittedConnections=" + commmittedConnections +
+                ", rollbackedConnections=" + rollbackedConnections +
+                '}';
+    }
 }

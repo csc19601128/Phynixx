@@ -48,8 +48,8 @@ class PhynixxConnectionProxyEvent<C extends IPhynixxConnection> extends EventObj
         return exception;
     }
 
-    public IManagedConnectionProxy<C> getConnectionProxy() {
-        return (IManagedConnectionProxy) this.getSource();
+    public IPhynixxManagedConnection<C> getConnectionProxy() {
+        return (IPhynixxManagedConnection) this.getSource();
     }
 
 

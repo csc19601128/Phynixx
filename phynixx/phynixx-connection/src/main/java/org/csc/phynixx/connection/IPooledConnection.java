@@ -23,9 +23,9 @@ package org.csc.phynixx.connection;
 
 public interface IPooledConnection extends IPhynixxConnection {
 
-    public PooledManagedConnectionFactory getPooledConnectionFactory();
+    public PooledPhynixxManagedConnectionFactory getPooledConnectionFactory();
 
     public void setPooledConnectionFactory(
-            PooledManagedConnectionFactory pooledConnectionFactory);
+            PooledPhynixxManagedConnectionFactory pooledConnectionFactory);
 
 }

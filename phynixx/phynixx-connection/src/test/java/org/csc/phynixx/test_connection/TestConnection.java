@@ -21,6 +21,9 @@ package org.csc.phynixx.test_connection;
  */
 
 
+import org.csc.phynixx.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.io.LogRecordReader;
+import org.csc.phynixx.io.LogRecordWriter;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecord;
@@ -32,6 +35,9 @@ import java.util.Map;
 
 
 /**
+ * the initial value of the counter is the defines the rollback state. Every increrment of the counter via {@link #act} increases the counter.
+ * The counter at commit are commitRollforward data.
+ *
  * TestConnection provides a mechanism to activate predetermined points of interruption.
  * These points leads the current work to interrupt.
  * You can simulate abnormal situation like system crashes.
@@ -74,8 +80,9 @@ public class TestConnection implements ITestConnection {
     private boolean closed = false;
 
     private int currentCounter = 0;
-
     private int initialValue = 0;
+
+    private boolean committed = false;
 
     private IXADataRecorder messageLogger = null;
 
@@ -94,26 +101,33 @@ public class TestConnection implements ITestConnection {
         TestConnectionStatusManager.addStatusStack(this.getId());
     }
 
+    @Override
+    public boolean isCommitted() {
+        return committed;
+    }
+
     /**
      * sets the counter to the initial value
      * this value has to be restored if the connection is rollbacked
      */
     public void setInitialCounter(int value) {
-        this.currentCounter = this.currentCounter + value;
-        this.getXADataRecorder().writeRollbackData(Integer.toString(-1 * this.currentCounter).getBytes());
-        this.getXADataRecorder().writeRollbackData(Integer.toString(value).getBytes());
+        this.currentCounter = value;
         this.initialValue = value;
+        this.getXADataRecorder().writeRollbackData(Integer.toString(value).getBytes());
     }
 
 
+    @Override
     public boolean isInterruptFlag(TestInterruptionPoint interruptionPoint) {
         return this.interruptionFlags.get(interruptionPoint) <= 0;
     }
 
+    @Override
     public void setInterruptFlag(TestInterruptionPoint interruptionPoint, int gate) {
         interruptionFlags.put(interruptionPoint, gate);
     }
 
+    @Override
     public void setInterruptFlag(TestInterruptionPoint interruptionPoint) {
         this.setInterruptFlag(interruptionPoint, 1);
     }
@@ -134,7 +148,7 @@ public class TestConnection implements ITestConnection {
      * @see de.csc.xaresource.sample.ITestConnection#act()
      */
     public void act(int inc) {
-        this.getXADataRecorder().writeRollbackData(Integer.toString(inc).getBytes());
+
         interrupt(TestInterruptionPoint.ACT);
         this.currentCounter = this.currentCounter + inc;
         log.info("TestConnection " + id + " counter incremented to " + inc + " counter=" + this.getCurrentCounter());
@@ -161,9 +175,14 @@ public class TestConnection implements ITestConnection {
     }
 
     public void commit() {
-        this.getXADataRecorder().commitRollforwardData(Integer.toString(this.currentCounter + RF_INCREMENT).getBytes());
+        try {
+            byte[] bytes = new LogRecordWriter().writeInt(this.initialValue).writeInt(this.currentCounter).toByteArray();
+            this.getXADataRecorder().commitRollforwardData(bytes);
+        } catch (Exception e) {
+            throw new DelegatedRuntimeException(e);
+        }
         interrupt(TestInterruptionPoint.COMMIT);
-        this.currentCounter = this.currentCounter + RF_INCREMENT;
+        this.committed = true;
         TestConnectionStatusManager.getStatusStack(this.getId()).addStatus(TestConnectionStatus.COMMITTED);
         log.info("TestConnection " + id + " is committed");
 
@@ -186,6 +205,22 @@ public class TestConnection implements ITestConnection {
         return "TestConnection " + id;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TestConnection that = (TestConnection) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 
     private void interrupt(TestInterruptionPoint interruptionPoint) {
         Integer gate = this.interruptionFlags.get(interruptionPoint) - 1;
@@ -217,13 +252,19 @@ public class TestConnection implements ITestConnection {
         }
 
         public void replayRollback(IDataRecord message) {
-            int inc = Integer.parseInt(new String(message.getData()[0]));
-            this.con.currentCounter = this.con.currentCounter + inc;
+            int initialValue = Integer.parseInt(new String(message.getData()[0]));
+            this.con.currentCounter = initialValue;
         }
 
         public void replayRollforward(IDataRecord message) {
-            int inc = Integer.parseInt(new String(message.getData()[0]));
-            this.con.currentCounter = this.con.currentCounter + inc;
+
+            try {
+                LogRecordReader logRecordReader = new LogRecordReader(message.getData()[0]);
+                this.con.initialValue = logRecordReader.readInt();
+                this.con.currentCounter = logRecordReader.readInt();
+            } catch (Exception e) {
+                throw new DelegatedRuntimeException(e);
+            }
         }
 
     }

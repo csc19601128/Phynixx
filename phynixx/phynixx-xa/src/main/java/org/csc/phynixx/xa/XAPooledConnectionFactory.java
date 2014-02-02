@@ -131,8 +131,8 @@ public class XAPooledConnectionFactory<C extends IPhynixxConnection> implements 
         }
     }
 
-    public Class<C> connectionInterface() {
-        return this.getConnectionFactory().connectionInterface();
+    public Class<C> getConnectionInterface() {
+        return this.getConnectionFactory().getConnectionInterface();
     }
 
 

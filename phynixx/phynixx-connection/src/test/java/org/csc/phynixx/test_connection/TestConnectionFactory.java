@@ -37,7 +37,7 @@ public class TestConnectionFactory implements IPhynixxConnectionFactory<ITestCon
         return new TestConnection(connectionId);
     }
 
-    public Class connectionInterface() {
+    public Class getConnectionInterface() {
         return ITestConnection.class;
     }
 

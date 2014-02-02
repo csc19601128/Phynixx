@@ -24,9 +24,9 @@ package org.csc.phynixx.connection.reference.scenarios;
  */
 
 
-import org.csc.phynixx.connection.IManagedConnectionProxy;
 import org.csc.phynixx.connection.IManagedConnectionProxyEvent;
 import org.csc.phynixx.connection.IPhynixxConnectionProxyDecorator;
+import org.csc.phynixx.connection.IPhynixxManagedConnection;
 import org.csc.phynixx.connection.ManagedConnectionListenerAdapter;
 
 class EventListener extends ManagedConnectionListenerAdapter implements IPhynixxConnectionProxyDecorator {
@@ -60,7 +60,7 @@ class EventListener extends ManagedConnectionListenerAdapter implements IPhynixx
         this.rollbackedConnections++;
     }
 
-    public IManagedConnectionProxy decorate(IManagedConnectionProxy connectionProxy) {
+    public IPhynixxManagedConnection decorate(IPhynixxManagedConnection connectionProxy) {
         connectionProxy.addConnectionListener(this);
         return connectionProxy;
 

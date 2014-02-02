@@ -23,7 +23,7 @@ package org.csc.phynixx.connection;
 
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
+import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnectionFactory;
 import org.csc.phynixx.logger.IPhynixxLogger;
@@ -42,15 +42,15 @@ public class ReferenceConnectionProxyTest {
     public static final String LOGGER = "logger";
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
-    private ManagedConnectionFactory factory = null;
+    private PhynixxManagedConnectionFactory factory = null;
 
     private TmpDirectory tmpDirectory = null;
 
-    private ManagedConnectionFactory createConnectionFactory() throws Exception {
+    private PhynixxManagedConnectionFactory createConnectionFactory() throws Exception {
 
-        ManagedConnectionFactory factory = new ManagedConnectionFactory(new ReferenceConnectionFactory());
+        PhynixxManagedConnectionFactory factory = new PhynixxManagedConnectionFactory(new ReferenceConnectionFactory());
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
-        factory.setLoggerSystemStrategy(new PerTransactionStrategy(loggerFactory));
+        factory.setLoggerSystemStrategy(new LoggerPerTransactionStrategy(loggerFactory));
 
 
         return factory;
@@ -109,10 +109,10 @@ public class ReferenceConnectionProxyTest {
 
 
  IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDirectory.getDirectory());
- this.strategy = new PerTransactionStrategy(loggerFactory);
+ this.strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
  IReferenceConnection con = (IReferenceConnection) ReferenceConnectionProxyTest.this.factory.getConnection();
- IManagedConnectionProxy proxy = ReferenceConnectionProxyTest.this.proxyFactory.getConnectionProxy();
+ IPhynixxManagedConnection proxy = ReferenceConnectionProxyTest.this.proxyFactory.getConnectionProxy();
  proxy.addConnectionListener(ReferenceConnectionProxyTest.this.strategy);
  proxy.setConnection(con);
 
@@ -135,10 +135,10 @@ public class ReferenceConnectionProxyTest {
 
 
  IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDirectory.getDirectory());
- this.strategy = new PerTransactionStrategy(loggerFactory);
+ this.strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
  IReferenceConnection con = (IReferenceConnection) ReferenceConnectionProxyTest.this.factory.getConnection();
- IManagedConnectionProxy proxy = ReferenceConnectionProxyTest.this.proxyFactory.getConnectionProxy();
+ IPhynixxManagedConnection proxy = ReferenceConnectionProxyTest.this.proxyFactory.getConnectionProxy();
  proxy.addConnectionListener(ReferenceConnectionProxyTest.this.strategy);
  proxy.setConnection(con);
 

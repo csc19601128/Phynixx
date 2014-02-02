@@ -183,6 +183,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         if (this.messages == null || this.messages.size() == 0) {
             return;
         }
+
         for (int i = 0; i < messages.size(); i++) {
             IDataRecord msg = this.messages.get(i);
             if (msg.getLogRecordType().equals(XALogRecordType.USER)) {

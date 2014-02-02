@@ -49,7 +49,7 @@ class ManagedXAConnection extends ManagedConnectionListenerAdapter implements IP
     private volatile boolean readOnly = true;
 
     private PhynixxXAResource xaresource = null;
-    private IManagedConnectionProxy connectionProxy = null;
+    private IPhynixxManagedConnection connectionProxy = null;
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
     private Transaction transaction = null;
@@ -57,7 +57,7 @@ class ManagedXAConnection extends ManagedConnectionListenerAdapter implements IP
     ManagedXAConnection(
             PhynixxXAResource xaresource,
             TransactionManager tmMgr,
-            IManagedConnectionProxy connectionProxy) {
+            IPhynixxManagedConnection connectionProxy) {
         super();
         this.xaresource = xaresource;
         this.tmMgr = tmMgr;
@@ -73,7 +73,7 @@ class ManagedXAConnection extends ManagedConnectionListenerAdapter implements IP
         return xaresource;
     }
 
-    public IManagedConnectionProxy getConnectionHandle() {
+    public IPhynixxManagedConnection getConnectionHandle() {
         return connectionProxy;
     }
 

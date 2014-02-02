@@ -32,33 +32,43 @@ import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 import java.util.List;
 
 /**
+ * managedConnection are proxies for connections created by a {@link IPhynixxConnectionFactory}. The proxy adds serveral capabilities to the (core-)connection
+ * <pre>
+ *   1.)
+ *
+ *
+ * </pre>
+ *
  * @param <C>
  */
 
-public class ManagedConnectionFactory<C extends IPhynixxConnection> extends ManagedConnectionListenerAdapter<C> implements IPhynixxConnectionFactory<C>, IManagedConnectionListener<C> {
+public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends ManagedConnectionListenerAdapter<C> implements IPhynixxConnectionFactory<C>, IPhynixxManagedConnectionFactory<C>, IManagedConnectionListener<C> {
 
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
     private IPhynixxConnectionFactory<C> connectionFactory = null;
 
-    private DynaManagedConnectionProxyFactory<C> connectionProxyFactory = null;
+    private DynaPhynixxManagedConnectionFactory<C> connectionProxyFactory = null;
     private ILoggerSystemStrategy<C> loggerSystemStrategy = new Dev0Strategy();
     private IPhynixxConnectionProxyDecorator<C> connectionProxyDecorator = null;
 
 
-    public ManagedConnectionFactory() {
+    public PhynixxManagedConnectionFactory() {
     }
 
-    public ManagedConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory) {
+    public PhynixxManagedConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory) {
         this.connectionFactory = connectionFactory;
-            this.connectionProxyFactory =
-                    new DynaManagedConnectionProxyFactory<C>(new Class[]{connectionFactory.connectionInterface()});
+        this.connectionProxyFactory =
+                new DynaPhynixxManagedConnectionFactory<C>(new Class[]{connectionFactory.getConnectionInterface()});
 
     }
 
 
     public void setConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory) {
+
         this.connectionFactory = connectionFactory;
+        this.connectionProxyFactory =
+                new DynaPhynixxManagedConnectionFactory<C>(new Class[]{connectionFactory.getConnectionInterface()});
     }
 
 
@@ -83,34 +93,42 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Mana
         this.loggerSystemStrategy = loggerSystemStrategy;
     }
 
+    @Override
     public C getConnection() {
+        return ImplementorUtils.cast(getManagedConnection(), getConnectionInterface());
+    }
+
+    @Override
+    public IPhynixxManagedConnection<C> getManagedConnection() {
         return this.instantiateConnection();
     }
 
 
-    protected C instantiateConnection() {
+    protected IPhynixxManagedConnection<C> instantiateConnection() {
         try {
-            IManagedConnectionProxy<C> proxy;
+            IPhynixxManagedConnection<C> proxy;
             try {
-                C connection = ManagedConnectionFactory.this.getConnectionFactory().getConnection();
+
+                // instanciate a fresh core connection
+                C connection = PhynixxManagedConnectionFactory.this.getConnectionFactory().getConnection();
 
                 /**
                  * returns empty Proxy
                  */
-                proxy = ManagedConnectionFactory.this.connectionProxyFactory.getConnectionProxy();
+                proxy = PhynixxManagedConnectionFactory.this.connectionProxyFactory.getConnectionProxy();
 
                 /**
                  * sets the decorated connection
                  */
                 proxy.setConnection(connection);
-                proxy.addConnectionListener(ManagedConnectionFactory.this);
+                proxy.addConnectionListener(PhynixxManagedConnectionFactory.this);
 
-                if (ManagedConnectionFactory.this.loggerSystemStrategy != null) {
-                    proxy = ManagedConnectionFactory.this.loggerSystemStrategy.decorate(proxy);
+                if (PhynixxManagedConnectionFactory.this.loggerSystemStrategy != null) {
+                    proxy = PhynixxManagedConnectionFactory.this.loggerSystemStrategy.decorate(proxy);
                 }
 
-                if (ManagedConnectionFactory.this.connectionProxyDecorator != null) {
-                    proxy = ManagedConnectionFactory.this.connectionProxyDecorator.decorate(proxy);
+                if (PhynixxManagedConnectionFactory.this.connectionProxyDecorator != null) {
+                    proxy = PhynixxManagedConnectionFactory.this.connectionProxyDecorator.decorate(proxy);
                 }
 
                 // Instantiate the connection
@@ -120,7 +138,7 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Mana
                 throw new DelegatedRuntimeException(e);
             }
 
-            return ImplementorUtils.cast(proxy, connectionFactory.connectionInterface());
+            return proxy;
 
         } catch (Throwable e) {
             throw new DelegatedRuntimeException("Instantiating new pooled Proxy", e);
@@ -128,28 +146,30 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Mana
     }
 
 
-    public Class<C> connectionInterface() {
-        return this.getConnectionFactory().connectionInterface();
+    public Class<C> getConnectionInterface() {
+        return this.getConnectionFactory().getConnectionInterface();
     }
 
-    public static interface IRecoveredManagedConnection<C> {
-        public void managedConnectionRecovered(C con);
-    }
-
+    @Override
     public void recover(IRecoveredManagedConnection<C> recoveredManagedConnectionCallback) {
 
         // get all recoverable transaction data
         List<IXADataRecorder> messageLoggers = this.loggerSystemStrategy.readIncompleteTransactions();
-        C con = null;
+        IPhynixxManagedConnection<C> con = null;
         for (int i = 0; i < messageLoggers.size(); i++) {
             try {
                 IXADataRecorder msgLogger = messageLoggers.get(i);
-                con = this.getConnection();
-                con.setXADataRecorder(msgLogger);
-                ((IManagedConnectionProxy<C>) con).recover();
+                con = this.getManagedConnection();
+                if (!ImplementorUtils.isImplementationOf(con, IXADataRecorderAware.class)) {
+                    throw new IllegalStateException("Connection does not support " + IXADataRecorderAware.class + " and can't be recovered");
+                } else {
+                    (ImplementorUtils.cast(con, IXADataRecorderAware.class)).setXADataRecorder(msgLogger);
+                }
+
+                con.recover();
 
                 if (recoveredManagedConnectionCallback != null) {
-                    recoveredManagedConnectionCallback.managedConnectionRecovered(con);
+                    recoveredManagedConnectionCallback.managedConnectionRecovered(con.getConnection());
                 }
             } finally {
                 if (con != null) {
@@ -160,6 +180,7 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Mana
 
     }
 
+    @Override
     public void close() {
         try {
             if (this.loggerSystemStrategy != null) {
@@ -175,7 +196,7 @@ public class ManagedConnectionFactory<C extends IPhynixxConnection> extends Mana
      * the connection is released to the pool
      */
     public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
-        IManagedConnectionProxy proxy = event.getConnectionProxy();
+        IPhynixxManagedConnection proxy = event.getConnectionProxy();
         if (proxy.getConnection() == null) {
             return;
         }

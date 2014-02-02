@@ -103,7 +103,7 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
      */
     private List<IXARecorderResourceListener> listeners = new ArrayList<IXARecorderResourceListener>();
 
-    private SortedMap<Long, PhynixxXADataRecorder> xaDataRecorder = new TreeMap<Long, PhynixxXADataRecorder>();
+    private SortedMap<Long, PhynixxXADataRecorder> xaDataRecorders = new TreeMap<Long, PhynixxXADataRecorder>();
 
     private IDGenerator messageSeqGenerator = new IDGenerator();
 
@@ -288,14 +288,17 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
         if (this.dataLoggerFactory == null) {
             throw new IllegalStateException("No logger set");
         }
-        // xaDataRecorder.clear();
+        // xaDataRecorders.clear();
         fireXARecorderResourceOpened();
     }
 
     @Override
     public synchronized void close() {
         if (!isClosed()) {
-            xaDataRecorder.clear();
+            for (PhynixxXADataRecorder dataRecorder : xaDataRecorders.values()) {
+                dataRecorder.close();
+            }
+            xaDataRecorders.clear();
             fireXARecorderResourceClosed();
         }
     }
@@ -342,15 +345,15 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
 
 
     private void addXADataRecorder(PhynixxXADataRecorder xaDataRecorder) {
-        if (!this.xaDataRecorder.containsKey(xaDataRecorder.getXADataRecorderId())) {
-            this.xaDataRecorder.put(xaDataRecorder.getXADataRecorderId(), xaDataRecorder);
+        if (!this.xaDataRecorders.containsKey(xaDataRecorder.getXADataRecorderId())) {
+            this.xaDataRecorders.put(xaDataRecorder.getXADataRecorderId(), xaDataRecorder);
         }
     }
 
     @Override
     public Set<IXADataRecorder> getXADataRecorders() {
-        Set<IXADataRecorder> seqs = new HashSet<IXADataRecorder>(this.xaDataRecorder.size());
-        for (Iterator<PhynixxXADataRecorder> iterator = xaDataRecorder.values().iterator(); iterator.hasNext(); ) {
+        Set<IXADataRecorder> seqs = new HashSet<IXADataRecorder>(this.xaDataRecorders.size());
+        for (Iterator<PhynixxXADataRecorder> iterator = xaDataRecorders.values().iterator(); iterator.hasNext(); ) {
             seqs.add(iterator.next());
         }
         return seqs;
@@ -368,7 +371,7 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
     }
 
     private void removeXADataRecoder(IXADataRecorder xaDataRecorder) {
-        this.xaDataRecorder.remove(xaDataRecorder.getXADataRecorderId());
+        this.xaDataRecorders.remove(xaDataRecorder.getXADataRecorderId());
     }
 
     private void fireEvents(IEventDeliver deliver) {

@@ -24,8 +24,8 @@ package org.csc.phynixx.connection.reference.scenarios;
 import junit.framework.TestCase;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.csc.phynixx.common.TestUtils;
-import org.csc.phynixx.connection.PooledManagedConnectionFactory;
-import org.csc.phynixx.connection.loggersystem.PerTransactionStrategy;
+import org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory;
+import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnectionFactory;
 import org.csc.phynixx.logger.IPhynixxLogger;
@@ -42,7 +42,7 @@ public class MTIntegrationScenarios extends TestCase {
     private static final int NUMBER_OF_THREADS = 5;
     private static final int NUMBER_OPF_TRIALS = 25;
 
-    private PooledManagedConnectionFactory factory = null;
+    private PooledPhynixxManagedConnectionFactory factory = null;
 
     private TmpDirectory tmpDirectory = null;
 
@@ -79,11 +79,11 @@ public class MTIntegrationScenarios extends TestCase {
         // instanciate a connection pool
         GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
         cfg.setMaxTotal(100);
-        this.factory = new PooledManagedConnectionFactory(new ReferenceConnectionFactory(), cfg);
+        this.factory = new PooledPhynixxManagedConnectionFactory(new ReferenceConnectionFactory(), cfg);
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
         //IDataLoggerFactory loggerFactory= new HowlLoggerFactory("reference", this.loadHowlConfig());
 
-        PerTransactionStrategy loggingStrategy = new PerTransactionStrategy(loggerFactory);
+        LoggerPerTransactionStrategy loggingStrategy = new LoggerPerTransactionStrategy(loggerFactory);
         loggingStrategy.addLoggerListener(loggerManagement);
         this.factory.setLoggerSystemStrategy(loggingStrategy);
     }

@@ -24,10 +24,24 @@ package org.csc.phynixx.connection;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
+/**
+ * Connction is aware of a {@link IXADataRecorder}. The enviromne tof the connection provides a {@link IXADataRecorder} if necessary and
+ * sets it via {@link #setXADataRecorder(org.csc.phynixx.loggersystem.logrecord.IXADataRecorder)}.
+ */
 public interface IXADataRecorderAware {
 
+
+    /**
+     * sets the current datzaRecorder. It is set bey the environment
+     *
+     * @param logger
+     */
     void setXADataRecorder(IXADataRecorder logger);
 
+
+    /**
+     * @return the current xadataRecorder
+     */
     IXADataRecorder getXADataRecorder();
 
 

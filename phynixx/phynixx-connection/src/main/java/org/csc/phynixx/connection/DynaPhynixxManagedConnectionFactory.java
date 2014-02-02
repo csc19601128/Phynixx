@@ -23,9 +23,11 @@ package org.csc.phynixx.connection;
 
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.exceptions.ExceptionUtils;
+import org.csc.phynixx.generator.IDGenerator;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -38,23 +40,31 @@ import java.lang.reflect.Proxy;
  *
  * @param <C>
  */
-class DynaManagedConnectionProxyFactory<C extends IPhynixxConnection> extends AbstractDynaProxyFactory {
+class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends AbstractDynaProxyFactory {
 
-    public DynaManagedConnectionProxyFactory(Class[] supportedInterfaces, boolean synchronize) {
+    private static final IDGenerator idGenerator = new IDGenerator(1);
+
+    public DynaPhynixxManagedConnectionFactory(Class[] supportedInterfaces, boolean synchronize) {
         super(supportedInterfaces,
-                new Class[]{IPhynixxConnection.class, IManagedConnectionProxy.class, IPhynixxConnectionHandle.class},
+                new Class[]{IPhynixxConnection.class, IPhynixxManagedConnection.class, IPhynixxConnectionHandle.class},
                 new Class[]{IXADataRecorderAware.class},
                 synchronize);
 
     }
 
-    DynaManagedConnectionProxyFactory(Class[] supportedInterfaces) {
+    DynaPhynixxManagedConnectionFactory(Class[] supportedInterfaces) {
         this(supportedInterfaces, true);
     }
 
-    IManagedConnectionProxy<C> getConnectionProxy() {
-        ConnectionProxy proxy = new ConnectionProxy();
-        IManagedConnectionProxy<C> proxied = (IManagedConnectionProxy<C>)
+    IPhynixxManagedConnection<C> getConnectionProxy() {
+
+        Long connectionId = null;
+        synchronized (idGenerator) {
+            connectionId = idGenerator.generateLong();
+        }
+        ConnectionPhynixxGuard proxy = new ConnectionPhynixxGuard(connectionId);
+
+        IPhynixxManagedConnection<C> proxied = (IPhynixxManagedConnection<C>)
                 Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
                         this.getImplementedInterfaces(), proxy);
         proxy.proxiedObject = proxied;
@@ -62,7 +72,7 @@ class DynaManagedConnectionProxyFactory<C extends IPhynixxConnection> extends Ab
     }
 
 
-    class ConnectionProxy<C extends IPhynixxConnection> extends PhynixxManagedConnectionProxy<C> implements IPhynixxConnectionHandle<C>, InvocationHandler {
+    class ConnectionPhynixxGuard<C extends IPhynixxConnection> extends PhynixxManagedConnectionGuard<C> implements IPhynixxConnectionHandle<C>, InvocationHandler {
 
 
         private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
@@ -70,7 +80,35 @@ class DynaManagedConnectionProxyFactory<C extends IPhynixxConnection> extends Ab
          * As the proxy contains more information than the current implentation we have to store
          * the proxy an use it in all call backs
          */
-        private IManagedConnectionProxy<C> proxiedObject = null;
+        private IPhynixxManagedConnection<C> proxiedObject = null;
+
+        ConnectionPhynixxGuard(long id) {
+            super(id);
+        }
+
+        /**
+         * if the interface method is decorated with {@link org.csc.phynixx.connection.RequiresTransaction}
+         *
+         * @param method
+         * @return
+         */
+        private boolean requiresTransaction(Method method) {
+
+            Annotation[] annotations = method.getDeclaredAnnotations();
+            if (annotations == null || annotations.length == 0) {
+                return false;
+            }
+            for (int i = 0; i < annotations.length; i++) {
+                if (RequiresTransaction.class.isAssignableFrom(annotations[i].annotationType())) {
+                    RequiresTransaction requiresTransactionAnnotation = (RequiresTransaction) annotations[i];
+                    return requiresTransactionAnnotation.value();
+                }
+            }
+
+            return false;
+
+        }
+
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             Object target = null;
@@ -81,12 +119,12 @@ class DynaManagedConnectionProxyFactory<C extends IPhynixxConnection> extends Ab
 
             // execute
             try {
-                if (DynaManagedConnectionProxyFactory.this.declaredBySystemInterface(method)) {
+                if (DynaPhynixxManagedConnectionFactory.this.declaredBySystemInterface(method)) {
                     target = this;
 
                     // System.out.println("Thread " + Thread.currentThread()+" Connection IF expected to " + this+" on "+method);
                     Object obj = null;
-                    if (DynaManagedConnectionProxyFactory.this.isSynchronize()) {
+                    if (DynaPhynixxManagedConnectionFactory.this.isSynchronize()) {
                         synchronized (this) {
                             obj = method.invoke(this, args);
                         }
@@ -94,28 +132,30 @@ class DynaManagedConnectionProxyFactory<C extends IPhynixxConnection> extends Ab
                         obj = method.invoke(this, args);
                     }
                     return obj;
-                } else if (DynaManagedConnectionProxyFactory.this.declaredBySupportedInterface(method)) {
+                } else if (DynaPhynixxManagedConnectionFactory.this.declaredBySupportedInterface(method)) {
 
                     target = this.getConnection();
 
                     // System.out.println("Thread " + Thread.currentThread()+" Delegated to Connection " + target+" on "+method);
 
                     Object obj = null;
-                    if (DynaManagedConnectionProxyFactory.this.isSynchronize()) {
+                    if (DynaPhynixxManagedConnectionFactory.this.isSynchronize()) {
                         synchronized (this) {
-                            // as we do not no better we assume that all methods needs transactions ...
-                            this.fireConnectionRequiresTransaction();
+                            if (this.requiresTransaction(method)) {
+                                this.fireConnectionRequiresTransaction();
+                            }
                             obj = method.invoke(target, args);
                         }
                     } else {
-                        // as we do not no better we assume that all methods needs transactions ...
-                        this.fireConnectionRequiresTransaction();
+                        if (this.requiresTransaction(method)) {
+                            this.fireConnectionRequiresTransaction();
+                        }
                         obj = method.invoke(target, args);
                     }
                     return obj;
                 } else {
                     Object obj = null;
-                    if (DynaManagedConnectionProxyFactory.this.isSynchronize()) {
+                    if (DynaPhynixxManagedConnectionFactory.this.isSynchronize()) {
                         synchronized (this) {
                             obj = method.invoke(this, args);
                         }
@@ -134,11 +174,9 @@ class DynaManagedConnectionProxyFactory<C extends IPhynixxConnection> extends Ab
             }
         }
 
-
-        protected IManagedConnectionProxy<C> getObservableProxy() {
-            return (IManagedConnectionProxy) proxiedObject;
+        protected IPhynixxManagedConnection<C> getObservableProxy() {
+            return (IPhynixxManagedConnection) proxiedObject;
         }
 
     }
-
 }

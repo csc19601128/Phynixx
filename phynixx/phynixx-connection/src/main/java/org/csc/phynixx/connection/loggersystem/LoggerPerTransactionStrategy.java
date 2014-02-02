@@ -36,9 +36,9 @@ import java.util.Set;
 
 
 /**
- * this listener observes the lifecycle of a connection and associates a xaDataRecorder is neccessary
+ * this listener observes the lifecycle of a connection and associates a xaDataRecorder if necessary.
  */
-public class PerTransactionStrategy<C extends IPhynixxConnection> extends ManagedConnectionListenerAdapter<C> implements ILoggerSystemStrategy<C>, IManagedConnectionListener<C> {
+public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXADataRecorderAware> extends ManagedConnectionListenerAdapter<C> implements ILoggerSystemStrategy<C>, IManagedConnectionListener<C> {
 
 
     private IXARecorderResource xaRecorderResource;
@@ -58,7 +58,7 @@ public class PerTransactionStrategy<C extends IPhynixxConnection> extends Manage
      * @param loggerFactory
      * @throws Exception
      */
-    public PerTransactionStrategy(IDataLoggerFactory loggerFactory) {
+    public LoggerPerTransactionStrategy(IDataLoggerFactory loggerFactory) {
         this.xaRecorderResource = new PhynixxXARecorderResource(loggerFactory);
     }
 
@@ -75,7 +75,9 @@ public class PerTransactionStrategy<C extends IPhynixxConnection> extends Manage
 
 
     /**
-     * Logger isn't destroy. If a dataRecorder is found in this phase this indicates a abnormal programm flow
+     * Logger isn't destroy. If a dataRecorder is found in this phase this indicates an abnormal program flow.,
+     * <p/>
+     * Therefore the dataRecorder isn't destroy and keep it's content to possibly recover
      *
      * @param event current connection
      */
@@ -215,7 +217,7 @@ public class PerTransactionStrategy<C extends IPhynixxConnection> extends Manage
     }
 
 
-    public IManagedConnectionProxy<C> decorate(IManagedConnectionProxy<C> connectionProxy) {
+    public IPhynixxManagedConnection<C> decorate(IPhynixxManagedConnection<C> connectionProxy) {
         connectionProxy.addConnectionListener(this);
         return connectionProxy;
     }

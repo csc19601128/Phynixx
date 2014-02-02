@@ -212,9 +212,12 @@ public class FileChannelDataLogger implements IDataLogger {
         if (this.randomAccess == null) {
             return;
         }
-        this.logFileAccess.close();
-        this.randomAccess.close();
-        this.randomAccess = null;
+        try {
+            this.randomAccess.close();
+        } finally {
+            this.logFileAccess.close();
+            this.randomAccess = null;
+        }
     }
 
 
