@@ -34,6 +34,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
+ * <p>
  * provided generic proxies on base of java DynaProxies
  * <p/>
  * This proxy
@@ -75,7 +76,7 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
     class ConnectionPhynixxGuard<C extends IPhynixxConnection> extends PhynixxManagedConnectionGuard<C> implements IPhynixxConnectionHandle<C>, InvocationHandler {
 
 
-        private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
+        private final IPhynixxLogger log = PhynixxLogManager.getLogger(ConnectionPhynixxGuard.class);
         /**
          * As the proxy contains more information than the current implentation we have to store
          * the proxy an use it in all call backs

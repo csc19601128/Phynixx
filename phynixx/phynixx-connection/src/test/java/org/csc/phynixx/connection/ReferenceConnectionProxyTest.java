@@ -42,13 +42,13 @@ public class ReferenceConnectionProxyTest {
     public static final String LOGGER = "logger";
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
-    private PhynixxManagedConnectionFactory factory = null;
+    private PhynixxPhynixxManagedConnectionFactory factory = null;
 
     private TmpDirectory tmpDirectory = null;
 
-    private PhynixxManagedConnectionFactory createConnectionFactory() throws Exception {
+    private PhynixxPhynixxManagedConnectionFactory createConnectionFactory() throws Exception {
 
-        PhynixxManagedConnectionFactory factory = new PhynixxManagedConnectionFactory(new ReferenceConnectionFactory());
+        PhynixxPhynixxManagedConnectionFactory factory = new PhynixxPhynixxManagedConnectionFactory(new ReferenceConnectionFactory());
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
         factory.setLoggerSystemStrategy(new LoggerPerTransactionStrategy(loggerFactory));
 

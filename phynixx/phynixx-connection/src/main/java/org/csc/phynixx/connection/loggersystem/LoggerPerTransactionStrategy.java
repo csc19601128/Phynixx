@@ -38,7 +38,7 @@ import java.util.Set;
 /**
  * this listener observes the lifecycle of a connection and associates a xaDataRecorder if necessary.
  */
-public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXADataRecorderAware> extends ManagedConnectionListenerAdapter<C> implements ILoggerSystemStrategy<C>, IManagedConnectionListener<C> {
+public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXADataRecorderAware> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxLoggerSystemStrategy<C>, IPhynixxManagedConnectionListener<C> {
 
 
     private IXARecorderResource xaRecorderResource;

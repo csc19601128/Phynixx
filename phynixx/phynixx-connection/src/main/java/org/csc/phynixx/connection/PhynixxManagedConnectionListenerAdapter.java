@@ -22,9 +22,9 @@ package org.csc.phynixx.connection;
 
 
 /**
- * Noop Implementation of the IManagedConnectionListener.
+ * Noop Implementation of the IPhynixxManagedConnectionListener.
  */
-public class ManagedConnectionListenerAdapter<C extends IPhynixxConnection> implements IManagedConnectionListener<C> {
+public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnection> implements IPhynixxManagedConnectionListener<C> {
 
 
     /**

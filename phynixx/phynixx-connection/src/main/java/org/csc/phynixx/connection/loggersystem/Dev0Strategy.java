@@ -37,7 +37,7 @@ import java.util.List;
  * written data are fired an forgotten. Their are not stored as if wriiten to dev0.
  */
 
-public class Dev0Strategy<C extends IPhynixxConnection> extends ManagedConnectionListenerAdapter<C> implements ILoggerSystemStrategy<C> {
+public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxLoggerSystemStrategy<C> {
 
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 

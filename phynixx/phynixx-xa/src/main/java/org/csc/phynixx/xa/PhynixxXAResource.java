@@ -66,7 +66,7 @@ public class PhynixxXAResource implements XAResource {
     /**
      * @supplierCardinality 0..1
      */
-    private ManagedXAConnection currentXAConnectionHandle = null;
+    private PhynixxManagedXAConnection currentXAConnectionHandle = null;
 
     private volatile boolean closed = false;
 
@@ -88,7 +88,7 @@ public class PhynixxXAResource implements XAResource {
         this.tmMgr = tmMgr;
         this.factory = factory;
         if (connectionProxy != null) {
-            this.currentXAConnectionHandle = new ManagedXAConnection(this, tmMgr, connectionProxy);
+            this.currentXAConnectionHandle = new PhynixxManagedXAConnection(this, tmMgr, connectionProxy);
         } else {
             this.currentXAConnectionHandle = null;
         }
@@ -564,7 +564,7 @@ public class PhynixxXAResource implements XAResource {
                     }
                 }
 
-                ManagedXAConnection handle = null;
+                PhynixxManagedXAConnection handle = null;
                 if (this.currentXAConnectionHandle != null) {
                     handle = this.currentXAConnectionHandle;
                     this.currentXAConnectionHandle = null; // used
@@ -576,7 +576,7 @@ public class PhynixxXAResource implements XAResource {
                     } catch (Exception e) {
                         throw new DelegatedRuntimeException(e);
                     }
-                    handle = new ManagedXAConnection(this, this.tmMgr, con);
+                    handle = new PhynixxManagedXAConnection(this, this.tmMgr, con);
                 }
                 handle.associateTransaction();
                 statecon =

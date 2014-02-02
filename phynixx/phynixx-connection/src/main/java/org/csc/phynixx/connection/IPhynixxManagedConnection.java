@@ -26,7 +26,7 @@ package org.csc.phynixx.connection;
  * it takes care of integrating the connection into the phynixx XA Implementation
  * and/or provides persistent logger to store transaction data.
  * <p/>
- * It decorates the origin Connection with one or more aspects an. You can declare new decorators by {@link PhynixxManagedConnectionFactory}
+ * It decorates the origin Connection with one or more aspects an. You can declare new decorators by {@link PhynixxPhynixxManagedConnectionFactory}
  * <p/>
  * <p/>
  * this IF combines the role of a core connection and the role of a connection proxy.
@@ -45,7 +45,7 @@ public interface IPhynixxManagedConnection<C extends IPhynixxConnection> extends
 
     void recover();
 
-    void addConnectionListener(IManagedConnectionListener<C> listener);
+    void addConnectionListener(IPhynixxManagedConnectionListener<C> listener);
 
-    void removeConnectionListener(IManagedConnectionListener<C> listener);
+    void removeConnectionListener(IPhynixxManagedConnectionListener<C> listener);
 }

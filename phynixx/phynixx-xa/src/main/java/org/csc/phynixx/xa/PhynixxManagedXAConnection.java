@@ -43,7 +43,7 @@ import javax.transaction.xa.XAResource;
  *
  * @author zf4iks2
  */
-class ManagedXAConnection extends ManagedConnectionListenerAdapter implements IPhynixxXAConnection, IManagedConnectionListener {
+class PhynixxManagedXAConnection extends PhynixxManagedConnectionListenerAdapter implements IPhynixxXAConnection, IPhynixxManagedConnectionListener {
 
     private TransactionManager tmMgr = null;
     private volatile boolean readOnly = true;
@@ -54,7 +54,7 @@ class ManagedXAConnection extends ManagedConnectionListenerAdapter implements IP
 
     private Transaction transaction = null;
 
-    ManagedXAConnection(
+    PhynixxManagedXAConnection(
             PhynixxXAResource xaresource,
             TransactionManager tmMgr,
             IPhynixxManagedConnection connectionProxy) {
@@ -204,10 +204,10 @@ class ManagedXAConnection extends ManagedConnectionListenerAdapter implements IP
 
 
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof ManagedXAConnection)) {
+        if (obj == null || !(obj instanceof PhynixxManagedXAConnection)) {
             return false;
         }
-        return ((ManagedXAConnection) obj).connectionProxy.equals(this.connectionProxy);
+        return ((PhynixxManagedXAConnection) obj).connectionProxy.equals(this.connectionProxy);
     }
 
 

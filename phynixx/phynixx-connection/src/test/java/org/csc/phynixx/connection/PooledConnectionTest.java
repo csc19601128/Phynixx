@@ -44,9 +44,9 @@ import java.util.Properties;
 public class PooledConnectionTest {
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
-    private PooledPhynixxManagedConnectionFactory<ITestConnection> factory = null;
+    private PooledPhynixxPhynixxManagedConnectionFactory<ITestConnection> factory = null;
 
-    private RecoveryListener recoveryListner = new RecoveryListener();
+    private TestRecoveryListener recoveryListner = new TestRecoveryListener();
 
     private static final int POOL_SIZE = 30;
 
@@ -62,13 +62,13 @@ public class PooledConnectionTest {
 
         GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
         cfg.setMaxTotal(POOL_SIZE);
-        this.factory = new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
+        this.factory = new PooledPhynixxPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
         LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
         this.factory.setLoggerSystemStrategy(strategy);
-        this.recoveryListner = new RecoveryListener();
+        this.recoveryListner = new TestRecoveryListener();
         this.factory.setConnectionProxyDecorator(this.recoveryListner);
 
     }

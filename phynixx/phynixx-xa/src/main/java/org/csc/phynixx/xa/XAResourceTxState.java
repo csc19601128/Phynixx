@@ -21,10 +21,10 @@ package org.csc.phynixx.xa;
  */
 
 
-import org.csc.phynixx.connection.IManagedConnectionListener;
 import org.csc.phynixx.connection.IManagedConnectionProxyEvent;
 import org.csc.phynixx.connection.IPhynixxConnection;
-import org.csc.phynixx.connection.ManagedConnectionListenerAdapter;
+import org.csc.phynixx.connection.IPhynixxManagedConnectionListener;
+import org.csc.phynixx.connection.PhynixxManagedConnectionListenerAdapter;
 import org.csc.phynixx.exceptions.SampleTransactionalException;
 import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
@@ -64,7 +64,7 @@ import java.util.Set;
  *
  * @author zf4iks2
  */
-class XAResourceTxState extends ManagedConnectionListenerAdapter implements IManagedConnectionListener {
+class XAResourceTxState extends PhynixxManagedConnectionListenerAdapter implements IPhynixxManagedConnectionListener {
 
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
@@ -76,7 +76,7 @@ class XAResourceTxState extends ManagedConnectionListenerAdapter implements IMan
 
     private Xid xid = null;
 
-    private ManagedXAConnection xaConnectionHandle;
+    private PhynixxManagedXAConnection xaConnectionHandle;
 
     private Set joinedXAConnections = new HashSet();
 
@@ -85,7 +85,7 @@ class XAResourceTxState extends ManagedConnectionListenerAdapter implements IMan
 
     private int heuristicState = 0;
 
-    XAResourceTxState(Xid xid, ManagedXAConnection xaConnectionHandle) {
+    XAResourceTxState(Xid xid, PhynixxManagedXAConnection xaConnectionHandle) {
         super();
         this.xid = xid;
         this.xaConnectionHandle = xaConnectionHandle;
@@ -99,7 +99,7 @@ class XAResourceTxState extends ManagedConnectionListenerAdapter implements IMan
         return xid;
     }
 
-    ManagedXAConnection getXAConnectionHandle() {
+    PhynixxManagedXAConnection getXAConnectionHandle() {
         return xaConnectionHandle;
     }
 
@@ -110,7 +110,7 @@ class XAResourceTxState extends ManagedConnectionListenerAdapter implements IMan
         return this.joinedXAConnections.contains(resouce);
     }
 
-    void join(ManagedXAConnection xaConnectionHandle) {
+    void join(PhynixxManagedXAConnection xaConnectionHandle) {
 
         // join the connections ...
         xaConnectionHandle.setConnection(this.getXAConnectionHandle().getConnectionHandle().getConnection());
@@ -342,7 +342,7 @@ class XAResourceTxState extends ManagedConnectionListenerAdapter implements IMan
         this.xaConnectionHandle.close();
         if (joinedXAConnections != null && joinedXAConnections.size() > 0) {
             for (Iterator iterator = joinedXAConnections.iterator(); iterator.hasNext(); ) {
-                ManagedXAConnection handle = (ManagedXAConnection) iterator.next();
+                PhynixxManagedXAConnection handle = (PhynixxManagedXAConnection) iterator.next();
                 handle.close();
             }
         }

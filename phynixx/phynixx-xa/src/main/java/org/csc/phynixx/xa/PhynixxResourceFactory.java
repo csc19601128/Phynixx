@@ -44,7 +44,7 @@ public class PhynixxResourceFactory implements IPhynixxXAResourceListener {
 
     private static IResourceIDGenerator idGenerator = new IDGenerator();
     private XAResourceTxStateManager xaresourceTxStateManager = new XAResourceTxStateManager();
-    private ConnectionTray connectionTray = null;
+    private PhynixxConnectionTray connectionTray = null;
 
     private Set xaresources = Collections.synchronizedSet(new HashSet());
 
@@ -66,7 +66,7 @@ public class PhynixxResourceFactory implements IPhynixxXAResourceListener {
             IPhynixxConnectionProxyFactory connectionProxyFactory,
             TransactionManager transactionManager) {
         this.resourceFactoryId = id;
-        this.connectionTray = new ConnectionTray(connectionFactory);
+        this.connectionTray = new PhynixxConnectionTray(connectionFactory);
 
         this.connectionProxyFactory = connectionProxyFactory;
         this.transactionManager = transactionManager;

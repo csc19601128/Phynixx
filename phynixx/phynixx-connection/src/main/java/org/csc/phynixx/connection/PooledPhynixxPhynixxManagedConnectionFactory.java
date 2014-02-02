@@ -32,12 +32,12 @@ import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
 
 /**
- * Factory pools the pure connection. before delivering the connection it ist decorate by the according to {@link PhynixxManagedConnectionFactory}.
+ * Factory pools the pure connection. before delivering the connection it ist decorate by the according to {@link PhynixxPhynixxManagedConnectionFactory}.
  *
  * @param <C> Typ of the pure connection
  */
-public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends PhynixxManagedConnectionFactory<C> {
-    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PooledPhynixxManagedConnectionFactory.class);
+public class PooledPhynixxPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends PhynixxPhynixxManagedConnectionFactory<C> {
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PooledPhynixxPhynixxManagedConnectionFactory.class);
 
     private GenericObjectPool<IPhynixxManagedConnection<C>> genericObjectPool = null;
 
@@ -48,9 +48,9 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
      */
     private static class MyPoolableObjectFactory<X extends IPhynixxConnection> extends BasePooledObjectFactory<IPhynixxManagedConnection<X>> implements PooledObjectFactory<IPhynixxManagedConnection<X>> {
 
-        PooledPhynixxManagedConnectionFactory<X> managedConnectionFactory;
+        PooledPhynixxPhynixxManagedConnectionFactory<X> managedConnectionFactory;
 
-        private MyPoolableObjectFactory(PooledPhynixxManagedConnectionFactory<X> managedConnectionFactory) {
+        private MyPoolableObjectFactory(PooledPhynixxPhynixxManagedConnectionFactory<X> managedConnectionFactory) {
             this.managedConnectionFactory = managedConnectionFactory;
         }
 
@@ -90,17 +90,17 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
 
     }
 
-    public PooledPhynixxManagedConnectionFactory() {
+    public PooledPhynixxPhynixxManagedConnectionFactory() {
         super();
     }
 
 
-    public PooledPhynixxManagedConnectionFactory(IPhynixxConnectionFactory connectionFactory) {
+    public PooledPhynixxPhynixxManagedConnectionFactory(IPhynixxConnectionFactory connectionFactory) {
         this(connectionFactory, null);
     }
 
-    public PooledPhynixxManagedConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory,
-                                                 GenericObjectPoolConfig genericPoolConfig) {
+    public PooledPhynixxPhynixxManagedConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory,
+                                                        GenericObjectPoolConfig genericPoolConfig) {
         super(connectionFactory);
         GenericObjectPoolConfig cfg = genericPoolConfig;
         if (cfg == null) {

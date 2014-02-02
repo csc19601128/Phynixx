@@ -24,7 +24,7 @@ package org.csc.phynixx.connection;
 import junit.framework.AssertionFailedError;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.connection.loggersystem.ILoggerSystemStrategy;
+import org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnection;
@@ -44,9 +44,9 @@ public class ReferenceConnectionTest {
     public static final String LOGGER = "logger";
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
-    private PhynixxManagedConnectionFactory<IReferenceConnection> connectionFactory = null;
+    private PhynixxPhynixxManagedConnectionFactory<IReferenceConnection> connectionFactory = null;
 
-    private ILoggerSystemStrategy strategy = null;
+    private IPhynixxLoggerSystemStrategy strategy = null;
 
     private TmpDirectory tmpDir = null;
 
@@ -60,10 +60,10 @@ public class ReferenceConnectionTest {
 
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        ILoggerSystemStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
+        IPhynixxLoggerSystemStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
         this.connectionFactory =
-                new PhynixxManagedConnectionFactory<IReferenceConnection>(new ReferenceConnectionFactory());
+                new PhynixxPhynixxManagedConnectionFactory<IReferenceConnection>(new ReferenceConnectionFactory());
         connectionFactory.setLoggerSystemStrategy(strategy);
     }
 

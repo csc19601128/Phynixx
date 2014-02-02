@@ -27,7 +27,7 @@ package org.csc.phynixx.connection;
  * @param <C> Typ of the connection
  */
 
-public interface IManagedConnectionListener<C extends IPhynixxConnection> {
+public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection> {
 
     /**
      * called before the connection is opended
