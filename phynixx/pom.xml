@@ -16,6 +16,7 @@
         <module>phynixx-jmx</module>
         <module>phynixx-doc</module>
         <module>phynixx-howl</module>
+        <module>phynixx-tutorial</module>
     </modules>
 
     <properties>

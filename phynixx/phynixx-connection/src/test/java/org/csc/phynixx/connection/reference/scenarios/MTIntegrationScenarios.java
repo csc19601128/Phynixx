@@ -24,6 +24,7 @@ package org.csc.phynixx.connection.reference.scenarios;
 import junit.framework.TestCase;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.csc.phynixx.common.TestUtils;
+import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.connection.PooledPhynixxPhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.connection.reference.IReferenceConnection;
@@ -94,7 +95,7 @@ public class MTIntegrationScenarios extends TestCase {
             this.shutdown();
         }
 
-        this.tmpDirectory.rmdir();
+        this.tmpDirectory.clear();
     }
 
     private interface IWorkOnConnection {

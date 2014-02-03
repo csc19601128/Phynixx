@@ -23,6 +23,7 @@ package org.csc.phynixx.connection.reference.scenarios;
 
 import junit.framework.TestCase;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.connection.PhynixxPhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.PooledPhynixxPhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
@@ -49,7 +50,7 @@ public class IntegrationScenarios extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        this.tmpDirectory.rmdir();
+        this.tmpDirectory.clear();
     }
 
     TmpDirectory tmpDirectory = null;
