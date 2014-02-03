@@ -124,7 +124,7 @@ public class ConnectionRecoveryTest extends TestCase {
 
 
         // TestCase.assertTrue( messageLogger.isCommitting());
-        TestCase.assertEquals(5 + 7 + ITestConnection.RF_INCREMENT, counter[0]);
+        TestCase.assertEquals(5 + 7, counter[0]);
     }
 
 
@@ -161,7 +161,7 @@ public class ConnectionRecoveryTest extends TestCase {
 
         IActOnConnection actOnConnection = new IActOnConnection() {
             public void doWork(ITestConnection con) {
-                con.setInitialCounter(7);
+                con.setInitialCounter(3);
                 con.act(5);
                 con.act(7);
                 synchronized (counter) {
@@ -181,7 +181,7 @@ public class ConnectionRecoveryTest extends TestCase {
                     @Override
                     public void managedConnectionRecovered(ITestConnection con) {
 
-                        Assert.assertEquals(19 + ITestConnection.RF_INCREMENT, con.getCurrentCounter());
+                        Assert.assertEquals(15, con.getCurrentCounter());
                     }
                 };
 
@@ -198,6 +198,7 @@ public class ConnectionRecoveryTest extends TestCase {
         IActOnConnection actOnConnection = new IActOnConnection() {
             public void doWork(ITestConnection con) {
                 TestConnection coreCon = (TestConnection) ((IPhynixxConnectionHandle) con).getConnection();
+                con.setInitialCounter(3);
                 con.act(5);
                 coreCon.setInterruptFlag(TestInterruptionPoint.ACT);
                 con.act(7);
@@ -210,7 +211,7 @@ public class ConnectionRecoveryTest extends TestCase {
                 new PhynixxPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
                     @Override
                     public void managedConnectionRecovered(ITestConnection con) {
-                        Assert.assertEquals(12, con.getCurrentCounter());
+                        Assert.assertEquals(3, con.getCurrentCounter());
                     }
                 };
 
