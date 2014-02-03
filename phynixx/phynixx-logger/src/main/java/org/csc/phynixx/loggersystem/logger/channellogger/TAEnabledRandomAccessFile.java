@@ -137,7 +137,7 @@ class TAEnabledRandomAccessFile {
      *
      * @param newPosition Position
      * @throws java.io.IOException IO-Fehler
-     * @author Ivens
+     * @author Phynixx
      */
     public void position(long newPosition) throws IOException {
 
@@ -153,7 +153,7 @@ class TAEnabledRandomAccessFile {
      * Evtl. HeaderBrereiche werden ignoriert
      *
      * @throws java.io.IOException IO-Fehler
-     * @author Ivens
+     * @author Phynixx
      */
     public void incPosition(long length) throws IOException {
         long newPosition = this.position() + length;
@@ -167,6 +167,9 @@ class TAEnabledRandomAccessFile {
      */
     public void close() throws IOException {
         if (raf != null) {
+
+            // gibt Lock auf datei frei
+            raf.getChannel().lock().release();
             // Schliessen der Daten-Datei
             raf.close();
             raf = null;
@@ -437,7 +440,6 @@ class TAEnabledRandomAccessFile {
      * steht jeweils am Anfang der Datei. Positioniert auf die neu gesetzte
      * fileSize.
      *
-     * @param fileSize , Die wiederherzustellende Dateigroesse.
      * @throws java.io.IOException IO-Fehler
      * @see
      */
