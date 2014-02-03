@@ -66,6 +66,9 @@ class TAEnabledRandomAccessFile {
      * @return RandomAccessFile
      */
     RandomAccessFile getRandomAccessFile() {
+        if (isClose()) {
+            throw new IllegalStateException("TAEnabledChanneList is closed");
+        }
         return this.raf;
     }
 
@@ -445,9 +448,7 @@ class TAEnabledRandomAccessFile {
      */
     private void restoreCommittedSize() throws IOException {
 
-        if (isClose()) {
-            throw new IOException("TAEnabledChanneList geschlossen");
-        }
+
         this.getRandomAccessFile().seek(0);
         if (this.raf.length() < LONG_BYTES) {
             this.getRandomAccessFile().writeLong(0);
