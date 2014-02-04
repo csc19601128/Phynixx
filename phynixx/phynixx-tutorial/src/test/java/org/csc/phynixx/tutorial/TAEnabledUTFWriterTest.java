@@ -38,7 +38,9 @@ public class TAEnabledUTFWriterTest {
 
         File file = this.tmpDir.assertExitsFile("my_test.tmp");
 
-        TAEnabledUTFWriter writer = TAEnabledUTFWriter.createWriter(file);
+        TAEnabledUTFWriterImpl writer = new TAEnabledUTFWriterImpl();
+        writer.open(file);
+        writer.resetContent();
 
         try {
             writer.write("AA").write("BB");
@@ -46,7 +48,8 @@ public class TAEnabledUTFWriterTest {
             writer.close();
         }
 
-        writer = TAEnabledUTFWriter.recoverWriter(file);
+        TAEnabledUTFWriterImpl recoverWriter = new TAEnabledUTFWriterImpl();
+        recoverWriter.open(file);
         try {
             List<String> content = writer.getContent();
             Assert.assertEquals(2, content.size());
