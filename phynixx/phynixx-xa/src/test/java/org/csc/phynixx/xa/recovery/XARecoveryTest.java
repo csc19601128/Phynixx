@@ -85,11 +85,11 @@ public class XARecoveryTest extends TestCase {
         this.jotm = new Jotm(true, false);
 
         this.factory1 = new TestResourceFactory(
-                "RF1",
+                "RF1", this.tmpDirectory.getDirectory(),
                 this.jotm.getTransactionManager());
 
         this.factory2 = new TestResourceFactory(
-                "RF2",
+                "RF2", this.tmpDirectory.getDirectory(),
                 this.jotm.getTransactionManager());
     }
 
@@ -120,11 +120,11 @@ public class XARecoveryTest extends TestCase {
     private void provokeRecoverySituation() throws Exception {
         Runnable runnable = new Runnable() {
             public void run() {
-                IPhynixxXAConnection xaCon1 = XARecoveryTest.this.factory1.getXAConnection();
-                TestConnectionProxy con1 = (TestConnectionProxy) xaCon1.getConnection();
+                IPhynixxXAConnection<ITestConnection> xaCon1 = XARecoveryTest.this.factory1.getXAConnection();
+                ITestConnection con1 = xaCon1.getConnection();
 
-                IPhynixxXAConnection xaCon2 = XARecoveryTest.this.factory2.getXAConnection();
-                TestConnectionProxy con2 = (TestConnectionProxy) xaCon2.getConnection();
+                IPhynixxXAConnection<ITestConnection> xaCon2 = XARecoveryTest.this.factory2.getXAConnection();
+                ITestConnection con2 = xaCon2.getConnection();
 
                 try {
                     XARecoveryTest.this.getJotm().getTransactionManager().begin();
@@ -174,12 +174,11 @@ public class XARecoveryTest extends TestCase {
         this.provokeRecoverySituation();
 
 
-        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
-        TestConnectionProxy con1 = (TestConnectionProxy) xaCon1.getConnection();
+        IPhynixxXAConnection<ITestConnection> xaCon1 = XARecoveryTest.this.factory1.getXAConnection();
+        ITestConnection con1 = xaCon1.getConnection();
 
-        IPhynixxXAConnection xaCon2 = factory2.getXAConnection();
-        TestConnectionProxy con2 = (TestConnectionProxy) xaCon2.getConnection();
-
+        IPhynixxXAConnection<ITestConnection> xaCon2 = XARecoveryTest.this.factory2.getXAConnection();
+        ITestConnection con2 = xaCon2.getConnection();
 
         try {
             this.getJotm().getUserTransaction().begin();

@@ -32,12 +32,12 @@ import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
 
 /**
- * Factory pools the pure connection. before delivering the connection it ist decorate by the according to {@link PhynixxPhynixxManagedConnectionFactory}.
+ * Factory pools the pure connection. before delivering the connection it ist decorate by the according to {@link PhynixxManagedConnectionFactory}.
  *
  * @param <C> Typ of the pure connection
  */
-public class PooledPhynixxPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends PhynixxPhynixxManagedConnectionFactory<C> {
-    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PooledPhynixxPhynixxManagedConnectionFactory.class);
+public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends PhynixxManagedConnectionFactory<C> {
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PooledPhynixxManagedConnectionFactory.class);
 
     private GenericObjectPool<IPhynixxManagedConnection<C>> genericObjectPool = null;
 
@@ -48,9 +48,9 @@ public class PooledPhynixxPhynixxManagedConnectionFactory<C extends IPhynixxConn
      */
     private static class MyPoolableObjectFactory<X extends IPhynixxConnection> extends BasePooledObjectFactory<IPhynixxManagedConnection<X>> implements PooledObjectFactory<IPhynixxManagedConnection<X>> {
 
-        PooledPhynixxPhynixxManagedConnectionFactory<X> managedConnectionFactory;
+        PooledPhynixxManagedConnectionFactory<X> managedConnectionFactory;
 
-        private MyPoolableObjectFactory(PooledPhynixxPhynixxManagedConnectionFactory<X> managedConnectionFactory) {
+        private MyPoolableObjectFactory(PooledPhynixxManagedConnectionFactory<X> managedConnectionFactory) {
             this.managedConnectionFactory = managedConnectionFactory;
         }
 
@@ -63,8 +63,8 @@ public class PooledPhynixxPhynixxManagedConnectionFactory<C extends IPhynixxConn
         }
 
         public void destroyObject(PooledObject<IPhynixxManagedConnection<X>> obj) throws Exception {
-            IPhynixxManagedConnection ch = (IPhynixxManagedConnection) obj.getObject();
-            ch.getConnection().close();
+            IPhynixxManagedConnection<X> ch = obj.getObject();
+            ch.close();
         }
 
         @Override
@@ -84,23 +84,22 @@ public class PooledPhynixxPhynixxManagedConnectionFactory<C extends IPhynixxConn
         }
 
         public boolean validateObject(PooledObject<IPhynixxManagedConnection<X>> obj) {
-            X con = obj.getObject().getConnection();
-            return !(con.isClosed());
+            return obj.getObject() != null && !(obj.getObject().isClosed());
         }
 
     }
 
-    public PooledPhynixxPhynixxManagedConnectionFactory() {
+    public PooledPhynixxManagedConnectionFactory() {
         super();
     }
 
 
-    public PooledPhynixxPhynixxManagedConnectionFactory(IPhynixxConnectionFactory connectionFactory) {
+    public PooledPhynixxManagedConnectionFactory(IPhynixxConnectionFactory connectionFactory) {
         this(connectionFactory, null);
     }
 
-    public PooledPhynixxPhynixxManagedConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory,
-                                                        GenericObjectPoolConfig genericPoolConfig) {
+    public PooledPhynixxManagedConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory,
+                                                 GenericObjectPoolConfig genericPoolConfig) {
         super(connectionFactory);
         GenericObjectPoolConfig cfg = genericPoolConfig;
         if (cfg == null) {
@@ -111,7 +110,6 @@ public class PooledPhynixxPhynixxManagedConnectionFactory<C extends IPhynixxConn
 
     /**
      * closes the current pool -if existing- and instanciates a new pool
-     *
      *
      * @param cfg
      * @throws Exception
@@ -189,7 +187,7 @@ public class PooledPhynixxPhynixxManagedConnectionFactory<C extends IPhynixxConn
 		for(int i=0; i < messageLoggers.size();i++) {
 			try {
 				IXADataRecorder msgLogger= (IXADataRecorder) messageLoggers.get(i);
-				con= this.getConnection();
+				con= this.getCoreConnection();
 				if( (con instanceof IXADataRecorderAware)) {
 					((IXADataRecorderAware)con).setRecordLogger(msgLogger);
 				}
@@ -208,19 +206,16 @@ public class PooledPhynixxPhynixxManagedConnectionFactory<C extends IPhynixxConn
      * the connection is released to the pool
      */
     public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
-        IPhynixxManagedConnection<C> proxy = event.getConnectionProxy();
-        if (proxy.getConnection() == null) {
+        IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
+        if (proxy.getCoreConnection() == null || proxy.isClosed()) {
             return;
+        } else {
+            this.releaseConnection(proxy);
         }
-        this.releaseConnection(proxy);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Proxy " + proxy + " released");
         }
 
-    }
-
-    public void connectionDereferenced(IManagedConnectionProxyEvent<C> event) {
-        throw new IllegalStateException("Connection is bound to a proxy and can't be released");
     }
 
 

@@ -24,8 +24,8 @@ package org.csc.phynixx.connection.reference.scenarios;
 import junit.framework.TestCase;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.connection.PhynixxPhynixxManagedConnectionFactory;
-import org.csc.phynixx.connection.PooledPhynixxPhynixxManagedConnectionFactory;
+import org.csc.phynixx.connection.PhynixxManagedConnectionFactory;
+import org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnection;
@@ -57,7 +57,7 @@ public class IntegrationScenarios extends TestCase {
 
     public void testSampleConnectionFactory() throws Exception {
         // instanciate a connection pool
-        PhynixxPhynixxManagedConnectionFactory factory = this.createConnectionFactory();
+        PhynixxManagedConnectionFactory factory = this.createConnectionFactory();
 
         IReferenceConnection con = null;
         try {
@@ -88,7 +88,7 @@ public class IntegrationScenarios extends TestCase {
     public void testSampleConnectionPool() throws Exception {
         // instanciate a connection pool
 
-        PooledPhynixxPhynixxManagedConnectionFactory factory = createConnectionFactory(5);
+        PooledPhynixxManagedConnectionFactory factory = createConnectionFactory(5);
 
         IReferenceConnection con = null;
         try {
@@ -119,7 +119,7 @@ public class IntegrationScenarios extends TestCase {
 
     public void testDecorationConnections() throws Exception {
         // instanciate a connection pool
-        PooledPhynixxPhynixxManagedConnectionFactory factory = createConnectionFactory(5);
+        PooledPhynixxManagedConnectionFactory factory = createConnectionFactory(5);
         EventListenerPhynixx eventListener = new EventListenerPhynixx();
         factory.setConnectionProxyDecorator(eventListener);
 
@@ -155,7 +155,7 @@ public class IntegrationScenarios extends TestCase {
 
     public void testRecovery() throws Exception {
         // instanciate a connection pool
-        PooledPhynixxPhynixxManagedConnectionFactory factory = createConnectionFactory(5);
+        PooledPhynixxManagedConnectionFactory factory = createConnectionFactory(5);
         IReferenceConnection con = null;
         try {
             // get a connection ....
@@ -192,11 +192,11 @@ public class IntegrationScenarios extends TestCase {
 
     }
 
-    private PooledPhynixxPhynixxManagedConnectionFactory createConnectionFactory(int maxActiveConnections) throws Exception {
+    private PooledPhynixxManagedConnectionFactory createConnectionFactory(int maxActiveConnections) throws Exception {
 
         GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
         cfg.setMaxTotal(maxActiveConnections);
-        PooledPhynixxPhynixxManagedConnectionFactory factory = new PooledPhynixxPhynixxManagedConnectionFactory(new ReferenceConnectionFactory(), cfg);
+        PooledPhynixxManagedConnectionFactory factory = new PooledPhynixxManagedConnectionFactory(new ReferenceConnectionFactory(), cfg);
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
         //IDataLoggerFactory loggerFactory= new HowlLoggerFactory("reference", this.loadHowlConfig(tmpDirectory.getDirectory()));
@@ -205,9 +205,9 @@ public class IntegrationScenarios extends TestCase {
         return factory;
     }
 
-    private PhynixxPhynixxManagedConnectionFactory createConnectionFactory() throws Exception {
+    private PhynixxManagedConnectionFactory createConnectionFactory() throws Exception {
 
-        PhynixxPhynixxManagedConnectionFactory factory = new PhynixxPhynixxManagedConnectionFactory(new ReferenceConnectionFactory());
+        PhynixxManagedConnectionFactory factory = new PhynixxManagedConnectionFactory(new ReferenceConnectionFactory());
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
         factory.setLoggerSystemStrategy(new LoggerPerTransactionStrategy(loggerFactory));
 

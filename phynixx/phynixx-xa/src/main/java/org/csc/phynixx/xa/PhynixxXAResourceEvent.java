@@ -21,24 +21,25 @@ package org.csc.phynixx.xa;
  */
 
 
+import org.csc.phynixx.connection.IPhynixxConnection;
 import org.csc.phynixx.xa.IPhynixxXAResourceListener.IPhynixxXAResourceEvent;
 
 import java.util.EventObject;
 
 
-public class PhynixxXAResourceEvent extends EventObject implements IPhynixxXAResourceEvent {
+public class PhynixxXAResourceEvent<C extends IPhynixxConnection> extends EventObject implements IPhynixxXAResourceEvent {
 
     /**
      *
      */
     private static final long serialVersionUID = 336547313996504512L;
 
-    public PhynixxXAResourceEvent(PhynixxXAResource xaresource) {
+    public PhynixxXAResourceEvent(PhynixxXAResource<C> xaresource) {
         super(xaresource);
 
     }
 
-    public PhynixxXAResource getXAResource() {
+    public PhynixxXAResource<C> getXAResource() {
         return (PhynixxXAResource) this.getSource();
     }
 

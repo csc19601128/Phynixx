@@ -2,7 +2,7 @@ package org.csc.phynixx.tutorial;
 
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.connection.PhynixxPhynixxManagedConnectionFactory;
+import org.csc.phynixx.connection.PhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
@@ -22,7 +22,7 @@ public class TransactionalBehaviourTest {
 
     private TmpDirectory tmpDir = null;
 
-    private PhynixxPhynixxManagedConnectionFactory<TAEnabledUTFWriter> connectionFactory = null;
+    private PhynixxManagedConnectionFactory<TAEnabledUTFWriter> connectionFactory = null;
 
     private IPhynixxLoggerSystemStrategy strategy = null;
 
@@ -37,7 +37,7 @@ public class TransactionalBehaviourTest {
         IPhynixxLoggerSystemStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
         this.connectionFactory =
-                new PhynixxPhynixxManagedConnectionFactory<TAEnabledUTFWriter>(new TAEnabledUTFWriterFactoryImpl());
+                new PhynixxManagedConnectionFactory<TAEnabledUTFWriter>(new TAEnabledUTFWriterFactoryImpl());
         connectionFactory.setLoggerSystemStrategy(strategy);
 
     }

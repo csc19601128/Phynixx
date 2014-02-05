@@ -72,6 +72,9 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     private C connection = null;
 
+
+    private Class<C> connectionInterface;
+
     // indicates, that the core connection is executing
     private volatile boolean executing = false;
 
@@ -80,8 +83,10 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     final Long id;
 
-    protected PhynixxManagedConnectionGuard(long id) {
+    protected PhynixxManagedConnectionGuard(long id, Class<C> connectionInterface, C connection) {
         this.id = id;
+        this.connectionInterface = connectionInterface;
+        this.setConnection(connection);
     }
 
     @Override
@@ -104,8 +109,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     }
 
     public String toString() {
-        if (this.getConnection() != null) {
-            return this.getConnection().toString();
+        if (this.getCoreConnection() != null) {
+            return this.getCoreConnection().toString();
         }
         return "no core connection";
     }
@@ -121,31 +126,26 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
      * @return he object via <code>this</code> is accessible
      * @see org.csc.phynixx.connection.DynaPhynixxManagedConnectionFactory.ConnectionPhynixxGuard
      */
-    protected IPhynixxManagedConnection<C> getObservableProxy() {
-        return this;
+    abstract protected IPhynixxManagedConnection<C> getObservableProxy();
+
+    @Override
+    public C toConnection() {
+        return ImplementorUtils.cast(this.getObservableProxy(), this.connectionInterface);
     }
 
-    public void setConnection(C con) {
+    private void setConnection(C con) {
         if ((this.connection == null && con == null) ||
                 (this.connection != null && this.connection.equals(con))
                 ) {
             return;
         }
-
-        if (this.connection != null) {
-            this.fireConnectionDereferenced();
-        }
         this.connection = con;
-
-        if (this.connection != null) {
-            this.fireConnectionReferenced();
-        }
     }
 
 
     public IXADataRecorder getXADataRecorder() {
-        if (this.getConnection() != null && ImplementorUtils.isImplementationOf(getConnection(), IXADataRecorderAware.class)) {
-            return ImplementorUtils.cast(getConnection(), IXADataRecorderAware.class).getXADataRecorder();
+        if (this.getCoreConnection() != null && ImplementorUtils.isImplementationOf(getCoreConnection(), IXADataRecorderAware.class)) {
+            return ImplementorUtils.cast(getCoreConnection(), IXADataRecorderAware.class).getXADataRecorder();
         }
         return null;
 
@@ -153,15 +153,15 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     @Override
     public IDataRecordReplay recoverReplayListener() {
-        if (this.getConnection() != null && ImplementorUtils.isImplementationOf(getConnection(), IXADataRecorderAware.class)) {
-            return ImplementorUtils.cast(getConnection(), IXADataRecorderAware.class).recoverReplayListener();
+        if (this.getCoreConnection() != null && ImplementorUtils.isImplementationOf(getCoreConnection(), IXADataRecorderAware.class)) {
+            return ImplementorUtils.cast(getCoreConnection(), IXADataRecorderAware.class).recoverReplayListener();
         }
         return null;
     }
 
     public void setXADataRecorder(IXADataRecorder dataRecorder) {
-        if (this.getConnection() != null && ImplementorUtils.isImplementationOf(getConnection(), IXADataRecorderAware.class)) {
-            ImplementorUtils.cast(getConnection(), IXADataRecorderAware.class).setXADataRecorder(dataRecorder);
+        if (this.getCoreConnection() != null && ImplementorUtils.isImplementationOf(getCoreConnection(), IXADataRecorderAware.class)) {
+            ImplementorUtils.cast(getCoreConnection(), IXADataRecorderAware.class).setXADataRecorder(dataRecorder);
         }
     }
 
@@ -186,7 +186,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     }
 
 
-    public synchronized C getConnection() {
+    @Override
+    public C getCoreConnection() {
         return this.connection;
     }
 
@@ -195,8 +196,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
      * As a connection proxy shields a xa resource, the current connection is not closed but dereferenced (==released)
      */
     public void close() {
-        if (this.getConnection() != null) {
-            this.getConnection().close();
+        if (this.getCoreConnection() != null) {
+            this.getCoreConnection().close();
             // notify the action
             this.fireConnectionClosed();
         }
@@ -207,8 +208,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
      * As a connection proxy shields a xa resource, the current connection is not closed but dereferenced (==released)
      */
     public void open() {
-        if (this.getConnection() != null) {
-            this.getConnection().open();
+        if (this.getCoreConnection() != null) {
+            this.getCoreConnection().open();
             // notify the action
             this.fireConnectionOpen();
         }
@@ -216,8 +217,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     public synchronized void commit() {
         fireConnectionCommitting();
-        if (this.getConnection() != null) {
-            this.getConnection().commit();
+        if (this.getCoreConnection() != null) {
+            this.getCoreConnection().commit();
         }
         this.fireConnectionCommitted();
 
@@ -225,16 +226,16 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
 
     public boolean isClosed() {
-        if (this.getConnection() != null) {
-            return this.getConnection().isClosed();
+        if (this.getCoreConnection() != null) {
+            return this.getCoreConnection().isClosed();
         }
         return true;
     }
 
     public void prepare() {
         this.fireConnectionPreparing();
-        if (this.getConnection() != null) {
-            this.getConnection().prepare();
+        if (this.getCoreConnection() != null) {
+            this.getCoreConnection().prepare();
         }
         this.fireConnectionPrepared();
     }
@@ -242,8 +243,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     public void rollback() {
         fireConnectionRollingBack();
-        if (this.getConnection() != null) {
-            this.getConnection().rollback();
+        if (this.getCoreConnection() != null) {
+            this.getCoreConnection().rollback();
         }
         this.fireConnectionRolledback();
     }
@@ -256,11 +257,11 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     public void recover() {
 
         // not revoverable
-        if (this.getConnection() == null || !ImplementorUtils.isImplementationOf(getConnection(), IXADataRecorderAware.class)) {
+        if (this.getCoreConnection() == null || !ImplementorUtils.isImplementationOf(getCoreConnection(), IXADataRecorderAware.class)) {
             return;
         }
 
-        IXADataRecorderAware con = ImplementorUtils.cast(getConnection(), IXADataRecorderAware.class);
+        IXADataRecorderAware con = ImplementorUtils.cast(getCoreConnection(), IXADataRecorderAware.class);
 
         // the connection has to re establish the state of the message logger
         IXADataRecorder msgLogger = this.getXADataRecorder();
@@ -369,7 +370,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         fireEvents(deliver);
     }
 
-    protected void fireConnectionErrorOccurred(final Exception exception) {
+    @Override
+    public void fireConnectionErrorOccurred(final Exception exception) {
         IEventDeliver deliver = new IEventDeliver() {
             public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
                 listener.connectionErrorOccurred(event);
@@ -461,7 +463,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     }
 
 
-    protected void fireConnectionDereferenced() {
+    @Override
+    public void fireConnectionDereferenced() {
         IEventDeliver deliver = new IEventDeliver() {
             public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
                 listener.connectionDereferenced(event);
@@ -474,7 +477,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         fireEvents(deliver);
     }
 
-    protected void fireConnectionReferenced() {
+    @Override
+    public void fireConnectionReferenced() {
         IEventDeliver deliver = new IEventDeliver() {
             public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
                 listener.connectionReferenced(event);

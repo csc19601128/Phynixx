@@ -23,7 +23,7 @@ package org.csc.phynixx.connection;
 
 public interface IManagedConnectionProxyEvent<C extends IPhynixxConnection> {
 
-    IPhynixxManagedConnection<C> getConnectionProxy();
+    IPhynixxManagedConnection<C> getManagedConnection();
 
     /**
      * @return exception, that raises the event

@@ -21,32 +21,45 @@ package org.csc.phynixx.xa;
  */
 
 
-import org.csc.phynixx.connection.DynaProxyFactory;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.csc.phynixx.connection.PhynixxManagedConnectionFactory;
+import org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory;
+import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
+import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
+import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
 import org.csc.phynixx.test_connection.ITestConnection;
-import org.csc.phynixx.test_connection.TestConnection;
 import org.csc.phynixx.test_connection.TestConnectionFactory;
 
 import javax.transaction.TransactionManager;
+import java.io.File;
 
 
-public class TestResourceFactory extends PhynixxResourceFactory {
+public class TestResourceFactory extends PhynixxResourceFactory<ITestConnection> {
 
-    public TestResourceFactory(
-            TransactionManager transactionManager) {
-        this("TestResourceFactory", transactionManager);
+    public static final int POOL_SIZE = 10;
+
+    public TestResourceFactory(TransactionManager transactionManager) {
+        this("TestResourceFactory", null, transactionManager);
     }
 
     public TestResourceFactory(String id,
+                               File dataLoggerDirectory,
                                TransactionManager transactionManager) {
-        super(id,
-                new XAPooledConnectionFactory(new TestConnectionFactory()),
-                new DynaProxyFactory(new Class[]{ITestConnection.class}),
-                transactionManager);
+        super(id, createManagedConnectionFactory(dataLoggerDirectory), transactionManager);
     }
 
-    public boolean isReleased(TestConnection connection) {
-        return this.isFreeConnection(connection);
-    }
+    private static PhynixxManagedConnectionFactory<ITestConnection> createManagedConnectionFactory(File dataLoggerDirectory) {
+        GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
+        cfg.setMaxTotal(POOL_SIZE);
+        PooledPhynixxManagedConnectionFactory<ITestConnection> factory = new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
 
+        if (dataLoggerDirectory != null) {
+            IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("testResource", dataLoggerDirectory);
+            LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
+            factory.setLoggerSystemStrategy(strategy);
+        }
+
+        return factory;
+    }
 
 }

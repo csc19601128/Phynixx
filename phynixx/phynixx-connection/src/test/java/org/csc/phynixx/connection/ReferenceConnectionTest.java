@@ -44,7 +44,7 @@ public class ReferenceConnectionTest {
     public static final String LOGGER = "logger";
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
-    private PhynixxPhynixxManagedConnectionFactory<IReferenceConnection> connectionFactory = null;
+    private PhynixxManagedConnectionFactory<IReferenceConnection> connectionFactory = null;
 
     private IPhynixxLoggerSystemStrategy strategy = null;
 
@@ -63,7 +63,7 @@ public class ReferenceConnectionTest {
         IPhynixxLoggerSystemStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
         this.connectionFactory =
-                new PhynixxPhynixxManagedConnectionFactory<IReferenceConnection>(new ReferenceConnectionFactory());
+                new PhynixxManagedConnectionFactory<IReferenceConnection>(new ReferenceConnectionFactory());
         connectionFactory.setLoggerSystemStrategy(strategy);
     }
 

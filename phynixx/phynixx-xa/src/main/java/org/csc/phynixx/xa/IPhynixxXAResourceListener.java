@@ -21,13 +21,15 @@ package org.csc.phynixx.xa;
  */
 
 
-public interface IPhynixxXAResourceListener {
+import org.csc.phynixx.connection.IPhynixxConnection;
 
-    interface IPhynixxXAResourceEvent {
+public interface IPhynixxXAResourceListener<C extends IPhynixxConnection> {
 
-        PhynixxXAResource getXAResource();
+    interface IPhynixxXAResourceEvent<T extends IPhynixxConnection> {
+
+        PhynixxXAResource<T> getXAResource();
     }
 
-    void closed(IPhynixxXAResourceEvent event);
+    void closed(IPhynixxXAResourceEvent<C> event);
 
 }

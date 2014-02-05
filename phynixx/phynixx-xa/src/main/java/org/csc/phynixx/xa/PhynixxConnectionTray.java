@@ -25,11 +25,13 @@ import org.csc.phynixx.logger.IPhynixxLogger;
 import org.csc.phynixx.logger.PhynixxLogManager;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 
-public class PhynixxConnectionTray extends PhynixxManagedConnectionListenerAdapter implements IPhynixxManagedConnectionListener {
+/**
+ *
+ */
+public class PhynixxConnectionTray<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxManagedConnectionListener<C> {
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
@@ -50,41 +52,37 @@ public class PhynixxConnectionTray extends PhynixxManagedConnectionListenerAdapt
 
     }
 
-    private Map referencedConnections = new HashMap();
+    private Map<IPhynixxManagedConnection<C>, RefCounter> referencedConnections = new HashMap<IPhynixxManagedConnection<C>, RefCounter>();
 
-    private XAPooledConnectionFactory connectionFactory = null;
+    private IPhynixxManagedConnectionFactory<C> connectionFactory;
 
-
-    PhynixxConnectionTray(IPhynixxConnectionFactory connectionFactory) {
-        this.connectionFactory = new XAPooledConnectionFactory(connectionFactory);
+    public PhynixxConnectionTray(IPhynixxManagedConnectionFactory<C> connectionFactory) {
+        this.connectionFactory = connectionFactory;
     }
 
-    private IPhynixxConnectionFactory getCoreConnectionFactory() {
+    private IPhynixxManagedConnectionFactory<C> getCoreConnectionFactory() {
         return this.connectionFactory;
     }
 
-    synchronized IPhynixxConnection getFreeConnenction() {
-        IPhynixxConnection con = this.connectionFactory.getConnection();
+    @Deprecated
+    IPhynixxManagedConnection<C> getFreeConnenction() {
+        IPhynixxManagedConnection<C> con = this.connectionFactory.getManagedConnection();
         return con;
+    }
+
+    int freeConnectionSize() {
+        return 1 - this.referencedConnections.size();
 
     }
 
-    synchronized int freeConnectionSize() {
-        int maxCon = this.connectionFactory.getMaxTotal();
-        return maxCon - this.referencedConnections.size();
-
-    }
-
-    synchronized boolean isFreeConnection(IPhynixxConnection con) {
+    boolean isFreeConnection(IPhynixxManagedConnection<C> con) {
         return !this.referencedConnections.containsKey(con);
     }
 
-    synchronized void close() {
+    void close() {
         // release the referenced connections
-        for (Iterator iterator = this.referencedConnections.entrySet().iterator(); iterator.hasNext(); ) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            IPhynixxConnection con = (IPhynixxConnection) entry.getKey();
-            this.connectionFactory.releaseConnection(con);
+        for (IPhynixxManagedConnection<C> connection : this.referencedConnections.keySet()) {
+            connection.close();
         }
         this.referencedConnections.clear();
 
@@ -93,10 +91,10 @@ public class PhynixxConnectionTray extends PhynixxManagedConnectionListenerAdapt
 
     }
 
-    public synchronized void connectionDereferenced(IManagedConnectionProxyEvent event) {
-        IPhynixxConnection connection = event.getConnectionProxy().getConnection();
+    public void connectionDereferenced(IManagedConnectionProxyEvent<C> event) {
+        IPhynixxManagedConnection<C> connection = event.getManagedConnection();
         if (connection != null) {
-            RefCounter refCounter = (RefCounter) this.referencedConnections.get(connection);
+            RefCounter refCounter = this.referencedConnections.get(connection);
             if (refCounter == null) {
                 throw new IllegalStateException("Connection " + connection + " is not registerd");
             }
@@ -104,7 +102,7 @@ public class PhynixxConnectionTray extends PhynixxManagedConnectionListenerAdapt
                 if (!connection.isClosed()) {
                     this.referencedConnections.remove(connection);
                     log.debug("Connection " + connection + " freed");
-                    this.connectionFactory.releaseConnection(connection);
+                    connection.close();
                 }
             } else {
                 refCounter.decreaseRefCount();
@@ -113,11 +111,11 @@ public class PhynixxConnectionTray extends PhynixxManagedConnectionListenerAdapt
         }
     }
 
-    public synchronized void connectionReferenced(IManagedConnectionProxyEvent event) {
+    public void connectionReferenced(IManagedConnectionProxyEvent event) {
 
-        IPhynixxConnection connection = event.getConnectionProxy().getConnection();
+        IPhynixxManagedConnection<C> connection = event.getManagedConnection();
         if (connection != null) {
-            RefCounter refCounter = (RefCounter) this.referencedConnections.get(connection);
+            RefCounter refCounter = this.referencedConnections.get(connection);
             if (refCounter == null) {
                 refCounter = new RefCounter();
                 this.referencedConnections.put(connection, refCounter);
@@ -128,16 +126,11 @@ public class PhynixxConnectionTray extends PhynixxManagedConnectionListenerAdapt
         }
     }
 
-    public synchronized void connectionClosed(IManagedConnectionProxyEvent event) {
+    public void connectionClosed(IManagedConnectionProxyEvent event) {
 
-        // dereference the connection
-        event.getConnectionProxy().setConnection(null);
-
-        // Check, if it is really closed ...
-        IPhynixxConnection con = event.getConnectionProxy().getConnection();
-        this.connectionFactory.releaseConnection(con);
-
-        event.getConnectionProxy().removeConnectionListener(this);
+        IPhynixxManagedConnection managedConnection = event.getManagedConnection();
+        this.referencedConnections.remove(managedConnection);
+        event.getManagedConnection().removeConnectionListener(this);
 
     }
 

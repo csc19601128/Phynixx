@@ -83,7 +83,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
      */
     public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
 
-        C con = event.getConnectionProxy().getConnection();
+        C con = event.getManagedConnection().getCoreConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
         }
@@ -100,7 +100,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
     }
 
     public void connectionRolledback(IManagedConnectionProxyEvent<C> event) {
-        IPhynixxConnection con = event.getConnectionProxy().getConnection();
+        IPhynixxConnection con = event.getManagedConnection().getCoreConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
         }
@@ -118,12 +118,12 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 
         messageAwareConnection.setXADataRecorder(null);
 
-        event.getConnectionProxy().addConnectionListener(this);
+        event.getManagedConnection().addConnectionListener(this);
     }
 
 
     public void connectionCommitted(IManagedConnectionProxyEvent<C> event) {
-        IPhynixxConnection con = event.getConnectionProxy().getConnection();
+        IPhynixxConnection con = event.getManagedConnection().getCoreConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
         }
@@ -139,12 +139,12 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
         xaDataRecorder.destroy();
         messageAwareConnection.setXADataRecorder(null);
 
-        event.getConnectionProxy().addConnectionListener(this);
+        event.getManagedConnection().addConnectionListener(this);
     }
 
 
     public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {
-        IPhynixxConnection con = event.getConnectionProxy().getConnection();
+        IPhynixxConnection con = event.getManagedConnection().getCoreConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
         }
@@ -182,7 +182,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
                 }
             }
         }
-        event.getConnectionProxy().addConnectionListener(this);
+        event.getManagedConnection().addConnectionListener(this);
 
     }
 

@@ -39,10 +39,10 @@ import java.util.Set;
 
 
 /**
- * manages and stores the current of an XAResource enlisted in a transaction.
+ * manages and stores the current state of an XAResource enlisted in a transaction.
  * <p/>
  * The working horse of the XAResource is the connection. The logical connection is represented by
- * SampleXAConnectionHandle.
+ * PhynixxManagedXAConnection.
  * <p/>
  * <p/>
  * <h1>activation state</h1>
@@ -64,7 +64,7 @@ import java.util.Set;
  *
  * @author zf4iks2
  */
-class XAResourceTxState extends PhynixxManagedConnectionListenerAdapter implements IPhynixxManagedConnectionListener {
+class XAResourceTxState<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxManagedConnectionListener<C> {
 
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
@@ -76,7 +76,7 @@ class XAResourceTxState extends PhynixxManagedConnectionListenerAdapter implemen
 
     private Xid xid = null;
 
-    private PhynixxManagedXAConnection xaConnectionHandle;
+    private PhynixxManagedXAConnection<C> xaConnectionHandle;
 
     private Set joinedXAConnections = new HashSet();
 
@@ -85,21 +85,21 @@ class XAResourceTxState extends PhynixxManagedConnectionListenerAdapter implemen
 
     private int heuristicState = 0;
 
-    XAResourceTxState(Xid xid, PhynixxManagedXAConnection xaConnectionHandle) {
+    XAResourceTxState(Xid xid, PhynixxManagedXAConnection<C> xaConnectionHandle) {
         super();
         this.xid = xid;
         this.xaConnectionHandle = xaConnectionHandle;
         this.setRollbackOnly(false);
 
         // Observe the connection proxy
-        this.xaConnectionHandle.getConnectionHandle().addConnectionListener(this);
+        this.xaConnectionHandle.getManagedConnectionHandle().addConnectionListener(this);
     }
 
     Xid getXid() {
         return xid;
     }
 
-    PhynixxManagedXAConnection getXAConnectionHandle() {
+    PhynixxManagedXAConnection<C> getXAConnectionHandle() {
         return xaConnectionHandle;
     }
 
@@ -110,10 +110,10 @@ class XAResourceTxState extends PhynixxManagedConnectionListenerAdapter implemen
         return this.joinedXAConnections.contains(resouce);
     }
 
-    void join(PhynixxManagedXAConnection xaConnectionHandle) {
+    void join(PhynixxManagedXAConnection<C> xaConnectionHandle) {
 
         // join the connections ...
-        xaConnectionHandle.setConnection(this.getXAConnectionHandle().getConnectionHandle().getConnection());
+        xaConnectionHandle.setConnection(this.getXAConnectionHandle().getManagedConnectionHandle());
 
         // save and ignore the joined connection
         if (!this.joinedXAConnections.contains(xaConnectionHandle)) {
@@ -338,7 +338,7 @@ class XAResourceTxState extends PhynixxManagedConnectionListenerAdapter implemen
 
 
     synchronized void close() {
-        this.xaConnectionHandle.getConnectionHandle().removeConnectionListener(this);
+        this.xaConnectionHandle.getManagedConnectionHandle().removeConnectionListener(this);
         this.xaConnectionHandle.close();
         if (joinedXAConnections != null && joinedXAConnections.size() > 0) {
             for (Iterator iterator = joinedXAConnections.iterator(); iterator.hasNext(); ) {
@@ -359,7 +359,7 @@ class XAResourceTxState extends PhynixxManagedConnectionListenerAdapter implemen
      */
     public synchronized void connectionClosed(IManagedConnectionProxyEvent event) {
         heuristicState = XAException.XA_HEURMIX;
-        this.xaConnectionHandle.getConnectionHandle().removeConnectionListener(this);
+        this.xaConnectionHandle.getManagedConnectionHandle().removeConnectionListener(this);
     }
 
     /**

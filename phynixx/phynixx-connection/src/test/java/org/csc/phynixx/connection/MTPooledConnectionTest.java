@@ -40,7 +40,7 @@ import java.util.*;
 public class MTPooledConnectionTest extends TestCase {
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
-    private PooledPhynixxPhynixxManagedConnectionFactory factory = null;
+    private PooledPhynixxManagedConnectionFactory factory = null;
 
     private TestRecoveryListener recoveryListner = new TestRecoveryListener();
 
@@ -57,7 +57,7 @@ public class MTPooledConnectionTest extends TestCase {
 
         GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
         cfg.setMaxTotal(POOL_SIZE);
-        this.factory = new PooledPhynixxPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
+        this.factory = new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
         LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
@@ -189,7 +189,7 @@ public class MTPooledConnectionTest extends TestCase {
             public void doWork(ITestConnection con) {
                 con.act(5);
                 con.act(7);
-                TestConnection coreCon = (TestConnection) ((IPhynixxManagedConnection) con).getConnection();
+                TestConnection coreCon = (TestConnection) ((IPhynixxManagedConnection) con).getCoreConnection();
                 coreCon.setInterruptFlag(TestInterruptionPoint.ACT);
                 con.rollback();
             }

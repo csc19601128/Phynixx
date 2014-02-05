@@ -22,9 +22,8 @@ package org.csc.phynixx.xa;
 
 
 import org.csc.phynixx.connection.IPhynixxConnection;
-import org.csc.phynixx.connection.IPhynixxConnectionFactory;
-import org.csc.phynixx.connection.IPhynixxConnectionProxyFactory;
 import org.csc.phynixx.connection.IPhynixxManagedConnection;
+import org.csc.phynixx.connection.IPhynixxManagedConnectionFactory;
 import org.csc.phynixx.watchdog.IWatchdog;
 import org.csc.phynixx.watchdog.IWatchedCondition;
 import org.csc.phynixx.watchdog.WatchdogRegistry;
@@ -38,37 +37,35 @@ import java.util.Iterator;
 import java.util.Set;
 
 
-public class PhynixxResourceFactory implements IPhynixxXAResourceListener {
+public class PhynixxResourceFactory<T extends IPhynixxConnection> implements IPhynixxXAResourceListener {
 
     private static final long CHECK_INTERVAL = 100; // msecs
 
     private static IResourceIDGenerator idGenerator = new IDGenerator();
     private XAResourceTxStateManager xaresourceTxStateManager = new XAResourceTxStateManager();
-    private PhynixxConnectionTray connectionTray = null;
+    private PhynixxConnectionTray<T> connectionTray = null;
 
     private Set xaresources = Collections.synchronizedSet(new HashSet());
 
     private Object resourceFactoryId = null;
-    private IPhynixxConnectionProxyFactory connectionProxyFactory;
+    private IPhynixxManagedConnectionFactory<T> connectionProxyFactory;
     private TransactionManager transactionManager = null;
     private IWatchdog xaresourrceWatchdog = null;
 
     public PhynixxResourceFactory(
-            IPhynixxConnectionFactory connectionFactory,
-            IPhynixxConnectionProxyFactory connectionProxyFactory,
+            IPhynixxManagedConnectionFactory<T> connectionFactory,
             TransactionManager transactionManager) {
-        this("RF", connectionFactory, connectionProxyFactory, transactionManager);
+        this("RF", connectionFactory, transactionManager);
     }
 
     public PhynixxResourceFactory(
             Object id,
-            IPhynixxConnectionFactory connectionFactory,
-            IPhynixxConnectionProxyFactory connectionProxyFactory,
+            IPhynixxManagedConnectionFactory<T> connectionFactory,
             TransactionManager transactionManager) {
         this.resourceFactoryId = id;
         this.connectionTray = new PhynixxConnectionTray(connectionFactory);
 
-        this.connectionProxyFactory = connectionProxyFactory;
+        this.connectionProxyFactory = connectionFactory;
         this.transactionManager = transactionManager;
         this.xaresourrceWatchdog = WatchdogRegistry.getTheRegistry().createWatchdog(CHECK_INTERVAL);
     }
@@ -78,7 +75,7 @@ public class PhynixxResourceFactory implements IPhynixxXAResourceListener {
         return resourceFactoryId.toString();
     }
 
-    public IPhynixxConnectionProxyFactory getConnectionProxyFactory() {
+    public IPhynixxManagedConnectionFactory getManagedConnectionFactory() {
         return connectionProxyFactory;
     }
 
@@ -90,7 +87,7 @@ public class PhynixxResourceFactory implements IPhynixxXAResourceListener {
         return xaresourceTxStateManager;
     }
 
-    public synchronized boolean isFreeConnection(IPhynixxConnection con) {
+    public synchronized boolean isFreeConnection(IPhynixxManagedConnection<T> con) {
         return this.connectionTray.isFreeConnection(con);
     }
 
@@ -103,23 +100,20 @@ public class PhynixxResourceFactory implements IPhynixxXAResourceListener {
         this.idGenerator = idGenerator;
     }
 
-    synchronized IPhynixxManagedConnection getConnection() {
-        IPhynixxConnection con = this.connectionTray.getFreeConnenction();
-        IPhynixxManagedConnection proxy = this.connectionProxyFactory.getConnectionProxy();
-
+    synchronized IPhynixxManagedConnection getManagedConnection() {
+        IPhynixxManagedConnection proxy = this.connectionProxyFactory.getManagedConnection();
         proxy.addConnectionListener(this.connectionTray);
-        proxy.setConnection(con);
         return proxy;
     }
 
     public final synchronized IPhynixxXAConnection getXAConnection() {
         IPhynixxManagedConnection proxy;
-        proxy = this.getConnection();
+        proxy = this.getManagedConnection();
         PhynixxXAResource xares = instanciateXAResource(proxy);
         return xares.getXAConnection();
     }
 
-    private PhynixxXAResource instanciateXAResource(IPhynixxManagedConnection proxy) {
+    private PhynixxXAResource instanciateXAResource(IPhynixxManagedConnection<T> proxy) {
         PhynixxXAResource xares = new PhynixxXAResource(createXAResourceId(), this.transactionManager, this, proxy);
         xares.addXAResourceListener(this);
         this.xaresources.add(xares);

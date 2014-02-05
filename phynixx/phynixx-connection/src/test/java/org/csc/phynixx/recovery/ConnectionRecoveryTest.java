@@ -27,7 +27,7 @@ import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.connection.IPhynixxConnectionHandle;
 import org.csc.phynixx.connection.IPhynixxManagedConnection;
-import org.csc.phynixx.connection.PhynixxPhynixxManagedConnectionFactory;
+import org.csc.phynixx.connection.PhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.logger.IPhynixxLogger;
@@ -44,7 +44,7 @@ public class ConnectionRecoveryTest extends TestCase {
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
-    private PhynixxPhynixxManagedConnectionFactory<ITestConnection> factory = null;
+    private PhynixxManagedConnectionFactory<ITestConnection> factory = null;
 
     IDataLoggerFactory loggerFactory = null;
 
@@ -61,7 +61,7 @@ public class ConnectionRecoveryTest extends TestCase {
 
         this.loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
 
-        this.factory = new PhynixxPhynixxManagedConnectionFactory<ITestConnection>(new TestConnectionFactory());
+        this.factory = new PhynixxManagedConnectionFactory<ITestConnection>(new TestConnectionFactory());
         this.factory.setLoggerSystemStrategy(new LoggerPerTransactionStrategy(loggerFactory));
 
     }
@@ -113,7 +113,7 @@ public class ConnectionRecoveryTest extends TestCase {
                 con.commit();
 
                 synchronized (counter) {
-                    ITestConnection coreCon = (ITestConnection) ((IPhynixxManagedConnection) con).getConnection();
+                    ITestConnection coreCon = (ITestConnection) ((IPhynixxManagedConnection) con).getCoreConnection();
                     counter[0] = coreCon.getCurrentCounter();
                 }
             }
@@ -138,7 +138,7 @@ public class ConnectionRecoveryTest extends TestCase {
                 con.act(5);
                 con.act(7);
                 synchronized (counter) {
-                    ITestConnection coreCon = (ITestConnection) ((IPhynixxManagedConnection) con).getConnection();
+                    ITestConnection coreCon = (ITestConnection) ((IPhynixxManagedConnection) con).getCoreConnection();
                     counter[0] = coreCon.getCurrentCounter();
                 }
                 TestConnection coreCon = (TestConnection) ((IPhynixxConnectionHandle) con).getConnection();
@@ -165,7 +165,7 @@ public class ConnectionRecoveryTest extends TestCase {
                 con.act(5);
                 con.act(7);
                 synchronized (counter) {
-                    ITestConnection coreCon = (ITestConnection) ((IPhynixxManagedConnection) con).getConnection();
+                    ITestConnection coreCon = (ITestConnection) ((IPhynixxManagedConnection) con).getCoreConnection();
                     counter[0] = coreCon.getCurrentCounter();
                 }
                 TestConnection coreCon = (TestConnection) ((IPhynixxConnectionHandle) con).getConnection();
@@ -176,8 +176,8 @@ public class ConnectionRecoveryTest extends TestCase {
 
         this.provokeRecoverySituation(actOnConnection);
 
-        PhynixxPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection> cb =
-                new PhynixxPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
+        PhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection> cb =
+                new PhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
                     @Override
                     public void managedConnectionRecovered(ITestConnection con) {
 
@@ -207,8 +207,8 @@ public class ConnectionRecoveryTest extends TestCase {
 
         this.provokeRecoverySituation(actOnConnection);
 
-        PhynixxPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection> cb =
-                new PhynixxPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
+        PhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection> cb =
+                new PhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
                     @Override
                     public void managedConnectionRecovered(ITestConnection con) {
                         Assert.assertEquals(3, con.getCurrentCounter());
@@ -221,7 +221,7 @@ public class ConnectionRecoveryTest extends TestCase {
     }
 
 
-    private void replayLogRecords(PhynixxPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection> cb) {
+    private void replayLogRecords(PhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection> cb) {
 
         this.factory.recover(cb);
     }

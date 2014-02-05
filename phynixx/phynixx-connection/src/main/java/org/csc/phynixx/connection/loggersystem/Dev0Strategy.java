@@ -128,7 +128,7 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedCo
 
     @Override
     public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {
-        IPhynixxConnection con = event.getConnectionProxy().getConnection();
+        IPhynixxConnection con = event.getManagedConnection().getCoreConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
         }
@@ -138,7 +138,7 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedCo
         if (logger == null) {
             messageAwareConnection.setXADataRecorder(THE_DEV0_LOGGER);
         }
-        event.getConnectionProxy().addConnectionListener(this);
+        event.getManagedConnection().addConnectionListener(this);
     }
 
 

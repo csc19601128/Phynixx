@@ -33,12 +33,12 @@ class PhynixxConnectionProxyEvent<C extends IPhynixxConnection> extends EventObj
      */
     private static final long serialVersionUID = 2146374246818609618L;
 
-    public PhynixxConnectionProxyEvent(IPhynixxConnectionHandle<C> source) {
+    public PhynixxConnectionProxyEvent(IPhynixxManagedConnection<C> source) {
         super(source);
     }
 
 
-    public PhynixxConnectionProxyEvent(IPhynixxConnectionHandle<C> source, Exception exception) {
+    public PhynixxConnectionProxyEvent(IPhynixxManagedConnection<C> source, Exception exception) {
         super(source);
         this.exception = exception;
     }
@@ -48,13 +48,13 @@ class PhynixxConnectionProxyEvent<C extends IPhynixxConnection> extends EventObj
         return exception;
     }
 
-    public IPhynixxManagedConnection<C> getConnectionProxy() {
+    public IPhynixxManagedConnection<C> getManagedConnection() {
         return (IPhynixxManagedConnection) this.getSource();
     }
 
 
     public String toString() {
-        return this.getConnectionProxy() + ((getException() != null) ? " Exception:: " + getException() : "");
+        return this.getManagedConnection() + ((getException() != null) ? " Exception:: " + getException() : "");
     }
 
 

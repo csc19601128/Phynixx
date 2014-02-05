@@ -21,6 +21,7 @@ package org.csc.phynixx.xa;
  */
 
 
+import org.csc.phynixx.connection.IPhynixxConnection;
 import org.csc.phynixx.connection.IPhynixxManagedConnection;
 import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.exceptions.ExceptionUtils;
@@ -49,7 +50,7 @@ import java.util.List;
  *
  * @author christoph
  */
-public class PhynixxXAResource implements XAResource {
+public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResource {
 
 
     private static final long DEFAULT_TIMEOUT = Long.MAX_VALUE; // msecs - no time out at all
@@ -61,7 +62,7 @@ public class PhynixxXAResource implements XAResource {
 
     private TransactionManager tmMgr = null;
 
-    private PhynixxResourceFactory factory = null;
+    private PhynixxResourceFactory<C> factory = null;
 
     /**
      * @supplierCardinality 0..1
@@ -75,7 +76,7 @@ public class PhynixxXAResource implements XAResource {
     public PhynixxXAResource(
             String xaId,
             TransactionManager tmMgr,
-            PhynixxResourceFactory factory) {
+            PhynixxResourceFactory<C> factory) {
         this(xaId, tmMgr, factory, null);
     }
 
@@ -83,12 +84,12 @@ public class PhynixxXAResource implements XAResource {
             Object xaId,
             TransactionManager tmMgr,
             PhynixxResourceFactory factory,
-            IPhynixxManagedConnection connectionProxy) {
+            IPhynixxManagedConnection<C> managedConnection) {
         this.xaId = xaId;
         this.tmMgr = tmMgr;
         this.factory = factory;
-        if (connectionProxy != null) {
-            this.currentXAConnectionHandle = new PhynixxManagedXAConnection(this, tmMgr, connectionProxy);
+        if (managedConnection != null) {
+            this.currentXAConnectionHandle = new PhynixxManagedXAConnection(this, tmMgr, managedConnection);
         } else {
             this.currentXAConnectionHandle = null;
         }
@@ -122,7 +123,7 @@ public class PhynixxXAResource implements XAResource {
      */
     public void conditionViolated() {
         try {
-            List statecons =
+            List<XAResourceTxState> statecons =
                     factory.getXAResourceTxStateManager().getXAResourceTxStates(this);
             if (statecons == null || statecons.size() == 0) {
                 return;
@@ -130,10 +131,10 @@ public class PhynixxXAResource implements XAResource {
 
             // all associated TX are marked as rollback ...
             for (int i = 0; i < statecons.size(); i++) {
-                XAResourceTxState statecon = (XAResourceTxState) statecons.get(i);
+                XAResourceTxState statecon = statecons.get(i);
                 statecon.setRollbackOnly(true);
                 IPhynixxManagedConnection ch =
-                        statecon.getXAConnectionHandle().getConnectionHandle();
+                        statecon.getXAConnectionHandle().getManagedConnectionHandle();
 
             }
 
@@ -149,14 +150,14 @@ public class PhynixxXAResource implements XAResource {
 
     }
 
-    public IPhynixxXAConnection getXAConnection() {
+    public IPhynixxXAConnection<C> getXAConnection() {
         if (this.currentXAConnectionHandle != null) {
             return currentXAConnectionHandle;
         } else {
-            List xaResTates = this.factory.getXAResourceTxStateManager().getXAResourceTxStates(this);
+            List<XAResourceTxState> xaResourceStates = this.factory.getXAResourceTxStateManager().getXAResourceTxStates(this);
             // check if there is any active TX associated with the current XAREsource
-            for (Iterator iterator = xaResTates.iterator(); iterator.hasNext(); ) {
-                XAResourceTxState state = (XAResourceTxState) iterator.next();
+            for (Iterator<XAResourceTxState> iterator = xaResourceStates.iterator(); iterator.hasNext(); ) {
+                XAResourceTxState state = iterator.next();
                 if (state.isActive()) {
                     return state.getXAConnectionHandle();
                 }
@@ -176,8 +177,7 @@ public class PhynixxXAResource implements XAResource {
 
         try {
 
-            XAResourceTxState statecon =
-                    factory.getXAResourceTxStateManager().getXAResourceTxState(xid);
+            XAResourceTxState statecon = factory.getXAResourceTxStateManager().getXAResourceTxState(xid);
             if (statecon == null) {
                 throw new XAException(XAException.XAER_INVAL);
             }
@@ -226,7 +226,7 @@ public class PhynixxXAResource implements XAResource {
      * end is called in Transaction.delistResource
      *
      * @param xid      A global transaction identifier.
-     * @param onePhase If true, the resource manager should use a one-phase commit protocol
+     * @param flags If true, the resource manager should use a one-phase commit protocol
      *                 to commit the work done on behalf of xid.
      * @throws: XAException An error has occurred. Possible XAException values
      * are XAER_RMERR, XAER_RMFAIL,XAER_NOTA, XAER_INVAL, XAER_PROTO,XA_RB*.
@@ -539,8 +539,7 @@ public class PhynixxXAResource implements XAResource {
             if (flags == TMRESUME || flags == TMJOIN) {
 
                 // if resuming or joining an existing transaction
-                statecon =
-                        factory.getXAResourceTxStateManager().getXAResourceTxState(xid);
+                statecon = factory.getXAResourceTxStateManager().getXAResourceTxState(xid);
                 if (statecon == null) {
                     throw new XAException(XAException.XAER_INVAL);
                 }
@@ -564,7 +563,7 @@ public class PhynixxXAResource implements XAResource {
                     }
                 }
 
-                PhynixxManagedXAConnection handle = null;
+                PhynixxManagedXAConnection<C> handle = null;
                 if (this.currentXAConnectionHandle != null) {
                     handle = this.currentXAConnectionHandle;
                     this.currentXAConnectionHandle = null; // used
@@ -572,7 +571,7 @@ public class PhynixxXAResource implements XAResource {
                     // get a new connection
                     IPhynixxManagedConnection con;
                     try {
-                        con = this.factory.getConnection();
+                        con = this.factory.getManagedConnection();
                     } catch (Exception e) {
                         throw new DelegatedRuntimeException(e);
                     }
@@ -651,7 +650,7 @@ public class PhynixxXAResource implements XAResource {
     }
 
 
-    private List listeners = new ArrayList();
+    private List<IPhynixxXAResourceListener<C>> listeners = new ArrayList();
 
     public void addXAResourceListener(IPhynixxXAResourceListener listener) {
         if (!listeners.contains(listener)) {
@@ -659,15 +658,15 @@ public class PhynixxXAResource implements XAResource {
         }
     }
 
-    public void removeXAResourceListener(IPhynixxXAResourceListener listener) {
+    public void removeXAResourceListener(IPhynixxXAResourceListener<C> listener) {
 
         this.listeners.remove(listener);
     }
 
     private void notifyClosed() {
-        IPhynixxXAResourceEvent event = new PhynixxXAResourceEvent(this);
+        IPhynixxXAResourceEvent<C> event = new PhynixxXAResourceEvent(this);
         for (int i = 0; i < listeners.size(); i++) {
-            IPhynixxXAResourceListener listener = (IPhynixxXAResourceListener) listeners.get(i);
+            IPhynixxXAResourceListener<C> listener = listeners.get(i);
             listener.closed(event);
         }
 

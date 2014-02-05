@@ -43,29 +43,30 @@ import javax.transaction.xa.XAResource;
  *
  * @author zf4iks2
  */
-class PhynixxManagedXAConnection extends PhynixxManagedConnectionListenerAdapter implements IPhynixxXAConnection, IPhynixxManagedConnectionListener {
+class PhynixxManagedXAConnection<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxXAConnection, IPhynixxManagedConnectionListener<C> {
 
     private TransactionManager tmMgr = null;
     private volatile boolean readOnly = true;
 
-    private PhynixxXAResource xaresource = null;
-    private IPhynixxManagedConnection connectionProxy = null;
+    private PhynixxXAResource<C> xaresource = null;
+    private IPhynixxManagedConnection<C> managedConnection = null;
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
     private Transaction transaction = null;
 
     PhynixxManagedXAConnection(
-            PhynixxXAResource xaresource,
+            PhynixxXAResource<C> xaresource,
             TransactionManager tmMgr,
-            IPhynixxManagedConnection connectionProxy) {
+            IPhynixxManagedConnection<C> connectionProxy) {
         super();
         this.xaresource = xaresource;
         this.tmMgr = tmMgr;
-        this.connectionProxy = connectionProxy;
-        this.setConnection(this.connectionProxy.getConnection());
 
         // the current handle observes the connection proxy
         connectionProxy.addConnectionListener(this);
+
+        this.setConnection(connectionProxy);
+
     }
 
 
@@ -73,12 +74,12 @@ class PhynixxManagedXAConnection extends PhynixxManagedConnectionListenerAdapter
         return xaresource;
     }
 
-    public IPhynixxManagedConnection getConnectionHandle() {
-        return connectionProxy;
+    public IPhynixxManagedConnection<C> getManagedConnectionHandle() {
+        return managedConnection;
     }
 
-    public IPhynixxConnection getConnection() {
-        return this.connectionProxy;
+    public C getConnection() {
+        return this.managedConnection.toConnection();
     }
 
     /**
@@ -90,8 +91,13 @@ class PhynixxManagedXAConnection extends PhynixxManagedConnectionListenerAdapter
      *
      * @param con
      */
-    void setConnection(IPhynixxConnection con) {
-        this.connectionProxy.setConnection(con);
+    void setConnection(IPhynixxManagedConnection<C> con) {
+
+        if (this.managedConnection != null) {
+            throw new IllegalStateException("managedConnection already assigned");
+        }
+        con.fireConnectionReferenced();
+        this.managedConnection = con;
     }
 
 
@@ -103,7 +109,7 @@ class PhynixxManagedXAConnection extends PhynixxManagedConnectionListenerAdapter
 
     public void associateTransaction() {
         if (!this.isInTransaction()) {
-            Transaction ntx = this.getTransactionmanagerTransaction();
+            Transaction ntx = this.getTransactionManagerTransaction();
             if (ntx != null) {
                 this.transaction = ntx;
                 // enlist the xaResource in the transaction
@@ -114,7 +120,7 @@ class PhynixxManagedXAConnection extends PhynixxManagedConnectionListenerAdapter
             }
             log.debug("SampleXAConnection:associateTransaction tx==" + ntx);
         } else {
-            if (!this.transaction.equals(this.getTransactionmanagerTransaction())) {
+            if (!this.transaction.equals(this.getTransactionManagerTransaction())) {
                 log.error("SampleXAConnection.associateTransaction already assigned to a TX and expected to assigned to a different TX");
                 throw new DelegatedRuntimeException("already assigned to a TX and expected to assigned to a different TX");
             }
@@ -136,11 +142,11 @@ class PhynixxManagedXAConnection extends PhynixxManagedConnectionListenerAdapter
      * If th resource was enlisted in a TX without any indication it could happen, that the resource
      * is enlisted twice. We rely on the transaction manger to handle this situation correctly
      */
-    public synchronized void connectionRequiresTransaction(IManagedConnectionProxyEvent event) {
+    public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {
         // if not already enlist, do now
         if (!this.isInTransaction()) {
             try {
-                Transaction ntx = this.getTransactionmanagerTransaction();
+                Transaction ntx = this.getTransactionManagerTransaction();
                 if (ntx != null) {
                     associateTransaction();
                     ntx.enlistResource(this.xaresource);
@@ -175,24 +181,25 @@ class PhynixxManagedXAConnection extends PhynixxManagedConnectionListenerAdapter
      * The connection can be reused
      */
     void close() {
-        if (this.connectionProxy != null) {
-            this.connectionProxy.removeConnectionListener(this);
+        this.managedConnection.fireConnectionDereferenced();
+        if (this.managedConnection != null) {
+            this.managedConnection.removeConnectionListener(this);
         }
-        this.connectionProxy.setConnection(null);
+        this.managedConnection = null;
     }
 
 
     /**
      *
      */
-    public void connectionClosed(IManagedConnectionProxyEvent event) {
-        event.getConnectionProxy().removeConnectionListener(this);
+    public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
+        event.getManagedConnection().removeConnectionListener(this);
     }
 
     /**
      * @return aktuelle TX des TransactionManagers
      */
-    private Transaction getTransactionmanagerTransaction() {
+    private Transaction getTransactionManagerTransaction() {
         try {
             return this.tmMgr.getTransaction();
         } catch (SystemException e) {
@@ -207,18 +214,18 @@ class PhynixxManagedXAConnection extends PhynixxManagedConnectionListenerAdapter
         if (obj == null || !(obj instanceof PhynixxManagedXAConnection)) {
             return false;
         }
-        return ((PhynixxManagedXAConnection) obj).connectionProxy.equals(this.connectionProxy);
+        return ((PhynixxManagedXAConnection) obj).managedConnection.equals(this.managedConnection);
     }
 
 
     public int hashCode() {
-        return this.connectionProxy.hashCode();
+        return this.managedConnection.hashCode();
     }
 
 
     public String toString() {
         StringBuffer buffer = new StringBuffer("SampleXAConnection");
-        buffer.append("\n   connected to " + connectionProxy.toString()).
+        buffer.append("\n   connected to " + managedConnection.toString()).
                 append("\n   enlisted in TX ").append(this.transaction != null).
                 append("\n   readOnly ").append(this.readOnly).
                 append("\n   relates to XAResource ").append(this.xaresource.getId());

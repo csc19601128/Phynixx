@@ -34,7 +34,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * <p>
+ * <p/>
  * provided generic proxies on base of java DynaProxies
  * <p/>
  * This proxy
@@ -45,25 +45,29 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
 
     private static final IDGenerator idGenerator = new IDGenerator(1);
 
-    public DynaPhynixxManagedConnectionFactory(Class[] supportedInterfaces, boolean synchronize) {
-        super(supportedInterfaces,
-                new Class[]{IPhynixxConnection.class, IPhynixxManagedConnection.class, IPhynixxConnectionHandle.class},
+    private Class<C> connectionInterface;
+
+    DynaPhynixxManagedConnectionFactory(Class<C> connectionInterface, boolean synchronize) {
+        super(new Class<?>[]{connectionInterface},
+                new Class[]{IPhynixxConnection.class, IPhynixxManagedConnection.class},
                 new Class[]{IXADataRecorderAware.class},
                 synchronize);
+        this.connectionInterface = connectionInterface;
+
 
     }
 
-    DynaPhynixxManagedConnectionFactory(Class[] supportedInterfaces) {
-        this(supportedInterfaces, true);
+    DynaPhynixxManagedConnectionFactory(Class<C> connectionInterface) {
+        this(connectionInterface, true);
     }
 
-    IPhynixxManagedConnection<C> getConnectionProxy() {
+    IPhynixxManagedConnection<C> getManagedConnection(C coreConnection) {
 
         Long connectionId = null;
         synchronized (idGenerator) {
             connectionId = idGenerator.generateLong();
         }
-        ConnectionPhynixxGuard proxy = new ConnectionPhynixxGuard(connectionId);
+        ConnectionPhynixxGuard proxy = new ConnectionPhynixxGuard(connectionId, connectionInterface, coreConnection);
 
         IPhynixxManagedConnection<C> proxied = (IPhynixxManagedConnection<C>)
                 Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
@@ -73,7 +77,7 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
     }
 
 
-    class ConnectionPhynixxGuard<C extends IPhynixxConnection> extends PhynixxManagedConnectionGuard<C> implements IPhynixxConnectionHandle<C>, InvocationHandler {
+    class ConnectionPhynixxGuard<C extends IPhynixxConnection> extends PhynixxManagedConnectionGuard<C> implements InvocationHandler {
 
 
         private final IPhynixxLogger log = PhynixxLogManager.getLogger(ConnectionPhynixxGuard.class);
@@ -81,10 +85,10 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
          * As the proxy contains more information than the current implentation we have to store
          * the proxy an use it in all call backs
          */
-        private IPhynixxManagedConnection<C> proxiedObject = null;
+        private IPhynixxManagedConnection<C> proxiedObject;
 
-        ConnectionPhynixxGuard(long id) {
-            super(id);
+        ConnectionPhynixxGuard(long id, Class<C> connectionInterface, C connection) {
+            super(id, connectionInterface, connection);
         }
 
         /**
@@ -135,7 +139,7 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
                     return obj;
                 } else if (DynaPhynixxManagedConnectionFactory.this.declaredBySupportedInterface(method)) {
 
-                    target = this.getConnection();
+                    target = this.getCoreConnection();
 
                     // System.out.println("Thread " + Thread.currentThread()+" Delegated to Connection " + target+" on "+method);
 
