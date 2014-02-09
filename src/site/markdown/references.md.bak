@@ -12,19 +12,16 @@ X/Open Ltd 1991
 
 [data_direct-2005]
 Nur auf Basis der Begrifflichkeiten der JTA wie XAResource und XMID werden unterschieldliche Szenarien der Kommunikation zwischen TA-manager und XAresource demonstriert.
-Understanding JTA [http://www.datadirect.com/resources/resource-library/jdbc-developer-center/jdbc-tutorials/understanding-jta---the-java-transaction-api/distributed-transactions-and-the-transaction-manager].
+Understanding JTA [http://www.datadirect.com/developer/jdbc/docs/jta.pdf].
 DATA DIRECT Technology. May 2005.
 
 [mike_spille-2004]
 Umfangreiche und detailierte Diskussion der unterschiedlichen Szenarien eines XA Protokolls.
-XA Exposed Part I-III[ http://jroller.com/pyrasun/category/XA]. Mike Spille (im Rahmen TheServerSide.com).
+XA Exposed Part I –III[ http://jroller.com/pyrasun/category/XA]. Mike Spille (im Rahmen TheServerSide.com).
 2004.
 [gupta-1997]
 Grundlagen zu OLTP.
 Commit Processing in Distributed On-Line and Real-Time Transaction Processing Systems
 [ http://dsl.serc.iisc.ernet.in/publications/thesis/rkg.ps.gz].
 Ramesh Kumar Gupta (Promotion am Indian Institute of Science , Bangalore). 1997.
-[rich-2006]
-Java Transaction Design Strategies by Mark Richards on May 14, 2006 
-[http://www.infoq.com/minibooks/JTDS]
 
