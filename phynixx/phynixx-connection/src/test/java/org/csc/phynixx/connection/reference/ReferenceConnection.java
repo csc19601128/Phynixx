@@ -21,11 +21,11 @@ package org.csc.phynixx.connection.reference;
  */
 
 
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.connection.IXADataRecorderAware;
 import org.csc.phynixx.connection.RequiresTransaction;
 import org.csc.phynixx.connection.loggersystem.Dev0Strategy;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecord;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
@@ -118,7 +118,7 @@ public class ReferenceConnection implements IReferenceConnection, IXADataRecorde
         this.increments.add(new Integer(inc));
     }
 
-    public void open() {
+    public void reset() {
         increments.clear();
         counter = 0;
     }

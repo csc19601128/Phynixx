@@ -21,9 +21,9 @@ package org.objectweb.howl.log;
  */
 
 
-import org.csc.phynixx.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.ILogRecordReplayListener;
 import org.csc.phynixx.loggersystem.ILogger;
 import org.csc.phynixx.loggersystem.XALogRecordType;

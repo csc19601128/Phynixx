@@ -21,9 +21,9 @@ package org.csc.phynixx.connection.loggersystem;
  */
 
 
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.connection.*;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecord;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;

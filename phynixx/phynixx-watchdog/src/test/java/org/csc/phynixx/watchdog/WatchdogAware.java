@@ -24,9 +24,9 @@ package org.csc.phynixx.watchdog;
  */
 
 
-import org.csc.phynixx.generator.IDGenerator;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.common.generator.IDGenerator;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.watchdog.log.ConditionViolatedLog;
 
 /**

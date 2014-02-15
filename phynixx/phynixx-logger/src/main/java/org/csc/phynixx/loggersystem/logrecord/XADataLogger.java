@@ -22,10 +22,10 @@ package org.csc.phynixx.loggersystem.logrecord;
 
 
 import org.apache.commons.io.IOUtils;
-import org.csc.phynixx.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.exceptions.ExceptionUtils;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.exceptions.ExceptionUtils;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logger.IDataLogger;
 import org.csc.phynixx.loggersystem.logger.channellogger.AccessMode;
 

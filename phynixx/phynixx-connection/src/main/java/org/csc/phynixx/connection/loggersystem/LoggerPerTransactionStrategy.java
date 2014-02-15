@@ -21,8 +21,8 @@ package org.csc.phynixx.connection.loggersystem;
  */
 
 
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.connection.*;
-import org.csc.phynixx.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 import org.csc.phynixx.loggersystem.logrecord.IXARecorderResource;

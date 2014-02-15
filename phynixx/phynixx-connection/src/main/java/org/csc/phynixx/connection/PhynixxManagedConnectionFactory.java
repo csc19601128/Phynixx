@@ -21,12 +21,12 @@ package org.csc.phynixx.connection;
  */
 
 
-import org.csc.phynixx.cast.ImplementorUtils;
+import org.csc.phynixx.common.cast.ImplementorUtils;
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.connection.loggersystem.Dev0Strategy;
 import org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy;
-import org.csc.phynixx.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
 import java.util.List;
@@ -128,7 +128,7 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
                 }
 
                 // Instantiate the connection
-                proxy.open();
+                proxy.reset();
             } catch (ClassCastException e) {
                 e.printStackTrace();
                 throw new DelegatedRuntimeException(e);

@@ -21,13 +21,10 @@ package org.csc.phynixx.xa;
  */
 
 
-import org.csc.phynixx.connection.IManagedConnectionProxyEvent;
-import org.csc.phynixx.connection.IPhynixxConnection;
-import org.csc.phynixx.connection.IPhynixxManagedConnectionListener;
-import org.csc.phynixx.connection.PhynixxManagedConnectionListenerAdapter;
-import org.csc.phynixx.exceptions.SampleTransactionalException;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.common.exceptions.SampleTransactionalException;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
+import org.csc.phynixx.connection.*;
 
 import javax.transaction.Status;
 import javax.transaction.xa.XAException;
@@ -46,8 +43,7 @@ import java.util.Set;
  * <p/>
  * <p/>
  * <h1>activation state</h1>
- * A XAResource can participate in several TXs. This is controlled by the TA-Manager
- * using the resume/suspend-protocol
+ * A XAResource can participate in several TXs. This is controlled by the TA-Manager using the resume/suspend-protocol
  * A XAResource that hasn't already be prepared can be suspended.
  * <p/>
  * <h1>progress state</h1>
@@ -78,29 +74,37 @@ class XAResourceTxState<C extends IPhynixxConnection> extends PhynixxManagedConn
 
     private PhynixxManagedXAConnection<C> xaConnectionHandle;
 
-    private Set joinedXAConnections = new HashSet();
+    private Set<PhynixxManagedXAConnection<C>> joinedXAConnections = new HashSet();
 
     private int activeState = ACTIVE;
     private volatile boolean rollbackOnly = false;
 
     private int heuristicState = 0;
 
-    XAResourceTxState(Xid xid, PhynixxManagedXAConnection<C> xaConnectionHandle) {
-        super();
+
+    /**
+     * shared physical connection
+     */
+    private IPhynixxManagedConnection<C> managedConnection;
+
+    /**
+     * a xaResource is started with falgs==TMNOFLAGS. A new connection has to be assocoated
+     *
+     * @param xid
+     * @param managedConnection shared physical connection
+     */
+    XAResourceTxState(Xid xid, IPhynixxManagedConnection<C> managedConnection) {
         this.xid = xid;
-        this.xaConnectionHandle = xaConnectionHandle;
         this.setRollbackOnly(false);
 
         // Observe the connection proxy
-        this.xaConnectionHandle.getManagedConnectionHandle().addConnectionListener(this);
+        this.managedConnection = managedConnection;
+        this.managedConnection.addConnectionListener(this);
     }
+
 
     Xid getXid() {
         return xid;
-    }
-
-    PhynixxManagedXAConnection<C> getXAConnectionHandle() {
-        return xaConnectionHandle;
     }
 
     boolean isJoined(XAResource resouce) {
@@ -113,7 +117,7 @@ class XAResourceTxState<C extends IPhynixxConnection> extends PhynixxManagedConn
     void join(PhynixxManagedXAConnection<C> xaConnectionHandle) {
 
         // join the connections ...
-        xaConnectionHandle.setConnection(this.getXAConnectionHandle().getManagedConnectionHandle());
+        xaConnectionHandle.setConnection(this.managedConnection);
 
         // save and ignore the joined connection
         if (!this.joinedXAConnections.contains(xaConnectionHandle)) {
@@ -152,17 +156,17 @@ class XAResourceTxState<C extends IPhynixxConnection> extends PhynixxManagedConn
         return activeState;
     }
 
-    synchronized void setRollbackOnly(boolean rbOnly) {
+    void setRollbackOnly(boolean rbOnly) {
         this.rollbackOnly = rbOnly;
         //new Exception("Set to " + rbOnly+" ObjectId"+super.toString()).printStackTrace();
     }
 
-    synchronized boolean isRollbackOnly() {
+    boolean isRollbackOnly() {
         // new Exception("Read " + this.rollbackOnly+" ObjectId"+super.toString()).printStackTrace();
         return rollbackOnly;
     }
 
-    synchronized int getProgressState() {
+    int getProgressState() {
         return progressState;
     }
 
@@ -175,7 +179,7 @@ class XAResourceTxState<C extends IPhynixxConnection> extends PhynixxManagedConn
         return (this.heuristicState > 0);
     }
 
-    synchronized int getHeuristicState() {
+    int getHeuristicState() {
         return this.heuristicState;
     }
 
@@ -231,7 +235,7 @@ class XAResourceTxState<C extends IPhynixxConnection> extends PhynixxManagedConn
         }
     }
 
-    synchronized int prepare() throws XAException {
+    int prepare() throws XAException {
         if (this.progressState == Status.STATUS_PREPARED) {
             if (this.getXAConnectionHandle().isReadOnly()) {
                 return (XAResource.XA_RDONLY);
@@ -271,7 +275,7 @@ class XAResourceTxState<C extends IPhynixxConnection> extends PhynixxManagedConn
     }
 
 
-    synchronized void rollback() throws XAException {
+    void rollback() throws XAException {
         if (!checkTXRequirements()) {
             log.error("State not transactional " + this);
             throw new XAException(XAException.XAER_PROTO);
@@ -332,12 +336,12 @@ class XAResourceTxState<C extends IPhynixxConnection> extends PhynixxManagedConn
 
     public String toString() {
         StringBuffer buffer = new StringBuffer("XAResourceTxState ");
-        buffer.append(" connected to " + xaConnectionHandle + " enlisted in TX " + this.xid + " Active=" + this.isActive() + " ProgressState=" + ConstantsPrinter.getStatusMessage(this.progressState));
+        buffer.append(" connected to " + managedConnection + " enlisted in TX " + this.xid + " Active=" + this.isActive() + " ProgressState=" + ConstantsPrinter.getStatusMessage(this.progressState));
         return buffer.toString();
     }
 
 
-    synchronized void close() {
+    void close() {
         this.xaConnectionHandle.getManagedConnectionHandle().removeConnectionListener(this);
         this.xaConnectionHandle.close();
         if (joinedXAConnections != null && joinedXAConnections.size() > 0) {
@@ -384,7 +388,6 @@ class XAResourceTxState<C extends IPhynixxConnection> extends PhynixxManagedConn
      *
      * @see IConnectionProxyListener.#connectionRolledback(IConnectionProxyEvent)
      */
-
     public synchronized void connectionRolledback(IManagedConnectionProxyEvent event) {
         if (this.getProgressState() != Status.STATUS_ROLLING_BACK &&
                 this.getProgressState() != Status.STATUS_ROLLEDBACK) {

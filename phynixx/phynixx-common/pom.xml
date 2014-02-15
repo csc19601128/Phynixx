@@ -4,7 +4,7 @@
 
     <parent>
         <artifactId>phynixx</artifactId>
-        <groupId>org.csc.phynixx</groupId>
+        <groupId>org.csc.phynixx.phynixx</groupId>
         <version>1.3-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>

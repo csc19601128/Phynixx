@@ -23,7 +23,7 @@ package org.csc.phynixx.watchdog;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.csc.phynixx.generator.IDGenerator;
+import org.csc.phynixx.common.generator.IDGenerator;
 
 import java.util.*;
 

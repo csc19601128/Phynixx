@@ -1,4 +1,4 @@
-package org.csc.phynixx.evaluation.howl;
+package org.csc.phynixx.phynixx.evaluation.howl;
 
 /*
  * #%L

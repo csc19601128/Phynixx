@@ -27,9 +27,9 @@ import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.csc.phynixx.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 
 /**
  * Factory pools the pure connection. before delivering the connection it ist decorate by the according to {@link PhynixxManagedConnectionFactory}.
@@ -56,7 +56,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
 
         public void activateObject(PooledObject<IPhynixxManagedConnection<X>> obj) throws Exception {
             // opens the connection
-            obj.getObject().open();
+            obj.getObject().reset();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Activated " + obj);
             }

@@ -24,11 +24,12 @@ package org.csc.phynixx.xa;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.csc.phynixx.common.TestUtils;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.test_connection.ITestConnection;
-import org.csc.phynixx.test_connection.TestConnectionStatusManager;
-import org.csc.phynixx.test_connection.TestStatusStack;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
+import org.csc.phynixx.phynixx.test_connection.ITestConnection;
+import org.csc.phynixx.phynixx.test_connection.TestConnectionStatusManager;
+import org.csc.phynixx.phynixx.test_connection.TestStatusStack;
+import org.junit.Assert;
 import org.objectweb.jotm.Jotm;
 
 import javax.transaction.RollbackException;
@@ -43,8 +44,8 @@ public class XAResourceTest extends TestCase {
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
     private Jotm jotm = null;
-    private TestResourceFactory factory1 = null;
-    private TestResourceFactory factory2 = null;
+    private TestXAResourceFactory factory1 = null;
+    private TestXAResourceFactory factory2 = null;
 
     protected void setUp() throws Exception {
 
@@ -54,11 +55,11 @@ public class XAResourceTest extends TestCase {
         TestConnectionStatusManager.clear();
         this.jotm = new Jotm(true, false);
 
-        this.factory1 = new TestResourceFactory(
+        this.factory1 = new TestXAResourceFactory(
                 "RF1", null,
                 this.jotm.getTransactionManager());
 
-        this.factory2 = new TestResourceFactory(
+        this.factory2 = new TestXAResourceFactory(
                 "RF2", null,
                 this.jotm.getTransactionManager());
     }
@@ -170,6 +171,47 @@ public class XAResourceTest extends TestCase {
         //TestCase.assertTrue(factory2.isFreeConnection(coreCon2));
 
     }
+
+
+    /**
+     * two XAResource of the same Factory are joining the same underlying connection
+     *
+     * @throws Exception
+     */
+    public void testJoin1() throws Exception {
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
+
+        IPhynixxXAConnection<ITestConnection> xaCon2 = factory1.getXAConnection();
+
+        // u are just interfacing the proxy.
+        ITestConnection con1 = xaCon1.getConnection();
+        ITestConnection con2 = xaCon2.getConnection();
+
+        // ... the real core connection is hidden by the proxy
+
+        try {
+            this.getTransactionManager().begin();
+
+            con1.act(1);
+            con2.act(1);
+
+            Object conId1 = con1.getId();
+            Object conId2 = con2.getId();
+            Assert.assertSame(con1.getId(), con2.getId());
+            // act transactional and enlist the current resource
+            // conProxy.act();
+
+            this.getTransactionManager().rollback();
+        } finally {
+            if (con1 != null) {
+                con1.close();
+            }
+            if (con1 != null) {
+                con1.close();
+            }
+        }
+    }
+
 
     /**
      * there 's just one XAResource enlisted in a resource but the

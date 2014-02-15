@@ -1,4 +1,4 @@
-package org.csc.phynixx.evaluation.howl;
+package org.csc.phynixx.phynixx.evaluation.howl;
 
 /*
  * #%L
@@ -21,8 +21,8 @@ package org.csc.phynixx.evaluation.howl;
  */
 
 
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.objectweb.howl.log.LogEventListener;
 
 public class TestLogEventListener implements LogEventListener {

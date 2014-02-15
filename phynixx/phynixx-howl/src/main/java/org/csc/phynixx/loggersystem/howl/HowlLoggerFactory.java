@@ -21,7 +21,7 @@ package org.csc.phynixx.loggersystem.howl;
  */
 
 
-import org.csc.phynixx.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.loggersystem.ILogger;
 import org.csc.phynixx.loggersystem.ILoggerFactory;
 import org.objectweb.howl.log.Configuration;

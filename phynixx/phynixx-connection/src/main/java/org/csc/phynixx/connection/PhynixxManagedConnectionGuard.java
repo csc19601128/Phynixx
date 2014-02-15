@@ -21,9 +21,9 @@ package org.csc.phynixx.connection;
  */
 
 
-import org.csc.phynixx.cast.ImplementorUtils;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.common.cast.ImplementorUtils;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
@@ -207,9 +207,9 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
      * A xaresource's connection is  never closed but always dereferenced .
      * As a connection proxy shields a xa resource, the current connection is not closed but dereferenced (==released)
      */
-    public void open() {
+    public void reset() {
         if (this.getCoreConnection() != null) {
-            this.getCoreConnection().open();
+            this.getCoreConnection().reset();
             // notify the action
             this.fireConnectionOpen();
         }
@@ -529,7 +529,6 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         };
         fireEvents(deliver);
     }
-
 
 
 }

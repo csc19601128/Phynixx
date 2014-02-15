@@ -28,6 +28,9 @@ import java.util.*;
 
 /*
  * manages the state of the XAResource enlisted in Transactions.
+ * The underlying connection of a XAResource can be shared between different xaresources, if the xaresources are associate to the same XID.
+  *
+  * This class is thread safe
  * 
  * @see  XAResoXAResourceTxState
  */

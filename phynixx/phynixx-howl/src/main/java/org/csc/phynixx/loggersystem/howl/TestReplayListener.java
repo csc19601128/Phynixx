@@ -21,8 +21,8 @@ package org.csc.phynixx.loggersystem.howl;
  */
 
 
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.objectweb.howl.log.LogException;
 import org.objectweb.howl.log.LogRecord;
 import org.objectweb.howl.log.LogRecordType;

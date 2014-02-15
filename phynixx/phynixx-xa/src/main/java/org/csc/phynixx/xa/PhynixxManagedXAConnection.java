@@ -21,180 +21,185 @@ package org.csc.phynixx.xa;
  */
 
 
-import org.csc.phynixx.connection.*;
-import org.csc.phynixx.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.exceptions.ExceptionUtils;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.exceptions.ExceptionUtils;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
+import org.csc.phynixx.connection.IPhynixxConnection;
 
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 
-/**
- * keeps the XAResource's relation to the (logical) connection.
- * <p/>
- * association is handle in the current class.
- * The XAResource observes the connection via the IF ISampleConnectionListener to be notified of the
- * state changes.
+/**keeps the XAresource's association to the transactional branch (given via XID).
+ *
  *
  * @author zf4iks2
  */
-class PhynixxManagedXAConnection<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxXAConnection, IPhynixxManagedConnectionListener<C> {
+class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhynixxXAConnection<C> {
+
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PhynixxManagedXAConnection.class);
+
+    private final PhynixxXAResource<C> xaResource;
 
     private TransactionManager tmMgr = null;
-    private volatile boolean readOnly = true;
 
-    private PhynixxXAResource<C> xaresource = null;
-    private IPhynixxManagedConnection<C> managedConnection = null;
-    private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
+    private Transaction globalTransaction = null;
 
-    private Transaction transaction = null;
+    private final IXATransactionalBranchDictionary<C> xaTransactionalBranchDictionary;
 
-    PhynixxManagedXAConnection(
-            PhynixxXAResource<C> xaresource,
-            TransactionManager tmMgr,
-            IPhynixxManagedConnection<C> connectionProxy) {
-        super();
-        this.xaresource = xaresource;
+    private Xid xid;
+
+    PhynixxManagedXAConnection(PhynixxXAResource<C> xaResource, TransactionManager tmMgr, IXATransactionalBranchDictionary<C> xaTransactionalBranchDictionary) {
+        this.xaResource = xaResource;
+        this.xaTransactionalBranchDictionary = xaTransactionalBranchDictionary;
         this.tmMgr = tmMgr;
-
-        // the current handle observes the connection proxy
-        connectionProxy.addConnectionListener(this);
-
-        this.setConnection(connectionProxy);
-
     }
-
 
     public XAResource getXAResource() {
-        return xaresource;
+        return xaResource;
     }
 
-    public IPhynixxManagedConnection<C> getManagedConnectionHandle() {
-        return managedConnection;
+
+    Transaction getGlobalTransaction() {
+        return globalTransaction;
     }
 
-    public C getConnection() {
-        return this.managedConnection.toConnection();
+
+    /**
+     * call by the XCAResource when {@link javax.transaction.xa.XAResource#start(javax.transaction.xa.Xid, int)}  is called.
+     * A TransactionalBranch for the given XID ist expected to be created.
+     *
+     * @param xid
+     */
+    void associateTransactionalBranch(Xid xid) {
+
+        if (!isInTransaction()) {
+            throw new IllegalStateException("Not in Transaction. No TransactionB ranch can be associated");
+        }
+        this.xid = xid;
     }
 
     /**
-     * sets the new Connection.
-     * the previous connection is returned.
-     * this connection is not closed so it can be reused.
-     * <p/>
-     * The State of the previous connection is not checked.
+     * call by the XCAResource when {@link javax.transaction.xa.XAResource#end(javax.transaction.xa.Xid, int)} is called
      *
-     * @param con
+     * @param xid
      */
-    void setConnection(IPhynixxManagedConnection<C> con) {
-
-        if (this.managedConnection != null) {
-            throw new IllegalStateException("managedConnection already assigned");
-        }
-        con.fireConnectionReferenced();
-        this.managedConnection = con;
+    void disassociateTransactionalBranch(Xid xid) {
+        this.xid = null;
+        delistTransaction();
     }
+
+    private void delistTransaction() {
+        this.globalTransaction=null;
+    }
+
+    /**
+     *
+     * @return XID of the currently associated transactional branch; may be null, if the XAConnection isnt't associated to an tb
+     */
+    Xid getCurrentTransactionalBranch() {
+        return this.xid;
+    }
+
+    public C getConnection() {
+
+        // Connection wid in TX eingetragen ....
+        this.enlistTransaction();
+
+
+        XATransactionalBranch<C> transactionalBranch = this.findTransactionalBranch();
+        if (transactionalBranch == null) {
+            throw new IllegalStateException("Not in Transaction. No TransactionBranch is assiociated");
+        }
+        return transactionalBranch.getManagedConnection().toConnection();
+    }
+
+
+    /**
+     * finds the transactional branch associated to the given XID
+     *
+     * @return
+     */
+    private XATransactionalBranch<C> findTransactionalBranch() {
+        if (xid == null) {
+            return null;
+        }
+        return this.xaTransactionalBranchDictionary.findTransactionalBranch(this.xid);
+    }
+
 
 
     public boolean isInTransaction() {
         synchronized (this) {
-            return this.transaction != null;
+            return this.globalTransaction != null;
         }
     }
 
-    public void associateTransaction() {
+    void associateTransaction(Transaction currentTx) {
         if (!this.isInTransaction()) {
-            Transaction ntx = this.getTransactionManagerTransaction();
-            if (ntx != null) {
-                this.transaction = ntx;
-                // enlist the xaResource in the transaction
+            if (this.globalTransaction != null) {
+                this.globalTransaction = currentTx;
+                // enlist the xaResource in the globalTransaction
             } else {
-                log.error(
-                        "SampleXAConnection:associateTransaction (no transaction bound to thread " + Thread.currentThread());
-                throw new DelegatedRuntimeException("no transaction bound to thread " + Thread.currentThread());
+                LOG.error(
+                        "PhynixxManagedXAConnection:associateTransaction (no globalTransaction bound to thread " + Thread.currentThread());
+                LOG.error(
+                        "PhynixxManagedXAConnection:associateTransaction (local Transaction is opened " + Thread.currentThread());
+                throw new DelegatedRuntimeException("no globalTransaction bound to thread " + Thread.currentThread());
             }
-            log.debug("SampleXAConnection:associateTransaction tx==" + ntx);
+            LOG.debug("PhynixxManagedXAConnection:associateTransaction tx==" + this.globalTransaction);
         } else {
-            if (!this.transaction.equals(this.getTransactionManagerTransaction())) {
-                log.error("SampleXAConnection.associateTransaction already assigned to a TX and expected to assigned to a different TX");
+            if (!this.globalTransaction.equals(this.getTransactionManagerTransaction())) {
+                LOG.error("PhynixxManagedXAConnection.associateTransaction already assigned to a TX and expected to assigned to a different TX");
                 throw new DelegatedRuntimeException("already assigned to a TX and expected to assigned to a different TX");
             }
 
         }
 
     }
-
-    public boolean isReadOnly() {
-        return this.readOnly;
-    }
-
-
     /**
      * if necessary the current xa resource is enlisted in the current TX.
-     * <p/>
-     * the current callback method is called, if a connection's method indicates, that its
-     * execution has to be protected by a TX.
-     * If th resource was enlisted in a TX without any indication it could happen, that the resource
-     * is enlisted twice. We rely on the transaction manger to handle this situation correctly
+     *
+     * The enlistment calls the{@link javax.transaction.xa.XAResource#start(javax.transaction.xa.Xid, int)}. This call associates the Xid with the current instance
      */
-    public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {
+    void enlistTransaction() {
         // if not already enlist, do now
         if (!this.isInTransaction()) {
             try {
                 Transaction ntx = this.getTransactionManagerTransaction();
                 if (ntx != null) {
-                    associateTransaction();
-                    ntx.enlistResource(this.xaresource);
+                    boolean enlisted = ntx.enlistResource(this.xaResource);
+                    if (!enlisted) {
+                        LOG.error("Enlisting " + xaResource + " failed");
+                    }
+                    associateTransaction(ntx);
 
-                    // enlist the xaResource in the transaction
+                    // enlist the xaResource in the globalTransaction
                 } else {
-                    log.debug(
-                            "SampleXAConnection:connectionRequiresTransaction (no transaction found)");
+                    LOG.debug(
+                            "SampleXAConnection:connectionRequiresTransaction (no globalTransaction found)");
                 }
-                log.debug("SampleXAConnection:connectionRequiresTransaction tx==" + ntx);
+                LOG.debug("SampleXAConnection:connectionRequiresTransaction tx==" + ntx);
 
             } catch (RollbackException n) {
-                log.error(
+                LOG.error(
                         "SampleXAConnection:prevokeAction enlistResource exception : "
                                 + n.toString());
             } catch (SystemException n) {
-                log.error("SampleXAConnection:connectionRequiresTransaction " + n + "\n" + ExceptionUtils.getStackTrace(n));
+                LOG.error("SampleXAConnection:connectionRequiresTransaction " + n + "\n" + ExceptionUtils.getStackTrace(n));
                 throw new DelegatedRuntimeException(n);
             }
 
         } else {
-            log.debug("SampleXAConnection.connectionRequiresTransaction already assigned to a TX");
+            LOG.debug("SampleXAConnection.connectionRequiresTransaction already assigned to a TX");
         }
-
-        // indicates that the resource may change
-        this.readOnly = false;
-
     }
 
-    /*
-     * releases the connection
-     * The connection can be reused
-     */
-    void close() {
-        this.managedConnection.fireConnectionDereferenced();
-        if (this.managedConnection != null) {
-            this.managedConnection.removeConnectionListener(this);
-        }
-        this.managedConnection = null;
-    }
-
-
-    /**
-     *
-     */
-    public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
-        event.getManagedConnection().removeConnectionListener(this);
-    }
 
     /**
      * @return aktuelle TX des TransactionManagers
@@ -203,33 +208,36 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> extends PhynixxMa
         try {
             return this.tmMgr.getTransaction();
         } catch (SystemException e) {
-            log.error("SampleXAConnection:getTransaction " + e + "\n" + ExceptionUtils.getStackTrace(e));
+            LOG.error("SampleXAConnection:getTransaction " + e + "\n" + ExceptionUtils.getStackTrace(e));
 
             throw new DelegatedRuntimeException(e);
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-    public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof PhynixxManagedXAConnection)) {
-            return false;
-        }
-        return ((PhynixxManagedXAConnection) obj).managedConnection.equals(this.managedConnection);
+        PhynixxManagedXAConnection that = (PhynixxManagedXAConnection) o;
+
+        if (!xaResource.equals(that.xaResource)) return false;
+
+        return true;
     }
 
-
+    @Override
     public int hashCode() {
-        return this.managedConnection.hashCode();
+        return xaResource.hashCode();
     }
 
 
+    @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer("SampleXAConnection");
-        buffer.append("\n   connected to " + managedConnection.toString()).
-                append("\n   enlisted in TX ").append(this.transaction != null).
-                append("\n   readOnly ").append(this.readOnly).
-                append("\n   relates to XAResource ").append(this.xaresource.getId());
-        return buffer.toString();
+        return "PhynixxManagedXAConnection{" +
+                "xaResource=" + xaResource +
+                ", xid=" + xid +
+                '}';
     }
 
 

@@ -24,8 +24,8 @@ package org.csc.phynixx.loggersystem.logrecord;
 import junit.framework.TestCase;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 
 public class MTXAResourceLoggerTest extends TestCase {
 
@@ -186,15 +186,15 @@ public class MTXAResourceLoggerTest extends TestCase {
 
      private Properties loadHowlConfig() throws Exception {
      Properties howlprop = new Properties();
-     howlprop.put("listConfig", "false");
-     howlprop.put("bufferSize", "32");
-     howlprop.put("minBuffers", "16");
-     howlprop.put("maxBuffers", "16");
-     howlprop.put("maxBlocksPerFile", "100");
+     howlprop.associate("listConfig", "false");
+     howlprop.associate("bufferSize", "32");
+     howlprop.associate("minBuffers", "16");
+     howlprop.associate("maxBuffers", "16");
+     howlprop.associate("maxBlocksPerFile", "100");
      howlprop
-     .put("logFileDir", this.tmpDir.getDirectory().getAbsolutePath());
-     howlprop.put("logFileName", "test1");
-     howlprop.put("maxLogFiles", "6");
+     .associate("logFileDir", this.tmpDir.getDirectory().getAbsolutePath());
+     howlprop.associate("logFileName", "test1");
+     howlprop.associate("maxLogFiles", "6");
 
      return howlprop;
      }

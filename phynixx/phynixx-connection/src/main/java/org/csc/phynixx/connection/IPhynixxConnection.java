@@ -21,7 +21,7 @@ package org.csc.phynixx.connection;
  */
 
 
-import org.csc.phynixx.exceptions.SampleTransactionalException;
+import org.csc.phynixx.common.exceptions.SampleTransactionalException;
 
 
 public interface IPhynixxConnection {
@@ -30,7 +30,7 @@ public interface IPhynixxConnection {
     /**
      * opens a connection  for reuse. If it isn't close an Exception is thrown
      */
-    void open();
+    void reset();
 
     /**
      * @throws SampleTransactionalException

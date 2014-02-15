@@ -35,5 +35,7 @@ public interface IPhynixxXAConnection<C extends IPhynixxConnection> {
 
     public XAResource getXAResource();
 
+
     public C getConnection();
+
 }

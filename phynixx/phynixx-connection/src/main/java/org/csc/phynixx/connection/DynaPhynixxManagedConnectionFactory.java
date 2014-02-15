@@ -21,11 +21,11 @@ package org.csc.phynixx.connection;
  */
 
 
-import org.csc.phynixx.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.exceptions.ExceptionUtils;
-import org.csc.phynixx.generator.IDGenerator;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.exceptions.ExceptionUtils;
+import org.csc.phynixx.common.generator.IDGenerator;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;

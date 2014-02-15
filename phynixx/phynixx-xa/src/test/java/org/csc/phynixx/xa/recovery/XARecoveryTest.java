@@ -24,12 +24,12 @@ package org.csc.phynixx.xa.recovery;
 import junit.framework.TestCase;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
-import org.csc.phynixx.test_connection.ITestConnection;
-import org.csc.phynixx.test_connection.TestConnectionStatusManager;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
+import org.csc.phynixx.phynixx.test_connection.ITestConnection;
+import org.csc.phynixx.phynixx.test_connection.TestConnectionStatusManager;
 import org.csc.phynixx.xa.IPhynixxXAConnection;
-import org.csc.phynixx.xa.TestResourceFactory;
+import org.csc.phynixx.xa.TestXAResourceFactory;
 import org.objectweb.howl.log.Configuration;
 import org.objectweb.howl.log.xa.XALogger;
 import org.objectweb.jotm.Jotm;
@@ -67,8 +67,8 @@ public class XARecoveryTest extends TestCase {
 
     private TmpDirectory tmpDirectory = null;
     private Jotm jotm = null;
-    private TestResourceFactory factory1 = null;
-    private TestResourceFactory factory2 = null;
+    private TestXAResourceFactory factory1 = null;
+    private TestXAResourceFactory factory2 = null;
 
     protected void setUp() throws Exception {
         // configuring the log-system (e.g. log4j)
@@ -84,11 +84,11 @@ public class XARecoveryTest extends TestCase {
         TestConnectionStatusManager.clear();
         this.jotm = new Jotm(true, false);
 
-        this.factory1 = new TestResourceFactory(
+        this.factory1 = new TestXAResourceFactory(
                 "RF1", this.tmpDirectory.getDirectory(),
                 this.jotm.getTransactionManager());
 
-        this.factory2 = new TestResourceFactory(
+        this.factory2 = new TestXAResourceFactory(
                 "RF2", this.tmpDirectory.getDirectory(),
                 this.jotm.getTransactionManager());
     }
@@ -179,6 +179,7 @@ public class XARecoveryTest extends TestCase {
 
         IPhynixxXAConnection<ITestConnection> xaCon2 = XARecoveryTest.this.factory2.getXAConnection();
         ITestConnection con2 = xaCon2.getConnection();
+
 
         try {
             this.getJotm().getUserTransaction().begin();

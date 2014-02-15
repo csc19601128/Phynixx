@@ -21,9 +21,9 @@ package org.csc.phynixx.tutorial;
  */
 
 
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.io.LogRecordWriter;
 import org.csc.phynixx.connection.RequiresTransaction;
-import org.csc.phynixx.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.io.LogRecordWriter;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 

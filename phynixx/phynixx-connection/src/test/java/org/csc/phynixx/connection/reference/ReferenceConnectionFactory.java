@@ -21,8 +21,8 @@ package org.csc.phynixx.connection.reference;
  */
 
 
+import org.csc.phynixx.common.generator.IDGenerator;
 import org.csc.phynixx.connection.IPhynixxConnectionFactory;
-import org.csc.phynixx.generator.IDGenerator;
 
 
 public class ReferenceConnectionFactory implements IPhynixxConnectionFactory<IReferenceConnection> {

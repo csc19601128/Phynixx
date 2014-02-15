@@ -21,7 +21,7 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 
 
-import org.csc.phynixx.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -170,7 +170,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     }
 
     public void commitRollforwardData(byte[][] data) {
-            IDataRecord msg = this.createDataRecord(XALogRecordType.XA_COMMIT, data);
+        IDataRecord msg = this.createDataRecord(XALogRecordType.XA_COMMIT, data);
     }
 
     public synchronized void addMessage(IDataRecord message) {

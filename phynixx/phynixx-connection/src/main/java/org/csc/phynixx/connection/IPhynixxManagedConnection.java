@@ -37,8 +37,6 @@ package org.csc.phynixx.connection;
  */
 public interface IPhynixxManagedConnection<C extends IPhynixxConnection> extends IPhynixxConnection //, IPhynixxConnectionHandle<C>
 {
-
-
     /**
      * @return Id unique for the scope of the factory
      */

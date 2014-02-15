@@ -25,8 +25,8 @@ package org.csc.phynixx.common;
 
 
 import org.apache.commons.io.FilenameUtils;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 
 import java.io.File;
 import java.io.IOException;

@@ -23,9 +23,9 @@ package org.csc.phynixx.loggersystem.logrecord;
 
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.io.LogRecordReader;
-import org.csc.phynixx.io.LogRecordWriter;
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.io.LogRecordReader;
+import org.csc.phynixx.common.io.LogRecordWriter;
 import org.csc.phynixx.loggersystem.logger.IDataLogger;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;

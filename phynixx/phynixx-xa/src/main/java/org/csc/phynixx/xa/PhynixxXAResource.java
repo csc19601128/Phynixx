@@ -21,12 +21,11 @@ package org.csc.phynixx.xa;
  */
 
 
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.exceptions.ExceptionUtils;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.connection.IPhynixxConnection;
-import org.csc.phynixx.connection.IPhynixxManagedConnection;
-import org.csc.phynixx.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.exceptions.ExceptionUtils;
-import org.csc.phynixx.logger.IPhynixxLogger;
-import org.csc.phynixx.logger.PhynixxLogManager;
 import org.csc.phynixx.watchdog.ITimeoutCondition;
 import org.csc.phynixx.watchdog.TimeoutCondition;
 import org.csc.phynixx.watchdog.log.ConditionViolatedLog;
@@ -38,11 +37,14 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
 /**
+ * A transactional branch may be associated with differnt XAResources (TMJOIN) or a XAResource may be shared with different transaction branches
+ * <p/>
+ * Therefore a transactional branch might be associated to many XAResources or to many transactions (==XIDs)
+ * <p/>
  * A XAresourec can be initialized with a connection. This connection is used,
  * the first time an TX is opened on the XAResource.
  * <p/>
@@ -50,24 +52,23 @@ import java.util.List;
  *
  * @author christoph
  */
-public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResource {
-
+public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixxXAResource {
 
     private static final long DEFAULT_TIMEOUT = Long.MAX_VALUE; // msecs - no time out at all
 
 
-    private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PhynixxXAResource.class);
 
     private Object xaId = null;
 
     private TransactionManager tmMgr = null;
 
-    private PhynixxResourceFactory<C> factory = null;
+    private PhynixxXAResourceFactory<C> xaResourceFactory = null;
 
     /**
      * @supplierCardinality 0..1
      */
-    private PhynixxManagedXAConnection currentXAConnectionHandle = null;
+    private PhynixxManagedXAConnection<C> xaConnectionHandle = null;
 
     private volatile boolean closed = false;
 
@@ -76,23 +77,11 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
     public PhynixxXAResource(
             String xaId,
             TransactionManager tmMgr,
-            PhynixxResourceFactory<C> factory) {
-        this(xaId, tmMgr, factory, null);
-    }
-
-    public PhynixxXAResource(
-            Object xaId,
-            TransactionManager tmMgr,
-            PhynixxResourceFactory factory,
-            IPhynixxManagedConnection<C> managedConnection) {
+            PhynixxXAResourceFactory<C> xaResourceFactory) {
         this.xaId = xaId;
         this.tmMgr = tmMgr;
-        this.factory = factory;
-        if (managedConnection != null) {
-            this.currentXAConnectionHandle = new PhynixxManagedXAConnection(this, tmMgr, managedConnection);
-        } else {
-            this.currentXAConnectionHandle = null;
-        }
+        this.xaResourceFactory = xaResourceFactory;
+        this.xaConnectionHandle = new PhynixxManagedXAConnection(this, tmMgr, xaResourceFactory.getXATransactionalBranchRepository());
 
         // start a watchdog to watch the timeout ...
         // this condition is not active
@@ -104,8 +93,8 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
         // synchronize the watched condition
         this.timeoutCondition = this.timeoutCondition;
 
-        // it is registered at the resource factory's watchdog  ....
-        factory.registerWatchCondition(this.timeoutCondition);
+        // it is registered at the resource xaResourceFactory's watchdog  ....
+        xaResourceFactory.registerWatchCondition(this.timeoutCondition);
     }
 
 
@@ -123,24 +112,18 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
      */
     public void conditionViolated() {
         try {
-            List<XAResourceTxState> statecons =
-                    factory.getXAResourceTxStateManager().getXAResourceTxStates(this);
-            if (statecons == null || statecons.size() == 0) {
-                return;
+            if (this.xaConnectionHandle != null) {
+                Xid xid = this.xaConnectionHandle.getCurrentTransactionalBranch();
+                if (xid != null) {
+                    XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xid);
+                    if (transactionalBranch != null) {
+                        transactionalBranch.setRollbackOnly(true);
+                    }
+                }
             }
-
-            // all associated TX are marked as rollback ...
-            for (int i = 0; i < statecons.size(); i++) {
-                XAResourceTxState statecon = statecons.get(i);
-                statecon.setRollbackOnly(true);
-                IPhynixxManagedConnection ch =
-                        statecon.getXAConnectionHandle().getManagedConnectionHandle();
-
-            }
-
-            if (log.isInfoEnabled()) {
+            if (LOG.isInfoEnabled()) {
                 String logString = "SampleXAResource.expired :: XAResource " + this.getId() + " is expired (time out occurred) and all associated TX are rollbacked ";
-                log.info(new ConditionViolatedLog(this.timeoutCondition, logString).toString());
+                LOG.info(new ConditionViolatedLog(this.timeoutCondition, logString).toString());
             }
 
         } finally {
@@ -150,20 +133,22 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
 
     }
 
+    /**
+     * finds the transactional branch associated to the xaResourceFactory
+     *
+     * @param xid
+     */
+    private XATransactionalBranch<C> findTransactionalBranch(Xid xid) {
+        return this.xaResourceFactory.getXATransactionalBranchRepository().findTransactionalBranch(xid);
+    }
+
+    /**
+     * accessing the XAConnection forces the XAResource to enlist to the Transaction. {@link #getXAConnection()} must be called in the appropriate TransactionContext
+     *
+     * @return
+     */
     public IPhynixxXAConnection<C> getXAConnection() {
-        if (this.currentXAConnectionHandle != null) {
-            return currentXAConnectionHandle;
-        } else {
-            List<XAResourceTxState> xaResourceStates = this.factory.getXAResourceTxStateManager().getXAResourceTxStates(this);
-            // check if there is any active TX associated with the current XAREsource
-            for (Iterator<XAResourceTxState> iterator = xaResourceStates.iterator(); iterator.hasNext(); ) {
-                XAResourceTxState state = iterator.next();
-                if (state.isActive()) {
-                    return state.getXAConnectionHandle();
-                }
-            }
-        }
-        return null;
+        return this.xaConnectionHandle;
     }
 
     public boolean isClosed() {
@@ -172,34 +157,36 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
 
 
     public void commit(Xid xid, boolean onePhase) throws XAException {
-        if (xid == null)
+        if (xid == null) {
             throw new XAException(XAException.XAER_INVAL);
+        }
 
+        // assert that the current xaConnection is associated to this XID
+        if (!xaConnectionHandle.getCurrentTransactionalBranch().equals(xid)) {
+            LOG.error("XAResource " + this + " isnt't active for XID=" + xid);
+            throw new XAException(XAException.XAER_INVAL);
+        }
+
+        // Find the current Branch
+        XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xid);
+        if (transactionalBranch == null) {
+            throw new XAException(XAException.XAER_INVAL);
+        }
         try {
-
-            XAResourceTxState statecon = factory.getXAResourceTxStateManager().getXAResourceTxState(xid);
-            if (statecon == null) {
-                throw new XAException(XAException.XAER_INVAL);
-            }
-            // Check if the XAresource is suspended
-            if (!statecon.isActive()) {
-                throw new XAException(XAException.XAER_INVAL);
-            }
-
-            statecon.commit(onePhase);
+            transactionalBranch.commit(onePhase);
         } catch (XAException xaExc) {
-            log.error("SampleXAResource[" + this.getId() + "]:end xid='"
+            LOG.error("SampleXAResource[" + this.getId() + "]:end xid='"
                     + xid
                     + "' onePhase='" + onePhase
                     + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
             throw xaExc;
 
         } catch (Exception ex) {
-            log.error("SampleXAResource.commit(" + xid + "," + onePhase + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            LOG.error("SampleXAResource.commit(" + xid + "," + onePhase + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
             throw new DelegatedRuntimeException("commit(" + xid + "," + onePhase + ") on Resource " + this.xaId, ex);
         } finally {
             try {
-                factory.getXAResourceTxStateManager().deregisterConnection(xid);
+                transactionalBranch.close();
             } finally {
                 // stop monitoring the timeout
                 this.timeoutCondition.setActive(false);
@@ -211,55 +198,55 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
 
     /**
      * This method ends the work performed on behalf of a transaction branch.
-     * The resource manager dissociates
-     * the XA resource from the transaction branch specified and let the transaction
+     * <p/>
+     * The resource manager dissociates the XA resource from the transaction branch specified and let the transaction
      * be completed.
-     * If TMSUSPEND is specified in flags, the transaction branch is temporarily suspended
-     * in incomplete state.
-     * The transaction context is in suspended state and must be resumed via start
-     * with TMRESUME specified.
+     * If TMSUSPEND is specified in flags, the transaction branch is temporarily suspended in incomplete state.
+     * The transaction context is in suspended state and must be resumed via start with TMRESUME specified.
      * <p/>
      * If TMFAIL is specified, the portion of work has failed. The resource manager
      * may mark the transaction as rollback only.
      * <p/>
-     * If TMSUCCESS is specified, the portion of work has completed successfully.
-     * end is called in Transaction.delistResource
+     * If TMSUCCESS is specified, the portion of work has completed successfully. end is called in Transaction.delistResource
      *
-     * @param xid      A global transaction identifier.
+     * @param xid   A global transaction identifier.
      * @param flags If true, the resource manager should use a one-phase commit protocol
-     *                 to commit the work done on behalf of xid.
+     *              to commit the work done on behalf of xid.
      * @throws: XAException An error has occurred. Possible XAException values
      * are XAER_RMERR, XAER_RMFAIL,XAER_NOTA, XAER_INVAL, XAER_PROTO,XA_RB*.
      */
     public void end(Xid xid, int flags) throws XAException {
         try {
             //not tested XS
-            log.debug("SampleXAResource:end");
-            log.debug(
+            LOG.debug("SampleXAResource:end");
+            LOG.debug(
                     "SampleXAResource[" + this.getId() + "]:end xid='" + xid + "' flags='" + ConstantsPrinter.getXAResourceMessage(flags) + "'");
 
             if (xid == null) {
                 throw new XAException(XAException.XAER_INVAL);
             }
 
-            XAResourceTxState statecon =
-                    factory.getXAResourceTxStateManager().getXAResourceTxState(xid);
+            // Find the current Branch
+            XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xid);
 
             // must find connection for this transaction
-            if (statecon == null || statecon.getProgressState() != Status.STATUS_ACTIVE) // must have had start() called
+            if (transactionalBranch == null || transactionalBranch.getProgressState() != Status.STATUS_ACTIVE) {// must have had start() called
+                LOG.error("XAResource " + this + " must have start() called ");
                 throw new XAException(XAException.XAER_PROTO);
-
-            if (flags == TMSUSPEND) {
-                statecon.suspend();
-
             }
 
-			/*else if ( flags==TMSUCCESS) {
-                factory.getXAResourceTxStateManager().deregisterConnection(xid);
-			}*/
+            if (flags == TMSUSPEND) {
+                transactionalBranch.suspend();
+            } else if (flags == TMSUCCESS) {
+                LOG.error("XAResource " + this + " closed gracefully ");
+            } else if (flags == TMFAIL) {
+                if (this.xaConnectionHandle.isInTransaction()) {
+                    this.xaConnectionHandle.getGlobalTransaction().setRollbackOnly();
+                }
+            }
 
         } catch (XAException xaExc) {
-            log.error("SampleXAResource[" + this.getId() + "]:end xid='"
+            LOG.error("SampleXAResource[" + this.getId() + "]:end xid='"
                     + xid
                     + "' flags='"
                     + ConstantsPrinter.getXAResourceMessage(flags)
@@ -267,20 +254,33 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
                     + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
             throw xaExc;
         } catch (Exception ex) {
-            log.error("SampleXAResource.end(" + xid + "," + flags + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            LOG.error("SampleXAResource.end(" + xid + "," + flags + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
             throw new DelegatedRuntimeException("end(" + xid + "," + flags + ") on Resource " + this.xaId, ex);
+        } finally {
 
+            // Branch isn't active for the current XAresource
+            this.xaConnectionHandle.disassociateTransactionalBranch(xid);
         }
     }
 
+    /**
+     * finds the transactional branch of the current XAResource associated with die XID
+     *
+     * @param xid
+     * @throws XAException
+     */
     public void forget(Xid xid) throws XAException {
         try {
-            log.debug("SampleXAResource[" + this.getId() + "]:forget forget with Xid");
+            LOG.debug("SampleXAResource[" + this.getId() + "]:forget forget with Xid");
             if (xid == null)
                 throw new XAException(XAException.XAER_INVAL);
 
-            factory.getXAResourceTxStateManager().deregisterConnection(xid);
-            // finished with this transaction
+            XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xid);
+            // must find connection for this transaction
+            if (transactionalBranch == null) {
+                return; //
+            }
+            transactionalBranch.close();
 
         } finally {
             // stop monitoring the timeout
@@ -298,44 +298,44 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
      * manager instance represented by the target object is the same
      * as the resource manager instance represented by the parameter xares .
      * <p/>
-     * The resource manager is reresented by the Resourcefactory
+     * The resource manager is reresented by the ResourceFactory.
      *
-     * @param xares An XAResource object.
+     * @param xaResource An XAResource object.
      * @return true if same RM instance; otherwise false.
      */
 
-    public boolean isSameRM(XAResource xares) throws XAException {
-        if (this.equals(xares)) { // if the same object
-            log.debug("SampleXAResource[" + this.getId() + "]:isSameRM isSameRM");
+    public boolean isSameRM(XAResource xaResource) throws XAException {
+        if (this.equals(xaResource)) { // if the same object
+            LOG.debug("SampleXAResource[" + this.getId() + "]:isSameRM isSameRM");
             return true; // then definitely the same RM
         }
-        if (!(xares instanceof PhynixxXAResource)) {
+        if (!(xaResource instanceof PhynixxXAResource)) {
             // if it's not one of our wrappers
-            log.debug("SampleXAResource[" + this.getId() + "]:isSameRM not isSameRM");
+            LOG.debug("SampleXAResource[" + this.getId() + "]:isSameRM not isSameRM");
             return false; // then it's definitely not the same RM
         }
-        PhynixxXAResource sampleXARes = (PhynixxXAResource) xares;
+        PhynixxXAResource sampleXARes = (PhynixxXAResource) xaResource;
 
         try {
             // cast to something more convenient
-            if (factory.equals(sampleXARes.factory)) {
+            if (xaResourceFactory.equals(sampleXARes.xaResourceFactory)) {
                 // if they originate from same data source
-                log.debug(
-                        "SampleXAResource[" + this.getId() + "]:isSameRM isSameRM (equal XAResourceFactory)");
+                LOG.debug("SampleXAResource[" + this.getId() + "]:isSameRM isSameRM (equal XAResourceFactory)");
                 return true; // then they're the same RM
             } else {
-                log.debug(
-                        "SampleXAResource[" + this.getId() + "]:isSameRM not isSameRM (not equal XAResourceFactory)");
+                LOG.debug("SampleXAResource[" + this.getId() + "]:isSameRM not isSameRM (not equal XAResourceFactory)");
                 return false;
             }
         } catch (Exception ex) {
-            log.error("SampleXAResource.isSameRM(" + sampleXARes.xaId + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            LOG.error("SampleXAResource.isSameRM(" + sampleXARes.xaId + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
             throw new DelegatedRuntimeException("isSameRM(" + sampleXARes.xaId + ") on Resource " + this.xaId, ex);
 
         }
     }
 
     /**
+     * finds the transactional branch of the current XAResource associated with die XID
+     * <p/>
      * Prepares to perform a commit. May actually perform a commit
      * in the flag commitOnPrepare is set to true.
      * <p/>
@@ -343,7 +343,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
      * transaction commit of the transaction specified in xid.
      *
      * @param xid A global transaction identifier.
-     * @return A value indicating the resource manager�s vote on the outcome of
+     * @return A value indicating the resource manager's vote on the outcome of
      * the transaction. The possible values are: XA_RDONLY or XA_OK.
      * If the resource manager wants to roll back the transaction, it should do so by
      * throwing an appropriate XAException in the prepare method.
@@ -353,69 +353,77 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
      */
     public int prepare(Xid xid) throws XAException {
         try {
-            log.debug(
+            LOG.debug(
                     "SampleXAResource[" + this.getId() + "]:prepare prepare to perform a commit for XID=" + xid);
 
-            if (xid == null)
+            if (xid == null) {
                 throw new XAException(XAException.XAER_INVAL);
+            }
 
-            XAResourceTxState statecon =
-                    factory.getXAResourceTxStateManager().getXAResourceTxState(xid);
+            XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xid);
+
             // must find connection for this transaction
-            int retVal = statecon.prepare();
+            if (transactionalBranch == null || transactionalBranch.getProgressState() != Status.STATUS_ACTIVE) {// must have had start() called
+                LOG.error("XAResource " + this + " must have start() called ");
+                throw new XAException(XAException.XAER_PROTO);
+            }
+            // must find connection for this transaction
+            int retVal = transactionalBranch.prepare();
             return retVal;
 
         } catch (XAException xaExc) {
-            log.error("SampleXAResource[" + this.getId() + "]:prepare xid='"
+            LOG.error("SampleXAResource[" + this.getId() + "]:prepare xid='"
                     + xid
                     + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
             throw xaExc;
         } catch (Exception ex) {
-            log.error("SampleXAResource.prepare(" + xid + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            LOG.error("SampleXAResource.prepare(" + xid + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
             throw new DelegatedRuntimeException("prepare(" + xid + ") on Resource " + this.xaId, ex);
 
         }
     }
 
     /**
+     * finds the transactional branch of the current XAResource associated with die XID
+     * <p/>
      * Close this XA Resource.
      * All depending Connection are closed
      */
     public void close() {
-        // check if the XAresource is assigned to the TX
-        List statecons =
-                factory.getXAResourceTxStateManager().getXAResourceTxStates(this);
-        if (statecons != null && statecons.size() > 0) {
-            for (Iterator iterator = statecons.iterator(); iterator.hasNext(); ) {
-                XAResourceTxState statecon = (XAResourceTxState) iterator.next();
-                factory.getXAResourceTxStateManager().deregisterConnection(statecon.getXid());
+
+        if (this.xaConnectionHandle != null) {
+            XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xaConnectionHandle.getCurrentTransactionalBranch());
+            if (transactionalBranch != null) {
+                transactionalBranch.close();
             }
         }
         this.closed = true;
         this.notifyClosed();
 
-        log.debug("SampleXAResource[" + this.getId() + "]:closed ");
+        LOG.debug("SampleXAResource[" + this.getId() + "]:closed ");
     }
 
     /**
-     * the system is recovered by the factory representing the persistence management system,
+     * the system is recovered by the xaResourceFactory representing the persistence management system,
      */
     public Xid[] recover(int flags) throws XAException {
-        log.info("SampleXAResource[" + this.getId() + "]:recover recover flags=" + ConstantsPrinter.getXAResourceMessage(flags));
+        LOG.info("SampleXAResource[" + this.getId() + "]:recover recover flags=" + ConstantsPrinter.getXAResourceMessage(flags));
         if (flags != TMSTARTRSCAN && flags != TMENDRSCAN && flags != TMNOFLAGS) {
             throw new XAException(XAException.XAER_INVAL);
         }
 
         Xid[] retval = null;
-        retval = this.factory.recover(); // get all valid Xids
+        retval = this.xaResourceFactory.recover(); // get all valid Xids
         return retval;
     }
 
 
     /*
+     * finds the transactional branch of the current XAResource associated with die XID
+     *
      * This method informs the resource manager to roll back
      * work done on behalf of a transaction branch.
-     * Upon return, the resource manager has rolled back the branch�s work and
+     * Upon return, the resource manager has rolled back the branch's work and
      * has released all held resources.
      *
      * @param xid A global transaction identifier.
@@ -430,36 +438,47 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
     public void rollback(Xid xid) throws XAException {
         {
             try {
-                log.debug("SampleXAResource[" + this.getId() + "]:rollback started xid=" + xid);
-                if (xid == null)
+                LOG.debug("SampleXAResource[" + this.getId() + "]:rollback started xid=" + xid);
+
+                if (xid == null) {
                     throw new XAException(XAException.XAER_INVAL);
+                }
 
-                XAResourceTxState statecon =
-                        factory.getXAResourceTxStateManager().getXAResourceTxState(xid);
+                // assert that the current xaConnection is associated to this XID
+                if (!xaConnectionHandle.getCurrentTransactionalBranch().equals(xid)) {
+                    LOG.error("XAResource " + this + " isn't active for XID=" + xid);
+                    throw new XAException(XAException.XAER_INVAL);
+                }
 
-                if (statecon == null) {
+                // Find the current Branch
+                XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xid);
+                if (transactionalBranch == null) {
+                    throw new XAException(XAException.XAER_INVAL);
+                }
+
+                if (transactionalBranch == null) {
                     return; // already rollbacked ...
                 }
 
-                if (!statecon.isActive()) {
+                if (!transactionalBranch.isActive()) {
                     throw new XAException(XAException.XAER_INVAL);
                 }
 
                 try {
-                    statecon.rollback();
+                    transactionalBranch.rollback();
                 } finally {
-                    factory.getXAResourceTxStateManager().deregisterConnection(xid);
+                    transactionalBranch.close();
                 }
 
 
             } catch (XAException xaExc) {
-                log.error("SampleXAResource[" + this.getId() + "]:rollback xid='"
+                LOG.error("SampleXAResource[" + this.getId() + "]:rollback xid='"
                         + xid
                         + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
                 throw xaExc;
 
             } catch (Exception ex) {
-                log.error("SampleXAResource.rollback(" + xid + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+                LOG.error("SampleXAResource.rollback(" + xid + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
                 throw new DelegatedRuntimeException("rollback(" + xid + ") on Resource " + this.xaId, ex);
 
             } finally {
@@ -504,13 +523,29 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
     }
 
     /**
+     * transaction branch is interchangeably with transaction context
+     * <p/>
+     * <p>
+     * situation     : XAResource is associtaed with XID(1)
+     * flags=TMNOFLAGS  with XID(1)
+     * result        : XAResource creates a new transactional context
+     * </p>
+     * <p/>
+     * <p>
+     * situation     : XAResource is associtaed with XID(1)
+     * flags=TMJOIN/TNRESUME  with XID(1) (may be different in branch)
+     * result        : XAResource joins the transactional context with the XAResource already associated with XID(1)
+     * If TMRESUME is specified, start is to resume a suspended transaction branch specified in xid.
+     * </p>
+     * <p/>
+     * <p/>
+     * <p/>
+     * <p/>
      * This method starts work on behalf of a transaction branch.
      * <p/>
-     * If TMJOIN is specified, start is for joining an exisiting transaction
-     * branch xid.
      * <p/>
-     * If TMRESUME is specified, start is to resume a suspended transaction branch
-     * specified in xid.
+     * <p/>
+     * If TMJOIN is specified, start is for joining an exisiting transaction branch xid.
      * <p/>
      * If neither TMJOIN nor TMRESUME is specified and the transaction branch specified in
      * xid already exists, the resource manager throw the XAException
@@ -530,81 +565,58 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
             if (xid == null) {
                 throw new XAException(XAException.XAER_INVAL);
             }
-
-            XAResourceTxState statecon = null;
+            // Find the current Branch
+            XATransactionalBranch<C> transactionalBranch = null;
 
             /**
              * An existing TX has to be joined with the current connection
              */
             if (flags == TMRESUME || flags == TMJOIN) {
-
                 // if resuming or joining an existing transaction
-                statecon = factory.getXAResourceTxStateManager().getXAResourceTxState(xid);
-                if (statecon == null) {
+                transactionalBranch = findTransactionalBranch(xid);
+                if (transactionalBranch == null) {
                     throw new XAException(XAException.XAER_INVAL);
                 }
-                // the current connection is substituted by the connection used by the
-                // existing TX
-                // TODO  wird TMJOIN korrekt behandelt
-                if (this.currentXAConnectionHandle != null) {
-                    statecon.join(this.currentXAConnectionHandle);
-                }
                 if (flags == TMRESUME) {
-                    statecon.resume();
+                    transactionalBranch.resume();
                 }
-
+                this.xaConnectionHandle.disassociateTransactionalBranch(xid);
             } else {
                 // check if there are any transaction contexts associated with the current XAResource
-                List<XAResourceTxState> statecons = factory.getXAResourceTxStateManager().getXAResourceTxStates(this);
+                /**
+                 List<XAResourceTxState> statecons =
+                 xaResourceFactory.getXAResourceTxStateManager().getXAResourceTxStates(this);
                 for (int i = 0; i < statecons.size(); i++) {
                     XAResourceTxState sc = statecons.get(i);
                     if (!sc.isSuspended()) {
                         throw new XAException(XAException.XA_RBINTEGRITY);
                     }
-                }
+                 }
+                 **/
 
-                PhynixxManagedXAConnection<C> handle = null;
-                if (this.currentXAConnectionHandle != null) {
-                    handle = this.currentXAConnectionHandle;
-                    this.currentXAConnectionHandle = null; // used
-                } else {
-                    // get a new connection
-                    IPhynixxManagedConnection con;
-                    try {
-                        con = this.factory.getManagedConnection();
-                    } catch (Exception e) {
-                        throw new DelegatedRuntimeException(e);
-                    }
-                    handle = new PhynixxManagedXAConnection(this, this.tmMgr, con);
-                }
-                handle.associateTransaction();
-                statecon =
-                        factory.getXAResourceTxStateManager().getXAResourceTxState(xid);
-                if (statecon != null) {
+                // new Transactional branch with new pyhsical connection
+                this.xaResourceFactory.getXATransactionalBranchRepository().instanciateTransactionalBranch(xid);
+                if (findTransactionalBranch(xid) != null) {
+                    LOG.error("Although flag=" + ConstantsPrinter.getXAResourceMessage(flags) + " a transaction branch XID=" + xid + " is already opened");
                     throw new XAException(XAException.XAER_DUPID);
                 }
-
-                statecon = new XAResourceTxState(xid, handle);
+                this.xaConnectionHandle.associateTransactionalBranch(xid);
             }
-            log.debug(
+            LOG.debug(
                     "SampleXAResource[" + this.getId() + "]:start xid='"
                             + xid
                             + "' flags='"
                             + ConstantsPrinter.getXAResourceMessage(flags)
                             + "'"
                             + " Connected to " +
-                            statecon.getXAConnectionHandle());
+                            this.xaConnectionHandle);
 
-
-            if (factory.getXAResourceTxStateManager().getXAResourceTxState(xid) == null) {
-                factory.getXAResourceTxStateManager().registerConnection(statecon);
-            }
 
             // start monitoring the timeout
             this.timeoutCondition.setActive(true);
 
         } catch (XAException xaExc) {
-            log.error("SampleXAResource[" + this.getId() + "]:start xid='"
+            LOG.error("SampleXAResource[" + this.getId() + "]:start xid='"
                     + xid
                     + "' flags='"
                     + ConstantsPrinter.getXAResourceMessage(flags)
@@ -612,7 +624,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
                     + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
             throw xaExc;
         } catch (Exception ex) {
-            log.error("SampleXAResource.start(" + xid + "," + flags + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            LOG.error("SampleXAResource.start(" + xid + "," + flags + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
             throw new DelegatedRuntimeException("start(" + xid + "," + flags + ") on Resource " + this.xaId, ex);
 
         }
@@ -646,7 +658,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements XAResour
 	*/
 
     public String toString() {
-        return this.factory.getId().toString() + "." + this.xaId.toString();
+        return this.xaResourceFactory.getId().toString() + "." + this.xaId.toString();
     }
 
 

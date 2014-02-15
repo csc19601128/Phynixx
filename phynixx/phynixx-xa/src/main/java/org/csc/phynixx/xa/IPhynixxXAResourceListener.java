@@ -26,10 +26,10 @@ import org.csc.phynixx.connection.IPhynixxConnection;
 public interface IPhynixxXAResourceListener<C extends IPhynixxConnection> {
 
     interface IPhynixxXAResourceEvent<T extends IPhynixxConnection> {
-
         PhynixxXAResource<T> getXAResource();
     }
 
     void closed(IPhynixxXAResourceEvent<C> event);
+
 
 }
