@@ -148,8 +148,14 @@ public class ReferenceConnection implements IReferenceConnection, IXADataRecorde
      * commit stores the increments as rollforward info.
      * If the incremets contain {@link #ERRONEOUS_VALUE}  the commit is interrupted after the rollforward data is written.
      * A recover completes the commit.
+     *
+     * the counter a executed twice
      */
     public void commit() {
+
+        if (this.getXADataRecorder() == null) {
+            return;
+        }
         /**
          * All increments are stored as rollforward data to recover the commit
          */
@@ -176,8 +182,10 @@ public class ReferenceConnection implements IReferenceConnection, IXADataRecorde
     }
 
     public void rollback() {
-        // use the recovery data to rollback the connection ....
+        if (this.getXADataRecorder() != null) {
+            // use the recovery data to rollback the connection ....
         this.getXADataRecorder().replayRecords(new MessageReplay(this));
+        }
     }
 
     public String toString() {

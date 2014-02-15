@@ -144,20 +144,41 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
                     // System.out.println("Thread " + Thread.currentThread()+" Delegated to Connection " + target+" on "+method);
 
                     Object obj = null;
-                    if (DynaPhynixxManagedConnectionFactory.this.isSynchronize()) {
-                        synchronized (this) {
-                            if (this.requiresTransaction(method)) {
+                    boolean requireTransaction = this.requiresTransaction(method);
+                    try {
+                        if (DynaPhynixxManagedConnectionFactory.this.isSynchronize()) {
+                            synchronized (this) {
+                                if (requireTransaction) {
+                                    this.fireConnectionRequiresTransaction();
+                                }
+                                obj = method.invoke(target, args);
+                            }
+                        } else {
+                            if (requireTransaction) {
                                 this.fireConnectionRequiresTransaction();
                             }
                             obj = method.invoke(target, args);
                         }
-                    } else {
-                        if (this.requiresTransaction(method)) {
-                            this.fireConnectionRequiresTransaction();
+                        if (requireTransaction) {
+                            fireConnectionRequiresTransactionExecuted();
                         }
-                        obj = method.invoke(target, args);
+                        return obj;
+                    } catch (InvocationTargetException targetException) {
+                        if (requireTransaction) {
+                            Exception e = null;
+                            if (!(targetException.getTargetException() instanceof Exception)) {
+                                e = new Exception(targetException.getCause());
+                            } else {
+                                e = (Exception) (targetException.getTargetException());
+                            }
+                            fireConnectionRequiresTransactionExecuted(e);
+                        }
+
+
+                        // rethrow;
+                        throw targetException;
+
                     }
-                    return obj;
                 } else {
                     Object obj = null;
                     if (DynaPhynixxManagedConnectionFactory.this.isSynchronize()) {
