@@ -64,7 +64,7 @@ public class MTPooledConnectionTest extends TestCase {
 
         this.factory.setLoggerSystemStrategy(strategy);
         this.recoveryListner = new TestRecoveryListener();
-        this.factory.setConnectionProxyDecorator(this.recoveryListner);
+        this.factory.addConnectionProxyDecorator(this.recoveryListner);
 
     }
 

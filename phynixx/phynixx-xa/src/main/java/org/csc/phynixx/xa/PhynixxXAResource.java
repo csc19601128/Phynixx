@@ -586,11 +586,11 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                 /**
                  List<XAResourceTxState> statecons =
                  xaResourceFactory.getXAResourceTxStateManager().getXAResourceTxStates(this);
-                for (int i = 0; i < statecons.size(); i++) {
-                    XAResourceTxState sc = statecons.get(i);
-                    if (!sc.isSuspended()) {
-                        throw new XAException(XAException.XA_RBINTEGRITY);
-                    }
+                 for (int i = 0; i < statecons.size(); i++) {
+                 XAResourceTxState sc = statecons.get(i);
+                 if (!sc.isSuspended()) {
+                 throw new XAException(XAException.XA_RBINTEGRITY);
+                 }
                  }
                  **/
 

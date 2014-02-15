@@ -66,7 +66,7 @@ public class MTIntegrationScenarios extends TestCase {
         this.setUpConnectionFactory();
 
         EventListenerPhynixx eventListener = new EventListenerPhynixx();
-        this.factory.setConnectionProxyDecorator(eventListener);
+        this.factory.addConnectionProxyDecorator(eventListener);
 
         this.workOnConnection = new WorkOnConnection();
     }

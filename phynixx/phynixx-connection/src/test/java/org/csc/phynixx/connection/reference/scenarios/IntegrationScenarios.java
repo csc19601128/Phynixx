@@ -121,7 +121,7 @@ public class IntegrationScenarios extends TestCase {
         // instanciate a connection pool
         PooledPhynixxManagedConnectionFactory factory = createConnectionFactory(5);
         EventListenerPhynixx eventListener = new EventListenerPhynixx();
-        factory.setConnectionProxyDecorator(eventListener);
+        factory.addConnectionProxyDecorator(eventListener);
 
         IReferenceConnection con = null;
         try {
@@ -182,7 +182,7 @@ public class IntegrationScenarios extends TestCase {
 
         factory = createConnectionFactory(5);
         EventListenerPhynixx eventListener = new EventListenerPhynixx();
-        factory.setConnectionProxyDecorator(eventListener);
+        factory.addConnectionProxyDecorator(eventListener);
 
         factory.recover(null);
 

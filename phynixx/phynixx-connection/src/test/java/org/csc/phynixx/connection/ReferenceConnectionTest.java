@@ -139,6 +139,26 @@ public class ReferenceConnectionTest {
         con.close();
 
 
+        Assert.assertEquals(20, con.getCounter());
+
+    }
+
+    @Test
+    public void testAutoCommit() throws Exception {
+
+
+        IReferenceConnection con = connectionFactory.getConnection();
+        con.setAutoCommit(true);
+
+        con.setInitialCounter(13);
+
+        con.incCounter(7);
+        try {
+            con.rollback();
+        } catch (Exception e) {
+        }
+        con.close();
+
         Assert.assertEquals(20 + ReferenceConnection.ERRONEOUS_INC, con.getCounter());
 
     }

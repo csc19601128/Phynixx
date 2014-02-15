@@ -63,6 +63,8 @@ public class ReferenceConnection implements IReferenceConnection, IXADataRecorde
 
     private volatile boolean close = false;
 
+    private boolean autoCommit;
+
     /**
      * store the increments as compensations for rollforward
      */
@@ -70,6 +72,7 @@ public class ReferenceConnection implements IReferenceConnection, IXADataRecorde
 
 
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
+
 
     private IXADataRecorder xaDataRecorder = Dev0Strategy.THE_DEV0_LOGGER;
 
@@ -83,6 +86,14 @@ public class ReferenceConnection implements IReferenceConnection, IXADataRecorde
 
     public ReferenceConnection(Object id) {
         this.id = id;
+    }
+
+    public boolean isAutoCommit() {
+        return autoCommit;
+    }
+
+    public void setAutoCommit(boolean autoCommit) {
+        this.autoCommit = autoCommit;
     }
 
     public int getCounter() {

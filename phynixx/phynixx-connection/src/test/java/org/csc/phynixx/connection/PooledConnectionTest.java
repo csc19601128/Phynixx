@@ -69,7 +69,7 @@ public class PooledConnectionTest {
 
         this.factory.setLoggerSystemStrategy(strategy);
         this.recoveryListner = new TestRecoveryListener();
-        this.factory.setConnectionProxyDecorator(this.recoveryListner);
+        this.factory.addConnectionProxyDecorator(this.recoveryListner);
 
     }
 

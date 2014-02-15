@@ -33,7 +33,7 @@ public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnectio
      * @param event current connection
      */
     @Override
-    public void connectionOpen(IManagedConnectionProxyEvent<C> event) {
+    public void connectionReset(IManagedConnectionProxyEvent<C> event) {
     }
 
     /**
@@ -54,6 +54,10 @@ public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnectio
     public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {
     }
 
+    @Override
+    public void connectionRequiresTransactionExecuted(IManagedConnectionProxyEvent<C> event) {
+
+    }
 
     public void connectionCommitting(IManagedConnectionProxyEvent<C> event) {
 

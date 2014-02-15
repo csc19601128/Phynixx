@@ -29,6 +29,8 @@ import org.csc.phynixx.connection.loggersystem.Dev0Strategy;
 import org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,8 +52,8 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
 
     private DynaPhynixxManagedConnectionFactory<C> connectionProxyFactory = null;
     private IPhynixxLoggerSystemStrategy<C> loggerSystemStrategy = new Dev0Strategy();
-    private IPhynixxConnectionProxyDecorator<C> connectionProxyDecorator = null;
 
+    private List<IPhynixxConnectionProxyDecorator<C>> connectionProxyDecorators = new ArrayList<IPhynixxConnectionProxyDecorator<C>>();
 
     public PhynixxManagedConnectionFactory() {
     }
@@ -63,9 +65,15 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
 
     public void setConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory) {
 
+        /// factory for physical connection
         this.connectionFactory = connectionFactory;
+
+        // factory for managed connections
         this.connectionProxyFactory =
                 new DynaPhynixxManagedConnectionFactory<C>(connectionFactory.getConnectionInterface());
+
+        // TODO configurierbar machen
+        this.addConnectionProxyDecorator(new AutoCommitDecorator<C>());
     }
 
 
@@ -73,13 +81,13 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
         return connectionFactory;
     }
 
-    public IPhynixxConnectionProxyDecorator<C> getConnectionProxyDecorator() {
-        return connectionProxyDecorator;
+    public List<IPhynixxConnectionProxyDecorator<C>> getConnectionProxyDecorators() {
+        return Collections.unmodifiableList(connectionProxyDecorators);
     }
 
-    public void setConnectionProxyDecorator(
+    public void addConnectionProxyDecorator(
             IPhynixxConnectionProxyDecorator<C> connectionProxyDecorator) {
-        this.connectionProxyDecorator = connectionProxyDecorator;
+        this.connectionProxyDecorators.add(connectionProxyDecorator);
     }
 
     public IPhynixxLoggerSystemStrategy<C> getLoggerSystemStrategy() {
@@ -123,8 +131,8 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
                     proxy = PhynixxManagedConnectionFactory.this.loggerSystemStrategy.decorate(proxy);
                 }
 
-                if (PhynixxManagedConnectionFactory.this.connectionProxyDecorator != null) {
-                    proxy = PhynixxManagedConnectionFactory.this.connectionProxyDecorator.decorate(proxy);
+                for (IPhynixxConnectionProxyDecorator<C> decorators : this.connectionProxyDecorators) {
+                    proxy = decorators.decorate(proxy);
                 }
 
                 // Instantiate the connection

@@ -69,9 +69,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
-
     private C connection = null;
-
 
     private Class<C> connectionInterface;
 
@@ -203,6 +201,20 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         }
     }
 
+    public boolean isAutoCommit() {
+        if (this.getCoreConnection() != null) {
+            return this.getCoreConnection().isAutoCommit();
+        }
+        return false;
+    }
+
+    public void setAutoCommit(boolean autoCommit) {
+        if (this.getCoreConnection() != null) {
+            this.getCoreConnection().setAutoCommit(autoCommit);
+        }
+    }
+
+
     /**
      * A xaresource's connection is  never closed but always dereferenced .
      * As a connection proxy shields a xa resource, the current connection is not closed but dereferenced (==released)
@@ -211,7 +223,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         if (this.getCoreConnection() != null) {
             this.getCoreConnection().reset();
             // notify the action
-            this.fireConnectionOpen();
+            this.fireConnectionReset();
         }
     }
 
@@ -307,15 +319,15 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         this.fireConnectionErrorOccurred(exception);
     }
 
-    private void fireConnectionOpen() {
+    private void fireConnectionReset() {
 
         IEventDeliver deliver = new IEventDeliver() {
             public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
-                listener.connectionOpen(event);
+                listener.connectionReset(event);
             }
 
             public String toString() {
-                return "connectionOpened";
+                return "connectionRest";
             }
         };
         fireEvents(deliver);
@@ -326,15 +338,15 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event);
     }
 
-    private List listeners = new ArrayList();
+    private List<IPhynixxManagedConnectionListener<C>> listeners = new ArrayList<IPhynixxManagedConnectionListener<C>>();
 
-    public void addConnectionListener(IPhynixxManagedConnectionListener listener) {
+    public void addConnectionListener(IPhynixxManagedConnectionListener<C> listener) {
         if (!listeners.contains(listener)) {
             this.listeners.add(listener);
         }
     }
 
-    public synchronized void removeConnectionListener(IPhynixxManagedConnectionListener listener) {
+    public synchronized void removeConnectionListener(IPhynixxManagedConnectionListener<C> listener) {
 
         this.listeners.remove(listener);
     }
@@ -345,10 +357,10 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     private void fireEvents(IEventDeliver deliver, Exception exception) {
         // copy all listeners as the callback may change the list of listeners ...
-        List tmp = new ArrayList(this.listeners);
+        List<IPhynixxManagedConnectionListener<C>> tmp = new ArrayList(this.listeners);
         PhynixxConnectionProxyEvent event = new PhynixxConnectionProxyEvent(getObservableProxy(), exception);
         for (int i = 0; i < tmp.size(); i++) {
-            IPhynixxManagedConnectionListener listener = (IPhynixxManagedConnectionListener) tmp.get(i);
+            IPhynixxManagedConnectionListener<C> listener = tmp.get(i);
             if (logger.isDebugEnabled()) {
                 logger.debug("ConnectionPhynixxGuard " + event + " called listener " + listener + " on " + deliver);
             }
@@ -384,6 +396,20 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         fireEvents(deliver, exception);
     }
 
+    protected void fireConnectionRequiresTransactionFinished() {
+        IEventDeliver deliver = new IEventDeliver() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+                listener.connectionRequiresTransaction(event);
+            }
+
+            public String toString() {
+                return "connectionRequiresTransaction";
+            }
+        };
+        fireEvents(deliver);
+    }
+
+
     protected void fireConnectionRequiresTransaction() {
         IEventDeliver deliver = new IEventDeliver() {
             public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
@@ -396,6 +422,33 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         };
         fireEvents(deliver);
     }
+
+    protected void fireConnectionRequiresTransactionExecuted(Exception exception) {
+        IEventDeliver deliver = new IEventDeliver() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+                listener.connectionRequiresTransactionExecuted(event);
+            }
+
+            public String toString() {
+                return "connectionRequiresTransactionExecuted";
+            }
+        };
+        fireEvents(deliver, exception);
+    }
+
+    protected void fireConnectionRequiresTransactionExecuted() {
+        IEventDeliver deliver = new IEventDeliver() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+                listener.connectionRequiresTransactionExecuted(event);
+            }
+
+            public String toString() {
+                return "connectionRequiresTransactionExecuted";
+            }
+        };
+        fireEvents(deliver);
+    }
+
 
     protected void fireConnectionRolledback() {
         IEventDeliver deliver = new IEventDeliver() {

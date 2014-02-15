@@ -34,7 +34,7 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
      *
      * @param event current connection
      */
-    void connectionOpen(IManagedConnectionProxyEvent<C> event);
+    void connectionReset(IManagedConnectionProxyEvent<C> event);
 
     /**
      * called after the connection is closed
@@ -58,6 +58,16 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
      * @param event current connection
      */
     void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event);
+
+    /**
+     * connectionRequiresTransaction - an action was performed that
+     * must be transactional.
+     * If the method fail the exception is attached to the event
+     *
+     * @param event current connection
+     */
+    void connectionRequiresTransactionExecuted(IManagedConnectionProxyEvent<C> event);
+
 
     /**
      * connectionRolledback
