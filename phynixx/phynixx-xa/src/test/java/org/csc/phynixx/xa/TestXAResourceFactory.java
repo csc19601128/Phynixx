@@ -51,7 +51,8 @@ public class TestXAResourceFactory extends PhynixxXAResourceFactory<ITestConnect
     private static PhynixxManagedConnectionFactory<ITestConnection> createManagedConnectionFactory(File dataLoggerDirectory) {
         GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
         cfg.setMaxTotal(POOL_SIZE);
-        PooledPhynixxManagedConnectionFactory<ITestConnection> factory = new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
+        PooledPhynixxManagedConnectionFactory<ITestConnection> factory =
+                new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
 
         if (dataLoggerDirectory != null) {
             IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("testResource", dataLoggerDirectory);

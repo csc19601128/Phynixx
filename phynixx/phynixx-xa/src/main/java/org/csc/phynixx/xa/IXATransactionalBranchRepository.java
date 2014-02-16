@@ -1,6 +1,7 @@
 package org.csc.phynixx.xa;
 
 import org.csc.phynixx.connection.IPhynixxConnection;
+import org.csc.phynixx.connection.IPhynixxManagedConnection;
 
 import javax.transaction.xa.Xid;
 
@@ -10,7 +11,7 @@ import javax.transaction.xa.Xid;
 public interface IXATransactionalBranchRepository<C extends IPhynixxConnection> extends IXATransactionalBranchDictionary<C> {
 
 
-    void instanciateTransactionalBranch(Xid xid);
+    XATransactionalBranch<C> instanciateTransactionalBranch(Xid xid, IPhynixxManagedConnection<C> physicalConnection);
 
     void releaseTransactionalBranch(Xid xid);
 

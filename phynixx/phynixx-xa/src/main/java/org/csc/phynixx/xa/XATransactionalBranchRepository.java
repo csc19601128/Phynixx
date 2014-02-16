@@ -4,7 +4,6 @@ import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.connection.IPhynixxConnection;
 import org.csc.phynixx.connection.IPhynixxManagedConnection;
-import org.csc.phynixx.connection.IPhynixxManagedConnectionFactory;
 
 import javax.transaction.xa.Xid;
 import java.util.HashMap;
@@ -17,21 +16,22 @@ class XATransactionalBranchRepository<C extends IPhynixxConnection> implements I
 
     private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(XATransactionalBranchRepository.class);
 
-    private IPhynixxManagedConnectionFactory<C> managedConnectionFactory;
 
     private Map<Xid, XATransactionalBranch<C>> branches = new HashMap<Xid, XATransactionalBranch<C>>();
 
-    XATransactionalBranchRepository(IPhynixxManagedConnectionFactory<C> managedConnectionFactory) {
-        this.managedConnectionFactory = managedConnectionFactory;
+    XATransactionalBranchRepository() {
     }
 
     @Override
-    public void instanciateTransactionalBranch(Xid xid) {
-        if (!branches.containsKey(xid)) {
-            IPhynixxManagedConnection<C> connection = this.managedConnectionFactory.getManagedConnection();
-            XATransactionalBranch<C> branch = new XATransactionalBranch<C>(xid, connection);
+    public XATransactionalBranch<C> instanciateTransactionalBranch(Xid xid, IPhynixxManagedConnection<C> physicalConnection) {
+        XATransactionalBranch<C> branch = branches.get(xid);
+        if (branch == null) {
+            branch = new XATransactionalBranch<C>(xid, physicalConnection);
             branches.put(xid, branch);
         }
+        return branch;
+
+
     }
 
     @Override

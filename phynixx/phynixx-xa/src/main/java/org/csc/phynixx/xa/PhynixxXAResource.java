@@ -61,7 +61,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     private Object xaId = null;
 
-    private TransactionManager tmMgr = null;
+    private TransactionManager transactionManager = null;
 
     private PhynixxXAResourceFactory<C> xaResourceFactory = null;
 
@@ -76,12 +76,12 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     public PhynixxXAResource(
             String xaId,
-            TransactionManager tmMgr,
+            TransactionManager transactionManager,
             PhynixxXAResourceFactory<C> xaResourceFactory) {
         this.xaId = xaId;
-        this.tmMgr = tmMgr;
+        this.transactionManager = transactionManager;
         this.xaResourceFactory = xaResourceFactory;
-        this.xaConnectionHandle = new PhynixxManagedXAConnection(this, tmMgr, xaResourceFactory.getXATransactionalBranchRepository());
+        this.xaConnectionHandle = new PhynixxManagedXAConnection(this, transactionManager, xaResourceFactory.getXATransactionalBranchRepository(), xaResourceFactory.getManagedConnectionFactory());
 
         // start a watchdog to watch the timeout ...
         // this condition is not active
@@ -113,13 +113,10 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     public void conditionViolated() {
         try {
             if (this.xaConnectionHandle != null) {
-                Xid xid = this.xaConnectionHandle.getCurrentTransactionalBranch();
-                if (xid != null) {
-                    XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xid);
-                    if (transactionalBranch != null) {
+                XATransactionalBranch<C> transactionalBranch = this.xaConnectionHandle.toGlobalTransactionBranch();
+                if (transactionalBranch != null) {
                         transactionalBranch.setRollbackOnly(true);
                     }
-                }
             }
             if (LOG.isInfoEnabled()) {
                 String logString = "SampleXAResource.expired :: XAResource " + this.getId() + " is expired (time out occurred) and all associated TX are rollbacked ";
@@ -133,14 +130,6 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     }
 
-    /**
-     * finds the transactional branch associated to the xaResourceFactory
-     *
-     * @param xid
-     */
-    private XATransactionalBranch<C> findTransactionalBranch(Xid xid) {
-        return this.xaResourceFactory.getXATransactionalBranchRepository().findTransactionalBranch(xid);
-    }
 
     /**
      * accessing the XAConnection forces the XAResource to enlist to the Transaction. {@link #getXAConnection()} must be called in the appropriate TransactionContext
@@ -155,30 +144,115 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
         return closed;
     }
 
+    /**
+     * transaction branch is interchangeably with transaction context
+     * <p/>
+     * <p>
+     * situation     : XAResource is associtaed with XID(1)
+     * flags=TMNOFLAGS  with XID(1)
+     * result        : XAResource creates a new transactional context
+     * </p>
+     * <p/>
+     * <p>
+     * situation     : XAResource is associtaed with XID(1)
+     * flags=TMJOIN/TNRESUME  with XID(1) (may be different in branch)
+     * result        : XAResource joins the transactional context with the XAResource already associated with XID(1)
+     * If TMRESUME is specified, start is to resume a suspended transaction branch specified in xid.
+     * </p>
+     * <p/>
+     * <p/>
+     * <p/>
+     * <p/>
+     * This method starts work on behalf of a transaction branch.
+     * <p/>
+     * <p/>
+     * <p/>
+     * If TMJOIN is specified, start is for joining an exisiting transaction branch xid.
+     * <p/>
+     * If neither TMJOIN nor TMRESUME is specified and the transaction branch specified in
+     * xid already exists, the resource manager throw the XAException
+     * with XAER_DUPID error code.
+     * <p/>
+     * If the XAResource has a current connection  and flags ==TMJOIN/TMRESUME, the current connection is
+     * substituted by the connection of the existing TX.
+     *
+     * @param xid   A global transaction identifier to be associated with the resource.
+     * @param flags One of TMNOFLAGS, TMJOIN, or TMRESUME.
+     * @throws: XAException An error has occurred.
+     * Possible exceptions are XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_DUPID, XAER_OUTSIDE, XAER_NOTA, XAER_INVAL, or XAER_PROTO.
+     */
+    public void start(Xid xid, int flags) throws XAException {
+        try {
+
+            if (xid == null) {
+                throw new XAException(XAException.XAER_INVAL);
+            }
+            // Find the current Branch
+            XATransactionalBranch<C> transactionalBranch = null;
+
+            // if resuming or joining an existing transaction
+            if (flags == TMRESUME) {
+                this.xaConnectionHandle.resumeTransactionalBranch(xid);
+            } else if (flags == TMJOIN || flags == TMNOFLAGS) {
+                this.xaConnectionHandle.startTransactionalBranch(xid);
+            }
+            LOG.debug(
+                    "SampleXAResource[" + this.getId() + "]:start xid='"
+                            + xid
+                            + "' flags='"
+                            + ConstantsPrinter.getXAResourceMessage(flags)
+                            + "'"
+                            + " Connected to " +
+                            this.xaConnectionHandle);
+
+
+            // start monitoring the timeout
+            this.timeoutCondition.setActive(true);
+
+        } catch (XAException xaExc) {
+            LOG.error("SampleXAResource[" + this.getId() + "]:start xid='"
+                    + xid
+                    + "' flags='"
+                    + ConstantsPrinter.getXAResourceMessage(flags)
+                    + "'"
+                    + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
+            throw xaExc;
+        } catch (Exception ex) {
+            LOG.error("SampleXAResource.start(" + xid + "," + flags + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            throw new DelegatedRuntimeException("start(" + xid + "," + flags + ") on Resource " + this.xaId, ex);
+
+        }
+    }
+
 
     public void commit(Xid xid, boolean onePhase) throws XAException {
+
+        XATransactionalBranch<C> transactionalBranch = this.xaConnectionHandle.toGlobalTransactionBranch();
         if (xid == null) {
+            LOG.error("No XID");
             throw new XAException(XAException.XAER_INVAL);
+        }
+
+        if (transactionalBranch != null) {
+            LOG.error("XAConnection is not associated to a global Transaction");
+            throw new XAException(XAException.XAER_PROTO);
         }
 
         // assert that the current xaConnection is associated to this XID
-        if (!xaConnectionHandle.getCurrentTransactionalBranch().equals(xid)) {
+        if (!transactionalBranch.getXid().equals(xid)) {
             LOG.error("XAResource " + this + " isnt't active for XID=" + xid);
-            throw new XAException(XAException.XAER_INVAL);
+            throw new XAException(XAException.XAER_PROTO);
         }
 
         // Find the current Branch
-        XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xid);
-        if (transactionalBranch == null) {
-            throw new XAException(XAException.XAER_INVAL);
-        }
+
         try {
             transactionalBranch.commit(onePhase);
         } catch (XAException xaExc) {
             LOG.error("SampleXAResource[" + this.getId() + "]:end xid='"
                     + xid
                     + "' onePhase='" + onePhase
-                    + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
+                    + "            ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
             throw xaExc;
 
         } catch (Exception ex) {
@@ -186,13 +260,150 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
             throw new DelegatedRuntimeException("commit(" + xid + "," + onePhase + ") on Resource " + this.xaId, ex);
         } finally {
             try {
-                transactionalBranch.close();
+                // Branch isn't active for the current XAresource
+                this.xaConnectionHandle.closeTransactionalBranch(xid);
             } finally {
                 // stop monitoring the timeout
                 this.timeoutCondition.setActive(false);
 
             }
         }
+
+    }
+
+    /**
+     * finds the transactional branch of the current XAResource associated with die XID
+     * <p/>
+     * Prepares to perform a commit. May actually perform a commit
+     * in the flag commitOnPrepare is set to true.
+     * <p/>
+     * This method is called to ask the resource manager to prepare for a
+     * transaction commit of the transaction specified in xid.
+     *
+     * @param xid A global transaction identifier.
+     * @return A value indicating the resource manager's vote on the outcome of
+     * the transaction. The possible values are: XA_RDONLY or XA_OK.
+     * If the resource manager wants to roll back the transaction, it should do so by
+     * throwing an appropriate XAException in the prepare method.
+     * @throws XAException An error has occurred.
+     *                     Possible exception values are:
+     *                     XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or XAER_PROTO.
+     */
+    public int prepare(Xid xid) throws XAException {
+        try {
+            LOG.debug(
+                    "SampleXAResource[" + this.getId() + "]:prepare prepare to perform a commit for XID=" + xid);
+
+            XATransactionalBranch<C> transactionalBranch = this.xaConnectionHandle.toGlobalTransactionBranch();
+            if (xid == null) {
+                LOG.error("No XID");
+                throw new XAException(XAException.XAER_INVAL);
+            }
+
+            if (transactionalBranch != null) {
+                LOG.error("XAConnection is not associated to a global Transaction");
+                throw new XAException(XAException.XAER_PROTO);
+            }
+
+            // assert that the current xaConnection is associated to this XID
+            if (!transactionalBranch.getXid().equals(xid)) {
+                LOG.error("XAResource " + this + " isnt't active for XID=" + xid);
+                throw new XAException(XAException.XAER_PROTO);
+            }
+
+
+            // must find connection for this transaction
+            if (transactionalBranch.getProgressState() != Status.STATUS_ACTIVE) {// must have had start() called
+                LOG.error("XAResource " + this + " must have start() called ");
+                throw new XAException(XAException.XAER_PROTO);
+            }
+            // must find connection for this transaction
+            int retVal = transactionalBranch.prepare();
+            return retVal;
+
+        } catch (XAException xaExc) {
+            LOG.error("SampleXAResource[" + this.getId() + "]:prepare xid='"
+                    + xid
+                    + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
+            throw xaExc;
+        } catch (Exception ex) {
+            LOG.error("SampleXAResource.prepare(" + xid + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            throw new DelegatedRuntimeException("prepare(" + xid + ") on Resource " + this.xaId, ex);
+
+        }
+    }
+
+
+    /*
+    * finds the transactional branch of the current XAResource associated with die XID
+    *
+    * This method informs the resource manager to roll back
+    * work done on behalf of a transaction branch.
+    * Upon return, the resource manager has rolled back the branch's work and
+    * has released all held resources.
+    *
+    * @param xid A global transaction identifier.
+    * @throws XAException An error has occurred.
+    *    Possible XAExceptions are
+    *       XA_HEURHAZ, XA_HEURCOM,XA_HEURRB, XA_HEURMIX,
+    *       XAER_RMERR, XAER_RMFAIL, XAER_NOTA,XAER_INVAL, or XAER_PROTO.
+    *
+    *
+    * @see javax.transaction.xa.XAResource#rollback(javax.transaction.xa.Xid)
+    */
+    public void rollback(Xid xid) throws XAException {
+        {
+            try {
+                LOG.debug("SampleXAResource[" + this.getId() + "]:rollback started xid=" + xid);
+
+                XATransactionalBranch<C> transactionalBranch = this.xaConnectionHandle.toGlobalTransactionBranch();
+                if (xid == null) {
+                    LOG.error("No XID");
+                    throw new XAException(XAException.XAER_INVAL);
+                }
+
+                if (transactionalBranch != null) {
+                    LOG.error("XAConnection is not associated to a global Transaction");
+                    throw new XAException(XAException.XAER_PROTO);
+                }
+
+                // assert that the current xaConnection is associated to this XID
+                if (!transactionalBranch.getXid().equals(xid)) {
+                    LOG.error("XAResource " + this + " isnt't active for XID=" + xid);
+                    throw new XAException(XAException.XAER_PROTO);
+                }
+
+                // Find the current Branch
+
+                if (!transactionalBranch.isActive()) {
+                    throw new XAException(XAException.XAER_PROTO);
+                }
+
+                try {
+                    transactionalBranch.rollback();
+                } finally {
+                    // Branch isn't active for the current XAresource
+                    this.xaConnectionHandle.closeTransactionalBranch(xid);
+                }
+
+
+            } catch (XAException xaExc) {
+                LOG.error("SampleXAResource[" + this.getId() + "]:rollback xid='"
+                        + xid
+                        + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
+                throw xaExc;
+
+            } catch (Exception ex) {
+                LOG.error("SampleXAResource.rollback(" + xid + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+                throw new DelegatedRuntimeException("rollback(" + xid + ") on Resource " + this.xaId, ex);
+
+            } finally {
+                // stop monitoring the timeout
+                this.timeoutCondition.setActive(false);
+
+            }
+        }
+
 
     }
 
@@ -223,26 +434,34 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                     "SampleXAResource[" + this.getId() + "]:end xid='" + xid + "' flags='" + ConstantsPrinter.getXAResourceMessage(flags) + "'");
 
             if (xid == null) {
+                LOG.error("No XID");
                 throw new XAException(XAException.XAER_INVAL);
             }
 
-            // Find the current Branch
-            XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xid);
+            XATransactionalBranch<C> transactionalBranch = this.xaConnectionHandle.toGlobalTransactionBranch();
+            if (transactionalBranch != null) {
+                LOG.error("XAConnection is not associated to a global Transaction");
+                throw new XAException(XAException.XAER_PROTO);
+            }
+
+            // assert that the current xaConnection is associated to this XID
+            if (!transactionalBranch.getXid().equals(xid)) {
+                LOG.error("XAResource " + this + " isnt't active for XID=" + xid);
+                throw new XAException(XAException.XAER_PROTO);
+            }
 
             // must find connection for this transaction
-            if (transactionalBranch == null || transactionalBranch.getProgressState() != Status.STATUS_ACTIVE) {// must have had start() called
+            if (transactionalBranch.getProgressState() != Status.STATUS_ACTIVE) {// must have had start() called
                 LOG.error("XAResource " + this + " must have start() called ");
                 throw new XAException(XAException.XAER_PROTO);
             }
 
             if (flags == TMSUSPEND) {
-                transactionalBranch.suspend();
+                this.xaConnectionHandle.suspendTransactionalBranch(xid);
             } else if (flags == TMSUCCESS) {
                 LOG.error("XAResource " + this + " closed gracefully ");
             } else if (flags == TMFAIL) {
-                if (this.xaConnectionHandle.isInTransaction()) {
-                    this.xaConnectionHandle.getGlobalTransaction().setRollbackOnly();
-                }
+                transactionalBranch.setRollbackOnly(true);
             }
 
         } catch (XAException xaExc) {
@@ -256,10 +475,6 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
         } catch (Exception ex) {
             LOG.error("SampleXAResource.end(" + xid + "," + flags + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
             throw new DelegatedRuntimeException("end(" + xid + "," + flags + ") on Resource " + this.xaId, ex);
-        } finally {
-
-            // Branch isn't active for the current XAresource
-            this.xaConnectionHandle.disassociateTransactionalBranch(xid);
         }
     }
 
@@ -275,12 +490,12 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
             if (xid == null)
                 throw new XAException(XAException.XAER_INVAL);
 
-            XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xid);
+            XATransactionalBranch<C> transactionalBranch = this.xaConnectionHandle.toGlobalTransactionBranch();
             // must find connection for this transaction
             if (transactionalBranch == null) {
                 return; //
             }
-            transactionalBranch.close();
+            this.xaConnectionHandle.closeTransactionalBranch(xid);
 
         } finally {
             // stop monitoring the timeout
@@ -333,55 +548,6 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
         }
     }
 
-    /**
-     * finds the transactional branch of the current XAResource associated with die XID
-     * <p/>
-     * Prepares to perform a commit. May actually perform a commit
-     * in the flag commitOnPrepare is set to true.
-     * <p/>
-     * This method is called to ask the resource manager to prepare for a
-     * transaction commit of the transaction specified in xid.
-     *
-     * @param xid A global transaction identifier.
-     * @return A value indicating the resource manager's vote on the outcome of
-     * the transaction. The possible values are: XA_RDONLY or XA_OK.
-     * If the resource manager wants to roll back the transaction, it should do so by
-     * throwing an appropriate XAException in the prepare method.
-     * @throws XAException An error has occurred.
-     *                     Possible exception values are:
-     *                     XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or XAER_PROTO.
-     */
-    public int prepare(Xid xid) throws XAException {
-        try {
-            LOG.debug(
-                    "SampleXAResource[" + this.getId() + "]:prepare prepare to perform a commit for XID=" + xid);
-
-            if (xid == null) {
-                throw new XAException(XAException.XAER_INVAL);
-            }
-
-            XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xid);
-
-            // must find connection for this transaction
-            if (transactionalBranch == null || transactionalBranch.getProgressState() != Status.STATUS_ACTIVE) {// must have had start() called
-                LOG.error("XAResource " + this + " must have start() called ");
-                throw new XAException(XAException.XAER_PROTO);
-            }
-            // must find connection for this transaction
-            int retVal = transactionalBranch.prepare();
-            return retVal;
-
-        } catch (XAException xaExc) {
-            LOG.error("SampleXAResource[" + this.getId() + "]:prepare xid='"
-                    + xid
-                    + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
-            throw xaExc;
-        } catch (Exception ex) {
-            LOG.error("SampleXAResource.prepare(" + xid + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
-            throw new DelegatedRuntimeException("prepare(" + xid + ") on Resource " + this.xaId, ex);
-
-        }
-    }
 
     /**
      * finds the transactional branch of the current XAResource associated with die XID
@@ -392,7 +558,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     public void close() {
 
         if (this.xaConnectionHandle != null) {
-            XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xaConnectionHandle.getCurrentTransactionalBranch());
+            XATransactionalBranch<C> transactionalBranch = this.xaConnectionHandle.toGlobalTransactionBranch();
             if (transactionalBranch != null) {
                 transactionalBranch.close();
             }
@@ -418,78 +584,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     }
 
 
-    /*
-     * finds the transactional branch of the current XAResource associated with die XID
-     *
-     * This method informs the resource manager to roll back
-     * work done on behalf of a transaction branch.
-     * Upon return, the resource manager has rolled back the branch's work and
-     * has released all held resources.
-     *
-     * @param xid A global transaction identifier.
-     * @throws XAException An error has occurred.
-     *    Possible XAExceptions are
-     *       XA_HEURHAZ, XA_HEURCOM,XA_HEURRB, XA_HEURMIX,
-     *       XAER_RMERR, XAER_RMFAIL, XAER_NOTA,XAER_INVAL, or XAER_PROTO.
-     *
-     *
-     * @see javax.transaction.xa.XAResource#rollback(javax.transaction.xa.Xid)
-     */
-    public void rollback(Xid xid) throws XAException {
-        {
-            try {
-                LOG.debug("SampleXAResource[" + this.getId() + "]:rollback started xid=" + xid);
 
-                if (xid == null) {
-                    throw new XAException(XAException.XAER_INVAL);
-                }
-
-                // assert that the current xaConnection is associated to this XID
-                if (!xaConnectionHandle.getCurrentTransactionalBranch().equals(xid)) {
-                    LOG.error("XAResource " + this + " isn't active for XID=" + xid);
-                    throw new XAException(XAException.XAER_INVAL);
-                }
-
-                // Find the current Branch
-                XATransactionalBranch<C> transactionalBranch = findTransactionalBranch(xid);
-                if (transactionalBranch == null) {
-                    throw new XAException(XAException.XAER_INVAL);
-                }
-
-                if (transactionalBranch == null) {
-                    return; // already rollbacked ...
-                }
-
-                if (!transactionalBranch.isActive()) {
-                    throw new XAException(XAException.XAER_INVAL);
-                }
-
-                try {
-                    transactionalBranch.rollback();
-                } finally {
-                    transactionalBranch.close();
-                }
-
-
-            } catch (XAException xaExc) {
-                LOG.error("SampleXAResource[" + this.getId() + "]:rollback xid='"
-                        + xid
-                        + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
-                throw xaExc;
-
-            } catch (Exception ex) {
-                LOG.error("SampleXAResource.rollback(" + xid + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
-                throw new DelegatedRuntimeException("rollback(" + xid + ") on Resource " + this.xaId, ex);
-
-            } finally {
-                // stop monitoring the timeout
-                this.timeoutCondition.setActive(false);
-
-            }
-        }
-
-
-    }
 
     /**
      * This method sets the transaction timeout value for this XAResource instance.
@@ -522,113 +617,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     }
 
-    /**
-     * transaction branch is interchangeably with transaction context
-     * <p/>
-     * <p>
-     * situation     : XAResource is associtaed with XID(1)
-     * flags=TMNOFLAGS  with XID(1)
-     * result        : XAResource creates a new transactional context
-     * </p>
-     * <p/>
-     * <p>
-     * situation     : XAResource is associtaed with XID(1)
-     * flags=TMJOIN/TNRESUME  with XID(1) (may be different in branch)
-     * result        : XAResource joins the transactional context with the XAResource already associated with XID(1)
-     * If TMRESUME is specified, start is to resume a suspended transaction branch specified in xid.
-     * </p>
-     * <p/>
-     * <p/>
-     * <p/>
-     * <p/>
-     * This method starts work on behalf of a transaction branch.
-     * <p/>
-     * <p/>
-     * <p/>
-     * If TMJOIN is specified, start is for joining an exisiting transaction branch xid.
-     * <p/>
-     * If neither TMJOIN nor TMRESUME is specified and the transaction branch specified in
-     * xid already exists, the resource manager throw the XAException
-     * with XAER_DUPID error code.
-     * <p/>
-     * If the XAResource has a current connection  and flags ==TMJOIN/TMRESUME, the current connection is
-     * substituted by the connection of the existing TX.
-     *
-     * @param xid   A global transaction identifier to be associated with the resource.
-     * @param flags One of TMNOFLAGS, TMJOIN, or TMRESUME.
-     * @throws: XAException An error has occurred.
-     * Possible exceptions are XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_DUPID, XAER_OUTSIDE, XAER_NOTA, XAER_INVAL, or XAER_PROTO.
-     */
-    public void start(Xid xid, int flags) throws XAException {
-        try {
 
-            if (xid == null) {
-                throw new XAException(XAException.XAER_INVAL);
-            }
-            // Find the current Branch
-            XATransactionalBranch<C> transactionalBranch = null;
-
-            /**
-             * An existing TX has to be joined with the current connection
-             */
-            if (flags == TMRESUME || flags == TMJOIN) {
-                // if resuming or joining an existing transaction
-                transactionalBranch = findTransactionalBranch(xid);
-                if (transactionalBranch == null) {
-                    throw new XAException(XAException.XAER_INVAL);
-                }
-                if (flags == TMRESUME) {
-                    transactionalBranch.resume();
-                }
-                this.xaConnectionHandle.disassociateTransactionalBranch(xid);
-            } else {
-                // check if there are any transaction contexts associated with the current XAResource
-                /**
-                 List<XAResourceTxState> statecons =
-                 xaResourceFactory.getXAResourceTxStateManager().getXAResourceTxStates(this);
-                 for (int i = 0; i < statecons.size(); i++) {
-                 XAResourceTxState sc = statecons.get(i);
-                 if (!sc.isSuspended()) {
-                 throw new XAException(XAException.XA_RBINTEGRITY);
-                 }
-                 }
-                 **/
-
-                // new Transactional branch with new pyhsical connection
-                this.xaResourceFactory.getXATransactionalBranchRepository().instanciateTransactionalBranch(xid);
-                if (findTransactionalBranch(xid) != null) {
-                    LOG.error("Although flag=" + ConstantsPrinter.getXAResourceMessage(flags) + " a transaction branch XID=" + xid + " is already opened");
-                    throw new XAException(XAException.XAER_DUPID);
-                }
-                this.xaConnectionHandle.associateTransactionalBranch(xid);
-            }
-            LOG.debug(
-                    "SampleXAResource[" + this.getId() + "]:start xid='"
-                            + xid
-                            + "' flags='"
-                            + ConstantsPrinter.getXAResourceMessage(flags)
-                            + "'"
-                            + " Connected to " +
-                            this.xaConnectionHandle);
-
-
-            // start monitoring the timeout
-            this.timeoutCondition.setActive(true);
-
-        } catch (XAException xaExc) {
-            LOG.error("SampleXAResource[" + this.getId() + "]:start xid='"
-                    + xid
-                    + "' flags='"
-                    + ConstantsPrinter.getXAResourceMessage(flags)
-                    + "'"
-                    + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
-            throw xaExc;
-        } catch (Exception ex) {
-            LOG.error("SampleXAResource.start(" + xid + "," + flags + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
-            throw new DelegatedRuntimeException("start(" + xid + "," + flags + ") on Resource " + this.xaId, ex);
-
-        }
-    }
 
     public final boolean equals(Object obj) {
         return super.equals(obj);
@@ -652,7 +641,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 		sb.append("     next timeOut =<"+this.nextTimeout + ">\n");
 		sb.append("     timeOut period =<"+this.timeoutPeriod + ">\n");
 		sb.append("     timeOut secs =<"+this.timeoutSecs + ">\n");
-		sb.append("     transaction manager=<"+this.tmMgr + ">\n");
+		sb.append("     transaction manager=<"+this.transactionManager + ">\n");
 		return sb.toString();	
 	}
 	*/

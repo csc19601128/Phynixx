@@ -86,7 +86,7 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
 
         this.managedConnectionFactory = connectionFactory;
 
-        xaTransactionalBranchRepository = new XATransactionalBranchRepository(this.managedConnectionFactory);
+        xaTransactionalBranchRepository = new XATransactionalBranchRepository();
 
         this.transactionManager = transactionManager;
         this.xaresourrceWatchdog = WatchdogRegistry.getTheRegistry().createWatchdog(CHECK_INTERVAL);

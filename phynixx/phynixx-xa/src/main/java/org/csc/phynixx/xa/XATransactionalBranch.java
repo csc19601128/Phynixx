@@ -108,7 +108,12 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
     }
 
     void setRollbackOnly(boolean rbOnly) {
+
         this.rollbackOnly = rbOnly;
+        // TODO STATUS_MARK_ROLLBACK freischalten
+        if (this.rollbackOnly) {
+            this.activeState = Status.STATUS_MARKED_ROLLBACK;
+        }
         //new Exception("Set to " + rbOnly+" ObjectId"+super.toString()).printStackTrace();
     }
 
@@ -234,13 +239,13 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
             throw new XAException(XAException.XAER_PROTO);
         }
 
-        LOG.debug("XAResourceTxState:rollback for xid=" + xid + " current Status=" + ConstantsPrinter.getStatusMessage(this.getProgressState()));
+        LOG.debug("XATransactionalBranch:rollback for xid=" + xid + " current Status=" + ConstantsPrinter.getStatusMessage(this.getProgressState()));
         switch (this.getProgressState()) {
             case Status.STATUS_PREPARED: // ready to do rollback
             case Status.STATUS_ACTIVE:
                 try {
                     LOG.debug(
-                            "XAResourceTxState:rollback try to perform the rollback operation");
+                            "XATransactionalBranch:rollback try to perform the rollback operation");
                     this.setProgressState(Status.STATUS_ROLLING_BACK);
 
                     // do the rollback
@@ -248,13 +253,13 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
                             !this.getManagedConnection().isClosed()) {
                         this.getManagedConnection().rollback();
                     } else {
-                        LOG.info("XAResourceTxState connection already closed -> no rollback");
+                        LOG.info("XATransactionalBranch connection already closed -> no rollback");
                     }
 
                     this.setProgressState(Status.STATUS_ROLLEDBACK);
                     // perform the rollback operation
                     LOG.debug(
-                            "XAResourceTxState:rollback performed the rollback");
+                            "XATransactionalBranch:rollback performed the rollback");
                 } catch (Exception e) {
                     LOG.error("Error in " + this + " \n" + e.getMessage());
                     throw new XAException(XAException.XAER_PROTO);
@@ -262,7 +267,7 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
                 }
                 break;
             default:
-                LOG.error("XAResourceTxState : rollback not permitted on TX state " + ConstantsPrinter.getStatusMessage(this.getProgressState()) + " XAResoureTXState=" + this);
+                LOG.error("XATransactionalBranch : rollback not permitted on TX state " + ConstantsPrinter.getStatusMessage(this.getProgressState()) + " XAResoureTXState=" + this);
                 throw new XAException(XAException.XAER_RMFAIL);
         }
 
@@ -288,6 +293,7 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
 
     public void close() {
         this.getManagedConnection().close();
+        this.activeState = Status.STATUS_UNKNOWN;
     }
 
 

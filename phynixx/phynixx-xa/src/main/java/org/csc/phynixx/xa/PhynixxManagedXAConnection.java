@@ -21,11 +21,14 @@ package org.csc.phynixx.xa;
  */
 
 
+import org.csc.phynixx.common.cast.ImplementorUtils;
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.common.exceptions.ExceptionUtils;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.connection.IPhynixxConnection;
+import org.csc.phynixx.connection.IPhynixxManagedConnection;
+import org.csc.phynixx.connection.IPhynixxManagedConnectionFactory;
 
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
@@ -35,8 +38,8 @@ import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 
-/**keeps the XAresource's association to the transactional branch (given via XID).
- *
+/**
+ * keeps the XAresource's association to the transactional branch (given via XID).
  *
  * @author zf4iks2
  */
@@ -46,18 +49,22 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
 
     private final PhynixxXAResource<C> xaResource;
 
-    private TransactionManager tmMgr = null;
+    private IPhynixxManagedConnectionFactory<C> managedConnectionFactory;
 
-    private Transaction globalTransaction = null;
+    private transient ITransactionBinding<C> transactionBinding = null;
 
-    private final IXATransactionalBranchDictionary<C> xaTransactionalBranchDictionary;
+    private TransactionManager transactionManager = null;
 
-    private Xid xid;
+    private final IXATransactionalBranchRepository<C> xaTransactionalBranchDictionary;
 
-    PhynixxManagedXAConnection(PhynixxXAResource<C> xaResource, TransactionManager tmMgr, IXATransactionalBranchDictionary<C> xaTransactionalBranchDictionary) {
+    PhynixxManagedXAConnection(PhynixxXAResource<C> xaResource,
+                               TransactionManager transactionManager,
+                               IXATransactionalBranchRepository<C> xaTransactionalBranchDictionary,
+                               IPhynixxManagedConnectionFactory<C> managedConnectionFactory) {
         this.xaResource = xaResource;
         this.xaTransactionalBranchDictionary = xaTransactionalBranchDictionary;
-        this.tmMgr = tmMgr;
+        this.managedConnectionFactory = managedConnectionFactory;
+        this.transactionManager = transactionManager;
     }
 
     public XAResource getXAResource() {
@@ -65,8 +72,14 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
     }
 
 
-    Transaction getGlobalTransaction() {
-        return globalTransaction;
+    /**
+     * @return !=null if an if the XAConnection is bound to a global transaction
+     */
+    XATransactionalBranch<C> toGlobalTransactionBranch() {
+        if (this.transactionBinding != null && this.transactionBinding.getTransactionBindingType() == TransactionBindingType.GlobalTransaction) {
+            return ImplementorUtils.cast(this.transactionBinding, XATransactionalBranch.class);
+        }
+        return null;
     }
 
 
@@ -76,12 +89,121 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
      *
      * @param xid
      */
-    void associateTransactionalBranch(Xid xid) {
+    void startTransactionalBranch(Xid xid) {
+        cleanupTransactionBinding();
 
-        if (!isInTransaction()) {
-            throw new IllegalStateException("Not in Transaction. No TransactionB ranch can be associated");
+        final TransactionBindingType transactionBindingType = getTransactionBindingType();
+
+
+        // already associated to a local transaction
+        if (transactionBindingType == TransactionBindingType.LocalTransaction) {
+            LocalTransactionProxy<C> localTransactionProxy = ImplementorUtils.cast(this.transactionBinding, LocalTransactionProxy.class);
+            if (localTransactionProxy.hasTransactionalData()) {
+                throw new IllegalStateException("Connection ist associated to a local transaction and has uncommitted transactional data");
+            }
+
+            XATransactionalBranch<C> xaTransactionalBranch = this.xaTransactionalBranchDictionary.findTransactionalBranch(xid);
+            /// xaTransactionalBranch!=null => joining a existing transactional branch
+            if (xaTransactionalBranch == null) {
+                this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid, localTransactionProxy.getConnection());
+            }
+            this.transactionBinding = new GlobalTransactionProxy<C>(xaTransactionalBranch);
+            return;
+
+            // no transaction binding
+        } else if (transactionBindingType == TransactionBindingType.NoTransaction) {
+            XATransactionalBranch<C> xaTransactionalBranch = this.xaTransactionalBranchDictionary.findTransactionalBranch(xid);
+
+            /// xaTransactionalBranch!=null => joining a existing transactional branch
+            if (xaTransactionalBranch == null) {
+                IPhynixxManagedConnection<C> physicalConnection = this.createPhysicalConnection();
+                xaTransactionalBranch =
+                        this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid, physicalConnection);
+                this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid, physicalConnection);
+            }
+            this.transactionBinding = new GlobalTransactionProxy<C>(xaTransactionalBranch);
+            return;
+
+            // if bound to a global TX it has to be the same XID
+        } else if (transactionBindingType == TransactionBindingType.GlobalTransaction) {
+            GlobalTransactionProxy<C> globalTransactionProxy = ImplementorUtils.cast(this.transactionBinding, GlobalTransactionProxy.class);
+            if (!globalTransactionProxy.getXid().equals(xid)) {
+                throw new IllegalStateException("XAConnection already associated to a global Transaction");
+            }
         }
-        this.xid = xid;
+
+
+    }
+
+    private void cleanupTransactionBinding() {
+        // cleanup
+        if (getTransactionBindingType() == TransactionBindingType.LocalTransaction) {
+            LocalTransactionProxy<C> localTransactionProxy = ImplementorUtils.cast(this.transactionBinding, LocalTransactionProxy.class);
+            if (localTransactionProxy.isClosed()) {
+                this.transactionBinding.release();
+                this.transactionBinding = null;
+            }
+        }
+    }
+
+    private TransactionBindingType getTransactionBindingType() {
+        return (this.transactionBinding != null) ? this.transactionBinding.getTransactionBindingType() : TransactionBindingType.NoTransaction;
+    }
+
+    private IPhynixxManagedConnection<C> createPhysicalConnection() {
+        return this.managedConnectionFactory.getManagedConnection();
+    }
+
+
+    void resumeTransactionalBranch(Xid xid) {
+
+        this.cleanupTransactionBinding();
+
+        TransactionBindingType transactionBindingType = getTransactionBindingType();
+        if (transactionBindingType == TransactionBindingType.GlobalTransaction) {
+            throw new IllegalStateException("XAConnection associated to a global transaction and can not be resumed");
+        }
+        XATransactionalBranch<C> transactionalBranch = this.xaTransactionalBranchDictionary.findTransactionalBranch(xid);
+        if (transactionalBranch == null) {
+            throw new IllegalStateException("No suspended branch for XID " + xid);
+        }
+        transactionalBranch.resume();
+        this.transactionBinding = new GlobalTransactionProxy<C>(transactionalBranch);
+
+    }
+
+    void suspendTransactionalBranch(Xid xid) {
+
+        this.cleanupTransactionBinding();
+
+        TransactionBindingType transactionBindingType = getTransactionBindingType();
+        if (transactionBindingType != TransactionBindingType.GlobalTransaction) {
+            throw new IllegalStateException("XAConnection not associated to a global transaction and can not be suspended");
+        }
+        GlobalTransactionProxy<C> globalTransactionProxy = ImplementorUtils.cast(this.transactionBinding, GlobalTransactionProxy.class);
+        if (!globalTransactionProxy.getXid().equals(xid)) {
+            throw new IllegalStateException("XAConnection already associated to a global Transaction");
+        }
+        globalTransactionProxy.getGlobalTransactionalBranch().suspend();
+
+        this.transactionBinding.release();
+        this.transactionBinding = null;
+
+    }
+
+    void joinTransactionalBranch(Xid xid) {
+
+        cleanupTransactionBinding();
+
+        TransactionBindingType transactionBindingType = getTransactionBindingType();
+        if (transactionBindingType == TransactionBindingType.GlobalTransaction) {
+            throw new IllegalStateException("XAConnection already associated to a global transaction and can not be joined to XID " + xid);
+        }
+
+
+        this.transactionBinding.release();
+        this.transactionBinding = null;
+
     }
 
     /**
@@ -89,21 +211,25 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
      *
      * @param xid
      */
-    void disassociateTransactionalBranch(Xid xid) {
-        this.xid = null;
+    void closeTransactionalBranch(Xid xid) {
+
+        if (this.getTransactionBindingType() != TransactionBindingType.GlobalTransaction) {
+            throw new IllegalStateException("XAConnection not associated to a global transaction");
+        }
+
+        GlobalTransactionProxy<C> globalTransactionProxy = ImplementorUtils.cast(this.transactionBinding, GlobalTransactionProxy.class);
+
+        XATransactionalBranch<C> transactionalBranch = globalTransactionProxy.getGlobalTransactionalBranch();
+        transactionalBranch.close();
+
         delistTransaction();
     }
 
     private void delistTransaction() {
-        this.globalTransaction=null;
-    }
-
-    /**
-     *
-     * @return XID of the currently associated transactional branch; may be null, if the XAConnection isnt't associated to an tb
-     */
-    Xid getCurrentTransactionalBranch() {
-        return this.xid;
+        if (this.transactionBinding != null) {
+            this.transactionBinding.release();
+        }
+        this.transactionBinding = null;
     }
 
     public C getConnection() {
@@ -111,81 +237,47 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
         // Connection wid in TX eingetragen ....
         this.enlistTransaction();
 
-
-        XATransactionalBranch<C> transactionalBranch = this.findTransactionalBranch();
-        if (transactionalBranch == null) {
-            throw new IllegalStateException("Not in Transaction. No TransactionBranch is assiociated");
-        }
-        return transactionalBranch.getManagedConnection().toConnection();
+        return this.transactionBinding.getConnection().toConnection();
     }
 
 
-    /**
-     * finds the transactional branch associated to the given XID
-     *
-     * @return
-     */
-    private XATransactionalBranch<C> findTransactionalBranch() {
-        if (xid == null) {
-            return null;
-        }
-        return this.xaTransactionalBranchDictionary.findTransactionalBranch(this.xid);
-    }
-
-
-
-    public boolean isInTransaction() {
-        synchronized (this) {
-            return this.globalTransaction != null;
+    boolean isInGlobalTransaction() {
+        try {
+            return this.transactionManager.getTransaction() != null;
+        } catch (SystemException e) {
+            throw new DelegatedRuntimeException(e);
         }
     }
 
-    void associateTransaction(Transaction currentTx) {
-        if (!this.isInTransaction()) {
-            if (this.globalTransaction != null) {
-                this.globalTransaction = currentTx;
-                // enlist the xaResource in the globalTransaction
-            } else {
-                LOG.error(
-                        "PhynixxManagedXAConnection:associateTransaction (no globalTransaction bound to thread " + Thread.currentThread());
-                LOG.error(
-                        "PhynixxManagedXAConnection:associateTransaction (local Transaction is opened " + Thread.currentThread());
-                throw new DelegatedRuntimeException("no globalTransaction bound to thread " + Thread.currentThread());
-            }
-            LOG.debug("PhynixxManagedXAConnection:associateTransaction tx==" + this.globalTransaction);
-        } else {
-            if (!this.globalTransaction.equals(this.getTransactionManagerTransaction())) {
-                LOG.error("PhynixxManagedXAConnection.associateTransaction already assigned to a TX and expected to assigned to a different TX");
-                throw new DelegatedRuntimeException("already assigned to a TX and expected to assigned to a different TX");
-            }
 
-        }
-
-    }
     /**
      * if necessary the current xa resource is enlisted in the current TX.
-     *
+     * <p/>
      * The enlistment calls the{@link javax.transaction.xa.XAResource#start(javax.transaction.xa.Xid, int)}. This call associates the Xid with the current instance
      */
-    void enlistTransaction() {
-        // if not already enlist, do now
-        if (!this.isInTransaction()) {
+    private void enlistTransaction() {
+
+        this.cleanupTransactionBinding();
+
+        TransactionBindingType transactionBindingType = this.getTransactionBindingType();
+
+        // not associated to global transaction, try to associate a global transaction
+        if (this.isInGlobalTransaction() && transactionBindingType != TransactionBindingType.GlobalTransaction) {
             try {
-                Transaction ntx = this.getTransactionManagerTransaction();
+                Transaction ntx = this.transactionManager.getTransaction();
                 if (ntx != null) {
+
+                    // enlisted makes startTransaactionalBranch calling
                     boolean enlisted = ntx.enlistResource(this.xaResource);
                     if (!enlisted) {
                         LOG.error("Enlisting " + xaResource + " failed");
-                    }
-                    associateTransaction(ntx);
+                    } else {
 
-                    // enlist the xaResource in the globalTransaction
+                    }
                 } else {
                     LOG.debug(
                             "SampleXAConnection:connectionRequiresTransaction (no globalTransaction found)");
                 }
-                LOG.debug("SampleXAConnection:connectionRequiresTransaction tx==" + ntx);
-
             } catch (RollbackException n) {
                 LOG.error(
                         "SampleXAConnection:prevokeAction enlistResource exception : "
@@ -194,25 +286,27 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
                 LOG.error("SampleXAConnection:connectionRequiresTransaction " + n + "\n" + ExceptionUtils.getStackTrace(n));
                 throw new DelegatedRuntimeException(n);
             }
-
-        } else {
-            LOG.debug("SampleXAConnection.connectionRequiresTransaction already assigned to a TX");
         }
+
+
+        if (transactionBindingType == TransactionBindingType.NoTransaction) {
+            this.transactionBinding = new LocalTransactionProxy<C>(this.managedConnectionFactory.getManagedConnection());
+            return;
+        }
+
+
+        // In Global Transaction and associated to a global transaction => nothing to do
+        if (this.isInGlobalTransaction() && transactionBindingType == TransactionBindingType.GlobalTransaction) {
+            return;
+        }
+
+        // Not in Global Transaction and associated to a local transaction => nothing to do
+        if (!this.isInGlobalTransaction() && transactionBindingType == TransactionBindingType.LocalTransaction) {
+            return;
+        }
+
     }
 
-
-    /**
-     * @return aktuelle TX des TransactionManagers
-     */
-    private Transaction getTransactionManagerTransaction() {
-        try {
-            return this.tmMgr.getTransaction();
-        } catch (SystemException e) {
-            LOG.error("SampleXAConnection:getTransaction " + e + "\n" + ExceptionUtils.getStackTrace(e));
-
-            throw new DelegatedRuntimeException(e);
-        }
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -236,7 +330,7 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
     public String toString() {
         return "PhynixxManagedXAConnection{" +
                 "xaResource=" + xaResource +
-                ", xid=" + xid +
+                ", transactionBinding=" + this.transactionBinding +
                 '}';
     }
 
