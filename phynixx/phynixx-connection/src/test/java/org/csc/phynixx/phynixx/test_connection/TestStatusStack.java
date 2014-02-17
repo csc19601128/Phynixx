@@ -21,24 +21,46 @@ package org.csc.phynixx.phynixx.test_connection;
  */
 
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestStatusStack {
 
     private Object id = null;
 
-    private Set statusStack = new TreeSet();
+    private List<TestConnectionStatus> statusStack = new ArrayList<TestConnectionStatus>();
 
-    public TestStatusStack(Object id) {
+    TestStatusStack(Object id, List<TestConnectionStatus> statusStack) {
         super();
         this.id = id;
+        this.statusStack = statusStack;
     }
 
-    public Object getId() {
+    public Object getConnectionId() {
         return id;
     }
+
+    public boolean isEmpty() {
+        return this.statusStack == null || this.statusStack.isEmpty();
+    }
+
+    public int countStatus(TestConnectionStatus status) {
+
+        int counter = 0;
+        for (TestConnectionStatus stat : this.statusStack) {
+            if (stat == status) {
+                counter++;
+            }
+        }
+
+        return counter;
+    }
+
+
+    public boolean isStatusEntered(TestConnectionStatus status) {
+        return this.statusStack.contains(status);
+    }
+
 
     public boolean isCommitted() {
         return this.statusStack.contains(TestConnectionStatus.COMMITTED);
@@ -48,12 +70,12 @@ public class TestStatusStack {
         return this.statusStack.contains(TestConnectionStatus.CLOSED);
     }
 
-    public boolean isRollbacked() {
-        return this.statusStack.contains(TestConnectionStatus.ROLLBACKED);
+    public boolean isRolledback() {
+        return this.statusStack.contains(TestConnectionStatus.ROLLEDBACK);
     }
 
-    public boolean isAct() {
-        return this.statusStack.contains(TestConnectionStatus.ACT);
+    public boolean isRequiresTransaction() {
+        return this.statusStack.contains(TestConnectionStatus.REQUIRES_TRANSACTION);
     }
 
     public boolean isPrepared() {
@@ -62,10 +84,6 @@ public class TestStatusStack {
 
     public boolean isRecoverd() {
         return this.statusStack.contains(TestConnectionStatus.RECOVERED);
-    }
-
-    public void addStatus(Integer status) {
-        this.statusStack.add(status);
     }
 
     public boolean equals(Object obj) {
@@ -80,13 +98,11 @@ public class TestStatusStack {
         return this.id.hashCode();
     }
 
+    @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer("TestStatusStack ").append(id);
-        for (Iterator iterator = this.statusStack.iterator(); iterator.hasNext(); ) {
-            Long status = (Long) iterator.next();
-            buffer.append(status).append(',');
-        }
-        return buffer.toString();
+        return "TestStatusStack{" +
+                "id=" + id +
+                ", statusStack=" + statusStack +
+                '}';
     }
-
 }

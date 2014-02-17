@@ -49,7 +49,7 @@ import java.util.Map;
  * <p/>
  * Feassable interruption pints are
  * <p/>
- * ACT       - after the rollback data is written and before the counter is incremented
+ * REQUIRES_TRANSACTION       - after the rollback data is written and before the counter is incremented
  * COMMIT    - after the rollforward dat is written
  * ROLLBACK  -
  * PREPARE
@@ -74,8 +74,7 @@ public class TestConnection implements ITestConnection {
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger("test");
 
-    private Object id = null;
-    private boolean closed = false;
+    private Object connectionId = null;
 
     private int currentCounter = 0;
     private int initialValue = 0;
@@ -104,9 +103,9 @@ public class TestConnection implements ITestConnection {
 
     public TestConnection(Object id) {
         resetInterruptionFlags();
-        this.id = id;
-        TestConnectionStatusManager.addStatusStack(this.getId());
+        this.connectionId = id;
     }
+
 
     @Override
     public boolean isCommitted() {
@@ -145,10 +144,10 @@ public class TestConnection implements ITestConnection {
     }
 
     /* (non-Javadoc)
-     * @see de.csc.xaresource.sample.ITestConnection#getId()
+     * @see de.csc.xaresource.sample.ITestConnection#getConnectionId()
      */
-    public Object getId() {
-        return id;
+    public Object getConnectionId() {
+        return connectionId;
     }
 
     /* (non-Javadoc)
@@ -158,13 +157,8 @@ public class TestConnection implements ITestConnection {
 
         interrupt(TestInterruptionPoint.ACT);
         this.currentCounter = this.currentCounter + inc;
-        log.info("TestConnection " + id + " counter incremented to " + inc + " counter=" + this.getCurrentCounter());
+        log.info("TestConnection " + connectionId + " counter incremented to " + inc + " counter=" + this.getCurrentCounter());
 
-        TestConnectionStatusManager.getStatusStack(this.getId()).addStatus(TestConnectionStatus.ACT);
-    }
-
-    public boolean isClosed() {
-        return closed;
     }
 
 
@@ -175,10 +169,8 @@ public class TestConnection implements ITestConnection {
     }
 
     public void close() {
-        TestConnectionStatusManager.getStatusStack(this.getId()).addStatus(TestConnectionStatus.CLOSED);
         this.interrupt(TestInterruptionPoint.CLOSE);
-        log.info("TestConnection " + id + " closed");
-        this.closed = true;
+        log.info("TestConnection " + connectionId + " closed");
     }
 
     public void commit() {
@@ -192,26 +184,23 @@ public class TestConnection implements ITestConnection {
         }
         interrupt(TestInterruptionPoint.COMMIT);
         this.committed = true;
-        TestConnectionStatusManager.getStatusStack(this.getId()).addStatus(TestConnectionStatus.COMMITTED);
-        log.info("TestConnection " + id + " is committed");
+        log.info("TestConnection " + connectionId + " is committed");
 
     }
 
     public void prepare() {
         interrupt(TestInterruptionPoint.PREPARE);
-        TestConnectionStatusManager.getStatusStack(this.getId()).addStatus(TestConnectionStatus.PREPARED);
-        log.info("TestConnection " + id + " is prepared");
+        log.info("TestConnection " + connectionId + " is prepared");
     }
 
     public void rollback() {
         interrupt(TestInterruptionPoint.ROLLBACK);
         this.currentCounter = this.initialValue;
-        TestConnectionStatusManager.getStatusStack(this.getId()).addStatus(TestConnectionStatus.ROLLBACKED);
-        log.info("TestConnection " + id + " rollbacked");
+        log.info("TestConnection " + connectionId + " rollbacked");
     }
 
     public String toString() {
-        return "TestConnection " + id;
+        return "TestConnection " + connectionId;
     }
 
     @Override
@@ -221,14 +210,14 @@ public class TestConnection implements ITestConnection {
 
         TestConnection that = (TestConnection) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (connectionId != null ? !connectionId.equals(that.connectionId) : that.connectionId != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return connectionId != null ? connectionId.hashCode() : 0;
     }
 
     private void interrupt(TestInterruptionPoint interruptionPoint) {

@@ -75,9 +75,9 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 
 
     /**
-     * Logger isn't destroy. If a dataRecorder is found in this phase this indicates an abnormal program flow.,
+     * Logger isn't close. If a dataRecorder is found in this phase this indicates an abnormal program flow.,
      * <p/>
-     * Therefore the dataRecorder isn't destroy and keep it's content to possibly recover
+     * Therefore the dataRecorder isn't close and keep it's content to possibly recover
      *
      * @param event current connection
      */

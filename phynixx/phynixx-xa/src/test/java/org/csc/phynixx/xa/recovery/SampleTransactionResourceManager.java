@@ -28,7 +28,7 @@ import javax.transaction.xa.XAResource;
 /**
  * Dummy implememntation of JOTM's TransactionresourceManager
  * <p/>
- * It's used by JOTM to record the Mapping of Resource's name to XAResource
+ * It's used by JOTM to record the Mapping of XAResourceProgressState's name to XAResource
  *
  * @author christoph
  */

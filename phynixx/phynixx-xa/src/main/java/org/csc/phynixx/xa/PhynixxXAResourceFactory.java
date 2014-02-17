@@ -127,13 +127,13 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
         return xares;
     }
 
-    public IPhynixxXAConnection getXAConnection() {
+    public IPhynixxXAConnection<T> getXAConnection() {
         return this.instanciateXAResource().getXAConnection();
     }
 
 
     /**
-     * Resource id helps debugging a xa resource.
+     * XAResourceProgressState id helps debugging a xa resource.
      * It's unique for all xa resources of a resource factory
      *
      * @return
@@ -147,7 +147,7 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
      *
      * @return
      */
-    public IPhynixxXAResource getXAResource() {
+    public IPhynixxXAResource<T> getXAResource() {
         return instanciateXAResource();
     }
 

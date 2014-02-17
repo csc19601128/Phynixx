@@ -1,4 +1,4 @@
-package org.csc.phynixx.phynixx.test_connection;
+package org.csc.phynixx.xa;
 
 /*
  * #%L
@@ -21,14 +21,20 @@ package org.csc.phynixx.phynixx.test_connection;
  */
 
 
-public enum TestConnectionStatus {
+public enum XAResourceProgressState {
 
-    REQUIRES_TRANSACTION,
+    /**
+     * the physical connection accepts data manipulation
+     */
+    ACTIVE,
+
     PREPARED,
+
     COMMITTED,
+
     ROLLEDBACK,
-    CLOSED,
-    RECOVERED, RESET, ERROR_OCCURRED;
+
+    CLOSED, COMMITTING, ROLLING_BACK, PREPARING;
 
 
 }

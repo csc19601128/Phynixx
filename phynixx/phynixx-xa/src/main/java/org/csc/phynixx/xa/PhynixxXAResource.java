@@ -31,7 +31,6 @@ import org.csc.phynixx.watchdog.TimeoutCondition;
 import org.csc.phynixx.watchdog.log.ConditionViolatedLog;
 import org.csc.phynixx.xa.IPhynixxXAResourceListener.IPhynixxXAResourceEvent;
 
-import javax.transaction.Status;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
@@ -74,6 +73,9 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     private ITimeoutCondition timeoutCondition = null;
 
+    /**
+     * TODO timeOut ueber einen Listener steuern und Konfigierbar machen
+     */
     public PhynixxXAResource(
             String xaId,
             TransactionManager transactionManager,
@@ -114,8 +116,8 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
         try {
             if (this.xaConnectionHandle != null) {
                 XATransactionalBranch<C> transactionalBranch = this.xaConnectionHandle.toGlobalTransactionBranch();
-                if (transactionalBranch != null) {
-                        transactionalBranch.setRollbackOnly(true);
+                if (transactionalBranch == null) {
+                    transactionalBranch.setRollbackOnly(true);
                     }
             }
             if (LOG.isInfoEnabled()) {
@@ -218,8 +220,8 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                     + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
             throw xaExc;
         } catch (Exception ex) {
-            LOG.error("SampleXAResource.start(" + xid + "," + flags + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
-            throw new DelegatedRuntimeException("start(" + xid + "," + flags + ") on Resource " + this.xaId, ex);
+            LOG.error("SampleXAResource.start(" + xid + "," + flags + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            throw new DelegatedRuntimeException("start(" + xid + "," + flags + ") on XAResourceProgressState " + this.xaId, ex);
 
         }
     }
@@ -233,8 +235,8 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
             throw new XAException(XAException.XAER_INVAL);
         }
 
-        if (transactionalBranch != null) {
-            LOG.error("XAConnection is not associated to a global Transaction");
+        if (transactionalBranch == null) {
+            LOG.error("XAConnection is not associated to a global Transaction (expected to XID=" + xid + ")");
             throw new XAException(XAException.XAER_PROTO);
         }
 
@@ -256,8 +258,8 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
             throw xaExc;
 
         } catch (Exception ex) {
-            LOG.error("SampleXAResource.commit(" + xid + "," + onePhase + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
-            throw new DelegatedRuntimeException("commit(" + xid + "," + onePhase + ") on Resource " + this.xaId, ex);
+            LOG.error("SampleXAResource.commit(" + xid + "," + onePhase + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            throw new DelegatedRuntimeException("commit(" + xid + "," + onePhase + ") on XAResourceProgressState " + this.xaId, ex);
         } finally {
             try {
                 // Branch isn't active for the current XAresource
@@ -300,7 +302,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                 throw new XAException(XAException.XAER_INVAL);
             }
 
-            if (transactionalBranch != null) {
+            if (transactionalBranch == null) {
                 LOG.error("XAConnection is not associated to a global Transaction");
                 throw new XAException(XAException.XAER_PROTO);
             }
@@ -313,12 +315,11 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
 
             // must find connection for this transaction
-            if (transactionalBranch.getProgressState() != Status.STATUS_ACTIVE) {// must have had start() called
-                LOG.error("XAResource " + this + " must have start() called ");
-                throw new XAException(XAException.XAER_PROTO);
-            }
-            // must find connection for this transaction
             int retVal = transactionalBranch.prepare();
+
+            if (retVal == XAResource.XA_RDONLY) {
+                this.xaConnectionHandle.closeTransactionalBranch(xid);
+            }
             return retVal;
 
         } catch (XAException xaExc) {
@@ -327,8 +328,8 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                     + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
             throw xaExc;
         } catch (Exception ex) {
-            LOG.error("SampleXAResource.prepare(" + xid + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
-            throw new DelegatedRuntimeException("prepare(" + xid + ") on Resource " + this.xaId, ex);
+            LOG.error("SampleXAResource.prepare(" + xid + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            throw new DelegatedRuntimeException("prepare(" + xid + ") on XAResourceProgressState " + this.xaId, ex);
 
         }
     }
@@ -362,7 +363,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                     throw new XAException(XAException.XAER_INVAL);
                 }
 
-                if (transactionalBranch != null) {
+                if (transactionalBranch == null) {
                     LOG.error("XAConnection is not associated to a global Transaction");
                     throw new XAException(XAException.XAER_PROTO);
                 }
@@ -382,7 +383,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                 try {
                     transactionalBranch.rollback();
                 } finally {
-                    // Branch isn't active for the current XAresource
+                    // Branch isn't active for the current XAResource
                     this.xaConnectionHandle.closeTransactionalBranch(xid);
                 }
 
@@ -394,8 +395,8 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                 throw xaExc;
 
             } catch (Exception ex) {
-                LOG.error("SampleXAResource.rollback(" + xid + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
-                throw new DelegatedRuntimeException("rollback(" + xid + ") on Resource " + this.xaId, ex);
+                LOG.error("SampleXAResource.rollback(" + xid + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+                throw new DelegatedRuntimeException("rollback(" + xid + ") on XAResourceProgressState " + this.xaId, ex);
 
             } finally {
                 // stop monitoring the timeout
@@ -418,6 +419,10 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
      * If TMFAIL is specified, the portion of work has failed. The resource manager
      * may mark the transaction as rollback only.
      * <p/>
+     * <p> the spec doesn't no fix the order of commit/rollback and end and we have to take of both orders.
+     * If end comes before rollback/commit, the transactional branch has to be freeze.
+     * If rollback/commit comes before end, the transactional branch has to be closed
+     * </p>
      * If TMSUCCESS is specified, the portion of work has completed successfully. end is called in Transaction.delistResource
      *
      * @param xid   A global transaction identifier.
@@ -439,7 +444,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
             }
 
             XATransactionalBranch<C> transactionalBranch = this.xaConnectionHandle.toGlobalTransactionBranch();
-            if (transactionalBranch != null) {
+            if (transactionalBranch == null) {
                 LOG.error("XAConnection is not associated to a global Transaction");
                 throw new XAException(XAException.XAER_PROTO);
             }
@@ -450,15 +455,14 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                 throw new XAException(XAException.XAER_PROTO);
             }
 
-            // must find connection for this transaction
-            if (transactionalBranch.getProgressState() != Status.STATUS_ACTIVE) {// must have had start() called
-                LOG.error("XAResource " + this + " must have start() called ");
-                throw new XAException(XAException.XAER_PROTO);
-            }
-
             if (flags == TMSUSPEND) {
                 this.xaConnectionHandle.suspendTransactionalBranch(xid);
             } else if (flags == TMSUCCESS) {
+
+                // XAProtocol is finsihed an the branch isnt needed any longer
+                if (transactionalBranch.isXAProtocolFinished()) {
+                    transactionalBranch.close();
+                }
                 LOG.error("XAResource " + this + " closed gracefully ");
             } else if (flags == TMFAIL) {
                 transactionalBranch.setRollbackOnly(true);
@@ -473,8 +477,8 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                     + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
             throw xaExc;
         } catch (Exception ex) {
-            LOG.error("SampleXAResource.end(" + xid + "," + flags + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
-            throw new DelegatedRuntimeException("end(" + xid + "," + flags + ") on Resource " + this.xaId, ex);
+            LOG.error("SampleXAResource.end(" + xid + "," + flags + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            throw new DelegatedRuntimeException("end(" + xid + "," + flags + ") on XAResourceProgressState " + this.xaId, ex);
         }
     }
 
@@ -542,8 +546,8 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                 return false;
             }
         } catch (Exception ex) {
-            LOG.error("SampleXAResource.isSameRM(" + sampleXARes.xaId + ") on Resource " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
-            throw new DelegatedRuntimeException("isSameRM(" + sampleXARes.xaId + ") on Resource " + this.xaId, ex);
+            LOG.error("SampleXAResource.isSameRM(" + sampleXARes.xaId + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            throw new DelegatedRuntimeException("isSameRM(" + sampleXARes.xaId + ") on XAResourceProgressState " + this.xaId, ex);
 
         }
     }
@@ -552,7 +556,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     /**
      * finds the transactional branch of the current XAResource associated with die XID
      * <p/>
-     * Close this XA Resource.
+     * Close this XA XAResourceProgressState.
      * All depending Connection are closed
      */
     public void close() {

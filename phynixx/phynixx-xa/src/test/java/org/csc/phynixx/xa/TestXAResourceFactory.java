@@ -29,6 +29,7 @@ import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
 import org.csc.phynixx.phynixx.test_connection.ITestConnection;
 import org.csc.phynixx.phynixx.test_connection.TestConnectionFactory;
+import org.csc.phynixx.phynixx.test_connection.TestConnectionStatusListener;
 
 import javax.transaction.TransactionManager;
 import java.io.File;
@@ -59,6 +60,8 @@ public class TestXAResourceFactory extends PhynixxXAResourceFactory<ITestConnect
             LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
             factory.setLoggerSystemStrategy(strategy);
         }
+
+        factory.addConnectionProxyDecorator(new TestConnectionStatusListener());
 
         return factory;
     }

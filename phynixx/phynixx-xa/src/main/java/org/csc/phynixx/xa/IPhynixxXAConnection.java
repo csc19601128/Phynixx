@@ -22,6 +22,7 @@ package org.csc.phynixx.xa;
 
 
 import org.csc.phynixx.connection.IPhynixxConnection;
+import org.csc.phynixx.connection.IPhynixxManagedConnection;
 
 import javax.transaction.xa.XAResource;
 
@@ -37,5 +38,8 @@ public interface IPhynixxXAConnection<C extends IPhynixxConnection> {
 
 
     public C getConnection();
+
+
+    public IPhynixxManagedConnection<C> getManagedConnection();
 
 }

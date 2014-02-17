@@ -56,16 +56,12 @@ public interface IPhynixxConnection {
 
 
     /**
-     * Closes the connection and releases all resources
+     * Closes the connection and releases all resources. It called by the connection management
      *
      * @throws SampleTransactionalException
      */
     void close();
 
-    /*
-     *
-     */
-    boolean isClosed();
 
 
     /**

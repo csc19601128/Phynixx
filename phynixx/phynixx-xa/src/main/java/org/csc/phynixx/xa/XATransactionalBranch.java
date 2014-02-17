@@ -5,7 +5,6 @@ import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.connection.*;
 
-import javax.transaction.Status;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -21,15 +20,12 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
 
     private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(XATransactionalBranch.class);
 
-    private final static int SUSPENDED = 0x02000000;
-    private final static int ACTIVE = 0x04000000; // opposite of suspended
-
-    private int progressState = Status.STATUS_ACTIVE;
+    private XAResourceProgressState progressState = XAResourceProgressState.ACTIVE;
 
     private boolean readOnly = true;
 
+    private XAResourceActivationState activeState = XAResourceActivationState.ACTIVE;
 
-    private int activeState = ACTIVE;
     private volatile boolean rollbackOnly = false;
 
     private int heuristicState = 0;
@@ -70,29 +66,33 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
     }
 
     void suspend() {
-        if (this.activeState == XATransactionalBranch.SUSPENDED) {
+        if (this.activeState == XAResourceActivationState.SUSPENDED) {
             return;
         }
-        if (this.progressState != Status.STATUS_ACTIVE) {
+        if (this.progressState != XAResourceProgressState.ACTIVE) {
             throw new IllegalStateException("A already prepared or preparing TX can not be suspended");
 
         }
-        this.activeState = SUSPENDED;
+        this.activeState = XAResourceActivationState.ACTIVE;
     }
 
     void resume() {
-        if (this.activeState == XATransactionalBranch.ACTIVE) {
+        if (this.activeState == XAResourceActivationState.SUSPENDED) {
             return;
         }
-        this.activeState = XATransactionalBranch.ACTIVE;
+        this.activeState = XAResourceActivationState.ACTIVE;
     }
 
     public boolean isActive() {
-        return this.getActiveState() == XATransactionalBranch.ACTIVE;
+        return this.getActiveState() == XAResourceActivationState.ACTIVE;
+    }
+
+    public boolean isXAProtocolFinished() {
+        return !this.isProgressStateIn(XAResourceProgressState.ACTIVE);
     }
 
     boolean isSuspended() {
-        return this.getActiveState() == XATransactionalBranch.SUSPENDED;
+        return this.getActiveState() == XAResourceActivationState.SUSPENDED;
     }
 
     boolean isReadOnly() {
@@ -103,18 +103,12 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
         this.readOnly = readOnly;
     }
 
-    private int getActiveState() {
+    private XAResourceActivationState getActiveState() {
         return activeState;
     }
 
     void setRollbackOnly(boolean rbOnly) {
-
         this.rollbackOnly = rbOnly;
-        // TODO STATUS_MARK_ROLLBACK freischalten
-        if (this.rollbackOnly) {
-            this.activeState = Status.STATUS_MARKED_ROLLBACK;
-        }
-        //new Exception("Set to " + rbOnly+" ObjectId"+super.toString()).printStackTrace();
     }
 
     boolean isRollbackOnly() {
@@ -122,11 +116,11 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
         return rollbackOnly;
     }
 
-    int getProgressState() {
+    XAResourceProgressState getProgressState() {
         return progressState;
     }
 
-    private void setProgressState(int progressState) {
+    private void setProgressState(XAResourceProgressState progressState) {
         this.progressState = progressState;
     }
 
@@ -149,7 +143,7 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
      * @throws XAException
      */
     void commit(boolean onePhase) throws XAException {
-        if (this.getProgressState() == Status.STATUS_COMMITTED) {
+        if (this.getProgressState() == XAResourceProgressState.COMMITTED) {
             return;
         }
 
@@ -162,29 +156,29 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
 
         this.checkRollback();
 
-        if (this.getProgressState() != Status.STATUS_ACTIVE && onePhase) {
+        if (this.getProgressState() != XAResourceProgressState.ACTIVE && onePhase) {
             throw new XAException(XAException.XAER_RMFAIL);
-        } else if (this.getProgressState() != Status.STATUS_PREPARED && !onePhase) {
+        } else if (this.getProgressState() != XAResourceProgressState.PREPARED && !onePhase) {
             throw new XAException(XAException.XAER_RMFAIL);
-        } else if (this.getProgressState() != Status.STATUS_PREPARED && this.getProgressState() != Status.STATUS_ACTIVE) {
+        } else if (this.getProgressState() != XAResourceProgressState.PREPARED && this.getProgressState() != XAResourceProgressState.ACTIVE) {
             throw new XAException(XAException.XAER_RMFAIL);
         }
 
-        this.setProgressState(Status.STATUS_COMMITTING);
+        this.setProgressState(XAResourceProgressState.COMMITTING);
         this.getManagedConnection().commit();
-        this.setProgressState(Status.STATUS_COMMITTED);
+        this.setProgressState(XAResourceProgressState.COMMITTED);
 
     }
 
     private void checkRollback() throws XAException {
         if (this.getManagedConnection().getCoreConnection() == null ||
-                this.getManagedConnection().getCoreConnection().isClosed()) {
-            this.setProgressState(Status.STATUS_ROLLING_BACK);
+                this.getManagedConnection().isClosed()) {
+            this.setProgressState(XAResourceProgressState.ROLLING_BACK);
             throw new XAException(XAException.XA_RBROLLBACK);
         }
 
         if (this.isRollbackOnly()) {
-            this.setProgressState(Status.STATUS_ROLLING_BACK);
+            this.setProgressState(XAResourceProgressState.ROLLING_BACK);
             throw new XAException(XAException.XA_RBROLLBACK);
         }
 
@@ -194,7 +188,13 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
     }
 
     int prepare() throws XAException {
-        if (this.progressState == Status.STATUS_PREPARED) {
+        // must find connection for this transaction
+        if (!this.isProgressStateIn(XAResourceProgressState.ACTIVE)) {// must have had start() called
+            LOG.error("XAResource " + this + " must have start() called ");
+            throw new XAException(XAException.XAER_PROTO);
+        }
+
+        if (this.progressState == XAResourceProgressState.PREPARED) {
             if (this.isReadOnly()) {
                 return (XAResource.XA_RDONLY);
             } else {
@@ -204,12 +204,12 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
 
         // check if resource is READONLY -> no prepare is required
         if (this.isReadOnly()) {
-            this.setProgressState(Status.STATUS_PREPARED);
+            this.setProgressState(XAResourceProgressState.PREPARED);
             return (XAResource.XA_RDONLY);
         }
 
 
-        if (this.progressState == Status.STATUS_PREPARING) {
+        if (this.progressState == XAResourceProgressState.PREPARING) {
             throw new IllegalStateException("XAResource already preparing");
         }
         if (!checkTXRequirements()) {
@@ -220,9 +220,9 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
             throw new XAException(this.heuristicState);
         }
         this.checkRollback();
-        this.setProgressState(Status.STATUS_PREPARING);
+        this.setProgressState(XAResourceProgressState.PREPARING);
         this.getManagedConnection().prepare();
-        this.setProgressState(Status.STATUS_PREPARED);
+        this.setProgressState(XAResourceProgressState.PREPARED);
 
         // anything to commit?
         if (this.isReadOnly()) {
@@ -230,6 +230,20 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
         } else {
             return XAResource.XA_OK;
         }
+    }
+
+
+    private boolean isProgressStateIn(XAResourceProgressState... states) {
+        if (states == null || states.length == 0) {
+            return false;
+        }
+        XAResourceProgressState currentStates = this.getProgressState();
+        for (int i = 0; i < states.length; i++) {
+            if (states[i] == currentStates) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -241,12 +255,12 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
 
         LOG.debug("XATransactionalBranch:rollback for xid=" + xid + " current Status=" + ConstantsPrinter.getStatusMessage(this.getProgressState()));
         switch (this.getProgressState()) {
-            case Status.STATUS_PREPARED: // ready to do rollback
-            case Status.STATUS_ACTIVE:
+            case PREPARED: // ready to do rollback
+            case ACTIVE:
                 try {
                     LOG.debug(
                             "XATransactionalBranch:rollback try to perform the rollback operation");
-                    this.setProgressState(Status.STATUS_ROLLING_BACK);
+                    this.setProgressState(XAResourceProgressState.ROLLING_BACK);
 
                     // do the rollback
                     if (this.getManagedConnection() != null &&
@@ -256,7 +270,7 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
                         LOG.info("XATransactionalBranch connection already closed -> no rollback");
                     }
 
-                    this.setProgressState(Status.STATUS_ROLLEDBACK);
+                    this.setProgressState(XAResourceProgressState.ROLLEDBACK);
                     // perform the rollback operation
                     LOG.debug(
                             "XATransactionalBranch:rollback performed the rollback");
@@ -293,17 +307,18 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
 
     public void close() {
         this.getManagedConnection().close();
-        this.activeState = Status.STATUS_UNKNOWN;
+        this.setProgressState(XAResourceProgressState.CLOSED);
     }
-
 
     @Override
     public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {
-        this.setRollbackOnly(false);
+        this.setReadOnly(false);
     }
 
     @Override
     public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
         event.getManagedConnection().removeConnectionListener(this);
     }
+
+
 }

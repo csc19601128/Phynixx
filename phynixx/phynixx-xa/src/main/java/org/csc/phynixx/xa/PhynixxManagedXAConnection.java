@@ -77,7 +77,7 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
      */
     XATransactionalBranch<C> toGlobalTransactionBranch() {
         if (this.transactionBinding != null && this.transactionBinding.getTransactionBindingType() == TransactionBindingType.GlobalTransaction) {
-            return ImplementorUtils.cast(this.transactionBinding, XATransactionalBranch.class);
+            return ImplementorUtils.cast(this.transactionBinding, GlobalTransactionProxy.class).getGlobalTransactionalBranch();
         }
         return null;
     }
@@ -232,12 +232,16 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
         this.transactionBinding = null;
     }
 
-    public C getConnection() {
+    public IPhynixxManagedConnection<C> getManagedConnection() {
 
         // Connection wid in TX eingetragen ....
         this.enlistTransaction();
 
-        return this.transactionBinding.getConnection().toConnection();
+        return this.transactionBinding.getConnection();
+    }
+
+    public C getConnection() {
+        return this.getManagedConnection().toConnection();
     }
 
 
@@ -286,24 +290,18 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
                 LOG.error("SampleXAConnection:connectionRequiresTransaction " + n + "\n" + ExceptionUtils.getStackTrace(n));
                 throw new DelegatedRuntimeException(n);
             }
-        }
-
-
-        if (transactionBindingType == TransactionBindingType.NoTransaction) {
+        } else if (transactionBindingType == TransactionBindingType.NoTransaction) {
             this.transactionBinding = new LocalTransactionProxy<C>(this.managedConnectionFactory.getManagedConnection());
             return;
-        }
+        } else     // In Global Transaction and associated to a global transaction => nothing to do
+            if (this.isInGlobalTransaction() && transactionBindingType == TransactionBindingType.GlobalTransaction) {
+                return;
+            } else
 
-
-        // In Global Transaction and associated to a global transaction => nothing to do
-        if (this.isInGlobalTransaction() && transactionBindingType == TransactionBindingType.GlobalTransaction) {
-            return;
-        }
-
-        // Not in Global Transaction and associated to a local transaction => nothing to do
-        if (!this.isInGlobalTransaction() && transactionBindingType == TransactionBindingType.LocalTransaction) {
-            return;
-        }
+                // Not in Global Transaction and associated to a local transaction => nothing to do
+                if (!this.isInGlobalTransaction() && transactionBindingType == TransactionBindingType.LocalTransaction) {
+                    return;
+                }
 
     }
 

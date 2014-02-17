@@ -52,7 +52,7 @@ public interface ITestConnection extends IPhynixxConnection, IXADataRecorderAwar
     /**
      * @return current ID of the connection
      */
-    public Object getId();
+    public Object getConnectionId();
 
     /**
      * incrememnts the current counter

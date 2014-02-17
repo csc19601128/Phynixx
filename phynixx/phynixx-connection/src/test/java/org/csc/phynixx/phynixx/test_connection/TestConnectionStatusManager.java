@@ -21,21 +21,19 @@ package org.csc.phynixx.phynixx.test_connection;
  */
 
 
+import org.csc.phynixx.connection.IPhynixxManagedConnection;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TestConnectionStatusManager {
 
-    private static Map connectionStati = new HashMap();
+    private static Map<Object, List<TestConnectionStatus>> connectionStati = new HashMap<Object, List<TestConnectionStatus>>();
 
-    public static synchronized TestStatusStack getStatusStack(Object id) {
-        return (TestStatusStack) (connectionStati.get(id));
-    }
-
-    public static synchronized void addStatusStack(Object id) {
-        if (!connectionStati.containsKey(id)) {
-            connectionStati.put(id, new TestStatusStack(id));
-        }
+    public static synchronized TestStatusStack getStatusStack(Object connectionId) {
+        return new TestStatusStack(connectionId, assertTestConnectionStati(connectionId));
     }
 
     public synchronized static void clear() {
@@ -43,4 +41,22 @@ public class TestConnectionStatusManager {
     }
 
 
+    public synchronized static void registerStatus(IPhynixxManagedConnection<ITestConnection> connection, TestConnectionStatus status) {
+        assertTestConnectionStati(connection.toConnection().getConnectionId()).add(status);
+    }
+
+    private static List<TestConnectionStatus> assertTestConnectionStati(Object connectionId) {
+        List<TestConnectionStatus> stati = connectionStati.get(connectionId);
+        if (stati == null) {
+            stati = new ArrayList<TestConnectionStatus>();
+            connectionStati.put(connectionId, stati);
+        }
+        return stati;
+    }
+
+    public synchronized static String toDebugString() {
+        return "TestConnectionStatusManager{" +
+                "connectionStati=" + connectionStati +
+                '}';
+    }
 }

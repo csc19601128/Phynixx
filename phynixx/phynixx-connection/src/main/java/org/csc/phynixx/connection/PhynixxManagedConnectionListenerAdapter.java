@@ -92,6 +92,7 @@ public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnectio
     /**
      * NOOP
      */
+    @Override
     public void connectionDereferenced(IManagedConnectionProxyEvent<C> event) {
     }
 

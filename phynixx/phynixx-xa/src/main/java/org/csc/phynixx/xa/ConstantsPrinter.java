@@ -86,9 +86,13 @@ public abstract class ConstantsPrinter {
 
     }
 
-    public static String getStatusMessage(int status) {
-        return (String) stati.get(new Integer(status));
+    public static String getStatusMessage(XAResourceProgressState status) {
+        return status.toString();
 
+    }
+
+    public static String getStatusMessage(XAResourceActivationState status) {
+        return status.toString();
     }
 
     public static String getXAResourceMessage(int flags) {

@@ -101,7 +101,7 @@ public class ReferenceConnection implements IReferenceConnection, IXADataRecorde
     }
 
     /* (non-Javadoc)
-     * @see de.csc.xaresource.sample.ITestConnection#getId()
+     * @see de.csc.xaresource.sample.ITestConnection#getConnectionId()
      */
     public Object getId() {
         return id;

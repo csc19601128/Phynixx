@@ -81,6 +81,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Passivated " + obj.getObject());
             }
+            obj.getObject().reset();
         }
 
         public boolean validateObject(PooledObject<IPhynixxManagedConnection<X>> obj) {
@@ -194,7 +195,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
 				con.recover();
 			} finally {
 				if( con!=null) {
-					con.close(); 
+					con.close();
 				}
 			}
 		}

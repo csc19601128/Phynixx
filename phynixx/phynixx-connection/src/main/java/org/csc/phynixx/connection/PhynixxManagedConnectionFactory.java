@@ -72,7 +72,7 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
         this.connectionProxyFactory =
                 new DynaPhynixxManagedConnectionFactory<C>(connectionFactory.getConnectionInterface());
 
-        // TODO configurierbar machen
+        // TODO AutoCommitDecorator configurierbar machen
         this.addConnectionProxyDecorator(new AutoCommitDecorator<C>());
     }
 
