@@ -26,7 +26,6 @@ import junit.framework.TestCase;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
-import org.csc.phynixx.connection.IPhynixxManagedConnection;
 import org.csc.phynixx.phynixx.test_connection.ITestConnection;
 import org.csc.phynixx.phynixx.test_connection.TestConnectionStatus;
 import org.csc.phynixx.phynixx.test_connection.TestConnectionStatusManager;
@@ -41,6 +40,9 @@ import javax.transaction.xa.XAResource;
 
 public class XAResourceIntegrationTest extends TestCase {
 
+    {
+        System.setProperty("log4j_level", "INFO");
+    }
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
@@ -86,8 +88,8 @@ public class XAResourceIntegrationTest extends TestCase {
     }
 
     /**
-     * there 's just one XAResource enlisted in a resource and the TM
-     * performs a 1-phase commit
+     * there 's just one XAResource enlisted in a resource but this resource hasn't changed. The TM
+     * performs a 1-phase read-only commit
      *
      * @throws Exception
      */
@@ -96,29 +98,25 @@ public class XAResourceIntegrationTest extends TestCase {
 
         // u are just interfacing the proxy.
 
-        this.getTransactionManager().begin();
 
         // ... the real core connection is hidden by the proxy
-        IPhynixxManagedConnection<ITestConnection> managedCon = xaCon.getManagedConnection();
         final Object conId;
-        try {
-            conId = managedCon.toConnection().getConnectionId();
+        this.getTransactionManager().begin();
+
+        // join the transaction
+        conId = xaCon.getConnection().getConnectionId();
 
 
-            this.getTransactionManager().commit();
+        this.getTransactionManager().commit();
 
-            System.out.println(TestConnectionStatusManager.toDebugString());
-        } finally {
-            if (managedCon != null) {
-                managedCon.close();
-            }
-        }
-
-        System.out.println(TestConnectionStatusManager.toDebugString());
+        log.info(TestConnectionStatusManager.toDebugString());
+        log.info(TestConnectionStatusManager.toDebugString());
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
         TestCase.assertTrue(statusStack != null);
+        TestCase.assertTrue(!statusStack.isRequiresTransaction());
         TestCase.assertTrue(statusStack.isCommitted());
         TestCase.assertTrue(!statusStack.isPrepared());
+        TestCase.assertTrue(statusStack.isClosed());
         // TestCase.assertTrue(factory1.isFreeConnection(con));
     }
 
@@ -129,6 +127,8 @@ public class XAResourceIntegrationTest extends TestCase {
      * @throws Exception
      */
     public void testOnePhaseCommit1() throws Exception {
+
+        // get a XAResource
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
 
         // u are just interfacing the proxy.
@@ -137,26 +137,21 @@ public class XAResourceIntegrationTest extends TestCase {
         this.getTransactionManager().begin();
 
         // ... the real core connection is hidden by the proxy
-        IPhynixxManagedConnection<ITestConnection> managedCon = xaCon.getManagedConnection();
         final Object conId;
-        try {
-            conId = managedCon.toConnection().getConnectionId();
+        ITestConnection con = xaCon.getConnection();
+        conId = con.getConnectionId();
 
-            // act transactional and enlist the current resource
-            managedCon.toConnection().act(1);
+        // act transactional and enlist the current resource
+        con.act(1);
 
-            this.getTransactionManager().commit();
-        } finally {
-            if (managedCon != null) {
-                managedCon.close();
-            }
-        }
+        this.getTransactionManager().commit();
 
-        System.out.println(TestConnectionStatusManager.toDebugString());
+        log.info(TestConnectionStatusManager.toDebugString());
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(statusStack.isCommitted());
         TestCase.assertTrue(!statusStack.isPrepared());
+        TestCase.assertTrue(statusStack.isClosed());
         // TestCase.assertTrue(factory1.isFreeConnection(con));
     }
 
@@ -188,7 +183,7 @@ public class XAResourceIntegrationTest extends TestCase {
             }
         }
 
-        System.out.println(TestConnectionStatusManager.toDebugString());
+        log.info(TestConnectionStatusManager.toDebugString());
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(statusStack.isCommitted());
@@ -211,62 +206,57 @@ public class XAResourceIntegrationTest extends TestCase {
         ITestConnection con1 = null;
         ITestConnection con2 = null;
         Object conId2 = null;
-        try {
-            this.getTransactionManager().begin();
+        this.getTransactionManager().begin();
 
-            IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
-            con1 = xaCon1.getConnection();
-            conId1 = con1.getConnectionId();
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
+        con1 = xaCon1.getConnection();
+        conId1 = con1.getConnectionId();
 
-            IPhynixxXAConnection<ITestConnection> xaCon2 = factory2.getXAConnection();
-            con2 = xaCon2.getConnection();
-            conId2 = con2.getConnectionId();
-
-            // act transactional and enlist the current resource
-            con1.act(1);
-            // no act on the second  resource ...
-            // .... con2.act();
-
-            this.getTransactionManager().commit();
-
-            System.out.println(TestConnectionStatusManager.toDebugString());
-        } finally {
-            if (con1 != null) {
-                con1.close();
-            }
-            if (con2 != null) {
-                con2.close();
-            }
-        }
+        IPhynixxXAConnection<ITestConnection> xaCon2 = factory2.getXAConnection();
+        con2 = xaCon2.getConnection();
+        conId2 = con2.getConnectionId();
 
 
-        System.out.println(TestConnectionStatusManager.toDebugString());
+        // act transactional and enlist the current resource
+        con1.act(1);
 
+
+        // no act on the second  resource ...
+        // .... con2.act();
+
+        this.getTransactionManager().commit();
+
+
+        log.info(TestConnectionStatusManager.toDebugString());
+
+
+        // conj1 has been changed an the XA protocol is performed
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId1);
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(statusStack.isCommitted());
-        TestCase.assertTrue(!statusStack.isPrepared());
+        TestCase.assertTrue(statusStack.isPrepared());
         //TestCase.assertTrue(factory1.isFreeConnection(coreCon1));
 
 
-        // assert that the con2 has not been enlisted in the TX
-
+        // assert that the con2
+        // con2 has not been changed , so no rollback/prepare/commit was performed
         statusStack = TestConnectionStatusManager.getStatusStack(conId2);
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(!statusStack.isCommitted());
         TestCase.assertTrue(!statusStack.isPrepared());
         TestCase.assertTrue(!statusStack.isRolledback());
+        TestCase.assertTrue(statusStack.isClosed());
         //TestCase.assertTrue(factory2.isFreeConnection(coreCon2));
 
     }
 
 
     /**
-     * two XAResource of the same Factory are joining the same underlying connection
+     * two XAResource of the same Factory are joining the same underlying connection and the TZX is rolled back
      *
      * @throws Exception
      */
-    public void testJoin1() throws Exception {
+    public void testJoinedRollback() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
 
         IPhynixxXAConnection<ITestConnection> xaCon2 = factory1.getXAConnection();
@@ -279,7 +269,6 @@ public class XAResourceIntegrationTest extends TestCase {
 
         // ... the real core connection is hidden by the proxy
 
-        try {
             this.getTransactionManager().begin();
 
             con1 = xaCon1.getConnection();
@@ -299,20 +288,62 @@ public class XAResourceIntegrationTest extends TestCase {
 
             this.getTransactionManager().rollback();
 
-            System.out.println(TestConnectionStatusManager.toDebugString());
-        } finally {
-            if (con1 != null) {
-                con1.close();
-            }
-            if (con2 != null) {
-                con2.close();
-            }
-        }
+            log.info(TestConnectionStatusManager.toDebugString());
 
-
+        // @RequiredTransaction was requested twice
         Assert.assertEquals(2, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.REQUIRES_TRANSACTION));
+        Assert.assertEquals(1, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.ROLLEDBACK));
+        Assert.assertEquals(1, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.CLOSED));
     }
 
+    /**
+     * two XAResource of the same Factory are joining the same underlying connection and the TZX is rolled back
+     *
+     * @throws Exception
+     */
+    public void testJoinedCommit() throws Exception {
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
+
+        IPhynixxXAConnection<ITestConnection> xaCon2 = factory1.getXAConnection();
+
+        // u are just interfacing the proxy.
+        ITestConnection con1 = null;
+        ITestConnection con2 = null;
+
+        Object conId2 = null;
+
+        // ... the real core connection is hidden by the proxy
+
+        this.getTransactionManager().begin();
+
+        con1 = xaCon1.getConnection();
+        con2 = xaCon2.getConnection();
+
+        con1.act(1);
+        con2.act(2);
+
+        Object conId1 = con1.getConnectionId();
+        conId2 = con2.getConnectionId();
+
+        // same physical connection
+        Assert.assertTrue("same physical connection", conId2 == conId1);
+
+        // act transactional and enlist the current resource
+        // conProxy.act();
+
+        this.getTransactionManager().commit();
+
+        log.info(TestConnectionStatusManager.toDebugString());
+
+        // @RequiredTransaction was requested twice
+        Assert.assertEquals(2, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.REQUIRES_TRANSACTION));
+
+
+        // onePhase Commit ist performed , so no prepare
+        Assert.assertEquals(0, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.PREPARED));
+        Assert.assertEquals(1, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.COMMITTED));
+        Assert.assertEquals(1, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.CLOSED));
+    }
 
     /**
      * there 's just one XAResource enlisted in a resource but the
@@ -321,7 +352,7 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
-    public void testReadOnly() throws Exception {
+    public void testExplicitEnlistment() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
 
         // u are just interfacing the proxy.
@@ -329,8 +360,6 @@ public class XAResourceIntegrationTest extends TestCase {
 
         // ... the real core connection is hidden by the proxy
         Object conId = con.getConnectionId();
-
-        try {
             this.getTransactionManager().begin();
 
             this.getTransactionManager().getTransaction().enlistResource(xaCon.getXAResource());
@@ -339,11 +368,7 @@ public class XAResourceIntegrationTest extends TestCase {
             // conProxy.act();
 
             this.getTransactionManager().commit();
-        } finally {
-            if (con != null) {
-                con.close();
-            }
-        }
+
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(statusStack.isCommitted());
@@ -357,30 +382,23 @@ public class XAResourceIntegrationTest extends TestCase {
      * @throws Exception
      */
     public void testTwoPhaseCommit() throws Exception {
-        IPhynixxXAConnection xaCon1 = factory1.getXAConnection();
-        ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
-        Object conId1 = con1.getConnectionId();
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
 
-        IPhynixxXAConnection xaCon2 = factory2.getXAConnection();
-        ITestConnection con2 = (ITestConnection) xaCon2.getConnection();
-        Object conId2 = con2.getConnectionId();
+        IPhynixxXAConnection<ITestConnection> xaCon2 = factory2.getXAConnection();
 
-        try {
             this.getTransactionManager().begin();
 
+            ITestConnection con1 = xaCon1.getConnection();
+            Object conId1 = con1.getConnectionId();
+            ITestConnection con2 = xaCon2.getConnection();
+            Object conId2 = con2.getConnectionId();
             // act transactional and enlist the current resource
             con1.act(1);
             con2.act(1);
 
+        Assert.assertTrue(conId1 != conId2);
+
             this.getTransactionManager().commit();
-        } finally {
-            if (con1 != null) {
-                con1.close();
-            }
-            if (con2 != null) {
-                con2.close();
-            }
-        }
 
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId1);
         TestCase.assertTrue(statusStack != null);
@@ -404,18 +422,18 @@ public class XAResourceIntegrationTest extends TestCase {
      * @throws Exception
      */
     public void testOnePhaseCommitOneRM_1() throws Exception {
-        IPhynixxXAConnection xaCon1 = factory1.getXAConnection();
-        ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
+
+        IPhynixxXAConnection<ITestConnection> xaCon2 = factory1.getXAConnection();
+
+        this.getTransactionManager().begin();
+
+        ITestConnection con1 = xaCon1.getConnection();
         Object conId1 = con1.getConnectionId();
-
-
-        IPhynixxXAConnection xaCon2 = factory1.getXAConnection();
-        ITestConnection con2 = (ITestConnection) xaCon2.getConnection();
+        ITestConnection con2 = xaCon2.getConnection();
         Object conId2 = con2.getConnectionId();
 
-
-        try {
-            this.getTransactionManager().begin();
+        Assert.assertTrue(conId1== conId2);
 
             // act transactional and enlist the current resource
             con1.act(1);
@@ -428,14 +446,6 @@ public class XAResourceIntegrationTest extends TestCase {
             // RM zusammengefuehrt werden muessen
             // derzeit gibt es aber keinen meschanismus dafuer
             this.getTransactionManager().commit();
-        } finally {
-            if (con1 != null) {
-                con1.close();
-            }
-            if (con2 != null) {
-                con2.close();
-            }
-        }
 
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId1);
         TestCase.assertTrue(statusStack != null);
@@ -444,20 +454,14 @@ public class XAResourceIntegrationTest extends TestCase {
         TestCase.assertTrue(!statusStack.isPrepared());
         // TestCase.assertTrue(factory1.isFreeConnection(coreCon1));
 
-
-        statusStack = TestConnectionStatusManager.getStatusStack(conId2);
-        TestCase.assertTrue(statusStack != null);
-        TestCase.assertTrue(!statusStack.isCommitted());
-        TestCase.assertTrue(!statusStack.isPrepared());
-
     }
 
     /**
      * @throws Exception
      */
-    public void testTwoPhaseCommitOneRM_2() throws Exception {
-        PhynixxXAResource xares1 = (PhynixxXAResource) factory1.getXAResource();
-        PhynixxXAResource xares2 = (PhynixxXAResource) factory2.getXAResource();
+    public void testExplicitEnlistmentTwoPhaseCommitTwoRM() throws Exception {
+        IPhynixxXAResource<ITestConnection> xares1 =  factory1.getXAResource();
+        IPhynixxXAResource<ITestConnection> xares2 =  factory2.getXAResource();
 
         ITestConnection con1 = null;
         ITestConnection con2 = null;
@@ -468,34 +472,26 @@ public class XAResourceIntegrationTest extends TestCase {
         Object conId1 = null;
         Object conId2 = null;
 
-        try {
             this.getTransactionManager().begin();
 
             this.getTransactionManager().getTransaction().enlistResource(xares1);
             this.getTransactionManager().getTransaction().enlistResource(xares2);
 
 
-            con1 = (ITestConnection) xares1.getXAConnection().getConnection();
+            con1 = xares1.getXAConnection().getConnection();
             //coreCon1 = (ITestConnection) ((IPhynixxManagedConnection) con1).getConnection();
             conId1 = con1.getConnectionId();
 
-            con2 = (ITestConnection) xares2.getXAConnection().getConnection();
+            con2 = xares2.getXAConnection().getConnection();
             //coreCon2 = (ITestConnection) ((IPhynixxManagedConnection) con1).getConnection();
             conId2 = con2.getConnectionId();
-
+        Assert.assertTrue(conId1!= conId2);
             // act transactional and enlist the current resource
-            ((ITestConnection) (xares1.getXAConnection().getConnection())).act(1);
-            ((ITestConnection) (xares2.getXAConnection().getConnection())).act(1);
+            con1.act(1);
+            con2.act(1);
 
             this.getTransactionManager().commit();
-        } finally {
-            if (con1 != null) {
-                con1.close();
-            }
-            if (con2 != null) {
-                con2.close();
-            }
-        }
+
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId1);
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(statusStack.isCommitted());
@@ -526,8 +522,8 @@ public class XAResourceIntegrationTest extends TestCase {
 
         this.getTransactionManager().begin();
 
-            this.getTransactionManager().getTransaction().enlistResource(xares1);
-            this.getTransactionManager().getTransaction().enlistResource(xares2);
+        this.getTransactionManager().getTransaction().enlistResource(xares1);
+        this.getTransactionManager().getTransaction().enlistResource(xares2);
 
         ITestConnection con1 = xares1.getXAConnection().getConnection();
         ITestConnection con2 = xares2.getXAConnection().getConnection();
@@ -539,7 +535,9 @@ public class XAResourceIntegrationTest extends TestCase {
         con1.act(1);
 
         this.getTransactionManager().commit();
-        System.out.println(TestConnectionStatusManager.toDebugString());
+
+
+        log.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId1);
         TestCase.assertTrue(statusStack != null);
@@ -561,18 +559,17 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
-    public void testRollbackTwoRM_2() throws Exception {
-        IPhynixxXAConnection xaCon1 = factory1.getXAConnection();
-        ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
+    public void testCommit3Connections1RM() throws Exception {
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
 
-        IPhynixxXAConnection xaCon2 = factory1.getXAConnection();
-        ITestConnection con2 = (ITestConnection) xaCon2.getConnection();
+        IPhynixxXAConnection<ITestConnection> xaCon2 = factory1.getXAConnection();
 
-        IPhynixxXAConnection xaCon3 = factory1.getXAConnection();
-        ITestConnection con3 = (ITestConnection) xaCon3.getConnection();
+        IPhynixxXAConnection<ITestConnection> xaCon3 = factory1.getXAConnection();
 
-        try {
-            this.getTransactionManager().begin();
+        this.getTransactionManager().begin();
+        ITestConnection con1 = xaCon1.getConnection();
+        ITestConnection con2 = xaCon2.getConnection();
+        ITestConnection con3 = xaCon3.getConnection();
 
             // act transactional and enlist the current resource
             con1.act(1);
@@ -580,17 +577,21 @@ public class XAResourceIntegrationTest extends TestCase {
             con3.act(1);
 
             this.getTransactionManager().commit();
-        } finally {
-            if (con1 != null) {
-                con1.close();
-            }
-            if (con2 != null) {
-                con2.close();
-            }
-            if (con3 == null) {
-                con3.close();
-            }
-        }
+
+        log.info(TestConnectionStatusManager.toDebugString());
+
+        Assert.assertTrue(con1.getConnectionId() == con2.getConnectionId());
+
+        Assert.assertTrue(con1.getConnectionId()== con3.getConnectionId());
+
+        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con3.getConnectionId());
+        TestCase.assertTrue(statusStack != null);
+        TestCase.assertTrue(statusStack.isCommitted());
+
+        // one-phae commit -> no prepare
+        TestCase.assertTrue(!statusStack.isPrepared());
+        TestCase.assertTrue(statusStack.isClosed());
+
     }
 
     /**
@@ -600,13 +601,13 @@ public class XAResourceIntegrationTest extends TestCase {
      * @throws Exception
      */
     public void testTwoPhaseCommitTwoRM_2() throws Exception {
-        IPhynixxXAConnection xaCon1 = factory1.getXAConnection();
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
         ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
 
-        IPhynixxXAConnection xaCon2 = factory1.getXAConnection();
+        IPhynixxXAConnection<ITestConnection> xaCon2 = factory1.getXAConnection();
         ITestConnection con2 = (ITestConnection) xaCon2.getConnection();
 
-        IPhynixxXAConnection xaCon3 = factory1.getXAConnection();
+        IPhynixxXAConnection<ITestConnection> xaCon3 = factory1.getXAConnection();
         ITestConnection con3 = (ITestConnection) xaCon3.getConnection();
 
         try {
@@ -634,41 +635,124 @@ public class XAResourceIntegrationTest extends TestCase {
     public void testSuspend() throws Exception {
 
         IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
-        ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
 
         IPhynixxXAConnection<ITestConnection> xaCon2 = factory1.getXAConnection();
-        ITestConnection con2 = (ITestConnection) xaCon2.getConnection();
 
         IPhynixxXAConnection<ITestConnection> xaCon3 = factory1.getXAConnection();
-        ITestConnection con3 = (ITestConnection) xaCon3.getConnection();
-        try {
-
             this.getTransactionManager().begin();
+
+            ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
             con1.act(1);
-            con2.act(1);
 
             Transaction tx = this.getTransactionManager().suspend();
 
+
             this.getTransactionManager().begin();
-            con3.act(1);
+            ITestConnection con2 = (ITestConnection) xaCon3.getConnection();
+            con2.act(1);
             this.getTransactionManager().commit();
 
             this.getTransactionManager().resume(tx);
 
-            this.getTransactionManager().commit();
+            this.getTransactionManager().rollback();
+
+        TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
+        TestCase.assertTrue(statusStack1 != null);
+        TestCase.assertTrue(statusStack1.isRolledback());
+        TestCase.assertTrue(statusStack1.isClosed());
 
 
-        } finally {
-            if (con1 != null) {
-                con1.close();
-            }
-            if (con2 != null) {
-                con2.close();
-            }
-            if (con3 == null) {
-                con3.close();
-            }
-        }
+
+        TestStatusStack statusStack2 = TestConnectionStatusManager.getStatusStack(con2.getConnectionId());
+        TestCase.assertTrue(statusStack2 != null);
+        TestCase.assertTrue(statusStack2.isCommitted());
+        // one-phase commit -> no prepare
+        TestCase.assertTrue(!statusStack2.isPrepared());
+        TestCase.assertTrue(statusStack2.isClosed());
+    }
+
+    /**
+     *
+     * Suspend on one XAConnection opens two different transactional branches and therefore two diffenr4ent physical connections.
+     *
+     * remember: the connection are associated to a TX by the call of xaConn.getConnection
+     *
+     * @throws Exception
+     */
+    public void testSuspendOneXAConnection() throws Exception {
+
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
+
+        this.getTransactionManager().begin();
+
+        ITestConnection con1 = xaCon1.getConnection();
+        con1.act(1);
+        Transaction tx = this.getTransactionManager().suspend();
+
+
+        this.getTransactionManager().begin();
+        ITestConnection con2 = xaCon1.getConnection();
+        con2.act(1);
+        this.getTransactionManager().commit();
+
+        this.getTransactionManager().resume(tx);
+
+        this.getTransactionManager().rollback();
+
+        Assert.assertTrue(con1.getConnectionId()!=con2.getConnectionId());
+
+        log.info(TestConnectionStatusManager.toDebugString());
+
+        TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
+        TestCase.assertTrue(statusStack1 != null);
+        TestCase.assertTrue(statusStack1.isRolledback());
+        TestCase.assertTrue(statusStack1.isClosed());
+
+        TestStatusStack statusStack2 = TestConnectionStatusManager.getStatusStack(con2.getConnectionId());
+        TestCase.assertTrue(statusStack2 != null);
+        TestCase.assertTrue(statusStack2.isCommitted());
+        // one-phase commit -> no prepare
+        TestCase.assertTrue(!statusStack2.isPrepared());
+        TestCase.assertTrue(statusStack2.isClosed());
+
+
+
+
+    }
+
+    public void testSuspendInvalidTransactionalContext() throws Exception {
+
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
+
+        this.getTransactionManager().begin();
+
+        ITestConnection con1 = xaCon1.getConnection();
+        con1.act(1);
+
+        Transaction tx = this.getTransactionManager().suspend();
+
+
+        this.getTransactionManager().begin();
+
+        // con1 remains asociated to the suspended TX
+        con1.act(1);
+        this.getTransactionManager().commit();
+
+        this.getTransactionManager().resume(tx);
+
+        this.getTransactionManager().rollback();
+
+        log.info(TestConnectionStatusManager.toDebugString());
+
+        TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
+        TestCase.assertTrue(statusStack1 != null);
+        TestCase.assertTrue(statusStack1.isRolledback());
+
+        // connection is associated to the first TX
+        TestCase.assertTrue(!statusStack1.isCommitted());
+
+
+
     }
 
 
@@ -683,67 +767,67 @@ public class XAResourceIntegrationTest extends TestCase {
     /**
      public void testHeuristicRollback() throws Exception {
 
-        int freeConnection1 = factory1.freeConnectionSize();
-        int freeConnection2 = factory2.freeConnectionSize();
+     int freeConnection1 = factory1.freeConnectionSize();
+     int freeConnection2 = factory2.freeConnectionSize();
 
-        IPhynixxXAConnection xaCon1 = factory1.getXAConnection();
-        ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
+     IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
+     ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
      Object conId1 = con1.getConnectionId();
 
-     IPhynixxXAConnection xaCon2 = factory2.getXAConnection();
-        ITestConnection con2 = (ITestConnection) xaCon2.getConnection();
+     IPhynixxXAConnection<ITestConnection> xaCon2 = factory2.getXAConnection();
+     ITestConnection con2 = (ITestConnection) xaCon2.getConnection();
      Object conId2 = con2.getConnectionId();
 
      log.debug("Con1 with ID=" + conId1);
-        log.debug("Con2 with ID=" + conId2);
+     log.debug("Con2 with ID=" + conId2);
 
-        TestCase.assertEquals(freeConnection1 - 1, factory1.freeConnectionSize());
-        TestCase.assertEquals(freeConnection2 - 1, factory2.freeConnectionSize());
+     TestCase.assertEquals(freeConnection1 - 1, factory1.freeConnectionSize());
+     TestCase.assertEquals(freeConnection2 - 1, factory2.freeConnectionSize());
 
-        try {
-            this.getTransactionManager().begin();
+     try {
+     this.getTransactionManager().begin();
 
-            // act transactional and enlist the current resource
-            con1.act(1);
-            con2.act(1);
+     // act transactional and enlist the current resource
+     con1.act(1);
+     con2.act(1);
 
-            // con1 is closed and the TX is marked as rollback
-            con1.close();
-            con1 = null;
+     // con1 is closed and the TX is marked as rollback
+     con1.close();
+     con1 = null;
 
-            try {
-                this.getTransactionManager().commit();
-                throw new AssertionFailedError("Exception expected");
-            } catch (RollbackException e) {
-            }
-        } finally {
-            if (con1 != null) {
-                con1.close();
-            }
-            if (con2 != null) {
-                con2.close();
-            }
-        }
-
-
-        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId1);
-        TestCase.assertTrue(statusStack != null);
-        TestCase.assertTrue(!statusStack.isCommitted());
-        TestCase.assertTrue(!statusStack.isPrepared());
-        // rollback has not been performed explicitly
-        TestCase.assertTrue(!statusStack.isRollbacked());
-        //TestCase.assertTrue(statusStack.isClosed());
+     try {
+     this.getTransactionManager().commit();
+     throw new AssertionFailedError("Exception expected");
+     } catch (RollbackException e) {
+     }
+     } finally {
+     if (con1 != null) {
+     con1.close();
+     }
+     if (con2 != null) {
+     con2.close();
+     }
+     }
 
 
-        statusStack = TestConnectionStatusManager.getStatusStack(conId2);
-        TestCase.assertTrue(statusStack != null);
-        TestCase.assertTrue(!statusStack.isCommitted());
-        TestCase.assertTrue(!statusStack.isPrepared());
+     TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId1);
+     TestCase.assertTrue(statusStack != null);
+     TestCase.assertTrue(!statusStack.isCommitted());
+     TestCase.assertTrue(!statusStack.isPrepared());
+     // rollback has not been performed explicitly
+     TestCase.assertTrue(!statusStack.isRollbacked());
+     //TestCase.assertTrue(statusStack.isClosed());
 
-        // con1 is not any longer available, threrefore no rollback
-        TestCase.assertTrue(statusStack.isRollbacked());
-        //TestCase.assertTrue(statusStack.isClosed());
-    }
+
+     statusStack = TestConnectionStatusManager.getStatusStack(conId2);
+     TestCase.assertTrue(statusStack != null);
+     TestCase.assertTrue(!statusStack.isCommitted());
+     TestCase.assertTrue(!statusStack.isPrepared());
+
+     // con1 is not any longer available, threrefore no rollback
+     TestCase.assertTrue(statusStack.isRollbacked());
+     //TestCase.assertTrue(statusStack.isClosed());
+     }
      **/
 
     /**
@@ -754,7 +838,7 @@ public class XAResourceIntegrationTest extends TestCase {
      * @throws Exception
      */
     public void testTimeout1() throws Exception {
-        IPhynixxXAConnection xaCon = factory1.getXAConnection();
+        IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
         ITestConnection con = (ITestConnection) xaCon.getConnection();
         XAResource xaresource = xaCon.getXAResource();
         xaresource.setTransactionTimeout(2);
@@ -788,7 +872,7 @@ public class XAResourceIntegrationTest extends TestCase {
      * @throws Exception
      */
     public void testTimeout2() throws Exception {
-        IPhynixxXAConnection xaCon = factory1.getXAConnection();
+        IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
         ITestConnection con = (ITestConnection) xaCon.getConnection();
         XAResource xaresource = xaCon.getXAResource();
         xaresource.setTransactionTimeout(2);

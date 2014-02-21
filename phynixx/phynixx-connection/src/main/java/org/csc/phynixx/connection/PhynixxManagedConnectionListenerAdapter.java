@@ -39,18 +39,21 @@ public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnectio
     /**
      * NOOP
      */
+    @Override
     public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
     }
 
     /**
      * NOOP
      */
+    @Override
     public void connectionErrorOccurred(IManagedConnectionProxyEvent<C> event) {
     }
 
     /**
      * NOOP
      */
+    @Override
     public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {
     }
 
@@ -59,14 +62,17 @@ public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnectio
 
     }
 
+    @Override
     public void connectionCommitting(IManagedConnectionProxyEvent<C> event) {
 
     }
 
+    @Override
     public void connectionPrepared(IManagedConnectionProxyEvent<C> event) {
 
     }
 
+    @Override
     public void connectionPreparing(IManagedConnectionProxyEvent<C> event) {
 
     }
@@ -74,6 +80,7 @@ public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnectio
     /**
      * NOOP
      */
+    @Override
     public void connectionCommitted(IManagedConnectionProxyEvent<C> event) {
     }
 
@@ -85,6 +92,7 @@ public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnectio
     /**
      * NOOP
      */
+    @Override
     public void connectionRolledback(IManagedConnectionProxyEvent<C> event) {
     }
 
@@ -99,17 +107,23 @@ public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnectio
     /**
      * NOOP
      */
+    @Override
     public void connectionReferenced(IManagedConnectionProxyEvent<C> event) {
 
     }
 
+    @Override
     public void connectionRecovered(IManagedConnectionProxyEvent<C> event) {
 
     }
 
+    @Override
     public void connectionRecovering(IManagedConnectionProxyEvent<C> event) {
 
     }
 
+    @Override
+    public void autocommitChanged(IManagedConnectionProxyEvent<C> event) {
 
+    }
 }

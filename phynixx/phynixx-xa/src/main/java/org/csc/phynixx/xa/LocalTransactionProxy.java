@@ -71,6 +71,15 @@ class LocalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManaged
             this.connection.removeConnectionListener(this);
         }
         this.connection = null;
+    }
+
+    @Override
+    public void close() {
+        if (connection != null) {
+            IPhynixxManagedConnection<C> connection=this.connection;
+        this.release();
+        connection.close();
+    }
 
     }
 

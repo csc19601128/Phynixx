@@ -220,6 +220,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     public void setAutoCommit(boolean autoCommit) {
         if (this.getCoreConnection() != null) {
             this.getCoreConnection().setAutoCommit(autoCommit);
+            this.fireAutocommitChanged();
         }
     }
 
@@ -464,6 +465,22 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         };
         fireEvents(deliver);
     }
+
+
+
+    protected void fireAutocommitChanged() {
+        IEventDeliver deliver = new IEventDeliver() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+                listener.autocommitChanged(event);
+            }
+
+            public String toString() {
+                return "autocommitChanged";
+            }
+        };
+        fireEvents(deliver);
+    }
+
 
     protected void fireConnectionPreparing() {
         IEventDeliver deliver = new IEventDeliver() {

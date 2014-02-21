@@ -129,4 +129,11 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
      * @param event
      */
     void connectionRollingBack(IManagedConnectionProxyEvent<C> event);
+
+
+    /**
+     * steAutoCommit has been Called. The current state of autocommit has to be requested
+     * @param event
+     */
+    void autocommitChanged(IManagedConnectionProxyEvent<C> event) ;
 }

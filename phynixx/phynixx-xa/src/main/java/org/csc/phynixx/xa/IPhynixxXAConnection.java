@@ -42,4 +42,7 @@ public interface IPhynixxXAConnection<C extends IPhynixxConnection> {
 
     public IPhynixxManagedConnection<C> getManagedConnection();
 
+
+    public void close();
+
 }

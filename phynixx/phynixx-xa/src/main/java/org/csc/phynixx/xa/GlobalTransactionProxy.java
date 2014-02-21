@@ -55,7 +55,7 @@ class GlobalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManage
     }
 
     /**
-     * releases and closes the associated TransactionalBranch
+     * releases and closes the associated TransactionalBranch, but do not release the associated resources
      */
     @Override
     public void release() {
@@ -69,6 +69,20 @@ class GlobalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManage
         this.transactionalBranch = null;
 
     }
+
+    /**
+     * releases and closes the associated TransactionalBranch, and releases the associated resources
+     */
+    @Override
+    public void close() {
+        if (transactionalBranch != null) {
+            XATransactionalBranch<C> branch= this.transactionalBranch;
+            this.release();
+            branch.getManagedConnection().close();
+        }
+
+    }
+
 
     Xid getXid() {
         if (transactionalBranch != null) {

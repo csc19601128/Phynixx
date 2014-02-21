@@ -28,7 +28,7 @@ public interface IPhynixxConnection {
 
 
     /**
-     * resets a connection  for reuse and prepares it for reuse.
+     * resets a connection  and prepares it for reuse.
      */
     void reset();
 
@@ -44,28 +44,24 @@ public interface IPhynixxConnection {
     boolean isAutoCommit();
 
     /**
-     * @throws SampleTransactionalException
      */
     void commit();
 
 
     /**
-     * @throws SampleTransactionalException
      */
     void rollback();
 
 
     /**
-     * Closes the connection and releases all resources. It called by the connection management
+     * Closes the connection and releases all resources. The connection can not be reused
      *
-     * @throws SampleTransactionalException
      */
     void close();
 
 
 
     /**
-     * @throws SampleTransactionalException
      */
     void prepare();
 

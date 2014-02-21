@@ -28,12 +28,12 @@ public class XidWrapper implements Xid {
 
     private int formatId = 0;
 
-    private byte[] gtrid = null;
+    private byte[] globalTransactionId = null;
 
-    private byte[] bqual = null;
+    private byte[] branchQualifier = null;
 
     public byte[] getBranchQualifier() {
-        return bqual;
+        return branchQualifier;
     }
 
     public int getFormatId() {
@@ -41,15 +41,23 @@ public class XidWrapper implements Xid {
     }
 
     public byte[] getGlobalTransactionId() {
-        return gtrid;
+        return globalTransactionId;
     }
 
 
     public XidWrapper(Xid otherXid) {
         this.formatId = otherXid.getFormatId();
-        this.bqual = otherXid.getBranchQualifier();
-        this.gtrid = otherXid.getGlobalTransactionId();
+        this.branchQualifier = otherXid.getBranchQualifier();
+        this.globalTransactionId = otherXid.getGlobalTransactionId();
     }
+
+    public XidWrapper(int formatId, byte[] globalTransactionId, byte[] branchQualifer) throws IOException {
+
+        this.formatId = formatId;
+        this.branchQualifier =branchQualifer;
+        this.globalTransactionId = globalTransactionId;
+    }
+
 
     public XidWrapper(byte[] xid) throws IOException {
         this.internalize(xid);
@@ -64,13 +72,13 @@ public class XidWrapper implements Xid {
             inputIO = new DataInputStream(byteIO);
             this.formatId = inputIO.readInt();
 
-            int gtrid_length = inputIO.readInt();
-            this.gtrid = new byte[gtrid_length];
-            inputIO.read(this.gtrid);
+            int gloabalTransactionIdLength = inputIO.readInt();
+            this.globalTransactionId = new byte[gloabalTransactionIdLength];
+            inputIO.read(this.globalTransactionId);
 
-            int bqual_length = inputIO.readInt();
-            this.bqual = new byte[bqual_length];
-            inputIO.read(this.bqual);
+            int branchLength = inputIO.readInt();
+            this.branchQualifier = new byte[branchLength];
+            inputIO.read(this.branchQualifier);
         } finally {
             if (inputIO != null) inputIO.close();
         }
@@ -78,25 +86,24 @@ public class XidWrapper implements Xid {
 
     }
 
-    public byte[] externalize() throws IOException {
+    public byte[] export() throws IOException {
 
-
-        DataOutputStream outputIO = null;
+        DataOutputStream out = null;
 
         try {
             ByteArrayOutputStream byteIO = new ByteArrayOutputStream();
-            outputIO = new DataOutputStream(byteIO);
-            outputIO.writeInt(this.getFormatId());
-            outputIO.writeInt(this.gtrid.length);
-            outputIO.write(gtrid);
-            outputIO.writeInt(bqual.length);
-            outputIO.write(bqual);
+            out = new DataOutputStream(byteIO);
+            out.writeInt(this.getFormatId());
+            out.writeInt(this.globalTransactionId.length);
+            out.write(globalTransactionId);
+            out.writeInt(branchQualifier.length);
+            out.write(branchQualifier);
 
-            outputIO.flush();
+            out.flush();
 
             return byteIO.toByteArray();
         } finally {
-            if (outputIO != null) outputIO.close();
+            if (out != null) out.close();
         }
 
 

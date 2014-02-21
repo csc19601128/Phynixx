@@ -12,6 +12,8 @@ public interface ITransactionBinding<C extends IPhynixxConnection> {
 
     void release();
 
+    void close();
+
     IPhynixxManagedConnection<C> getConnection();
 
 

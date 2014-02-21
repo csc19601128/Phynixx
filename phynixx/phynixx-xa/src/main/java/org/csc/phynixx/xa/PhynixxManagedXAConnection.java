@@ -105,7 +105,7 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
             XATransactionalBranch<C> xaTransactionalBranch = this.xaTransactionalBranchDictionary.findTransactionalBranch(xid);
             /// xaTransactionalBranch!=null => joining a existing transactional branch
             if (xaTransactionalBranch == null) {
-                this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid, localTransactionProxy.getConnection());
+                xaTransactionalBranch= this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid, localTransactionProxy.getConnection());
             }
             this.transactionBinding = new GlobalTransactionProxy<C>(xaTransactionalBranch);
             return;
@@ -223,6 +223,15 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
         transactionalBranch.close();
 
         delistTransaction();
+    }
+
+
+    @Override
+    public void close() {
+        if(this.transactionBinding!=null) {
+            this.transactionBinding.close();
+            this.transactionBinding=null;
+        }
     }
 
     private void delistTransaction() {
