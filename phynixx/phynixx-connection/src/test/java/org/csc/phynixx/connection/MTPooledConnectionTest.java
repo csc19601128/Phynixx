@@ -42,8 +42,6 @@ public class MTPooledConnectionTest extends TestCase {
 
     private PooledPhynixxManagedConnectionFactory factory = null;
 
-    private TestRecoveryListener recoveryListner = new TestRecoveryListener();
-
     private static final int POOL_SIZE = 30;
 
 
@@ -63,8 +61,8 @@ public class MTPooledConnectionTest extends TestCase {
         LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
         this.factory.setLoggerSystemStrategy(strategy);
-        this.recoveryListner = new TestRecoveryListener();
-        this.factory.addConnectionProxyDecorator(this.recoveryListner);
+        TestConnectionStatusListener recoveryListner = new TestConnectionStatusListener();
+        this.factory.addConnectionProxyDecorator(recoveryListner);
 
     }
 
@@ -79,7 +77,7 @@ public class MTPooledConnectionTest extends TestCase {
     }
 
     private static interface IActOnConnection {
-        void doWork(ITestConnection con);
+        Object doWork(ITestConnection con);
     }
 
 
@@ -162,14 +160,15 @@ public class MTPooledConnectionTest extends TestCase {
         final int[] counter = new int[1];
 
         IActOnConnection actOnConnection = new IActOnConnection() {
-            public void doWork(ITestConnection con) {
+            public Object doWork(ITestConnection con) {
                 con.act(5);
                 con.act(7);
                 synchronized (counter) {
                     counter[0] = con.getCounter();
                 }
-
                 con.rollback();
+
+                return con.getConnectionId();
             }
         };
 
@@ -186,12 +185,17 @@ public class MTPooledConnectionTest extends TestCase {
         final int[] counter = new int[1];
 
         IActOnConnection actOnConnection = new IActOnConnection() {
-            public void doWork(ITestConnection con) {
-                con.act(5);
-                con.act(7);
-                TestConnection coreCon = (TestConnection) ((IPhynixxManagedConnection) con).getCoreConnection();
-                coreCon.setInterruptFlag(TestInterruptionPoint.ACT);
-                con.rollback();
+            public Object doWork(ITestConnection con) {
+                Object conId=con.getConnectionId();
+                try {
+                    con.act(5);
+                    con.act(7);
+                     TestConnection coreCon = (TestConnection) ((IPhynixxManagedConnection) con).getCoreConnection();
+                    coreCon.setInterruptFlag(TestInterruptionPoint.ACT);
+                    con.rollback();
+                    } finally {
+                        return conId;
+                    }
             }
         };
 
@@ -199,8 +203,9 @@ public class MTPooledConnectionTest extends TestCase {
 
         this.factory.recover(null);
 
-        // nothing has to be recoverd ...
-        this.recoveryListner.recoveredConnections = POOL_SIZE * 4;
+        // TestStatusStack statusStack= TestConnectionStatusManager.getStatusStack(con.)
+
+
 
 
     }
