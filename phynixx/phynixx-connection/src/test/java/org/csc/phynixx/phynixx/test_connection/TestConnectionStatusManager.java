@@ -23,10 +23,7 @@ package org.csc.phynixx.phynixx.test_connection;
 
 import org.csc.phynixx.connection.IPhynixxManagedConnection;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TestConnectionStatusManager {
 
@@ -38,6 +35,17 @@ public class TestConnectionStatusManager {
 
     public synchronized static void clear() {
         connectionStati.clear();
+    }
+
+
+    public static synchronized Set<TestStatusStack> getStatusStacks() {
+        Set<TestStatusStack> stacks= new HashSet<TestStatusStack>();
+        for(Object connId : connectionStati.keySet()) {
+            stacks.add(getStatusStack(connId));
+        }
+
+        return stacks;
+
     }
 
 

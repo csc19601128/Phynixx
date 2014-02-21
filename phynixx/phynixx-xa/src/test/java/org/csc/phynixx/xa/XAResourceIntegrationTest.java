@@ -114,7 +114,9 @@ public class XAResourceIntegrationTest extends TestCase {
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(!statusStack.isRequiresTransaction());
-        TestCase.assertTrue(statusStack.isCommitted());
+
+        // con hasn't changed, so commit ism performed on the physical connection
+        TestCase.assertTrue(!statusStack.isCommitted());
         TestCase.assertTrue(!statusStack.isPrepared());
         TestCase.assertTrue(statusStack.isClosed());
         // TestCase.assertTrue(factory1.isFreeConnection(con));
@@ -352,22 +354,56 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
-    public void testExplicitEnlistment() throws Exception {
+    public void testExplicitEnlistment1() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
 
+            this.getTransactionManager().begin();
+
+        this.getTransactionManager().getTransaction().enlistResource(xaCon.getXAResource());
+
         // u are just interfacing the proxy.
-        ITestConnection con = (ITestConnection) xaCon.getConnection();
+        ITestConnection con = xaCon.getConnection();
 
         // ... the real core connection is hidden by the proxy
         Object conId = con.getConnectionId();
-            this.getTransactionManager().begin();
-
-            this.getTransactionManager().getTransaction().enlistResource(xaCon.getXAResource());
 
             // act transactional and enlist the current resource
             // conProxy.act();
 
             this.getTransactionManager().commit();
+
+        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
+        TestCase.assertTrue(statusStack != null);
+        TestCase.assertTrue(!statusStack.isCommitted());
+        TestCase.assertTrue(!statusStack.isRolledback());
+        //TestCase.assertTrue(factory1.isFreeConnection(coreCon));
+    }
+
+    /**
+     * there 's just one XAResource enlisted in a resource but the
+     * nothing has to be committed.
+     * As the Transaction managers performs a 1 phase commit the resource is committed correctly
+     *
+     * @throws Exception
+     */
+    public void testExplicitEnlistment2() throws Exception {
+        IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
+
+
+        // ... the real core connection is hidden by the proxy
+        this.getTransactionManager().begin();
+
+
+        this.getTransactionManager().getTransaction().enlistResource(xaCon.getXAResource());
+
+        // u are just interfacing the proxy.
+        ITestConnection con = xaCon.getConnection();
+
+        // act transactional and enlist the current resource
+        Object conId = con.getConnectionId();
+        con.act(2);
+
+        this.getTransactionManager().commit();
 
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
         TestCase.assertTrue(statusStack != null);
@@ -763,6 +799,7 @@ public class XAResourceIntegrationTest extends TestCase {
 
         IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
 
+        // con1 on local transaction
         ITestConnection con1 = xaCon1.getConnection();
         con1.act(1);
         con1.act(2);
@@ -770,9 +807,126 @@ public class XAResourceIntegrationTest extends TestCase {
         con1.close();
 
 
+        // con2 on global transaction
         this.getTransactionManager().begin();
         ITestConnection con2 = xaCon1.getConnection();
         con2.act(1);
+
+        this.getTransactionManager().rollback();
+
+        Assert.assertTrue(con1.getConnectionId()!=con2.getConnectionId());
+
+        log.info(TestConnectionStatusManager.toDebugString());
+
+        TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
+        TestCase.assertTrue(statusStack1 != null);
+        TestCase.assertTrue(statusStack1.isCommitted());
+        TestCase.assertTrue(statusStack1.isClosed());
+
+        TestStatusStack statusStack2 = TestConnectionStatusManager.getStatusStack(con2.getConnectionId());
+        TestCase.assertTrue(statusStack2 != null);
+        TestCase.assertTrue(statusStack2.isRolledback());
+        // one-phase commit -> no prepare
+        TestCase.assertTrue(!statusStack2.isPrepared());
+        TestCase.assertTrue(statusStack2.isClosed());
+    }
+
+    /**
+     *
+     *
+     *
+     * @throws Exception
+     */
+    public void testMixedLocalGlobalTransactionNested1() throws Exception {
+
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
+
+        // con1 on local transaction
+        ITestConnection con1 = xaCon1.getConnection();
+        con1.act(1);
+        con1.act(2);
+
+
+        // con2 on global transaction
+        this.getTransactionManager().begin();
+        try {
+            ITestConnection con2 = xaCon1.getConnection();
+            throw new AssertionFailedError("Nested Transactions are not permitted");
+        } catch (Exception e) {}
+    }
+
+
+    /**
+     *
+     *
+     *
+     * @throws Exception
+     */
+    public void testMixedLocalGlobalTransactionNested2() throws Exception {
+
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
+
+        // con1 on global transaction
+        this.getTransactionManager().begin();
+        ITestConnection con1 = xaCon1.getConnection();
+        con1.act(1);
+        con1.act(2);
+
+
+        // con2 shared con1 on global transaction
+        ITestConnection con2 = xaCon1.getConnection();
+        con2.act(3);
+
+        Assert.assertEquals(6, con2.getCounter());
+
+        try {
+            con2.rollback();
+            throw new AssertionFailedError("Nested Transactions are not permitted");
+        } catch (Exception e) {}
+
+        log.info(TestConnectionStatusManager.toDebugString());
+
+    }
+
+
+    /**
+     *
+     * Suspending one XAConnection opens a second transactional branch and therefore a second physical connection.
+     *
+     * remember: the connection are associated to a TX by the call of xaConn.getConnection
+     *
+     * @throws Exception
+     */
+    public void testMixedLocalGlobalTransactionAndSuspend() throws Exception {
+
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
+
+        this.getTransactionManager().begin();
+
+        ITestConnection con3 = xaCon1.getConnection();
+        con3.act(3);
+
+        Transaction transaction = this.getTransactionManager().getTransaction();
+        this.getTransactionManager().suspend();
+
+        // con1 on local transaction
+        ITestConnection con1 = xaCon1.getConnection();
+        con1.act(1);
+        con1.act(2);
+        con1.commit();
+        con1.close();
+
+
+        // con2 on global transaction
+        this.getTransactionManager().begin();
+        ITestConnection con2 = xaCon1.getConnection();
+        con2.act(1);
+
+        this.getTransactionManager().rollback();
+
+        this.getTransactionManager().resume(transaction);
+
+        con3.act(2);
 
         this.getTransactionManager().rollback();
 

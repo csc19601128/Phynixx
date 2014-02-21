@@ -67,17 +67,15 @@ import java.util.List;
  */
 abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> implements IPhynixxManagedConnection<C>, IXADataRecorderAware, ICloseable {
 
-    private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PhynixxManagedConnectionGuard.class);
 
     private C connection = null;
 
     private Class<C> connectionInterface;
 
-    // indicates, that the core connection is executing
-    private volatile boolean executing = false;
+    // indicates, that the core connection is transactionalData
+    private volatile boolean transactionalData = false;
 
-    // indicates that the connection is expired
-    private volatile boolean expired = false;
 
     private volatile boolean closed = false;
 
@@ -115,6 +113,9 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         return "no core connection";
     }
 
+    private boolean hasTransactionalData() {
+        return transactionalData;
+    }
 
     public boolean isClosed() {
         return closed;
@@ -170,27 +171,6 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         }
     }
 
-
-    public boolean isExpired() {
-        return expired;
-    }
-
-
-    public void setExpired(boolean expired) {
-        this.expired = expired;
-    }
-
-
-    public boolean isExecuting() {
-        return executing;
-    }
-
-
-    private void setExecuting(boolean executing) {
-        this.executing = executing;
-    }
-
-
     @Override
     public C getCoreConnection() {
         return this.connection;
@@ -210,6 +190,13 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         }
     }
 
+
+    private void checkClosed() {
+        if(this.isClosed()) {
+            throw new IllegalStateException("Connection " +this+" is closed");
+        }
+    }
+
     public boolean isAutoCommit() {
         if (this.getCoreConnection() != null) {
             return this.getCoreConnection().isAutoCommit();
@@ -219,6 +206,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     public void setAutoCommit(boolean autoCommit) {
         if (this.getCoreConnection() != null) {
+            checkClosed();
             this.getCoreConnection().setAutoCommit(autoCommit);
             this.fireAutocommitChanged();
         }
@@ -238,9 +226,15 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     }
 
     public synchronized void commit() {
+
+        if(!hasTransactionalData()) {
+            return;
+        }
         fireConnectionCommitting();
         if (this.getCoreConnection() != null) {
+            checkClosed();
             this.getCoreConnection().commit();
+            setTransactionalData(false);
         }
         this.fireConnectionCommitted();
 
@@ -248,8 +242,14 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
 
     public void prepare() {
+
+        if(!hasTransactionalData()) {
+            return;
+        }
+
         this.fireConnectionPreparing();
         if (this.getCoreConnection() != null) {
+            checkClosed();
             this.getCoreConnection().prepare();
         }
         this.fireConnectionPrepared();
@@ -257,11 +257,22 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
 
     public void rollback() {
+
+        if(!hasTransactionalData()) {
+            return;
+        }
+
         fireConnectionRollingBack();
         if (this.getCoreConnection() != null) {
+            checkClosed();
             this.getCoreConnection().rollback();
+            setTransactionalData(false);
         }
         this.fireConnectionRolledback();
+    }
+
+    private void setTransactionalData(boolean state) {
+        this.transactionalData=state;
     }
 
 
@@ -278,7 +289,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
         IXADataRecorderAware con = ImplementorUtils.cast(getCoreConnection(), IXADataRecorderAware.class);
 
-        // the connection has to re establish the state of the message logger
+        // the connection has to re establish the state of the message LOG
         IXADataRecorder msgLogger = this.getXADataRecorder();
         if (msgLogger.isCompleted()) {
             return;
@@ -293,34 +304,6 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     }
 
-
-    /**
-     * checks, if the current proxy is prepared to execute
-     * and modifies the state .
-     */
-    protected void prepareAction() {
-        this.setExecuting(true);
-
-
-        this.fireConnectionRequiresTransaction();
-
-        if (this.isExpired()) {
-            throw new IllegalStateException("Connection is expired");
-        }
-    }
-
-    protected void finishAction() {
-        this.setExecuting(false);
-        if (this.isExpired()) {
-            throw new IllegalStateException("Connection is expired");
-        }
-    }
-
-
-    protected void finishAction(Exception exception) {
-        this.setExecuting(false);
-        this.fireConnectionErrorOccurred(exception);
-    }
 
     private void fireConnectionReset() {
 
@@ -364,8 +347,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         PhynixxConnectionProxyEvent<C> event = new PhynixxConnectionProxyEvent<C>(getObservableProxy(), exception);
         for (int i = 0; i < tmp.size(); i++) {
             IPhynixxManagedConnectionListener<C> listener = tmp.get(i);
-            if (logger.isDebugEnabled()) {
-                logger.debug("ConnectionPhynixxGuard " + event + " called listener " + listener + " on " + deliver);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("ConnectionPhynixxGuard " + event + " called listener " + listener + " on " + deliver);
             }
             deliver.fireEvent(listener, event);
         }
@@ -414,6 +397,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
 
     protected void fireConnectionRequiresTransaction() {
+
         IEventDeliver deliver = new IEventDeliver() {
             public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
                 listener.connectionRequiresTransaction(event);
@@ -424,6 +408,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
             }
         };
         fireEvents(deliver);
+
+        this.setTransactionalData(true);
     }
 
     protected void fireConnectionRequiresTransactionExecuted(Exception exception) {

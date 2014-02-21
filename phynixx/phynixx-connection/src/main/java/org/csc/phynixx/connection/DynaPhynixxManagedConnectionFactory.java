@@ -152,15 +152,18 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
                                     this.fireConnectionRequiresTransaction();
                                 }
                                 obj = method.invoke(target, args);
+                                if (requireTransaction) {
+                                    fireConnectionRequiresTransactionExecuted();
+                                }
                             }
                         } else {
                             if (requireTransaction) {
                                 this.fireConnectionRequiresTransaction();
                             }
                             obj = method.invoke(target, args);
-                        }
-                        if (requireTransaction) {
-                            fireConnectionRequiresTransactionExecuted();
+                            if (requireTransaction) {
+                                fireConnectionRequiresTransactionExecuted();
+                            }
                         }
                         return obj;
                     } catch (InvocationTargetException targetException) {

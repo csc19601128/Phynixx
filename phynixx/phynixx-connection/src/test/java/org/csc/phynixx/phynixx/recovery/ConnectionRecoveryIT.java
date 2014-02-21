@@ -40,7 +40,7 @@ import org.junit.Before;
 import java.util.Properties;
 
 
-public class ConnectionRecoveryTest extends TestCase {
+public class ConnectionRecoveryIT extends TestCase {
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
@@ -82,7 +82,7 @@ public class ConnectionRecoveryTest extends TestCase {
     private void provokeRecoverySituation(IActOnConnection actOnConnection) throws Exception {
         ITestConnection con = null;
         try {
-            con = ConnectionRecoveryTest.this.factory.getConnection();
+            con = ConnectionRecoveryIT.this.factory.getConnection();
             actOnConnection.doWork(con);
         } catch (ActionInterruptedException ex) {
             log.info("interrupted by testcase");

@@ -76,12 +76,12 @@ public class TestConnection implements ITestConnection {
 
     private Object connectionId = null;
 
-    private int currentCounter = 0;
+    private int increment = 0;
     private int initialValue = 0;
 
     private IXADataRecorder messageLogger = null;
 
-    private boolean autoCommit;
+    private boolean autoCommit=false;
 
     public boolean isAutoCommit() {
         return autoCommit;
@@ -109,7 +109,7 @@ public class TestConnection implements ITestConnection {
      * this value has to be restored if the connection is rollbacked
      */
     public void setInitialCounter(int value) {
-        this.currentCounter = value;
+        this.increment = 0;
         this.initialValue = value;
         this.getXADataRecorder().writeRollbackData(Integer.toString(value).getBytes());
     }
@@ -132,7 +132,7 @@ public class TestConnection implements ITestConnection {
 
 
     public int getCounter() {
-        return currentCounter;
+        return this.initialValue + this.increment;
     }
 
     /* (non-Javadoc)
@@ -148,7 +148,7 @@ public class TestConnection implements ITestConnection {
     public void act(int inc) {
 
         interrupt(TestInterruptionPoint.ACT);
-        this.currentCounter = this.currentCounter + inc;
+        this.increment = this.increment + inc;
         log.info("TestConnection " + connectionId + " counter incremented to " + inc + " counter=" + this.getCounter());
 
     }
@@ -156,18 +156,29 @@ public class TestConnection implements ITestConnection {
 
     @Override
     public void reset() {
+        privReset();
+
+    }
+
+    /**
+     * reset without being tracked by the Listeners
+     */
+    private void privReset() {
         resetInterruptionFlags();
-        currentCounter = 0;
+        this.increment = 0;
+        this.initialValue=0;
     }
 
     public void close() {
         this.interrupt(TestInterruptionPoint.CLOSE);
+        this.privReset();
         log.info("TestConnection " + connectionId + " closed");
+
     }
 
     public void commit() {
         try {
-            byte[] bytes = new LogRecordWriter().writeInt(this.initialValue).writeInt(this.currentCounter).toByteArray();
+            byte[] bytes = new LogRecordWriter().writeInt(this.initialValue).writeInt(this.increment).toByteArray();
             if (this.getXADataRecorder() != null) {
                 this.getXADataRecorder().commitRollforwardData(bytes);
             }
@@ -175,8 +186,8 @@ public class TestConnection implements ITestConnection {
             throw new DelegatedRuntimeException(e);
         }
         interrupt(TestInterruptionPoint.COMMIT);
-        this.initialValue = this.initialValue+currentCounter;
-        this.currentCounter=0;
+        this.initialValue = this.initialValue+ increment;
+        this.increment =0;
         log.info("TestConnection " + connectionId + " is committed");
 
     }
@@ -188,7 +199,7 @@ public class TestConnection implements ITestConnection {
 
     public void rollback() {
         interrupt(TestInterruptionPoint.ROLLBACK);
-        this.currentCounter = this.initialValue;
+        this.increment = 0;
         log.info("TestConnection " + connectionId + " rollbacked");
     }
 
@@ -244,7 +255,7 @@ public class TestConnection implements ITestConnection {
 
         public void replayRollback(IDataRecord message) {
             int initialValue = Integer.parseInt(new String(message.getData()[0]));
-            this.con.currentCounter = initialValue;
+            this.con.increment = initialValue;
         }
 
         public void replayRollforward(IDataRecord message) {
@@ -252,7 +263,7 @@ public class TestConnection implements ITestConnection {
             try {
                 LogRecordReader logRecordReader = new LogRecordReader(message.getData()[0]);
                 this.con.initialValue = logRecordReader.readInt();
-                this.con.currentCounter = logRecordReader.readInt();
+                this.con.increment = logRecordReader.readInt();
             } catch (Exception e) {
                 throw new DelegatedRuntimeException(e);
             }

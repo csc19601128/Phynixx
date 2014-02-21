@@ -28,9 +28,9 @@ import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
-import org.csc.phynixx.connection.reference.ReferenceConnection;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
+import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 import org.csc.phynixx.phynixx.test_connection.ITestConnection;
 import org.csc.phynixx.phynixx.test_connection.TestConnectionFactory;
 import org.csc.phynixx.phynixx.test_connection.TestConnectionStatusManager;
@@ -40,10 +40,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ConnectionIntegrationTest {
+public class ManagedConnectionIT {
 
     public static final String LOGGER = "logger";
-    private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
+    private IPhynixxLogger LOG = PhynixxLogManager.getLogger(this.getClass());
 
     private PhynixxManagedConnectionFactory<ITestConnection> connectionFactory = null;
 
@@ -53,7 +53,7 @@ public class ConnectionIntegrationTest {
 
     @Before
     public void setUp() throws Exception {
-        // configuring the log-system (e.g. log4j)
+        // configuring the LOG-system (e.g. log4j)
         TestUtils.configureLogging();
 
         // delete all tmp files ...
@@ -79,7 +79,28 @@ public class ConnectionIntegrationTest {
         // delete all tmp files ...
         this.tmpDir.clear();
     }
+    @Test
+    public void testCommit1() throws Exception {
 
+
+        ITestConnection con = this.connectionFactory.getConnection();
+
+        con.setInitialCounter(13);
+
+        con.act(5);
+        con.act(7);
+
+        IXADataRecorder xaDataRecorder = con.getXADataRecorder();
+
+        con.commit();
+        Assert.assertEquals(25, con.getCounter());
+
+        con.close();
+
+        Assert.assertEquals(0, con.getCounter());
+
+
+    }
 
     @Test
     public void testCommit() throws Exception {
@@ -94,10 +115,11 @@ public class ConnectionIntegrationTest {
 
         con.commit();
 
+        Assert.assertEquals(25, con.getCounter());
+
         con.close();
 
 
-        Assert.assertEquals(25, con.getCounter());
 
 
     }
@@ -115,9 +137,9 @@ public class ConnectionIntegrationTest {
 
         con.rollback();
 
-        con.close();
         Assert.assertEquals(13, con.getCounter());
 
+        con.close();
 
     }
 
@@ -136,11 +158,12 @@ public class ConnectionIntegrationTest {
 
         } catch (Exception e) {
         }
+
+
+        // act(7) doesn't change the state of con
+        Assert.assertEquals(13, con.getCounter());
+
         con.close();
-
-
-        Assert.assertEquals(20, con.getCounter());
-
     }
 
     @Test
@@ -156,10 +179,12 @@ public class ConnectionIntegrationTest {
             con.rollback();
         } catch (Exception e) {
         }
-        con.close();
-
         // autocommit lets act() committing the change
         Assert.assertEquals(20, con.getCounter());
+
+
+        con.close();
+
 
 
     }
@@ -175,14 +200,14 @@ public class ConnectionIntegrationTest {
         con.setInitialCounter(13);
 
         con.act(7);
+
         try {
             con.rollback();
         } catch (Exception e) {
         }
-        con.close();
-
         Assert.assertEquals(13, con.getCounter());
 
+        con.close();
     }
 
 }
