@@ -30,6 +30,7 @@ import org.csc.phynixx.phynixx.test_connection.ITestConnection;
 import org.csc.phynixx.phynixx.test_connection.TestConnectionStatus;
 import org.csc.phynixx.phynixx.test_connection.TestConnectionStatusManager;
 import org.csc.phynixx.phynixx.test_connection.TestStatusStack;
+import org.csc.phynixx.xa.recovery.XidWrapper;
 import org.junit.Assert;
 import org.objectweb.jotm.Jotm;
 
@@ -945,6 +946,53 @@ public class XAResourceIntegrationTest extends TestCase {
         // one-phase commit -> no prepare
         TestCase.assertTrue(!statusStack2.isPrepared());
         TestCase.assertTrue(statusStack2.isClosed());
+    }
+
+
+
+    public void testDifferentTransactionBranches() throws Exception {
+
+        IPhynixxXAResource<ITestConnection> xares = factory1.getXAResource();
+
+        XidWrapper xid1= new XidWrapper(10, new byte[] {0x10}, new byte[] {0x10});
+        XidWrapper xid2= new XidWrapper(10, new byte[] {0x20}, new byte[] {0x20});
+
+        xares.start(xid1,XAResource.TMNOFLAGS );
+        ITestConnection con1= xares.getXAConnection().getConnection();
+        con1.act(1);
+
+        xares.end(xid1, XAResource.TMSUCCESS);
+        xares.commit(xid1, true);
+
+
+        xares.start(xid2,XAResource.TMNOFLAGS );
+        ITestConnection con2= xares.getXAConnection().getConnection();
+        con2.act(1);
+
+        xares.end(xid2, XAResource.TMSUCCESS);
+        xares.rollback(xid2);
+
+        log.info(TestConnectionStatusManager.toDebugString());
+
+        TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
+        TestCase.assertTrue(statusStack1 != null);
+        TestCase.assertTrue(statusStack1.isCommitted());
+        // one-phase commit -> no prepare
+        TestCase.assertTrue(!statusStack1.isPrepared());
+        TestCase.assertTrue(statusStack1.isClosed());
+
+        TestStatusStack statusStack2 = TestConnectionStatusManager.getStatusStack(con2.getConnectionId());
+        TestCase.assertTrue(statusStack2.isRolledback());
+        TestCase.assertTrue(statusStack2 != null);
+        TestCase.assertTrue(statusStack2.isClosed());
+
+
+
+
+
+
+
+
     }
 
 
