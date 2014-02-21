@@ -34,15 +34,8 @@ public interface ITestConnection extends IPhynixxConnection, IXADataRecorderAwar
 
 
     /**
-     * if a connection is commited the inernal counter is increment of this value
-     */
-    public static final int RF_INCREMENT = 17;
-
-    boolean isCommitted();
-
-    /**
      * sets the counter to the initial value
-     * this value has to be restored if the connection is rollbacked
+     * this value has to be restored if the connection is rolled back
      */
 
     @RequiresTransaction
@@ -55,7 +48,7 @@ public interface ITestConnection extends IPhynixxConnection, IXADataRecorderAwar
     public Object getConnectionId();
 
     /**
-     * incrememnts the current counter
+     * increments the current counter. In value of the counter is rolled back
      *
      * @param inc
      */
@@ -72,6 +65,6 @@ public interface ITestConnection extends IPhynixxConnection, IXADataRecorderAwar
     /**
      * @return current counter
      */
-    public int getCurrentCounter();
+    public int getCounter();
 
 }

@@ -70,6 +70,31 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 
     public void connectionRecovering(IManagedConnectionProxyEvent<C> event) {
         this.connectionRequiresTransaction(event);
+    }
+
+    /**
+     * Noop
+     *
+     * @param event current connection
+     */
+    @Override
+    public void connectionReset(IManagedConnectionProxyEvent<C> event) {
+        C con = event.getManagedConnection().getCoreConnection();
+        if (con == null || !(con instanceof IXADataRecorderAware)) {
+            return;
+        }
+
+        IXADataRecorderAware messageAwareConnection = (IXADataRecorderAware) con;
+        // Transaction is closed and the xaDataRecorder is destroyed ...
+        IXADataRecorder xaDataRecorder = messageAwareConnection.getXADataRecorder();
+        if (xaDataRecorder == null) {
+            return;
+        }
+
+        // if commit/rollback was performed, nothing happend. If no the logged data is closed but not destroy. So recovery can happen
+        xaDataRecorder.reset();
+        messageAwareConnection.setXADataRecorder(null);
+
 
     }
 
@@ -94,6 +119,8 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
         if (xaDataRecorder == null) {
             return;
         }
+
+        // if commit/rollback was performed, nothing happend. If no the logged data is closed but not destroy. So recovery can happen
         xaDataRecorder.close();
         messageAwareConnection.setXADataRecorder(null);
 
@@ -118,7 +145,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 
         messageAwareConnection.setXADataRecorder(null);
 
-        event.getManagedConnection().addConnectionListener(this);
+        event.getManagedConnection().removeConnectionListener(this);
     }
 
 
@@ -139,7 +166,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
         xaDataRecorder.destroy();
         messageAwareConnection.setXADataRecorder(null);
 
-        event.getManagedConnection().addConnectionListener(this);
+        event.getManagedConnection().removeConnectionListener(this);
     }
 
 

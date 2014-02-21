@@ -120,15 +120,6 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         }
     }
 
-
-    void reset() {
-        this.committing = false;
-        this.completed = false;
-        this.prepared = false;
-        messages.clear();
-
-    }
-
     /* (non-Javadoc)
      * @see de.csc.xaresource.sample.loggersystem.ILogMessageSequence#getMessages()
      */
@@ -160,7 +151,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     /**
      * create a new Message with the given data
      */
-    public synchronized void writeRollbackData(byte[][] data) {
+    public  void writeRollbackData(byte[][] data) {
         IDataRecord msg = this.createDataRecord(XALogRecordType.USER, data);
     }
 
@@ -173,12 +164,12 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         IDataRecord msg = this.createDataRecord(XALogRecordType.XA_COMMIT, data);
     }
 
-    public synchronized void addMessage(IDataRecord message) {
+    public void addMessage(IDataRecord message) {
         this.establishState(message);
         this.messages.add(message);
     }
 
-    public synchronized void replayRecords(IDataRecordReplay replay) {
+    public void replayRecords(IDataRecordReplay replay) {
 
         if (this.messages == null || this.messages.size() == 0) {
             return;
@@ -308,8 +299,33 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
 
     }
 
+
     /**
-     * current sequence is closed an can be forgotten
+     * rewinds the dataLoger to start without removing content
+     */
+    void rewind() {
+        this.committing = false;
+        this.completed = false;
+        this.prepared = false;
+        this.messages.clear();
+    }
+
+
+    public void reset() {
+        this.committing = false;
+        this.completed = false;
+        this.prepared = false;
+        this.messages.clear();
+        try {
+            this.dataLogger.prepareForWrite(this);
+        } catch (Exception e) {
+            throw new DelegatedRuntimeException(e);
+        }
+
+    }
+
+    /**
+     * current sequence is closed and can be forgotten
      */
     public void close() {
         if (dataRecorderLifycycleListner != null) {

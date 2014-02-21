@@ -32,7 +32,8 @@ import org.csc.phynixx.loggersystem.logger.channellogger.AccessMode;
 import java.io.*;
 
 /**
- * brings IXADataRecorder and dataLoger together
+ * brings IXADataRecorder and dataLoger together. An instance keeps an {@link IDataLogger} representing the physical logging strategy.
+ * Its permitted (but not recommended) to shared a dataLogger . Therefor the dataLogger isn't associated to the dataRecorder but the dataRecorder operates on the current dataLogger.
  * Created by christoph on 10.01.14.
  */
 public class XADataLogger {
@@ -97,7 +98,7 @@ public class XADataLogger {
     }
 
     /**
-     * prepares the Logger for writing.
+     * prepares the Logger for writing. The current content is removed.
      *
      * @param dataRecorder
      * @throws IOException
@@ -110,7 +111,7 @@ public class XADataLogger {
 
     /**
      * prepares the Logger for writing.
-     *
+     * @param dataRecorder DataRecorder that uses /operates on the current physical logger
      * @throws IOException
      * @throws InterruptedException
      */
@@ -121,7 +122,8 @@ public class XADataLogger {
     /**
      * prepares the Logger for writing.
      *
-     * @param dataRecorder
+     * @param dataRecorder DataRecorder that uses /operates on the current physical logger
+     *
      * @throws IOException
      * @throws InterruptedException
      */
@@ -129,6 +131,14 @@ public class XADataLogger {
         this.dataLogger.open(AccessMode.READ);
     }
 
+    /**
+     *
+     *
+     * @param dataRecorder DataRecorder that uses /operates on the current physical logger
+     *
+     * @param message message to be written
+     * @throws IOException
+     */
     void writeData(PhynixxXADataRecorder dataRecorder, IDataRecord message) throws IOException {
         DataOutputStream io = null;
         try {
@@ -166,15 +176,31 @@ public class XADataLogger {
         // Add the messageSequence to the set og messageSequences ...
     }
 
+    /**
+     *
+      *
+     * @param dataRecorder DataRecorder that uses /operates on the current physical logger
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
     void recover(PhynixxXADataRecorder dataRecorder) throws IOException, InterruptedException {
         RecoverReplayListener listener = new RecoverReplayListener(dataRecorder);
-        dataRecorder.reset();
+        dataRecorder.rewind();
         this.dataLogger.replay(listener);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("# Records=" + listener.getCountLogRecords());
         }
     }
 
+    /**
+     *
+      *
+     * @param dataRecorder DataRecorder that uses /operates on the current physical logger
+     *
+     * @param logRecordType
+     * @param fieldData
+     */
     private void recoverData(PhynixxXADataRecorder dataRecorder, XALogRecordType logRecordType, byte[][] fieldData) {
         if (LOGGER.isDebugEnabled()) {
             if (fieldData == null || fieldData.length == 0) {
@@ -221,9 +247,10 @@ public class XADataLogger {
     }
 
     /**
-     * Start Sequence writes the ID of the XAdataLogger to identify the content of the logger
+     * start sequence writes the ID of the XADataLogger to identify the content of the logger
+     *
+     * @param dataRecorder DataRecorder that uses /operates on the current physical logger
      */
-
     private void writeStartSequence(IXADataRecorder dataRecorder) throws IOException, InterruptedException {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
         try {

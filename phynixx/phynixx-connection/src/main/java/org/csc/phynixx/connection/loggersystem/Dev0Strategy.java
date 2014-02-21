@@ -96,6 +96,11 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedCo
         }
 
         @Override
+        public void reset() {
+
+        }
+
+        @Override
         public void destroy() {
         }
 

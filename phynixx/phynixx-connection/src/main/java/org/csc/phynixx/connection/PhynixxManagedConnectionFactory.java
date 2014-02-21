@@ -46,7 +46,7 @@ import java.util.List;
 
 public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxConnectionFactory<C>, IPhynixxManagedConnectionFactory<C>, IPhynixxManagedConnectionListener<C> {
 
-    private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
+    private IPhynixxLogger LOG = PhynixxLogManager.getLogger(this.getClass());
 
     private IPhynixxConnectionFactory<C> connectionFactory = null;
 
@@ -195,5 +195,22 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
         }
 
     }
+
+    /**
+     * the connection is released to the pool
+     */
+    public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
+        IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
+        if (proxy.getCoreConnection() == null || proxy.isClosed()) {
+            return;
+        } else {
+            proxy.close();
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Proxy " + proxy + " released");
+        }
+
+    }
+
 
 }

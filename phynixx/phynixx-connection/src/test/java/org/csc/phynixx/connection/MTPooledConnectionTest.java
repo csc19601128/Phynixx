@@ -166,7 +166,7 @@ public class MTPooledConnectionTest extends TestCase {
                 con.act(5);
                 con.act(7);
                 synchronized (counter) {
-                    counter[0] = con.getCurrentCounter();
+                    counter[0] = con.getCounter();
                 }
 
                 con.rollback();

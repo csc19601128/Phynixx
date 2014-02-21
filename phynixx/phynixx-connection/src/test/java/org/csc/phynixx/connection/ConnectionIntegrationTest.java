@@ -28,23 +28,24 @@ import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
-import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnection;
-import org.csc.phynixx.connection.reference.ReferenceConnectionFactory;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
+import org.csc.phynixx.phynixx.test_connection.ITestConnection;
+import org.csc.phynixx.phynixx.test_connection.TestConnectionFactory;
 import org.csc.phynixx.phynixx.test_connection.TestConnectionStatusManager;
+import org.csc.phynixx.phynixx.test_connection.TestInterruptionPoint;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ReferenceConnectionTest {
+public class ConnectionIntegrationTest {
 
     public static final String LOGGER = "logger";
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
-    private PhynixxManagedConnectionFactory<IReferenceConnection> connectionFactory = null;
+    private PhynixxManagedConnectionFactory<ITestConnection> connectionFactory = null;
 
     private IPhynixxLoggerSystemStrategy strategy = null;
 
@@ -63,7 +64,7 @@ public class ReferenceConnectionTest {
         IPhynixxLoggerSystemStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
         this.connectionFactory =
-                new PhynixxManagedConnectionFactory<IReferenceConnection>(new ReferenceConnectionFactory());
+                new PhynixxManagedConnectionFactory<ITestConnection>(new TestConnectionFactory());
         connectionFactory.setLoggerSystemStrategy(strategy);
     }
 
@@ -84,19 +85,19 @@ public class ReferenceConnectionTest {
     public void testCommit() throws Exception {
 
 
-        IReferenceConnection con = connectionFactory.getConnection();
+        ITestConnection con = connectionFactory.getConnection();
 
         con.setInitialCounter(13);
 
-        con.incCounter(5);
-        con.incCounter(7);
+        con.act(5);
+        con.act(7);
 
         con.commit();
 
         con.close();
 
 
-        Assert.assertEquals(37, con.getCounter());
+        Assert.assertEquals(25, con.getCounter());
 
 
     }
@@ -105,12 +106,12 @@ public class ReferenceConnectionTest {
     public void testRollback() throws Exception {
 
 
-        IReferenceConnection con = connectionFactory.getConnection();
+        ITestConnection con = connectionFactory.getConnection();
 
         con.setInitialCounter(13);
 
-        con.incCounter(5);
-        con.incCounter(7);
+        con.act(5);
+        con.act(7);
 
         con.rollback();
 
@@ -124,13 +125,12 @@ public class ReferenceConnectionTest {
     public void testCommitFailure() throws Exception {
 
 
-        IReferenceConnection con = connectionFactory.getConnection();
+        ITestConnection con = connectionFactory.getConnection();
 
         con.setInitialCounter(13);
-
-        con.incCounter(ReferenceConnection.ERRONEOUS_INC);
-        con.incCounter(7);
+        con.setInterruptFlag(TestInterruptionPoint.ACT);
         try {
+            con.act(7);
             con.commit();
             throw new AssertionFailedError("Invalid value to commit");
 
@@ -147,19 +147,20 @@ public class ReferenceConnectionTest {
     public void testAutoCommit() throws Exception {
 
 
-        IReferenceConnection con = connectionFactory.getConnection();
+        ITestConnection con = connectionFactory.getConnection();
         con.setAutoCommit(true);
 
         con.setInitialCounter(13);
-
-        con.incCounter(7);
+        con.act(7);
         try {
             con.rollback();
         } catch (Exception e) {
         }
         con.close();
 
-        Assert.assertEquals(27, con.getCounter());
+        // autocommit lets act() committing the change
+        Assert.assertEquals(20, con.getCounter());
+
 
     }
 
@@ -168,12 +169,12 @@ public class ReferenceConnectionTest {
     public void testAutoCommit2() throws Exception {
 
 
-        IReferenceConnection con = connectionFactory.getConnection();
+        ITestConnection con = connectionFactory.getConnection();
         con.setAutoCommit(false);
 
         con.setInitialCounter(13);
 
-        con.incCounter(7);
+        con.act(7);
         try {
             con.rollback();
         } catch (Exception e) {

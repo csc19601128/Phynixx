@@ -21,6 +21,7 @@ package org.csc.phynixx.connection;
  */
 
 
+import junit.framework.AssertionFailedError;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
@@ -29,10 +30,7 @@ import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
-import org.csc.phynixx.phynixx.test_connection.ITestConnection;
-import org.csc.phynixx.phynixx.test_connection.TestConnectionFactory;
-import org.csc.phynixx.phynixx.test_connection.TestConnectionStatusManager;
-import org.csc.phynixx.phynixx.test_connection.TestInterruptionPoint;
+import org.csc.phynixx.phynixx.test_connection.*;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,14 +40,18 @@ import java.util.Properties;
 
 
 public class PooledConnectionTest {
-    private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
+
+
+    {
+        System.setProperty("log4j_level", "INFO");
+
+    }
+
+    private IPhynixxLogger LOG = PhynixxLogManager.getLogger(this.getClass());
 
     private PooledPhynixxManagedConnectionFactory<ITestConnection> factory = null;
 
-    private TestRecoveryListener recoveryListner = new TestRecoveryListener();
-
     private static final int POOL_SIZE = 30;
-
 
     private TmpDirectory tmpDir = null;
 
@@ -68,8 +70,7 @@ public class PooledConnectionTest {
         LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
         this.factory.setLoggerSystemStrategy(strategy);
-        this.recoveryListner = new TestRecoveryListener();
-        this.factory.addConnectionProxyDecorator(this.recoveryListner);
+        this.factory.addConnectionProxyDecorator(new TestConnectionStatusListener());
 
     }
 
@@ -92,7 +93,7 @@ public class PooledConnectionTest {
 
         con.act(5);
         con.act(7);
-        int counter = con.getCurrentCounter();
+        int counter = con.getCounter();
         Assert.assertEquals(12, counter);
 
         con.rollback();
@@ -106,20 +107,20 @@ public class PooledConnectionTest {
 
         ITestConnection con = PooledConnectionTest.this.factory.getConnection();
 
-        int counterInitial = con.getCurrentCounter();
+        int counterInitial = con.getCounter();
         con.setInitialCounter(3);
         con.act(2);
         con.act(7);
         con.setInterruptFlag(TestInterruptionPoint.COMMIT);
         try {
             con.commit();
+            throw new AssertionFailedError("ActionInterruptedException expected");
+        } catch (Exception e) {;}
 
-        } catch (Exception e) {
-            System.out.println(e.getClass());
-        }
 
-        // Flag has not been set
-        Assert.assertFalse(con.isCommitted());
+        LOG.info(TestConnectionStatusManager.toDebugString());
+        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
+        Assert.assertTrue(!statusStack.isCommitted());
 
         final ITestConnection[] recoveredConnection = new ITestConnection[1];
         this.factory.recover(new IPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
@@ -129,7 +130,7 @@ public class PooledConnectionTest {
                 recoveredConnection[0] = con;
             }
         });
-        Assert.assertEquals(12, recoveredConnection[0].getCurrentCounter());
+        Assert.assertEquals(12, recoveredConnection[0].getCounter());
 
 
     }
@@ -140,7 +141,7 @@ public class PooledConnectionTest {
 
         ITestConnection con = PooledConnectionTest.this.factory.getConnection();
 
-        int counterInitial = con.getCurrentCounter();
+        int counterInitial = con.getCounter();
         con.setInitialCounter(3);
         con.act(5);
         con.act(4);
@@ -161,7 +162,7 @@ public class PooledConnectionTest {
                 recoveredConnection[0] = con;
             }
         });
-        Assert.assertEquals(3, recoveredConnection[0].getCurrentCounter());
+        Assert.assertEquals(3, recoveredConnection[0].getCounter());
 
 
     }

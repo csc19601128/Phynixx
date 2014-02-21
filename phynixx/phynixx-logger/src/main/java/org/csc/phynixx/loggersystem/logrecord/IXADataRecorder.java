@@ -21,14 +21,16 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 
 
+/**
+ * logs binary data. The persistence media depends on the implementation
+ */
 public interface IXADataRecorder extends IDataRecordSequence {
 
     /**
      * logs the given data
-     * <p/>
-     * These data can be replyed to perform rollback	 *
-     * If commitRollforwardData is called once
-     * this method can not be called any more
+     *
+     * These data can be replyed to perform rollback.
+     * If commitRollforwardData is called once this method can not be called any more
      *
      * @param data
      */
@@ -89,14 +91,18 @@ public interface IXADataRecorder extends IDataRecordSequence {
     IDataRecord createDataRecord(XALogRecordType logRecordType, byte[][] recordData);
 
     /**
-     * closes the dataLogger, but keeps all resorces, so the dataLogger can be re-opended
+     * closes the dataLogger, but keeps all resources, so the dataLogger can be re-open
      */
     void close();
 
     /**
-     * closes the dataRecorder an destroys all resources
+     * resets the dataLogger and prepares it for reuse
+     */
+    void reset();
+
+
+    /**
+     * closes the dataRecorder and destroys all resources
      */
     void destroy();
-
-
 }

@@ -88,4 +88,14 @@ class LocalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManaged
         return connection;
     }
 
+
+    @Override
+    public void connectionRolledback(IManagedConnectionProxyEvent<C> event) {
+       this.transactionalData=false;
+    }
+
+    @Override
+    public void connectionCommitted(IManagedConnectionProxyEvent<C> event) {
+        this.transactionalData=false;
+    }
 }

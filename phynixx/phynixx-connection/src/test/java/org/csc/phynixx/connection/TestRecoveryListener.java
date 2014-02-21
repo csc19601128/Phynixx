@@ -24,6 +24,7 @@ package org.csc.phynixx.connection;
  */
 
 
+@Deprecated
 class TestRecoveryListener extends PhynixxManagedConnectionListenerAdapter implements IPhynixxConnectionProxyDecorator {
 
     int recoveredConnections = 0;

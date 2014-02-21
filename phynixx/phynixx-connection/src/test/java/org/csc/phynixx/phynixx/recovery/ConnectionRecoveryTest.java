@@ -114,7 +114,7 @@ public class ConnectionRecoveryTest extends TestCase {
 
                 synchronized (counter) {
                     ITestConnection coreCon = (ITestConnection) ((IPhynixxManagedConnection) con).getCoreConnection();
-                    counter[0] = coreCon.getCurrentCounter();
+                    counter[0] = coreCon.getCounter();
                 }
             }
         };
@@ -139,7 +139,7 @@ public class ConnectionRecoveryTest extends TestCase {
                 con.act(7);
                 synchronized (counter) {
                     ITestConnection coreCon = (ITestConnection) ((IPhynixxManagedConnection) con).getCoreConnection();
-                    counter[0] = coreCon.getCurrentCounter();
+                    counter[0] = coreCon.getCounter();
                 }
                 TestConnection coreCon = (TestConnection) ((IPhynixxConnectionHandle) con).getConnection();
                 coreCon.setInterruptFlag(TestInterruptionPoint.ROLLBACK, 1);
@@ -166,7 +166,7 @@ public class ConnectionRecoveryTest extends TestCase {
                 con.act(7);
                 synchronized (counter) {
                     ITestConnection coreCon = (ITestConnection) ((IPhynixxManagedConnection) con).getCoreConnection();
-                    counter[0] = coreCon.getCurrentCounter();
+                    counter[0] = coreCon.getCounter();
                 }
                 TestConnection coreCon = (TestConnection) ((IPhynixxConnectionHandle) con).getConnection();
                 coreCon.setInterruptFlag(TestInterruptionPoint.COMMIT);
@@ -181,7 +181,7 @@ public class ConnectionRecoveryTest extends TestCase {
                     @Override
                     public void managedConnectionRecovered(ITestConnection con) {
 
-                        Assert.assertEquals(15, con.getCurrentCounter());
+                        Assert.assertEquals(15, con.getCounter());
                     }
                 };
 
@@ -211,7 +211,7 @@ public class ConnectionRecoveryTest extends TestCase {
                 new PhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
                     @Override
                     public void managedConnectionRecovered(ITestConnection con) {
-                        Assert.assertEquals(3, con.getCurrentCounter());
+                        Assert.assertEquals(3, con.getCounter());
                     }
                 };
 

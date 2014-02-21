@@ -673,7 +673,7 @@ public class XAResourceIntegrationTest extends TestCase {
 
     /**
      *
-     * Suspend on one XAConnection opens two different transactional branches and therefore two diffenr4ent physical connections.
+     * Suspending one XAConnection opens a second transactional branch and therefore a second physical connection.
      *
      * remember: the connection are associated to a TX by the call of xaConn.getConnection
      *
@@ -714,10 +714,6 @@ public class XAResourceIntegrationTest extends TestCase {
         // one-phase commit -> no prepare
         TestCase.assertTrue(!statusStack2.isPrepared());
         TestCase.assertTrue(statusStack2.isClosed());
-
-
-
-
     }
 
     public void testSuspendInvalidTransactionalContext() throws Exception {
@@ -753,6 +749,48 @@ public class XAResourceIntegrationTest extends TestCase {
 
 
 
+    }
+
+    /**
+     *
+     * Suspending one XAConnection opens a second transactional branch and therefore a second physical connection.
+     *
+     * remember: the connection are associated to a TX by the call of xaConn.getConnection
+     *
+     * @throws Exception
+     */
+    public void testMixedLocalGlobalTransaction() throws Exception {
+
+        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
+
+        ITestConnection con1 = xaCon1.getConnection();
+        con1.act(1);
+        con1.act(2);
+        con1.commit();
+        con1.close();
+
+
+        this.getTransactionManager().begin();
+        ITestConnection con2 = xaCon1.getConnection();
+        con2.act(1);
+
+        this.getTransactionManager().rollback();
+
+        Assert.assertTrue(con1.getConnectionId()!=con2.getConnectionId());
+
+        log.info(TestConnectionStatusManager.toDebugString());
+
+        TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
+        TestCase.assertTrue(statusStack1 != null);
+        TestCase.assertTrue(statusStack1.isCommitted());
+        TestCase.assertTrue(statusStack1.isClosed());
+
+        TestStatusStack statusStack2 = TestConnectionStatusManager.getStatusStack(con2.getConnectionId());
+        TestCase.assertTrue(statusStack2 != null);
+        TestCase.assertTrue(statusStack2.isRolledback());
+        // one-phase commit -> no prepare
+        TestCase.assertTrue(!statusStack2.isPrepared());
+        TestCase.assertTrue(statusStack2.isClosed());
     }
 
 

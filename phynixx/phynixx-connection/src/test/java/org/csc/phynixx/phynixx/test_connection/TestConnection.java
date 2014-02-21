@@ -79,8 +79,6 @@ public class TestConnection implements ITestConnection {
     private int currentCounter = 0;
     private int initialValue = 0;
 
-    private boolean committed = false;
-
     private IXADataRecorder messageLogger = null;
 
     private boolean autoCommit;
@@ -104,12 +102,6 @@ public class TestConnection implements ITestConnection {
     public TestConnection(Object id) {
         resetInterruptionFlags();
         this.connectionId = id;
-    }
-
-
-    @Override
-    public boolean isCommitted() {
-        return committed;
     }
 
     /**
@@ -139,7 +131,7 @@ public class TestConnection implements ITestConnection {
     }
 
 
-    public int getCurrentCounter() {
+    public int getCounter() {
         return currentCounter;
     }
 
@@ -157,7 +149,7 @@ public class TestConnection implements ITestConnection {
 
         interrupt(TestInterruptionPoint.ACT);
         this.currentCounter = this.currentCounter + inc;
-        log.info("TestConnection " + connectionId + " counter incremented to " + inc + " counter=" + this.getCurrentCounter());
+        log.info("TestConnection " + connectionId + " counter incremented to " + inc + " counter=" + this.getCounter());
 
     }
 
@@ -183,7 +175,8 @@ public class TestConnection implements ITestConnection {
             throw new DelegatedRuntimeException(e);
         }
         interrupt(TestInterruptionPoint.COMMIT);
-        this.committed = true;
+        this.initialValue = this.initialValue+currentCounter;
+        this.currentCounter=0;
         log.info("TestConnection " + connectionId + " is committed");
 
     }
