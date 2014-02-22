@@ -32,7 +32,7 @@ import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
-import org.csc.phynixx.phynixx.test_connection.*;
+import org.csc.phynixx.phynixx.testconnection.*;
 
 import java.util.*;
 

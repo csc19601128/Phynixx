@@ -27,9 +27,9 @@ import org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
-import org.csc.phynixx.phynixx.test_connection.ITestConnection;
-import org.csc.phynixx.phynixx.test_connection.TestConnectionFactory;
-import org.csc.phynixx.phynixx.test_connection.TestConnectionStatusListener;
+import org.csc.phynixx.phynixx.testconnection.ITestConnection;
+import org.csc.phynixx.phynixx.testconnection.TestConnectionFactory;
+import org.csc.phynixx.phynixx.testconnection.TestConnectionStatusListener;
 
 import javax.transaction.TransactionManager;
 import java.io.File;

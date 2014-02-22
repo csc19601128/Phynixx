@@ -30,9 +30,39 @@ public interface IPhynixxManagedConnectionFactory<C extends IPhynixxConnection> 
         public void managedConnectionRecovered(C con);
     }
 
+    /**
+     * the returned connection has to be explicitly closed
+     * @return a ready for use managed connection
+     */
     IPhynixxManagedConnection<C> getManagedConnection();
 
+
+    /**
+     *
+     *
+     * Default ist true
+     */
+    void setAutocommitAware(boolean state);
+
+
+    /**
+     *
+     */
+    boolean isAutocommitAware();
+
+
+    /**
+     * recovers all connection that have not completed transactions.
+     * The recovered connections are handed to the callback after recovering.
+     * All connections are closed after returning from this method
+     *
+     * @param recoveredManagedConnectionCallback callback accepting the recovered connections
+     */
     void recover(IRecoveredManagedConnection<C> recoveredManagedConnectionCallback);
 
+
+    /**
+     * closes all currently opened connections
+     */
     void close();
 }

@@ -35,7 +35,7 @@ import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logrecord.IXARecorderResource;
 import org.csc.phynixx.loggersystem.logrecord.IXARecorderResourceListener;
-import org.csc.phynixx.phynixx.test_connection.TestConnectionStatusListener;
+import org.csc.phynixx.phynixx.testconnection.TestConnectionStatusListener;
 
 import java.util.*;
 

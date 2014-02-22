@@ -1,4 +1,4 @@
-package org.csc.phynixx.phynixx.test_connection;
+package org.csc.phynixx.phynixx.testconnection;
 
 /*
  * #%L

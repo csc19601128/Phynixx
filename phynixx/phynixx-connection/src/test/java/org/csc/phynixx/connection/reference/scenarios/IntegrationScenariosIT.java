@@ -32,10 +32,9 @@ import org.csc.phynixx.common.logger.PrintLogger;
 import org.csc.phynixx.connection.PhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
-import org.csc.phynixx.connection.reference.ReferenceConnection;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
-import org.csc.phynixx.phynixx.test_connection.*;
+import org.csc.phynixx.phynixx.testconnection.*;
 import org.junit.Assert;
 
 import java.io.File;

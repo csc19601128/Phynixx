@@ -50,10 +50,15 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
 
     private IPhynixxConnectionFactory<C> connectionFactory = null;
 
-    private DynaPhynixxManagedConnectionFactory<C> connectionProxyFactory = null;
+    private DynaPhynixxManagedConnectionFactory<C> managedConnectionFactory = null;
     private IPhynixxLoggerSystemStrategy<C> loggerSystemStrategy = new Dev0Strategy();
 
-    private List<IPhynixxConnectionProxyDecorator<C>> connectionProxyDecorators = new ArrayList<IPhynixxConnectionProxyDecorator<C>>();
+    private List<IPhynixxConnectionProxyDecorator<C>> managedConnectionDecorators = new ArrayList<IPhynixxConnectionProxyDecorator<C>>();
+
+
+    private boolean autocommitAware= true;
+
+    private final AutoCommitDecorator<C> autcommitDecorator=new AutoCommitDecorator<C>();
 
     public PhynixxManagedConnectionFactory() {
     }
@@ -62,6 +67,14 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
         this.setConnectionFactory(connectionFactory);
     }
 
+    public boolean isAutocommitAware() {
+        return autocommitAware;
+    }
+
+    public void setAutocommitAware(boolean autocommitAware) {
+        this.autocommitAware = autocommitAware;
+
+    }
 
     public void setConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory) {
 
@@ -69,11 +82,10 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
         this.connectionFactory = connectionFactory;
 
         // factory for managed connections
-        this.connectionProxyFactory =
+        this.managedConnectionFactory =
                 new DynaPhynixxManagedConnectionFactory<C>(connectionFactory.getConnectionInterface());
 
-        // TODO AutoCommitDecorator configurierbar machen
-        this.addConnectionProxyDecorator(new AutoCommitDecorator<C>());
+
     }
 
 
@@ -82,12 +94,12 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
     }
 
     public List<IPhynixxConnectionProxyDecorator<C>> getConnectionProxyDecorators() {
-        return Collections.unmodifiableList(connectionProxyDecorators);
+        return Collections.unmodifiableList(managedConnectionDecorators);
     }
 
     public void addConnectionProxyDecorator(
             IPhynixxConnectionProxyDecorator<C> connectionProxyDecorator) {
-        this.connectionProxyDecorators.add(connectionProxyDecorator);
+        this.managedConnectionDecorators.add(connectionProxyDecorator);
     }
 
     public IPhynixxLoggerSystemStrategy<C> getLoggerSystemStrategy() {
@@ -111,7 +123,7 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
 
     protected IPhynixxManagedConnection<C> instantiateConnection() {
         try {
-            IPhynixxManagedConnection<C> proxy;
+            IPhynixxManagedConnection<C> managedConnection;
             try {
 
                 // instanciate a fresh core connection
@@ -120,29 +132,34 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
                 /**
                  * returns empty Proxy
                  */
-                proxy = PhynixxManagedConnectionFactory.this.connectionProxyFactory.getManagedConnection(connection);
+                managedConnection = PhynixxManagedConnectionFactory.this.managedConnectionFactory.getManagedConnection(connection);
 
                 /**
                  * sets the decorated connection
                  */
-                proxy.addConnectionListener(PhynixxManagedConnectionFactory.this);
+                managedConnection.addConnectionListener(PhynixxManagedConnectionFactory.this);
 
                 if (PhynixxManagedConnectionFactory.this.loggerSystemStrategy != null) {
-                    proxy = PhynixxManagedConnectionFactory.this.loggerSystemStrategy.decorate(proxy);
+                    managedConnection = PhynixxManagedConnectionFactory.this.loggerSystemStrategy.decorate(managedConnection);
                 }
 
-                for (IPhynixxConnectionProxyDecorator<C> decorators : this.connectionProxyDecorators) {
-                    proxy = decorators.decorate(proxy);
+                for (IPhynixxConnectionProxyDecorator<C> decorators : this.managedConnectionDecorators) {
+                    managedConnection = decorators.decorate(managedConnection);
+                }
+
+
+                if(this.isAutocommitAware()) {
+                    this.autcommitDecorator.decorate(managedConnection);
                 }
 
                 // Instantiate the connection
-                proxy.reset();
+                managedConnection.reset();
             } catch (ClassCastException e) {
                 e.printStackTrace();
                 throw new DelegatedRuntimeException(e);
             }
 
-            return proxy;
+            return managedConnection;
 
         } catch (Throwable e) {
             throw new DelegatedRuntimeException("Instantiating new pooled Proxy", e);

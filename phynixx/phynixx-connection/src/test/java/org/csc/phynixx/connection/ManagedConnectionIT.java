@@ -31,10 +31,10 @@ import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
-import org.csc.phynixx.phynixx.test_connection.ITestConnection;
-import org.csc.phynixx.phynixx.test_connection.TestConnectionFactory;
-import org.csc.phynixx.phynixx.test_connection.TestConnectionStatusManager;
-import org.csc.phynixx.phynixx.test_connection.TestInterruptionPoint;
+import org.csc.phynixx.phynixx.testconnection.ITestConnection;
+import org.csc.phynixx.phynixx.testconnection.TestConnectionFactory;
+import org.csc.phynixx.phynixx.testconnection.TestConnectionStatusManager;
+import org.csc.phynixx.phynixx.testconnection.TestInterruptionPoint;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,12 +60,18 @@ public class ManagedConnectionIT {
         this.tmpDir = new TmpDirectory(LOGGER);
 
 
+        this.connectionFactory =createConnectionFactory();
+    }
+
+    private PhynixxManagedConnectionFactory<ITestConnection> createConnectionFactory() {
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
         IPhynixxLoggerSystemStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
-        this.connectionFactory =
+        PhynixxManagedConnectionFactory<ITestConnection> connectionFactory =
                 new PhynixxManagedConnectionFactory<ITestConnection>(new TestConnectionFactory());
         connectionFactory.setLoggerSystemStrategy(strategy);
+
+        return connectionFactory;
     }
 
     @After
@@ -182,10 +188,7 @@ public class ManagedConnectionIT {
         // autocommit lets act() committing the change
         Assert.assertEquals(20, con.getCounter());
 
-
         con.close();
-
-
 
     }
 
@@ -205,6 +208,33 @@ public class ManagedConnectionIT {
             con.rollback();
         } catch (Exception e) {
         }
+
+        Assert.assertEquals(13, con.getCounter());
+
+        con.close();
+    }
+
+
+    @Test
+    public void testAutoCommitAware() throws Exception {
+
+        connectionFactory.setAutocommitAware(false);
+
+        ITestConnection con = connectionFactory.getConnection();
+
+        // sets autocommit but this setting may not have effect
+        con.setAutoCommit(true);
+
+        con.setInitialCounter(13);
+
+        con.act(7);
+
+        try {
+            con.rollback();
+        } catch (Exception e) {
+        }
+
+        // no autocommit
         Assert.assertEquals(13, con.getCounter());
 
         con.close();

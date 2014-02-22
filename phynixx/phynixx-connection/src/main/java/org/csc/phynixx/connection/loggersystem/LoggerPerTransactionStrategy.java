@@ -63,11 +63,13 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
     }
 
 
+    @Override
     public void close() {
         this.xaRecorderResource.close();
     }
 
 
+    @Override
     public void connectionRecovering(IManagedConnectionProxyEvent<C> event) {
         this.connectionRequiresTransaction(event);
     }
@@ -98,7 +100,6 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 
     }
 
-
     /**
      * Logger isn't close. If a dataRecorder is found in this phase this indicates an abnormal program flow.,
      * <p/>
@@ -106,6 +107,8 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
      *
      * @param event current connection
      */
+
+    @Override
     public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
 
         C con = event.getManagedConnection().getCoreConnection();
@@ -126,6 +129,37 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 
     }
 
+
+
+    /**
+     * destroys the datalogger
+     */
+    @Override
+    public void connectionRecovered(IManagedConnectionProxyEvent<C> event) {
+        IPhynixxConnection con = event.getManagedConnection().getCoreConnection();
+        if (con == null || !(con instanceof IXADataRecorderAware)) {
+            return;
+        }
+
+        IXADataRecorderAware messageAwareConnection = (IXADataRecorderAware) con;
+
+
+        // Transaction is close and the logger is destroyed ...
+        IXADataRecorder xaDataRecorder = messageAwareConnection.getXADataRecorder();
+        if (xaDataRecorder == null) {
+            return;
+        }
+        // it's my logger ....
+
+        // the logger has to be destroyed ...
+        else {
+            xaDataRecorder.destroy();
+            messageAwareConnection.setXADataRecorder(null);
+        }
+
+    }
+
+    @Override
     public void connectionRolledback(IManagedConnectionProxyEvent<C> event) {
         IPhynixxConnection con = event.getManagedConnection().getCoreConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
@@ -149,6 +183,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
     }
 
 
+    @Override
     public void connectionCommitted(IManagedConnectionProxyEvent<C> event) {
         IPhynixxConnection con = event.getManagedConnection().getCoreConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
@@ -170,6 +205,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
     }
 
 
+    @Override
     public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {
         IPhynixxConnection con = event.getManagedConnection().getCoreConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
@@ -219,6 +255,8 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
      *
      * @return incomplete dataRecorders
      */
+
+    @Override
     public List<IXADataRecorder> readIncompleteTransactions() {
         List<IXADataRecorder> messageSequences = new ArrayList<IXADataRecorder>();
         // recover all loggers ....
@@ -244,6 +282,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
     }
 
 
+    @Override
     public IPhynixxManagedConnection<C> decorate(IPhynixxManagedConnection<C> connectionProxy) {
         connectionProxy.addConnectionListener(this);
         return connectionProxy;

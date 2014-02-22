@@ -1,10 +1,10 @@
-package org.csc.phynixx.phynixx.test_connection;
+package org.csc.phynixx.phynixx.testconnection;
 
 /*
  * #%L
  * phynixx-connection
  * %%
- * Copyright (C) 2014 Christoph Schmidt-Casdorff
+ * Copyright (C) 2014 csc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,6 @@ package org.csc.phynixx.phynixx.test_connection;
  */
 
 
-/**
- * Created by zf4iks2 on 15.01.14.
- */
-public enum TestInterruptionPoint {
+public class ActionInterruptedException extends RuntimeException {
 
-    ACT, COMMIT, ROLLBACK, PREPARE, CLOSE;
 }

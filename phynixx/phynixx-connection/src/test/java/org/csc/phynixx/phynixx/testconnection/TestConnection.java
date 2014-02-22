@@ -1,4 +1,4 @@
-package org.csc.phynixx.phynixx.test_connection;
+package org.csc.phynixx.phynixx.testconnection;
 
 /*
  * #%L
@@ -44,7 +44,7 @@ import java.util.Map;
  * <p/>
  * <p/>
  * <p/>
- * The points of interruption are defined by the call of {@link #interrupt(org.csc.phynixx.phynixx.test_connection.TestInterruptionPoint)}.
+ * The points of interruption are defined by the call of {@link #interrupt(org.csc.phynixx.phynixx.testconnection.TestInterruptionPoint)}.
  * You can define a gate value that define how often the interruption point is reached  till the exception is thrown.
  * <p/>
  * Feassable interruption pints are
