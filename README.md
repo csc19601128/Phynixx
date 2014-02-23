@@ -3,7 +3,7 @@ Phynixx
 
 Phynixx is a XA compliant technique for non transactional resources. It's enables resources to join a XA transaction. 
 
-this java solutions is compliant to JTA 1.2
+This java solutions is compliant to JTA 1.2
 
 Documentation see [http://csc19601128.github.io/Phynixx/](http://csc19601128.github.io/Phynixx/)
 
