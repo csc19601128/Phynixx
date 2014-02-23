@@ -62,13 +62,20 @@ public class TestStatusStack {
     }
 
 
+
     public boolean isCommitted() {
         return this.statusStack.contains(TestConnectionStatus.COMMITTED);
     }
 
-    public boolean isClosed() {
-        return this.statusStack.contains(TestConnectionStatus.CLOSED);
+    public boolean isReleased() {
+        return this.statusStack.contains(TestConnectionStatus.RELEASED);
     }
+
+
+    public boolean isFreed() {
+        return this.statusStack.contains(TestConnectionStatus.FREED);
+    }
+
 
     public boolean isRolledback() {
         return this.statusStack.contains(TestConnectionStatus.ROLLEDBACK);

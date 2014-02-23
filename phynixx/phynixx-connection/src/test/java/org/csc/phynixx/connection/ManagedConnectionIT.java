@@ -108,9 +108,45 @@ public class ManagedConnectionIT {
 
         con.close();
 
+
         Assert.assertEquals(0, con.getCounter());
 
         LOG.info(TestConnectionStatusManager.toDebugString());
+        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
+        Assert.assertTrue(statusStack.isRequiresTransaction());
+        Assert.assertTrue(statusStack.isCommitted());
+
+
+
+
+
+    }
+
+
+    @Test
+    public void testUnpooledClose() throws Exception {
+
+
+        ITestConnection con = this.connectionFactory.getConnection();
+
+        con.setInitialCounter(13);
+
+        con.act(5);
+        con.act(7);
+
+        IXADataRecorder xaDataRecorder = con.getXADataRecorder();
+
+        con.commit();
+        Assert.assertEquals(25, con.getCounter());
+
+        con.close();
+
+        Assert.assertEquals(0, con.getCounter());
+
+        LOG.info(TestConnectionStatusManager.toDebugString());
+        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
+        Assert.assertTrue(statusStack.isFreed());
+
 
 
     }
@@ -133,6 +169,10 @@ public class ManagedConnectionIT {
         con.close();
 
 
+        LOG.info(TestConnectionStatusManager.toDebugString());
+        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
+        Assert.assertTrue(statusStack.isCommitted());
+
 
 
     }
@@ -152,7 +192,9 @@ public class ManagedConnectionIT {
 
         Assert.assertEquals(13, con.getCounter());
 
-        con.close();
+        LOG.info(TestConnectionStatusManager.toDebugString());
+        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
+        Assert.assertTrue(statusStack.isRolledback());
 
     }
 
@@ -176,7 +218,10 @@ public class ManagedConnectionIT {
         // act(7) doesn't change the state of con
         Assert.assertEquals(13, con.getCounter());
 
-        con.close();
+        LOG.info(TestConnectionStatusManager.toDebugString());
+        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
+        Assert.assertTrue(!statusStack.isRolledback());
+        Assert.assertTrue(!statusStack.isCommitted());
     }
 
     @Test
@@ -195,7 +240,9 @@ public class ManagedConnectionIT {
         // autocommit lets act() committing the change
         Assert.assertEquals(20, con.getCounter());
 
-        con.close();
+        LOG.info(TestConnectionStatusManager.toDebugString());
+        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
+        Assert.assertEquals(2,statusStack.countStatus(TestConnectionStatus.COMMITTED));
 
     }
 
@@ -211,14 +258,13 @@ public class ManagedConnectionIT {
 
         con.act(7);
 
-        try {
-            con.rollback();
-        } catch (Exception e) {
-        }
-
+        con.rollback();
         Assert.assertEquals(13, con.getCounter());
 
-        con.close();
+        LOG.info(TestConnectionStatusManager.toDebugString());
+        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
+        Assert.assertTrue(!statusStack.isCommitted());
+        Assert.assertTrue(statusStack.isRolledback());
     }
 
 

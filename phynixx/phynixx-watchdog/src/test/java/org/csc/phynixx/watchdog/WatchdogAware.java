@@ -25,6 +25,7 @@ package org.csc.phynixx.watchdog;
 
 
 import org.csc.phynixx.common.generator.IDGenerator;
+import org.csc.phynixx.common.generator.IDGenerators;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.watchdog.log.ConditionViolatedLog;
@@ -40,7 +41,7 @@ import org.csc.phynixx.watchdog.log.ConditionViolatedLog;
  */
 public class WatchdogAware extends TimeoutCondition implements Runnable, IWatchedCondition {
 
-    private static final IDGenerator ID_GENERATOR = new IDGenerator();
+    private static final IDGenerator<Long> ID_GENERATOR = IDGenerators.createLongGenerator(1, true);
 
     private static long CHECK_INTERVAL = 10;
 
@@ -64,7 +65,7 @@ public class WatchdogAware extends TimeoutCondition implements Runnable, IWatche
     public WatchdogAware(long idleTime, long timeout) {
         super(timeout);
         this.idleTime = idleTime;
-        this.id = "WatchdogAware[" + ID_GENERATOR.generateLong() + "]";
+        this.id = "WatchdogAware[" + ID_GENERATOR.generate() + "]";
     }
 
     public void kill() {
@@ -97,7 +98,6 @@ public class WatchdogAware extends TimeoutCondition implements Runnable, IWatche
     /**
      * registers an Condition just counting the calls to check the it
      *
-     * @param wd
      */
     private void registerWatching() {
         IWatchdog wd = WatchdogRegistry.getTheRegistry().createWatchdog(CHECK_INTERVAL);

@@ -22,18 +22,17 @@ package org.csc.phynixx.connection.reference;
 
 
 import org.csc.phynixx.common.generator.IDGenerator;
+import org.csc.phynixx.common.generator.IDGenerators;
 import org.csc.phynixx.connection.IPhynixxConnectionFactory;
 
 
 public class ReferenceConnectionFactory implements IPhynixxConnectionFactory<IReferenceConnection> {
 
-    private static final IDGenerator idGenerator = new IDGenerator(0);
+    private IDGenerator<Long> idGenerator = IDGenerators.synchronizeGenerator(IDGenerators.createLongGenerator(1l));
 
     public IReferenceConnection getConnection() {
         Object connectionId = null;
-        synchronized (idGenerator) {
             connectionId = idGenerator.generate();
-        }
         return new ReferenceConnection(connectionId);
     }
 

@@ -133,7 +133,14 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         this.closed = closed;
     }
 
-
+    @Override
+    public void reopen() {
+        if(this.hasTransactionalData()) {
+            throw new IllegalStateException("Connection "+this+" has tranactional data and has to be cloased safely");
+        }
+        this.setClosed(false);
+        this.reset();
+    }
 
     /**
      * If this proxy is implemented by a DynProxy. If a referene to this object has to be propagated
@@ -194,8 +201,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
      */
     @Override
     public void close() {
-
         if (!this.isClosed() && this.getCoreConnection() != null) {
+            this.setClosed(true);
             this.closeStrategy.close(this);
         }
     }
@@ -207,19 +214,39 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
      */
     @Override
     public void free() {
+        try {
         if(this.getCoreConnection()!=null) {
-            this.closeStrategy.free(this);
+            this.getCoreConnection().close();
         }
+        this.fireConnectionFreed();
+
+    } finally {
+        this.setClosed(true);
+
+        // state may be important for Stat-Listener, so its set after the listener did their work
+        setTransactionalData(false);
+    }
+
     }
 
 
     /**
-     * Implementation of real closing
+     * Implementation of releasing the connection from transactional context
      */
-    void doClose() {
-        this.getCoreConnection().close();
-        this.setClosed(true);
-        this.fireConnectionClosed();
+    public void release() {
+        try {
+            if(this.getCoreConnection()!=null) {
+                this.setClosed(true);
+                this.getCoreConnection().reset();
+                this.fireConnectionReleased();
+
+            }
+        } finally {
+            this.setClosed(true);
+
+            // state may be important for Stat-Listener, so its set after the listener did their work
+            setTransactionalData(false);
+        }
     }
 
 
@@ -252,7 +279,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     public void reset() {
         if (this.getCoreConnection() != null) {
             this.getCoreConnection().reset();
-            this.closed=false;
+            setTransactionalData(false);
             // notify the action
             this.fireConnectionReset();
         }
@@ -301,6 +328,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
             checkClosed();
             this.getCoreConnection().rollback();
             setTransactionalData(false);
+
         }
         this.fireConnectionRolledback();
     }
@@ -389,21 +417,20 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     }
 
 
-    protected void fireConnectionClosed() {
+    protected void fireConnectionReleased() {
         IEventDeliver deliver = new IEventDeliver() {
             public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
-                listener.connectionClosed(event);
+                listener.connectionReleased(event);
             }
 
             public String toString() {
-                return "connectionClosed";
+                return "connectionReleased";
             }
         };
         fireEvents(deliver);
     }
 
-    @Override
-    public void fireConnectionErrorOccurred(final Exception exception) {
+    protected void fireConnectionErrorOccurred(final Exception exception) {
         IEventDeliver deliver = new IEventDeliver() {
             public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
                 listener.connectionErrorOccurred(event);
@@ -555,33 +582,20 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     }
 
 
-    @Override
-    public void fireConnectionDereferenced() {
+    protected void fireConnectionFreed() {
         IEventDeliver deliver = new IEventDeliver() {
             public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
-                listener.connectionDereferenced(event);
+                listener.connectionFreed(event);
             }
 
             public String toString() {
-                return "connectionDereferenced";
+                return "connectionFreed";
             }
         };
         fireEvents(deliver);
     }
 
-    @Override
-    public void fireConnectionReferenced() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
-                listener.connectionReferenced(event);
-            }
 
-            public String toString() {
-                return "connectionReferenced";
-            }
-        };
-        fireEvents(deliver);
-    }
 
     protected void fireConnectionRecovering() {
         IEventDeliver deliver = new IEventDeliver() {

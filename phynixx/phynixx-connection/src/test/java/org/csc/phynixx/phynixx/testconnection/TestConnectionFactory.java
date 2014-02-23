@@ -22,18 +22,17 @@ package org.csc.phynixx.phynixx.testconnection;
 
 
 import org.csc.phynixx.common.generator.IDGenerator;
+import org.csc.phynixx.common.generator.IDGenerators;
 import org.csc.phynixx.connection.IPhynixxConnectionFactory;
 
 
 public class TestConnectionFactory implements IPhynixxConnectionFactory<ITestConnection> {
 
-    private static final IDGenerator idGenerator = new IDGenerator(0);
+    private static final IDGenerator<Long> idGenerator = IDGenerators.createLongGenerator(1, true);
 
     public ITestConnection getConnection() {
         Object connectionId = null;
-        synchronized (idGenerator) {
             connectionId = idGenerator.generate();
-        }
         return new TestConnection(connectionId);
     }
 

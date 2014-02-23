@@ -23,6 +23,7 @@ package org.csc.phynixx.connection;
 
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.common.generator.IDGenerator;
+import org.csc.phynixx.common.generator.IDGenerators;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 
@@ -42,7 +43,7 @@ import java.lang.reflect.Proxy;
  */
 class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends AbstractDynaProxyFactory {
 
-    private static final IDGenerator idGenerator = new IDGenerator(1);
+    private static final IDGenerator<Long> idGenerator = IDGenerators.createLongGenerator(1,true);
 
     private Class<C> connectionInterface;
     private CloseStrategy<C> closeStrategy=null;
@@ -66,7 +67,7 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
 
         Long connectionId = null;
         synchronized (idGenerator) {
-            connectionId = idGenerator.generateLong();
+            connectionId = idGenerator.generate();
         }
         ConnectionPhynixxGuard proxy = new ConnectionPhynixxGuard(connectionId, connectionInterface, coreConnection,closeStrategy);
 

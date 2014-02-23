@@ -108,7 +108,7 @@ public class RecoveryIT {
 
         con.close();
 
-        // Close the factory an release the pooled connections
+        // Close the factory an close the pooled connections
         this.factory.close();
 
         PooledPhynixxManagedConnectionFactory<ITestConnection> fac= this.createManagedConnectionFactory();
@@ -191,7 +191,7 @@ public class RecoveryIT {
 
         TestStatusStack recoveredStatusStack = TestConnectionStatusManager.getStatusStack(recoveredConnection[0].getConnectionId());
         Assert.assertTrue(recoveredStatusStack.isRecoverd());
-        Assert.assertTrue(recoveredStatusStack.isClosed());
+        Assert.assertTrue(recoveredStatusStack.isReleased());
 
     }
 
@@ -230,7 +230,7 @@ public class RecoveryIT {
 
         TestStatusStack recoveredStatusStack = TestConnectionStatusManager.getStatusStack(recoveredConnection[0].getConnectionId());
         Assert.assertTrue(recoveredStatusStack.isRecoverd());
-        Assert.assertTrue(recoveredStatusStack.isClosed());
+        Assert.assertTrue(recoveredStatusStack.isReleased());
 
 
     }

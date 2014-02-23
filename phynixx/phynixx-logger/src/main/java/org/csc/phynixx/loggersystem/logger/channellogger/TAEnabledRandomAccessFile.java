@@ -42,7 +42,7 @@ class TAEnabledRandomAccessFile {
     /**
      * Groesse in Byte fuer Datentyp long
      */
-    public static final int LONG_BYTES = 8;
+    public static final int HEADER_LENGTH = 8;
     /**
      * Groesse eines Bytes
      */
@@ -71,12 +71,12 @@ class TAEnabledRandomAccessFile {
      */
     TAEnabledRandomAccessFile(RandomAccessFile raf) throws IOException {
         this.raf = raf;
-        fileLock = getFileLock(raf);
+        fileLock = acquireFileLock(raf);
         this.restoreCommittedSize();
     }
 
-    private FileLock getFileLock(RandomAccessFile raf) throws IOException {
-            return raf.getChannel().lock();
+    private FileLock acquireFileLock(RandomAccessFile raf) throws IOException {
+        return raf.getChannel().lock(0,HEADER_LENGTH, false);
     }
 
     /**
@@ -84,8 +84,8 @@ class TAEnabledRandomAccessFile {
      *
      * @return Groesse des Header
      */
-    public static int getHeaderSize() {
-        return LONG_BYTES;
+    public static int getHeaderLength() {
+        return HEADER_LENGTH;
     }
 
     /**
@@ -136,7 +136,7 @@ class TAEnabledRandomAccessFile {
         if (isClose()) {
             throw new IOException("TAEnabledRandomAccessFile ist geschlossen");
         }
-        return this.raf.getFilePointer() - getHeaderSize();
+        return this.raf.getFilePointer() - getHeaderLength();
     }
 
 
@@ -154,7 +154,7 @@ class TAEnabledRandomAccessFile {
             throw new IOException("TAEnabledChannelist geschlossen");
         }
         checkPosition(newPosition);
-        this.getRandomAccessFile().seek(newPosition + getHeaderSize());
+        this.getRandomAccessFile().seek(newPosition + getHeaderLength());
     }
 
     /**
@@ -390,9 +390,9 @@ class TAEnabledRandomAccessFile {
         // increments the current position
         getRandomAccessFile().writeLong(value);
 
-        // this.incPosition(LONG_BYTES);
+        // this.incPosition(HEADER_LENGTH);
 
-        assert this.position() - currentPosition == LONG_BYTES : "Expected new position : " + currentPosition + LONG_BYTES + " actual position " + this.position();
+        assert this.position() - currentPosition == HEADER_LENGTH : "Expected new position : " + currentPosition + HEADER_LENGTH + " actual position " + this.position();
 
     }
 
@@ -416,7 +416,7 @@ class TAEnabledRandomAccessFile {
         getRandomAccessFile().writeLong(currentPosition);
         this.position(currentPosition);
 
-        // write through des zu grunde liegenden Files
+        // write through
         this.raf.getChannel().force(false);
     }
 
@@ -446,7 +446,7 @@ class TAEnabledRandomAccessFile {
      * @throws java.io.IOException IO-Fehler
      */
     public boolean hasCommittedData() throws IOException {
-        return (getCommittedSize() > LONG_BYTES);
+        return (getCommittedSize() > HEADER_LENGTH);
     }
 
 
@@ -462,10 +462,10 @@ class TAEnabledRandomAccessFile {
 
 
         this.getRandomAccessFile().seek(0);
-        if (this.raf.length() < LONG_BYTES) {
+        if (this.raf.length() < HEADER_LENGTH) {
             this.getRandomAccessFile().writeLong(0);
         } else {
-            this.getRandomAccessFile().writeLong(this.raf.length() - this.getHeaderSize());
+            this.getRandomAccessFile().writeLong(this.raf.length() - this.getHeaderLength());
         }
         this.position(this.getCommittedSize());
     }

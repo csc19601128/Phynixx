@@ -43,9 +43,14 @@ public class TestConnectionStatusListener extends PhynixxManagedConnectionListen
     }
 
     @Override
-    public void connectionClosed(IManagedConnectionProxyEvent<ITestConnection> event) {
+    public void connectionReleased(IManagedConnectionProxyEvent<ITestConnection> event) {
+        TestConnectionStatusManager.registerStatus(event.getManagedConnection(), TestConnectionStatus.RELEASED);
+    }
+
+    @Override
+    public void connectionFreed(IManagedConnectionProxyEvent<ITestConnection> event) {
         try {
-            TestConnectionStatusManager.registerStatus(event.getManagedConnection(), TestConnectionStatus.CLOSED);
+            TestConnectionStatusManager.registerStatus(event.getManagedConnection(), TestConnectionStatus.FREED);
         } finally {
             event.getManagedConnection().removeConnectionListener(this);
         }

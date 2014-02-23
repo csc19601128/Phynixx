@@ -133,8 +133,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
      * @return dataLogger encapsulating the logfile
      * @throws IOException
      */
-    public IDataLogger instanciateLogger(String loggerName) throws IOException {
-
+    public synchronized IDataLogger instanciateLogger(String loggerName) throws IOException {
 
         File logFile = this.provideFile(createQualifiedLoggerName(loggerName, 1), this.directory);
         return new FileChannelDataLogger(logFile);
@@ -144,7 +143,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
      * destroys a logfiles
      */
     @Override
-    public void cleanup() {
+    public synchronized void cleanup() {
         String pattern = MessageFormat.format(LOGGERSYSTEM_FORMAT_PATTERN, this.loggerSystemName);
         LogFilenameMatcher matcher = new LogFilenameMatcher(pattern);
 
@@ -165,7 +164,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
     /**
      * destroyes all logfile of the logger
      */
-    public void destroyLogger(String loggerName) {
+    public synchronized void destroyLogger(String loggerName) {
         String pattern = MessageFormat.format(LOGGER_FORMAT_PATTERN, loggerName);
         LogFilenameMatcher matcher = new LogFilenameMatcher(pattern);
 
@@ -186,7 +185,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
     /**
      * @return logger having at least one logfile accociated
      */
-    public Set<String> findLoggerNames() throws IOException {
+    public synchronized  Set<String> findLoggerNames() throws IOException {
 
         String pattern = MessageFormat.format(LOGGERSYSTEM_FORMAT_PATTERN, this.loggerSystemName);
         LogFilenameMatcher matcher = new LogFilenameMatcher(pattern);

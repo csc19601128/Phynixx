@@ -10,16 +10,10 @@ package org.csc.phynixx.connection;
 abstract class CloseStrategy<C extends IPhynixxConnection> {
 
     /**
-     * marks a connection a release from a transactional context
+     * marks a connection a close from a transactional context. The implematations decides if it can be re-used or if it is destroyes
      * @param managedConnection
      */
     abstract void close(PhynixxManagedConnectionGuard<C> managedConnection);
 
-
-    /**
-     * marks a connection a freed. This connection won't be used any more
-     * @param managedConnection
-     */
-    abstract void free(PhynixxManagedConnectionGuard<C> managedConnection);
 
 }

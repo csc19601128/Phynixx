@@ -62,11 +62,12 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Activated " + obj);
             }
+            obj.getObject().reopen();
         }
 
         public void destroyObject(PooledObject<IPhynixxManagedConnection<X>> obj) throws Exception {
             IPhynixxManagedConnection<X> ch = obj.getObject();
-            ch.close();
+            ch.free();
         }
 
         @Override
@@ -110,7 +111,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
         }
         this.genericObjectPool = new GenericObjectPool(new MyPoolableObjectFactory<C>(this), cfg);
 
-        this.setCloseStrategy(new PooledConnectionStrategy<C>());
+        this.setCloseStrategy(new PooledConnectionCloseStrategy<C>());
     }
 
     /**
@@ -187,34 +188,12 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
         return this.getConnectionFactory().getConnectionInterface();
     }
 
-	/*
-    public void recover() {
-		
-		// get all recoverable transaction data
-		List messageLoggers= this.loggerSystemStrategy.readIncompleteTransactions();
-		IPhynixxConnection con=null ;
-		for(int i=0; i < messageLoggers.size();i++) {
-			try {
-				IXADataRecorder msgLogger= (IXADataRecorder) messageLoggers.get(i);
-				con= this.getCoreConnection();
-				if( (con instanceof IXADataRecorderAware)) {
-					((IXADataRecorderAware)con).setRecordLogger(msgLogger);
-				}
-				con.recover();
-			} finally {
-				if( con!=null) {
-					con.close();
-				}
-			}
-		}
-		
-	}
-*/
+
 
     /**
      * the connection is sent back to the pool
      */
-    public void connectionReset(IManagedConnectionProxyEvent<C> event) {
+    public void connectionReleased(IManagedConnectionProxyEvent<C> event) {
         IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
         if (proxy.getCoreConnection() == null) {
             return;
@@ -230,7 +209,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
     /**
      * the connection is set free an released from the pool
      */
-    public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
+    public void connectionFreed(IManagedConnectionProxyEvent<C> event) {
         IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
         if (proxy.getCoreConnection() == null) {
             return;

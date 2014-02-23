@@ -1,4 +1,4 @@
-package org.csc.phynixx.connection.reference.scenarios;
+package org.csc.phynixx.connection;
 
 /*
  * #%L
@@ -29,8 +29,6 @@ import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.common.logger.PrintLogManager;
 import org.csc.phynixx.common.logger.PrintLogger;
-import org.csc.phynixx.connection.PhynixxManagedConnectionFactory;
-import org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
@@ -41,7 +39,7 @@ import java.io.File;
 import java.util.Properties;
 import java.util.Set;
 
-public class IntegrationScenariosIT extends TestCase {
+public class PooledManagedConnectionIntegrationScenariosIT extends TestCase {
 
     protected void setUp() throws Exception {
         this.tmpDirectory = new TmpDirectory();
@@ -49,7 +47,7 @@ public class IntegrationScenariosIT extends TestCase {
     }
 
 
-    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(IntegrationScenariosIT.class);
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PooledManagedConnectionIntegrationScenariosIT.class);
 
     protected void tearDown() throws Exception {
         this.tmpDirectory.clear();
@@ -59,12 +57,12 @@ public class IntegrationScenariosIT extends TestCase {
 
     public void testSampleConnectionFactory() throws Exception {
         // instanciate a connection pool
-        PhynixxManagedConnectionFactory<ITestConnection> factory = this.createConnectionFactory();
+        PooledPhynixxManagedConnectionFactory<ITestConnection> factory = this.createConnectionFactory(10);
 
         ITestConnection con = null;
         try {
             // get a connection ....
-            con = (ITestConnection) factory.getConnection();
+            con = factory.getManagedConnection().toConnection();
 
             con.setInitialCounter(43);
 
@@ -76,7 +74,7 @@ public class IntegrationScenariosIT extends TestCase {
             Assert.assertEquals(43, con.getCounter());
 
         } finally {
-            // release the connection to the pool ....
+            // close the connection to the pool ....
             if (con != null) {
                 con.close();
             }
@@ -109,7 +107,7 @@ public class IntegrationScenariosIT extends TestCase {
 
 
         } finally {
-            // release the connection to the pool ....
+            // close the connection to the pool ....
             if (con != null) {
                 con.close();
             }
@@ -142,11 +140,11 @@ public class IntegrationScenariosIT extends TestCase {
             TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
             Assert.assertTrue(statusStack.isRolledback());
             Assert.assertTrue(!statusStack.isCommitted());
-            Assert.assertTrue(!statusStack.isClosed());
+            Assert.assertTrue(!statusStack.isReleased());
 
 
         } finally {
-            // release the connection to the pool ....
+            // close the connection to the pool ....
             if (con != null) {
                 con.close();
             }
@@ -174,7 +172,7 @@ public class IntegrationScenariosIT extends TestCase {
             TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
             Assert.assertTrue(!statusStack.isRolledback());
             Assert.assertTrue(!statusStack.isCommitted());
-            Assert.assertTrue(!statusStack.isClosed());
+            Assert.assertTrue(!statusStack.isReleased());
     }
 
     /**
@@ -202,7 +200,7 @@ public class IntegrationScenariosIT extends TestCase {
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
         Assert.assertTrue(statusStack.isRolledback());
         Assert.assertTrue(!statusStack.isCommitted());
-        Assert.assertTrue(!statusStack.isClosed());
+        Assert.assertTrue(!statusStack.isReleased());
     }
 
     public void testRecovery() throws Exception {
@@ -249,14 +247,14 @@ public class IntegrationScenariosIT extends TestCase {
         Assert.assertTrue(!statusStack.isCommitted());
 
         // recovering closes the recovered connection
-        Assert.assertTrue(statusStack.isClosed());
+        Assert.assertTrue(statusStack.isReleased());
 
     }
 
-    private PooledPhynixxManagedConnectionFactory<ITestConnection> createConnectionFactory(int maxActiveConnections) throws Exception {
+    private PooledPhynixxManagedConnectionFactory<ITestConnection> createConnectionFactory(int poolSize) throws Exception {
 
         GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
-        cfg.setMaxTotal(maxActiveConnections);
+        cfg.setMaxTotal(poolSize);
         PooledPhynixxManagedConnectionFactory<ITestConnection> factory = new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("testConnection", this.tmpDirectory.getDirectory());
@@ -267,16 +265,6 @@ public class IntegrationScenariosIT extends TestCase {
 
         TestConnectionStatusListener eventListener = new TestConnectionStatusListener();
         factory.addConnectionProxyDecorator(eventListener); 
-        return factory;
-    }
-
-    private PhynixxManagedConnectionFactory<ITestConnection> createConnectionFactory() throws Exception {
-
-        PhynixxManagedConnectionFactory<ITestConnection> factory = new PhynixxManagedConnectionFactory(new TestConnectionFactory());
-        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", this.tmpDirectory.getDirectory());
-        factory.setLoggerSystemStrategy(new LoggerPerTransactionStrategy(loggerFactory));
-
-
         return factory;
     }
 

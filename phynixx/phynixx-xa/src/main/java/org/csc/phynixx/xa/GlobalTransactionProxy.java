@@ -55,7 +55,7 @@ class GlobalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManage
     }
 
     /**
-     * releases and closes the associated TransactionalBranch, but do not release the associated resources
+     * releases and closes the associated TransactionalBranch, but do not close the associated resources
      */
     @Override
     public void release() {

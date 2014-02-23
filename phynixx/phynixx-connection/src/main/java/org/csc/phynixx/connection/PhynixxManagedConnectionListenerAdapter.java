@@ -40,7 +40,7 @@ public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnectio
      * NOOP
      */
     @Override
-    public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
+    public void connectionReleased(IManagedConnectionProxyEvent<C> event) {
     }
 
     /**
@@ -101,16 +101,9 @@ public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnectio
      * NOOP
      */
     @Override
-    public void connectionDereferenced(IManagedConnectionProxyEvent<C> event) {
+    public void connectionFreed(IManagedConnectionProxyEvent<C> event) {
     }
 
-    /**
-     * NOOP
-     */
-    @Override
-    public void connectionReferenced(IManagedConnectionProxyEvent<C> event) {
-
-    }
 
     @Override
     public void connectionRecovered(IManagedConnectionProxyEvent<C> event) {

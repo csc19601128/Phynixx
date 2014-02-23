@@ -46,7 +46,7 @@ public class MTPooledConnectionTest extends TestCase {
 
     private PooledPhynixxManagedConnectionFactory<ITestConnection> factory = null;
 
-    private static final int CONNECTION_POOL_SIZE = 30;
+    private static final int CONNECTION_POOL_SIZE = 20;
 
     private TmpDirectory tmpDir = null;
 
@@ -64,7 +64,7 @@ public class MTPooledConnectionTest extends TestCase {
         this.factory = new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
         this.factory.setSynchronizeConnection(true);
 
-        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
+        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("pool", this.tmpDir.getDirectory());
         LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
         this.factory.setLoggerSystemStrategy(strategy);
@@ -73,6 +73,8 @@ public class MTPooledConnectionTest extends TestCase {
 
     protected void tearDown() throws Exception {
         TestConnectionStatusManager.clear();
+
+        this.factory.close();
 
 
         // delete all tmp files ...
@@ -151,6 +153,8 @@ public class MTPooledConnectionTest extends TestCase {
 
 
         executorService.shutdown();
+
+        // 10 seconds per execution
         boolean inTime= executorService.awaitTermination(10*CONNECTION_POOL_SIZE, TimeUnit.SECONDS);
         if(!inTime) {
             throw new IllegalStateException("Execution was stopped after "+10*CONNECTION_POOL_SIZE +" seconds");
@@ -209,13 +213,11 @@ public class MTPooledConnectionTest extends TestCase {
             }
         };
 
-        this.startRunners(actOnConnection, CONNECTION_POOL_SIZE);
+        this.startRunners(actOnConnection, CONNECTION_POOL_SIZE*2);
 
         this.factory.recover(null);
 
         // TestStatusStack statusStack= TestConnectionStatusManager.getStatusStack(con.)
-
-
 
 
     }

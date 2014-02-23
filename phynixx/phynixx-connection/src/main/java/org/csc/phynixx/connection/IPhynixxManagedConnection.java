@@ -66,13 +66,17 @@ public interface IPhynixxManagedConnection<C extends IPhynixxConnection> extends
 
     void recover();
 
+
+    /**
+     * opens a connection that may have been reset. After calling this method
+     * {@link #isClosed()}==false and {@link IPhynixxConnection#reset()} is called on the physical connection.
+     *
+     * @throws java.lang.IllegalStateException connection has transactional data
+     */
+    void reopen();
+
     void addConnectionListener(IPhynixxManagedConnectionListener<C> listener);
 
     void removeConnectionListener(IPhynixxManagedConnectionListener<C> listener);
 
-    void fireConnectionErrorOccurred(Exception exception);
-
-    void fireConnectionDereferenced();
-
-    void fireConnectionReferenced();
 }

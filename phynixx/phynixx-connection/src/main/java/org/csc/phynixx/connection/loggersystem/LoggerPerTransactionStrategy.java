@@ -74,13 +74,15 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
         this.connectionRequiresTransaction(event);
     }
 
-    /**
-     * Noop
+
+     /**
+     * Logger isn't close. If a dataRecorder is found in this phase this indicates an abnormal program flow.,
+     * <p/>
+     * Therefore the dataRecorder isn't close and keep it's content to possibly recover
      *
-     * @param event current connection
      */
     @Override
-    public void connectionReset(IManagedConnectionProxyEvent<C> event) {
+    public void connectionReleased(IManagedConnectionProxyEvent<C> event) {
         C con = event.getManagedConnection().getCoreConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
@@ -95,21 +97,18 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 
         // if commit/rollback was performed, nothing happened. If no the logged data is closed but not destroy. So recovery can happen
         xaDataRecorder.reset();
-        // messageAwareConnection.setXADataRecorder(null);
-
 
     }
 
     /**
-     * Logger isn't close. If a dataRecorder is found in this phase this indicates an abnormal program flow.,
-     * <p/>
-     * Therefore the dataRecorder isn't close and keep it's content to possibly recover
+     * Logger will be closed. If a dataRecorder has remaining transactional data an abnormal prgram flow is detected an
+     * the data of the logger is not destroy but kept to further recovery
      *
      * @param event current connection
      */
 
     @Override
-    public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
+    public void connectionFreed(IManagedConnectionProxyEvent<C> event) {
 
         C con = event.getManagedConnection().getCoreConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
@@ -126,7 +125,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
         // if commit/rollback was performed, nothing happend. If no the logged data is closed but not destroy. So recovery can happen
 
         if( event.getManagedConnection().hasTransactionalData()) {
-            xaRecorderResource.close(); // cklose without removing the revoer data
+            xaRecorderResource.close(); // close without removing the revoer data
         } else {
             xaDataRecorder.destroy();
         }
@@ -216,9 +215,12 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 
         IXADataRecorderAware messageAwareConnection = (IXADataRecorderAware) con;
 
+        IXADataRecorder former=null;
 
         // Transaction is close and the logger is destroyed ...
         IXADataRecorder xaDataRecorder = messageAwareConnection.getXADataRecorder();
+        former=xaDataRecorder;
+        boolean formerClosed= false;
         if (xaDataRecorder == null) {
         }
         // it's my logger ....
@@ -227,6 +229,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
         else if (xaDataRecorder.isClosed()) {
             xaDataRecorder = null;
             xaDataRecorder.close();
+            formerClosed=true;
         }
 
         if (xaDataRecorder == null) {

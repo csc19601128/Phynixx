@@ -24,6 +24,7 @@ package org.csc.phynixx.watchdog;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.csc.phynixx.common.generator.IDGenerator;
+import org.csc.phynixx.common.generator.IDGenerators;
 
 import java.util.*;
 
@@ -39,7 +40,7 @@ import java.util.*;
 public class WatchdogRegistry {
 
 
-    private static final IDGenerator ID_GENERATOR = new IDGenerator();
+    private static final IDGenerator<Long> ID_GENERATOR = IDGenerators.createLongGenerator(1, true);
 
     public static final String WATCHDOG_MANAGEMENT_INTERVAL_PROP = "org.csc.phynixx.watchdog.management_interval";
 
@@ -94,8 +95,8 @@ public class WatchdogRegistry {
 
     private WatchdogRegistry() {
         // System.out.println("Start the WatchdogRegistry");
-        this.watchTheWatchdogs = new Watchdog(new Long(ID_GENERATOR.generateLong()), WatchdogRegistry.getWatchdogManagementInterval() / 2, "Watches The Watchdogs");
-        this.watchTheWatchdogWatcher = new Watchdog(new Long(ID_GENERATOR.generateLong()), WatchdogRegistry.getWatchdogManagementInterval() / 2, "Watches The WatchdogWatcher");
+        this.watchTheWatchdogs = new Watchdog(ID_GENERATOR.generate(), WatchdogRegistry.getWatchdogManagementInterval() / 2, "Watches The Watchdogs");
+        this.watchTheWatchdogWatcher = new Watchdog(ID_GENERATOR.generate(), WatchdogRegistry.getWatchdogManagementInterval() / 2, "Watches The WatchdogWatcher");
 
         IWatchedCondition watchesTheWatcherCond =
                 new RestartCondition(WatchdogRegistry.getWatchdogManagementInterval(), watchTheWatchdogs) {
@@ -192,7 +193,7 @@ public class WatchdogRegistry {
 
         checkManagementWatchdogs();
 
-        Watchdog wd = new Watchdog(new Long(ID_GENERATOR.generateLong()), checkInterval);
+        Watchdog wd = new Watchdog(ID_GENERATOR.generate(), checkInterval);
 
 
         // the watchdigWatcher registered the new Watchdog ....

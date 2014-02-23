@@ -27,8 +27,11 @@ public enum TestConnectionStatus {
     PREPARED,
     COMMITTED,
     ROLLEDBACK,
-    CLOSED,
-    RECOVERED, RESET, ERROR_OCCURRED;
+    RELEASED,
+    FREED,
+    RECOVERED,
+    RESET,
+    ERROR_OCCURRED;
 
 
 }

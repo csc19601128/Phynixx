@@ -69,7 +69,7 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
 
     public PhynixxManagedConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory) {
         this.setConnectionFactory(connectionFactory);
-        this.setCloseStrategy(new UnpooledConnectionStrategy<C>());
+        this.setCloseStrategy(new UnpooledConnectionCloseStrategy<C>());
     }
 
     public boolean isAutocommitAware() {
@@ -111,7 +111,7 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
         }
 
         if(this.closeStrategy==null) {
-            throw new IllegalStateException("UnpooledConnectionStrategy has to be defined");
+            throw new IllegalStateException("CloseStrategy has to be defined");
         }
 
         this.managedConnectionFactory =
@@ -259,22 +259,19 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
     /**
      * the connection is released to the pool
      */
-    public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
+    public void connectionReleased(IManagedConnectionProxyEvent<C> event) {
         IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
-        if (proxy.getCoreConnection() == null || proxy.isClosed()) {
-            return;
-        }
-
-        /**
-        else {
-            proxy.getCoreConnection().close();
-        }
-         '**/
         if (LOG.isDebugEnabled()) {
             LOG.debug("Proxy " + proxy + " released");
         }
 
     }
 
-
+    @Override
+    public void connectionFreed(IManagedConnectionProxyEvent<C> event) {
+        IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Proxy " + proxy + " set free");
+        }
+    }
 }

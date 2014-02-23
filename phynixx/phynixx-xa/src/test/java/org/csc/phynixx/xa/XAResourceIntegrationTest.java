@@ -119,7 +119,7 @@ public class XAResourceIntegrationTest extends TestCase {
         // con hasn't changed, so commit ism performed on the physical connection
         TestCase.assertTrue(!statusStack.isCommitted());
         TestCase.assertTrue(!statusStack.isPrepared());
-        TestCase.assertTrue(statusStack.isClosed());
+        TestCase.assertTrue(statusStack.isReleased());
         // TestCase.assertTrue(factory1.isFreeConnection(con));
     }
 
@@ -154,7 +154,7 @@ public class XAResourceIntegrationTest extends TestCase {
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(statusStack.isCommitted());
         TestCase.assertTrue(!statusStack.isPrepared());
-        TestCase.assertTrue(statusStack.isClosed());
+        TestCase.assertTrue(statusStack.isReleased());
         // TestCase.assertTrue(factory1.isFreeConnection(con));
     }
 
@@ -248,7 +248,7 @@ public class XAResourceIntegrationTest extends TestCase {
         TestCase.assertTrue(!statusStack.isCommitted());
         TestCase.assertTrue(!statusStack.isPrepared());
         TestCase.assertTrue(!statusStack.isRolledback());
-        TestCase.assertTrue(statusStack.isClosed());
+        TestCase.assertTrue(statusStack.isReleased());
         //TestCase.assertTrue(factory2.isFreeConnection(coreCon2));
 
     }
@@ -296,7 +296,7 @@ public class XAResourceIntegrationTest extends TestCase {
         // @RequiredTransaction was requested twice
         Assert.assertEquals(2, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.REQUIRES_TRANSACTION));
         Assert.assertEquals(1, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.ROLLEDBACK));
-        Assert.assertEquals(1, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.CLOSED));
+        Assert.assertEquals(1, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.FREED));
     }
 
     /**
@@ -345,7 +345,7 @@ public class XAResourceIntegrationTest extends TestCase {
         // onePhase Commit ist performed , so no prepare
         Assert.assertEquals(0, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.PREPARED));
         Assert.assertEquals(1, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.COMMITTED));
-        Assert.assertEquals(1, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.CLOSED));
+        Assert.assertEquals(1, TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.FREED));
     }
 
     /**
@@ -580,14 +580,14 @@ public class XAResourceIntegrationTest extends TestCase {
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(statusStack.isCommitted());
         TestCase.assertTrue(statusStack.isPrepared());
-        TestCase.assertTrue(statusStack.isClosed());
+        TestCase.assertTrue(statusStack.isReleased());
 
 
         statusStack = TestConnectionStatusManager.getStatusStack(conId2);
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(!statusStack.isCommitted());
         TestCase.assertTrue(!statusStack.isPrepared());
-        TestCase.assertTrue(statusStack.isClosed());
+        TestCase.assertTrue(statusStack.isReleased());
     }
 
     /**
@@ -627,7 +627,7 @@ public class XAResourceIntegrationTest extends TestCase {
 
         // one-phae commit -> no prepare
         TestCase.assertTrue(!statusStack.isPrepared());
-        TestCase.assertTrue(statusStack.isClosed());
+        TestCase.assertTrue(statusStack.isReleased());
 
     }
 
@@ -696,7 +696,7 @@ public class XAResourceIntegrationTest extends TestCase {
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);
         TestCase.assertTrue(statusStack1.isRolledback());
-        TestCase.assertTrue(statusStack1.isClosed());
+        TestCase.assertTrue(statusStack1.isReleased());
 
 
 
@@ -705,7 +705,7 @@ public class XAResourceIntegrationTest extends TestCase {
         TestCase.assertTrue(statusStack2.isCommitted());
         // one-phase commit -> no prepare
         TestCase.assertTrue(!statusStack2.isPrepared());
-        TestCase.assertTrue(statusStack2.isClosed());
+        TestCase.assertTrue(statusStack2.isReleased());
     }
 
     /**
@@ -743,14 +743,14 @@ public class XAResourceIntegrationTest extends TestCase {
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);
         TestCase.assertTrue(statusStack1.isRolledback());
-        TestCase.assertTrue(statusStack1.isClosed());
+        TestCase.assertTrue(statusStack1.isReleased());
 
         TestStatusStack statusStack2 = TestConnectionStatusManager.getStatusStack(con2.getConnectionId());
         TestCase.assertTrue(statusStack2 != null);
         TestCase.assertTrue(statusStack2.isCommitted());
         // one-phase commit -> no prepare
         TestCase.assertTrue(!statusStack2.isPrepared());
-        TestCase.assertTrue(statusStack2.isClosed());
+        TestCase.assertTrue(statusStack2.isReleased());
     }
 
     public void testSuspendInvalidTransactionalContext() throws Exception {
@@ -822,14 +822,14 @@ public class XAResourceIntegrationTest extends TestCase {
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);
         TestCase.assertTrue(statusStack1.isCommitted());
-        TestCase.assertTrue(statusStack1.isClosed());
+        TestCase.assertTrue(statusStack1.isReleased());
 
         TestStatusStack statusStack2 = TestConnectionStatusManager.getStatusStack(con2.getConnectionId());
         TestCase.assertTrue(statusStack2 != null);
         TestCase.assertTrue(statusStack2.isRolledback());
         // one-phase commit -> no prepare
         TestCase.assertTrue(!statusStack2.isPrepared());
-        TestCase.assertTrue(statusStack2.isClosed());
+        TestCase.assertTrue(statusStack2.isReleased());
     }
 
     /**
@@ -938,14 +938,14 @@ public class XAResourceIntegrationTest extends TestCase {
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);
         TestCase.assertTrue(statusStack1.isCommitted());
-        TestCase.assertTrue(statusStack1.isClosed());
+        TestCase.assertTrue(statusStack1.isReleased());
 
         TestStatusStack statusStack2 = TestConnectionStatusManager.getStatusStack(con2.getConnectionId());
         TestCase.assertTrue(statusStack2 != null);
         TestCase.assertTrue(statusStack2.isRolledback());
         // one-phase commit -> no prepare
         TestCase.assertTrue(!statusStack2.isPrepared());
-        TestCase.assertTrue(statusStack2.isClosed());
+        TestCase.assertTrue(statusStack2.isReleased());
     }
 
 
@@ -979,12 +979,12 @@ public class XAResourceIntegrationTest extends TestCase {
         TestCase.assertTrue(statusStack1.isCommitted());
         // one-phase commit -> no prepare
         TestCase.assertTrue(!statusStack1.isPrepared());
-        TestCase.assertTrue(statusStack1.isClosed());
+        TestCase.assertTrue(statusStack1.isReleased());
 
         TestStatusStack statusStack2 = TestConnectionStatusManager.getStatusStack(con2.getConnectionId());
         TestCase.assertTrue(statusStack2.isRolledback());
         TestCase.assertTrue(statusStack2 != null);
-        TestCase.assertTrue(statusStack2.isClosed());
+        TestCase.assertTrue(statusStack2.isReleased());
 
 
 
@@ -1056,7 +1056,7 @@ public class XAResourceIntegrationTest extends TestCase {
      TestCase.assertTrue(!statusStack.isPrepared());
      // rollback has not been performed explicitly
      TestCase.assertTrue(!statusStack.isRollbacked());
-     //TestCase.assertTrue(statusStack.isClosed());
+     //TestCase.assertTrue(statusStack.isReleased());
 
 
      statusStack = TestConnectionStatusManager.getStatusStack(conId2);
@@ -1066,7 +1066,7 @@ public class XAResourceIntegrationTest extends TestCase {
 
      // con1 is not any longer available, threrefore no rollback
      TestCase.assertTrue(statusStack.isRollbacked());
-     //TestCase.assertTrue(statusStack.isClosed());
+     //TestCase.assertTrue(statusStack.isReleased());
      }
      **/
 

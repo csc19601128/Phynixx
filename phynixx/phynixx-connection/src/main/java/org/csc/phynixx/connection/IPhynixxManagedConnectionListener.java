@@ -37,13 +37,20 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
     void connectionReset(IManagedConnectionProxyEvent<C> event);
 
     /**
-     * called after the connection is closed.
+     * called after the connection is close.
+     * A connection is released when is not any longer bound to a transactional context but should be reused
      *
      * {@link org.csc.phynixx.connection.IPhynixxManagedConnection#isClosed()} is true
      *
      * @param event current connection
      */
-    void connectionClosed(IManagedConnectionProxyEvent<C> event);
+    void connectionReleased(IManagedConnectionProxyEvent<C> event);
+
+    /**
+     * connection dereferenced
+     */
+    void connectionFreed(IManagedConnectionProxyEvent<C> event);
+
 
     /**
      * connectionErrorOccurred is triggered when a fatal error,
@@ -102,16 +109,7 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
      */
     void connectionPrepared(IManagedConnectionProxyEvent<C> event);
 
-    /**
-     * connection dereferenced
-     */
-    void connectionDereferenced(IManagedConnectionProxyEvent<C> event);
 
-
-    /**
-     * connection referenced
-     */
-    void connectionReferenced(IManagedConnectionProxyEvent<C> event);
 
     /**
      * connection enters state 'recovering'

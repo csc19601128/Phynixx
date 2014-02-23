@@ -33,8 +33,6 @@ class LocalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManaged
 
     private IPhynixxManagedConnection<C> connection;
 
-    private transient boolean transactionalData = false;
-
 
     LocalTransactionProxy(IPhynixxManagedConnection<C> connection) {
         this.connection = connection;
@@ -45,17 +43,13 @@ class LocalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManaged
      * @return indicates if the transaction has uncomnmitted transactional data
      */
     boolean hasTransactionalData() {
-        return transactionalData;
+        return this.connection!=null && connection.hasTransactionalData();
     }
 
     boolean isClosed() {
         return this.getConnection() == null || this.getConnection().isClosed();
     }
 
-    @Override
-    public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {
-        this.transactionalData = true;
-    }
 
     @Override
     public TransactionBindingType getTransactionBindingType() {
@@ -89,13 +83,15 @@ class LocalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManaged
     }
 
 
+
+
     @Override
-    public void connectionRolledback(IManagedConnectionProxyEvent<C> event) {
-       this.transactionalData=false;
+    public void connectionReleased(IManagedConnectionProxyEvent<C> event) {
+        event.getManagedConnection().removeConnectionListener(this);
     }
 
     @Override
-    public void connectionCommitted(IManagedConnectionProxyEvent<C> event) {
-        this.transactionalData=false;
+    public void connectionFreed(IManagedConnectionProxyEvent<C> event) {
+        event.getManagedConnection().removeConnectionListener(this);
     }
 }

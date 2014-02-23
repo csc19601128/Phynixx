@@ -23,6 +23,7 @@ package org.csc.phynixx.loggersystem.logrecord;
 
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.common.generator.IDGenerator;
+import org.csc.phynixx.common.generator.IDGenerators;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logger.IDataLogger;
@@ -105,7 +106,7 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
 
     private SortedMap<Long, PhynixxXADataRecorder> xaDataRecorders = new TreeMap<Long, PhynixxXADataRecorder>();
 
-    private IDGenerator messageSeqGenerator = new IDGenerator();
+    private IDGenerator<Long> messageSeqGenerator = IDGenerators.synchronizeGenerator(IDGenerators.createLongGenerator(1l));
 
 
     public PhynixxXARecorderResource(IDataLoggerFactory dataLoggerFactory) {
@@ -124,7 +125,7 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
     public IXADataRecorder createXADataRecorder() {
 
         try {
-            long xaDataRecorderId = this.messageSeqGenerator.generateLong();
+            long xaDataRecorderId = this.messageSeqGenerator.generate();
 
             // create a new Logger
             IDataLogger dataLogger = this.dataLoggerFactory.instanciateLogger(Long.toString(xaDataRecorderId));
@@ -295,7 +296,8 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
     @Override
     public synchronized void close() {
         if (!isClosed()) {
-            for (PhynixxXADataRecorder dataRecorder : xaDataRecorders.values()) {
+            SortedMap<Long, PhynixxXADataRecorder> tmp= new TreeMap<Long, PhynixxXADataRecorder>(xaDataRecorders);
+            for (PhynixxXADataRecorder dataRecorder : tmp.values()) {
                 dataRecorder.close();
             }
             xaDataRecorders.clear();

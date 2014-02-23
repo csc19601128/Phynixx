@@ -158,6 +158,7 @@ public class FileChannelDataLogger implements IDataLogger {
         RandomAccessFile raf = openRandomAccessFile(this.logFileAccess.getFile(), FILE_MODE);
         try {
             this.randomAccess = new TAEnabledRandomAccessFile(raf);
+            LOG.error(Thread.currentThread() +" lock on "+this.logFileAccess +" succeeded");
         } catch(IOException e) {
             LOG.error(Thread.currentThread() +".lock on "+this.logFileAccess,e);
             throw e;

@@ -316,7 +316,12 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
     }
 
     @Override
-    public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
+    public void connectionReleased(IManagedConnectionProxyEvent<C> event) {
+        event.getManagedConnection().removeConnectionListener(this);
+    }
+
+    @Override
+    public void connectionFreed(IManagedConnectionProxyEvent<C> event) {
         event.getManagedConnection().removeConnectionListener(this);
     }
 

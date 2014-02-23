@@ -374,7 +374,7 @@ class TAEnabledRandomAccessFile {
         // increments the current position
         getRandomAccessFile().writeLong(value);
 
-        // this.incPosition(LONG_BYTES);
+        // this.incPosition(HEADER_LENGTH);
 
         assert this.position() - currentPosition == LONG_BYTES : "Expected new position : " + currentPosition + LONG_BYTES + " actual position " + this.position();
 
