@@ -23,4 +23,9 @@ package org.csc.phynixx.phynixx.testconnection;
 
 public class ActionInterruptedException extends RuntimeException {
 
+
+    public String toString() {
+        return super.toString();
+    }
+
 }

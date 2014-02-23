@@ -27,6 +27,7 @@ import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.loggersystem.logrecord.ILogRecordReplayListener;
 import org.csc.phynixx.loggersystem.logrecord.XALogRecordType;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -65,7 +66,8 @@ public class FileChannelLoggerTest {
         File loggerFile = new File(this.tmpDir.getDirectory().getAbsolutePath() + "/+logger_1.log");
         FileChannelDataLogger logger = new FileChannelDataLogger(loggerFile);
 
-        logger.open(AccessMode.WRITE);
+        Assert.assertTrue(logger.getAccessMode() == AccessMode.WRITE);
+
         byte[] data1 = "abcde".getBytes();
         byte[] data2 = "abcdef".getBytes();
         logger.write((short) 1, new byte[][]{data1});

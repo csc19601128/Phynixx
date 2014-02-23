@@ -37,7 +37,9 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
     void connectionReset(IManagedConnectionProxyEvent<C> event);
 
     /**
-     * called after the connection is closed
+     * called after the connection is closed.
+     *
+     * {@link org.csc.phynixx.connection.IPhynixxManagedConnection#isClosed()} is true
      *
      * @param event current connection
      */

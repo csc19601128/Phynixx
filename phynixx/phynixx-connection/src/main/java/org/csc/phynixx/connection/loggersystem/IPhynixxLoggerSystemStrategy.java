@@ -47,7 +47,7 @@ public interface IPhynixxLoggerSystemStrategy<C extends IPhynixxConnection> exte
     void close();
 
     /**
-     * recovers all Loggers of the system and returns a list of all open message sequences
+     * recovers all Loggers of the system and returns a list of all reopen message sequences
      * Each message sequence represents an incomplete transaction.
      * To be able to recover the connection the message sequence is converted to a IMessageLogger
      *

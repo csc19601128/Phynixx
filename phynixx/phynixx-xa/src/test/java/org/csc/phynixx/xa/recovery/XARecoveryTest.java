@@ -165,7 +165,7 @@ public class XARecoveryTest extends TestCase {
         // debug recovery log content ...
         Configuration cfg = this.loadHowlConfig();
         XALogger xaLog = new XALogger(cfg);
-        //xaLog.open(new TestReplayListener());
+        //xaLog.reopen(new TestReplayListener());
 
         // xaLog.replay(new TestReplayListener());
     }

@@ -33,6 +33,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ *
+ * A logger is qualified by its name and a subsequent integer qualifier. It is possible to have more than one loggfile for a given logger. The logfile differ in the qualifier.
+ *
+ * <pre>
+ *  A log file is named according to the follwing pattern
+ *  'loggerSystemName'_'loggerName'_'qualifier'.log
+ *
+ * The different parts of the name make i possible to deduce the following information from the logfile name
+ * 1.) loggerSystem
+ * 2.) loggername
+ * 3.) qualifier pof the logfile for the logger
+ * </pre>
+ *
+ * A logical logger name has to unique for all logfile of the current loggerfactory.
  * Diese Factory erzeugt FileChannelDataLogger .
  * Es wird ein logischer Name mitgegeben und es wird im Verzeichnis eine datei mit diesem namen angelegt und auf dieser Datei eine TAEnabledRandomAccessFile instanziert.
  * <p/>
@@ -49,6 +63,12 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
     private File directory = null;
     private String loggerSystemName = null;
 
+
+    /**
+     *
+     * @param loggerSystemName
+     * @param directoryName logfile are created in this directory
+     */
     public FileChannelDataLoggerFactory(String loggerSystemName, String directoryName) {
         super();
         this.loggerSystemName = loggerSystemName;
@@ -61,6 +81,11 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
         }
     }
 
+    /**
+     *
+      * @param loggerSystemName
+     *  @param directory logfile are created in this directory
+     */
     public FileChannelDataLoggerFactory(String loggerSystemName, File directory) {
         super();
         this.loggerSystemName = loggerSystemName;
@@ -80,11 +105,19 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
         }
     }
 
+    /**
+     *
+     * @return Name of the loggerSystem
+     */
     public String getLoggerSystemName() {
         return loggerSystemName;
     }
 
 
+    /**
+     *
+     * @return directory containing the logfiles
+     */
     public File getLoggingDirectory() {
         return directory;
     }
@@ -96,8 +129,8 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
 
 
     /**
-     * @param loggerName unique Identifier of the logger (concering the logger system)
-     * @return
+     * @param loggerName unique Identifier of the logger (concering to the logger system)
+     * @return dataLogger encapsulating the logfile
      * @throws IOException
      */
     public IDataLogger instanciateLogger(String loggerName) throws IOException {
@@ -107,6 +140,9 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
         return new FileChannelDataLogger(logFile);
     }
 
+    /**
+     * destroys a logfiles
+     */
     @Override
     public void cleanup() {
         String pattern = MessageFormat.format(LOGGERSYSTEM_FORMAT_PATTERN, this.loggerSystemName);
@@ -126,6 +162,9 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
     }
 
     @Override
+    /**
+     * destroyes all logfile of the logger
+     */
     public void destroyLogger(String loggerName) {
         String pattern = MessageFormat.format(LOGGER_FORMAT_PATTERN, loggerName);
         LogFilenameMatcher matcher = new LogFilenameMatcher(pattern);
@@ -144,6 +183,9 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
     }
 
     @Override
+    /**
+     * @return logger having at least one logfile accociated
+     */
     public Set<String> findLoggerNames() throws IOException {
 
         String pattern = MessageFormat.format(LOGGERSYSTEM_FORMAT_PATTERN, this.loggerSystemName);

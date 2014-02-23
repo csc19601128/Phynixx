@@ -48,9 +48,21 @@ public interface IPhynixxManagedConnection<C extends IPhynixxConnection> extends
     C getCoreConnection();
 
     /**
+     *
+     * @return shows if the connection has transactional data
+     */
+    boolean hasTransactionalData();
+
+    /**
      * @return current connection interpreted as core connection, but still managed
      */
     C toConnection();
+
+
+    /**
+     * marks a connection a freed. This connection won't be used any more
+     */
+    void free();
 
     void recover();
 

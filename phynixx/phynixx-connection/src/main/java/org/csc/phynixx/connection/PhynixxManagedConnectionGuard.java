@@ -22,6 +22,7 @@ package org.csc.phynixx.connection;
 
 
 import org.csc.phynixx.common.cast.ImplementorUtils;
+import org.csc.phynixx.common.exceptions.ExceptionUtils;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
@@ -76,15 +77,20 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     // indicates, that the core connection is transactionalData
     private volatile boolean transactionalData = false;
 
-
     private volatile boolean closed = false;
+
+
+    private CloseStrategy closeStrategy;
 
     final Long id;
 
-    protected PhynixxManagedConnectionGuard(long id, Class<C> connectionInterface, C connection) {
+    private Exception closeStack=null;
+
+    protected PhynixxManagedConnectionGuard(long id, Class<C> connectionInterface, C connection, CloseStrategy<C> closeStrategy) {
         this.id = id;
         this.connectionInterface = connectionInterface;
         this.setConnection(connection);
+        this.closeStrategy=closeStrategy;
     }
 
     @Override
@@ -113,13 +119,20 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         return "no core connection";
     }
 
-    private boolean hasTransactionalData() {
+    @Override
+    public boolean hasTransactionalData() {
         return transactionalData;
     }
 
     public boolean isClosed() {
         return closed;
     }
+
+
+    void setClosed(boolean closed) {
+        this.closed = closed;
+    }
+
 
 
     /**
@@ -177,23 +190,42 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     }
 
     /**
-     * A xaresource's connection is  never closed but always dereferenced .
-     * As a connection proxy shields a xa resource, the current connection is not closed but dereferenced (==released)
+     * The implementation delegates to {@link org.csc.phynixx.connection.CloseStrategy}.* the real action is determined by the implementation of {@link org.csc.phynixx.connection.CloseStrategy}.
      */
     @Override
     public void close() {
+
         if (!this.isClosed() && this.getCoreConnection() != null) {
-            this.getCoreConnection().close();
-            this.closed = true;
-            // notify the action
-            this.fireConnectionClosed();
+            this.closeStrategy.close(this);
         }
+    }
+
+    /**
+     * marks a connection a freed. This connection won't be used any more
+     *
+     * The implementation delegates to {@link org.csc.phynixx.connection.CloseStrategy}.
+     */
+    @Override
+    public void free() {
+        if(this.getCoreConnection()!=null) {
+            this.closeStrategy.free(this);
+        }
+    }
+
+
+    /**
+     * Implementation of real closing
+     */
+    void doClose() {
+        this.getCoreConnection().close();
+        this.setClosed(true);
+        this.fireConnectionClosed();
     }
 
 
     private void checkClosed() {
         if(this.isClosed()) {
-            throw new IllegalStateException("Connection " +this+" is closed");
+            throw new IllegalStateException(Thread.currentThread()+" Connection " +this+" is already closed by \n"+ ExceptionUtils.getStackTrace(closeStack));
         }
     }
 
@@ -220,6 +252,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     public void reset() {
         if (this.getCoreConnection() != null) {
             this.getCoreConnection().reset();
+            this.closed=false;
             // notify the action
             this.fireConnectionReset();
         }
@@ -264,6 +297,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
         fireConnectionRollingBack();
         if (this.getCoreConnection() != null) {
+
             checkClosed();
             this.getCoreConnection().rollback();
             setTransactionalData(false);
@@ -277,7 +311,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
 
     /**
-     * recovers the data of the dataLogger and provodes the recoverd data to the connection via the replaylistener
+     * recovers the data of the dataLogger and provides the recovered data to the connection via the replaylistener
      */
     @Override
     public void recover() {

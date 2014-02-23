@@ -73,7 +73,7 @@ class DataLoggerRespository {
 
     public IDataLogger instanciateLogger(String loggerName, boolean open) throws IOException, InterruptedException {
 
-        // is logger open
+        // is logger reopen
         if (this.openLoggers.containsKey(loggerName)) {
             return openLoggers.get(loggerName);
         }
@@ -81,7 +81,7 @@ class DataLoggerRespository {
         IDataLogger logger = this.loggerFactory.instanciateLogger(loggerName);
 
         if (open) {
-            logger.open(AccessMode.WRITE);
+            logger.reopen(AccessMode.WRITE);
         }
         this.openLoggers.put(loggerName, logger);
 
@@ -90,7 +90,7 @@ class DataLoggerRespository {
 
 
     /**
-     * cloes a logger. This logger can be re-open
+     * cloes a logger. This logger can be re-reopen
      *
      * @param loggerName
      */
@@ -145,7 +145,7 @@ class DataLoggerRespository {
     }
 
     /**
-     * closes all open loggers
+     * closes all reopen loggers
      */
     public synchronized void close() {
         Map<String, IDataLogger> copiedLoggers = new HashMap(this.openLoggers);

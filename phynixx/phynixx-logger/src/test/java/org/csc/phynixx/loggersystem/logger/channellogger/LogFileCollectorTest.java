@@ -45,7 +45,7 @@ import java.util.Set;
 @RunWith(JUnit4.class)
 public class LogFileCollectorTest {
 
-    private static final String FORMAT_PATTERN = "(howl_[a-z,A-Z,0-9]*[^_])_([0-9]*[^\\.])\\.[\\w]*";
+    private static final String FORMAT_PATTERN = "(howl)_([a-z,A-Z,0-9]*[^_])_([0-9]*[^\\.])\\.[\\w]*";
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
@@ -143,25 +143,25 @@ public class LogFileCollectorTest {
 
         Assert.assertEquals(3, loggerInfos.size());
 
-        Assert.assertTrue(loggerInfos.get("howl_a") != null);
+        Assert.assertTrue(loggerInfos.get("a") != null);
 
-        Assert.assertEquals("howl_a", ((LoggerInfo) loggerInfos.get("howl_a")).getLoggerName());
-
-        Assert.assertEquals(tmpDirectory.getDirectory(),
-                loggerInfos.get("howl_a").getFile().getParentFile());
-
-        Assert.assertTrue(loggerInfos.get("howl_b") != null);
+        Assert.assertEquals("a", ((LoggerInfo) loggerInfos.get("a")).getLoggerName());
 
         Assert.assertEquals(tmpDirectory.getDirectory(),
-                loggerInfos.get("howl_b").getFile().getParentFile());
+                loggerInfos.get("a").getFile().getParentFile());
+
+        Assert.assertTrue(loggerInfos.get("b") != null);
+
+        Assert.assertEquals(tmpDirectory.getDirectory(),
+                loggerInfos.get("b").getFile().getParentFile());
 
         Assert.assertEquals("howl_b_12345.log",
-                FilenameUtils.getName(loggerInfos.get("howl_b").getFile().getCanonicalPath()));
+                FilenameUtils.getName(loggerInfos.get("b").getFile().getCanonicalPath()));
 
-        Assert.assertTrue(loggerInfos.get("howl_c") != null);
+        Assert.assertTrue(loggerInfos.get("c") != null);
 
         Assert.assertEquals(tmpDirectory.assertExitsDirectory("subdir"),
-                loggerInfos.get("howl_c").getFile().getParentFile());
+                loggerInfos.get("c").getFile().getParentFile());
 
         FileChannelDataLoggerFactory channelFactory =
                 new FileChannelDataLoggerFactory("howl", tmpDirectory.getDirectory().getAbsolutePath());
@@ -170,9 +170,9 @@ public class LogFileCollectorTest {
             System.out.println(loggerName);
         }
         Assert.assertEquals(3, loggerNames.size());
-        Assert.assertTrue(loggerNames.contains("howl_a"));
-        Assert.assertTrue(loggerNames.contains("howl_c"));
-        Assert.assertTrue(loggerNames.contains("howl_b"));
+        Assert.assertTrue(loggerNames.contains("a"));
+        Assert.assertTrue(loggerNames.contains("c"));
+        Assert.assertTrue(loggerNames.contains("b"));
 
     }
 

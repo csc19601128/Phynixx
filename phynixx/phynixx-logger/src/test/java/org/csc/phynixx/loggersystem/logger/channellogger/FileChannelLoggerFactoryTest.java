@@ -21,6 +21,7 @@ package org.csc.phynixx.loggersystem.logger.channellogger;
  */
 
 
+import junit.framework.AssertionFailedError;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
@@ -77,19 +78,26 @@ public class FileChannelLoggerFactoryTest {
             tmpDirectory.assertExitsFile(filenames[i]);
         }
 
-        FileChannelDataLoggerFactory channelFactory =
-                new FileChannelDataLoggerFactory("howl", tmpDirectory.getDirectory().getAbsolutePath());
-        Set<String> loggerNames = channelFactory.findLoggerNames();
-        for (String loggerName : loggerNames) {
-            System.out.println(loggerName);
-        }
-        Assert.assertEquals(3, loggerNames.size());
-        Assert.assertTrue(loggerNames.contains("howl_a"));
-        Assert.assertTrue(loggerNames.contains("howl_b"));
-        Assert.assertTrue(loggerNames.contains("howl_c"));
+        FileChannelDataLoggerFactory channelFactory = null;
+        try {
 
-        // Muster ist nicht zulaessig
-        Assert.assertFalse(loggerNames.contains("howl_a_1_k"));
+            channelFactory =
+                    new FileChannelDataLoggerFactory("howl", tmpDirectory.getDirectory().getAbsolutePath());
+            Set<String> loggerNames = channelFactory.findLoggerNames();
+            for (String loggerName : loggerNames) {
+                System.out.println(loggerName);
+            }
+            Assert.assertEquals(2, loggerNames.size());
+            Assert.assertTrue(loggerNames.contains("a"));
+            Assert.assertTrue(loggerNames.contains("b"));
+
+            // Muster ist nicht zulaessig
+            Assert.assertFalse(loggerNames.contains("howl_a_1_k"));
+        } finally {
+            if (channelFactory != null) {
+                channelFactory.cleanup();
+            }
+        }
     }
 
     @Test
@@ -102,38 +110,66 @@ public class FileChannelLoggerFactoryTest {
                 "test_b_3.log",
                 "test2_b_12345.log"};
         TmpDirectory tmpDirectory = new TmpDirectory();
+        FileChannelDataLoggerFactory channelFactory1 = null;
+        FileChannelDataLoggerFactory channelFactory2 = null;
 
-        for (int i = 0; i < filenames.length; i++) {
+        try {
+            for (int i = 0; i < filenames.length; i++) {
             tmpDirectory.assertExitsFile(filenames[i]);
         }
 
-        FileChannelDataLoggerFactory channelFactory1 =
-                new FileChannelDataLoggerFactory("test", tmpDirectory.getDirectory().getAbsolutePath());
 
-        // logger test_a mit 2 logFiles und test_b mit einem
-        Assert.assertEquals(2, channelFactory1.findLoggerNames().size());
+            channelFactory1 =
+                    new FileChannelDataLoggerFactory("test", tmpDirectory.getDirectory().getAbsolutePath());
 
-        channelFactory1.cleanup();
-        Assert.assertEquals(0, channelFactory1.findLoggerNames().size());
+            // logger test_a mit 2 logFiles und test_b mit einem
+            Assert.assertEquals(2, channelFactory1.findLoggerNames().size());
 
-        FileChannelDataLoggerFactory channelFactory2 =
-                new FileChannelDataLoggerFactory("test2", tmpDirectory.getDirectory().getAbsolutePath());
+            channelFactory1.cleanup();
+            Assert.assertEquals(0, channelFactory1.findLoggerNames().size());
 
-        Set<String> loggerNames = channelFactory2.findLoggerNames();
-        Assert.assertEquals(1, channelFactory2.findLoggerNames().size());
+            channelFactory2 =
+                    new FileChannelDataLoggerFactory("test2", tmpDirectory.getDirectory().getAbsolutePath());
 
-        Assert.assertTrue(loggerNames.contains("test2_b"));
+            Set<String> loggerNames = channelFactory2.findLoggerNames();
+            Assert.assertEquals(1, channelFactory2.findLoggerNames().size());
+
+            Assert.assertTrue(loggerNames.contains("b"));
+        } finally {
+            if (channelFactory1 != null) {
+                channelFactory1.cleanup();
+            }
+
+            if (channelFactory2 != null) {
+                channelFactory2.cleanup();
+            }
+
+            if( tmpDirectory!=null) {
+                tmpDirectory.delete();
+            }
+        }
     }
 
     @Test
     public void testConcurrentWrite() throws Exception {
         TmpDirectory tmpDirectory = new TmpDirectory();
 
-        FileChannelDataLoggerFactory channelFactory =
-                new FileChannelDataLoggerFactory("howl", tmpDirectory.getDirectory().getAbsolutePath());
+        FileChannelDataLoggerFactory channelFactory = null;
+        try {
 
-        IDataLogger logger1 = channelFactory.instanciateLogger("a");
-        IDataLogger logger2 = channelFactory.instanciateLogger("a");
+            channelFactory = new FileChannelDataLoggerFactory("howl", tmpDirectory.getDirectory().getAbsolutePath());
+
+            IDataLogger logger1 = channelFactory.instanciateLogger("a");
+            try {
+             IDataLogger logger2 = channelFactory.instanciateLogger("a");
+                throw new AssertionFailedError("Two locks on same logfile not allowed");
+            } catch (Exception e) {}
+
+        } finally {
+            if (channelFactory != null) {
+                channelFactory.cleanup();
+            }
+        }
 
     }
 

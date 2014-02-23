@@ -168,13 +168,13 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
     }
 
     /**
-     * Closes all pending XAResources and all open but unused connections
+     * Closes all pending XAResources and all reopen but unused connections
      */
     public synchronized void close() {
         if (this.xaresources.size() > 0) {
             // copy all resources as the close of a resource modifies the xaresources ...
             Set<PhynixxXAResource<T>> tmpXAResources = new HashSet(this.xaresources);
-            // close all open XAResources ....
+            // close all reopen XAResources ....
             for (Iterator<PhynixxXAResource<T>> iterator = tmpXAResources.iterator(); iterator.hasNext(); ) {
                 PhynixxXAResource<T> xaresource = iterator.next();
                 xaresource.close();

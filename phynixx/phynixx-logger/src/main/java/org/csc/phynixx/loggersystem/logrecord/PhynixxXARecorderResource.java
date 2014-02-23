@@ -312,7 +312,8 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
     }
 
     /**
-     * recovers all dataRecorder of the loggerSystem. All open dataRecorders are closed and all dataRecorder that can be recovered are opend for reading
+     * recovers all dataRecorder of the loggerSystem. All reopen dataRecorders
+     * are closed and all dataRecorder that can be recovered are opened for reading
      *
      * @see #getXADataRecorders()
      */
@@ -321,7 +322,7 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
 
         try {
 
-            // close all open dataRecorders
+            // close all reopen dataRecorders
             this.close();
 
             Set<String> loggerNames = this.dataLoggerFactory.findLoggerNames();

@@ -28,6 +28,7 @@ import org.csc.phynixx.loggersystem.logrecord.ILogRecordReplayListener;
 import org.csc.phynixx.loggersystem.logrecord.XALogRecordType;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -38,6 +39,8 @@ import java.io.RandomAccessFile;
  * This class is not thread safe . Use facades to protect instances
  */
 public class FileChannelDataLogger implements IDataLogger {
+
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(FileChannelDataLogger.class);
 
     private static class FileAccessor {
 
@@ -76,6 +79,14 @@ public class FileChannelDataLogger implements IDataLogger {
         void close() {
             this.cachedFile = null;
         }
+
+        @Override
+        public String toString() {
+            return "FileAccessor{" +
+                    "cachedFile=" + cachedFile +
+                    ", absolutePathName='" + absolutePathName + '\'' +
+                    '}';
+        }
     }
 
     /**
@@ -91,14 +102,18 @@ public class FileChannelDataLogger implements IDataLogger {
     private AccessMode accessMode = AccessMode.NONE;
 
     /**
-     * Oeffnet die Datei, legt sie an, falls erforderlich.
-     * Schreibt 4 als Dateigroesse an den Anfang wenn die Datei neu angelegt wird.
+     * Opens a logger on base of die given logfile. A RandomAccessFile is created .
+     *
+     * The accessMode of the logger is {@link org.csc.phynixx.loggersystem.logger.channellogger.AccessMode#WRITE}, so you can start writting date
+     *
      *
      * @param logFileAccess
      * @throws IOException
      */
     public FileChannelDataLogger(File logFileAccess) throws IOException {
         this.logFileAccess = new FileAccessor(logFileAccess);
+        associatedRandomAccessFile();
+        this.reopen(AccessMode.WRITE);
     }
 
     public AccessMode getAccessMode() {
@@ -107,7 +122,7 @@ public class FileChannelDataLogger implements IDataLogger {
 
     private void maybeWritten() {
         if (this.randomAccess == null) {
-            throw new IllegalStateException("Channel is not open.");
+            throw new IllegalStateException("Channel is not reopen.");
         }
         if (this.accessMode != AccessMode.APPEND && this.accessMode != AccessMode.WRITE) {
             throw new IllegalStateException("Channel can not be written.");
@@ -116,18 +131,57 @@ public class FileChannelDataLogger implements IDataLogger {
 
     private void maybeRead() {
         if (this.randomAccess == null) {
-            throw new IllegalStateException("Channel is not open.");
+            throw new IllegalStateException("Channel is not reopen.");
         }
         if (this.accessMode == AccessMode.NONE) {
             throw new IllegalStateException("Channel can not be read.");
         }
     }
 
-
+    /**
+     * opens the logger with the specified ACCESS_MODE. If the logger isn't closed it is closed
+     * @param accessMode
+     * @throws IOException
+     */
+    @Override
     public void open(AccessMode accessMode) throws IOException {
-        this.close();
-        RandomAccessFile raf = new RandomAccessFile(logFileAccess.getFile(), FILE_MODE);
-        this.randomAccess = new TAEnabledRandomAccessFile(raf);
+
+        associatedRandomAccessFile();
+
+        this.reopen(accessMode);
+    }
+
+    private void associatedRandomAccessFile() throws IOException {
+        if(!this.isClosed()) {
+           this.close();
+        }
+        RandomAccessFile raf = openRandomAccessFile(this.logFileAccess.getFile(), FILE_MODE);
+        try {
+            this.randomAccess = new TAEnabledRandomAccessFile(raf);
+        } catch(IOException e) {
+            LOG.error(Thread.currentThread() +".lock on "+this.logFileAccess,e);
+            throw e;
+        } catch(IllegalStateException e) {
+            LOG.error(Thread.currentThread()+ ".lock on "+this.logFileAccess,e);
+            throw e;
+        }
+    }
+
+
+    /**
+     * reopens the datalogger. It is assumed that the logger is open.
+     *
+     * @param accessMode
+     * @throws IOException
+     * @throws java.lang.IllegalStateException logger isn't open
+     */
+    public void reopen(AccessMode accessMode) throws IOException {
+        if(this.isClosed()) {
+            throw new IllegalStateException("FileChannelDataLogger cannot be reopen as it is already closed");
+        }
+        if( this.randomAccess==null) {
+            throw new IllegalStateException("No RandomAccesFile associated");
+        }
 
         this.accessMode = accessMode;
 
@@ -135,7 +189,7 @@ public class FileChannelDataLogger implements IDataLogger {
         switch (accessMode) {
             case READ:
                 maybeRead();
-                // wird auf erste Position gesetzt
+                // start reading from the fiorts position
                 this.randomAccess.position(0L);
                 break;
             case WRITE:
@@ -152,6 +206,22 @@ public class FileChannelDataLogger implements IDataLogger {
         }
 
 
+    }
+
+    private RandomAccessFile openRandomAccessFile(File logFile, String fileMode) throws IOException {
+        try {
+            RandomAccessFile raf= new RandomAccessFile(logFile, fileMode);
+            if( LOG.isInfoEnabled()) {
+                LOG.info(Thread.currentThread()+" lock on "+logFile +" succeeded");
+            }
+            return raf;
+        } catch(IOException e) {
+            LOG.error(Thread.currentThread() +".release lock on "+logFile,e);
+            throw e;
+        } catch(IllegalStateException e) {
+            LOG.error(Thread.currentThread()+ " release lock on "+logFile,e);
+            throw e;
+        }
     }
 
 
@@ -214,6 +284,14 @@ public class FileChannelDataLogger implements IDataLogger {
         }
         try {
             this.randomAccess.close();
+            // LOG.error(Thread.currentThread() +".release lock on "+this.logFileAccess+" succeeded");
+        } catch(IOException e) {
+            LOG.error(Thread.currentThread() +".release lock on "+this.logFileAccess,e);
+            throw e;
+        } catch(IllegalStateException e) {
+            LOG.error(Thread.currentThread()+ " release lock on "+this.logFileAccess,e);
+            throw e;
+
         } finally {
             this.logFileAccess.close();
             this.randomAccess = null;
@@ -262,7 +340,7 @@ public class FileChannelDataLogger implements IDataLogger {
                 try {
                     this.logFileAccess.getFile().delete();
                 } catch (Exception e) {
-                    // juts log the error -- if cleanup fials, no fialure ofv the system
+                    // just log the error -- if cleanup fails, no failure of the system
                     LOGGER.fatal(this, e);
                 }
             }

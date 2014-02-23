@@ -31,16 +31,18 @@ import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
-import org.csc.phynixx.phynixx.testconnection.ITestConnection;
-import org.csc.phynixx.phynixx.testconnection.TestConnectionFactory;
-import org.csc.phynixx.phynixx.testconnection.TestConnectionStatusManager;
-import org.csc.phynixx.phynixx.testconnection.TestInterruptionPoint;
+import org.csc.phynixx.phynixx.testconnection.*;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 public class ManagedConnectionIT {
+
+    {
+        System.setProperty("log4j_level", "INFO");
+
+    }
 
     public static final String LOGGER = "logger";
     private IPhynixxLogger LOG = PhynixxLogManager.getLogger(this.getClass());
@@ -71,11 +73,14 @@ public class ManagedConnectionIT {
                 new PhynixxManagedConnectionFactory<ITestConnection>(new TestConnectionFactory());
         connectionFactory.setLoggerSystemStrategy(strategy);
 
+        connectionFactory.addConnectionProxyDecorator(new TestConnectionStatusListener());
+
         return connectionFactory;
     }
 
     @After
     public void tearDown() throws Exception {
+
         TestConnectionStatusManager.clear();
 
         if (connectionFactory != null) {
@@ -83,7 +88,7 @@ public class ManagedConnectionIT {
         }
 
         // delete all tmp files ...
-        this.tmpDir.clear();
+        this.tmpDir.delete();
     }
     @Test
     public void testCommit1() throws Exception {
@@ -104,6 +109,8 @@ public class ManagedConnectionIT {
         con.close();
 
         Assert.assertEquals(0, con.getCounter());
+
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
 
     }
@@ -239,5 +246,6 @@ public class ManagedConnectionIT {
 
         con.close();
     }
+
 
 }

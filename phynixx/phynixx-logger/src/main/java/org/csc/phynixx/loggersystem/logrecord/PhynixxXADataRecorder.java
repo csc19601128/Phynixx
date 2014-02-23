@@ -140,6 +140,11 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         return prepared;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return this.messages.isEmpty();
+    }
+
     /**
      * create a new Message with the given data
      */

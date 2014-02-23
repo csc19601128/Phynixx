@@ -37,6 +37,8 @@ import org.csc.phynixx.common.logger.PhynixxLogManager;
  * @param <C> Typ of the pure connection
  */
 public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends PhynixxManagedConnectionFactory<C> {
+
+
     private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PooledPhynixxManagedConnectionFactory.class);
 
     private GenericObjectPool<IPhynixxManagedConnection<C>> genericObjectPool = null;
@@ -56,7 +58,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
 
         public void activateObject(PooledObject<IPhynixxManagedConnection<X>> obj) throws Exception {
             // opens the connection
-            obj.getObject().reset();
+            //bobj.getObject().reset();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Activated " + obj);
             }
@@ -107,6 +109,8 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
             cfg = new GenericObjectPoolConfig();
         }
         this.genericObjectPool = new GenericObjectPool(new MyPoolableObjectFactory<C>(this), cfg);
+
+        this.setCloseStrategy(new PooledConnectionStrategy<C>());
     }
 
     /**
@@ -128,6 +132,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
     @Override
     public IPhynixxManagedConnection<C> getManagedConnection() {
         try {
+            // System.out.println(Thread.currentThread()+"borrowObject "+this.genericObjectPool.getNumIdle()+"/"+this.genericObjectPool.getNumActive()+ "(Waiters "+this.genericObjectPool.getNumWaiters()+")");
             return this.genericObjectPool.borrowObject();
         } catch (Throwable e) {
             throw new DelegatedRuntimeException("Instantiating new pooled Proxy", e);
@@ -140,11 +145,14 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
      * @param connection
      */
     public void releaseConnection(IPhynixxManagedConnection<C> connection) {
-        if (connection == null) {
+        if (connection == null || connection.getCoreConnection()==null) {
             return;
         }
         try {
+            //StringBuilder builder= new StringBuilder(Thread.currentThread().getId()+".releaseConnection starting from "+this.genericObjectPool.getNumIdle()+"/"+this.genericObjectPool.getNumActive());
             this.genericObjectPool.returnObject(connection);
+            // LOG.debug(builder.append(" ... to "+Thread.currentThread().getId()+"   "+this.genericObjectPool.getNumIdle()+"/"+this.genericObjectPool.getNumActive()).toString());
+
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
         }
@@ -154,7 +162,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
         }
     }
 
-    public void destroyConnection(IPhynixxManagedConnection<C> connection) {
+    public void freeConnection(IPhynixxManagedConnection<C> connection) {
         if (connection == null) {
             return;
         }
@@ -204,11 +212,11 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
 */
 
     /**
-     * the connection is released to the pool
+     * the connection is sent back to the pool
      */
-    public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
+    public void connectionReset(IManagedConnectionProxyEvent<C> event) {
         IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
-        if (proxy.getCoreConnection() == null || proxy.isClosed()) {
+        if (proxy.getCoreConnection() == null) {
             return;
         } else {
             this.releaseConnection(proxy);
@@ -218,6 +226,23 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
         }
 
     }
+
+    /**
+     * the connection is set free an released from the pool
+     */
+    public void connectionClosed(IManagedConnectionProxyEvent<C> event) {
+        IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
+        if (proxy.getCoreConnection() == null) {
+            return;
+        } else {
+            this.freeConnection(proxy);
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Proxy " + proxy + " released");
+        }
+
+    }
+
 
 
 }

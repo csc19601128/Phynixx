@@ -64,16 +64,23 @@ public class RecoveryIT {
 
         this.tmpDir = new TmpDirectory("test");
 
+        this.factory=createManagedConnectionFactory();
+
+    }
+
+    private PooledPhynixxManagedConnectionFactory<ITestConnection> createManagedConnectionFactory() {
+
         GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
         cfg.setMaxTotal(POOL_SIZE);
-        this.factory = new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
+        PooledPhynixxManagedConnectionFactory<ITestConnection> fac = new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
         LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
-        this.factory.setLoggerSystemStrategy(strategy);
-        this.factory.addConnectionProxyDecorator(new TestConnectionStatusListener());
+        fac.setLoggerSystemStrategy(strategy);
+        fac.addConnectionProxyDecorator(new TestConnectionStatusListener());
 
+        return fac;
     }
 
     @After
@@ -101,8 +108,13 @@ public class RecoveryIT {
 
         con.close();
 
+        // Close the factory an release the pooled connections
+        this.factory.close();
+
+        PooledPhynixxManagedConnectionFactory<ITestConnection> fac= this.createManagedConnectionFactory();
+
         final ITestConnection[] recoveredConnection = new ITestConnection[1];
-        this.factory.recover(new IPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
+        fac.recover(new IPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
 
             @Override
             public void managedConnectionRecovered(ITestConnection con) {
@@ -111,6 +123,8 @@ public class RecoveryIT {
         });
 
         Assert.assertTrue(recoveredConnection[0]==null);
+
+        fac.close();
 
 
     }

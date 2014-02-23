@@ -46,7 +46,7 @@ import java.util.List;
 
 public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxConnectionFactory<C>, IPhynixxManagedConnectionFactory<C>, IPhynixxManagedConnectionListener<C> {
 
-    private IPhynixxLogger LOG = PhynixxLogManager.getLogger(this.getClass());
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PhynixxManagedConnectionFactory.class);
 
     private IPhynixxConnectionFactory<C> connectionFactory = null;
 
@@ -58,13 +58,18 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
 
     private boolean autocommitAware= true;
 
+    private boolean synchronizeConnection= true;
+
     private final AutoCommitDecorator<C> autcommitDecorator=new AutoCommitDecorator<C>();
+
+    private CloseStrategy<C> closeStrategy;
 
     public PhynixxManagedConnectionFactory() {
     }
 
     public PhynixxManagedConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory) {
         this.setConnectionFactory(connectionFactory);
+        this.setCloseStrategy(new UnpooledConnectionStrategy<C>());
     }
 
     public boolean isAutocommitAware() {
@@ -73,19 +78,44 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
 
     public void setAutocommitAware(boolean autocommitAware) {
         this.autocommitAware = autocommitAware;
+    }
 
+    public boolean isSynchronizeConnection() {
+        return synchronizeConnection;
+    }
+
+    public void setSynchronizeConnection(boolean synchronizeConnection) {
+        this.synchronizeConnection = synchronizeConnection;
+    }
+
+
+    void setCloseStrategy(CloseStrategy<C> closeStrategy) {
+        this.closeStrategy= closeStrategy;
     }
 
     public void setConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory) {
 
+        if(this.connectionFactory!=null) {
+            this.connectionFactory.close();
+            this.connectionFactory=null;
+        }
+
         /// factory for physical connection
         this.connectionFactory = connectionFactory;
+    }
 
-        // factory for managed connections
+    private void createManagedConnectionFactory() {
+
+        if(this.getConnectionFactory()==null) {
+            throw new IllegalStateException("Connection Factory has to be defined");
+        }
+
+        if(this.closeStrategy==null) {
+            throw new IllegalStateException("UnpooledConnectionStrategy has to be defined");
+        }
+
         this.managedConnectionFactory =
-                new DynaPhynixxManagedConnectionFactory<C>(connectionFactory.getConnectionInterface());
-
-
+                new DynaPhynixxManagedConnectionFactory<C>(this.connectionFactory.getConnectionInterface(), this.closeStrategy, this.isSynchronizeConnection());
     }
 
 
@@ -132,7 +162,7 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
                 /**
                  * returns empty Proxy
                  */
-                managedConnection = PhynixxManagedConnectionFactory.this.managedConnectionFactory.getManagedConnection(connection);
+                managedConnection = getManagedConnectionFactory().getManagedConnection(connection);
 
                 /**
                  * sets the decorated connection
@@ -166,6 +196,14 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
         }
     }
 
+    private DynaPhynixxManagedConnectionFactory<C> getManagedConnectionFactory() {
+
+        if(this.managedConnectionFactory==null) {
+            this.createManagedConnectionFactory();
+        }
+        return PhynixxManagedConnectionFactory.this.managedConnectionFactory;
+    }
+
 
     public Class<C> getConnectionInterface() {
         return this.getConnectionFactory().getConnectionInterface();
@@ -174,6 +212,11 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
     @Override
     public void recover(IRecoveredManagedConnection<C> recoveredManagedConnectionCallback) {
 
+        if( this.loggerSystemStrategy!=null) {
+            this.loggerSystemStrategy.close();
+        } else {
+            return;
+        }
         // get all recoverable transaction data
         List<IXADataRecorder> messageLoggers = this.loggerSystemStrategy.readIncompleteTransactions();
         IPhynixxManagedConnection<C> con = null;
@@ -220,9 +263,13 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
         IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
         if (proxy.getCoreConnection() == null || proxy.isClosed()) {
             return;
-        } else {
-            proxy.close();
         }
+
+        /**
+        else {
+            proxy.getCoreConnection().close();
+        }
+         '**/
         if (LOG.isDebugEnabled()) {
             LOG.debug("Proxy " + proxy + " released");
         }

@@ -44,7 +44,7 @@ public class TestUtils {
 
 
     public static void configureLogging() {
-        Set validLogLevels = new HashSet();
+        Set<String> validLogLevels = new HashSet<String>();
         validLogLevels.add("DEBUG");
         validLogLevels.add("INFO");
         validLogLevels.add("WARNING");
@@ -64,11 +64,10 @@ public class TestUtils {
 
         // Reinitialize the logger and substitute any environment pros
         Properties props = System.getProperties();
-
         // copy all props beginning with log4j
-        Iterator iter = props.entrySet().iterator();
+        Iterator<Map.Entry<Object,Object>> iter = props.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
+            Map.Entry<Object,Object> entry = iter.next();
             String propName = (String) entry.getKey();
             if (propName.startsWith("log4j")) {
                 log4jProps.put(entry.getKey(), entry.getValue());

@@ -55,19 +55,35 @@ public class TmpDirectory {
         return this.dir;
     }
 
+    public void delete() {
+        this.clear();
+        this.dir.delete();
+        this.dir = null;
+    }
+
     public void clear() {
+        this.clearDirectory(dir);
+    }
+
+    private void clearDirectory(File dir) {
 
         if (dir == null) {
             return;
         }
+
+        if (!dir.isDirectory()) {
+            return;
+        }
+
         File[] files = dir.listFiles();
         for (int i = 0; i < files.length; i++) {
+            if( files[i].isDirectory()) {
+                this.clearDirectory(files[i]);
+            }
             if (!files[i].delete()) {
                 LOG.error("deleting " + files[i] + " fails");
             }
         }
-        this.dir.delete();
-        this.dir = null;
     }
 
     public File assertExitsFile(String filename) throws IOException {

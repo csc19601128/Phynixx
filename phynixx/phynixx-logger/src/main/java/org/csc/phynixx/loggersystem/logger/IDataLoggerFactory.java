@@ -45,7 +45,7 @@ public interface IDataLoggerFactory {
     void cleanup();
 
     /**
-     *
+     * destroys the logger an all is associated resources an information
      */
     void destroyLogger(String loggerName);
 

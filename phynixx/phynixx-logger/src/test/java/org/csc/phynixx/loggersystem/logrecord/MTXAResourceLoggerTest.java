@@ -162,7 +162,7 @@ public class MTXAResourceLoggerTest extends TestCase {
 
      try {
 
-     logger.open();
+     logger.reopen();
 
      // recover the message sequences
      logger.readMessageSequences();

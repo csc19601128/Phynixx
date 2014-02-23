@@ -65,6 +65,11 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedCo
         }
 
         @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
         public boolean isPrepared() {
             return false;
         }

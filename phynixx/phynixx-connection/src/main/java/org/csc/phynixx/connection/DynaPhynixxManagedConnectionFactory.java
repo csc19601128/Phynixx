@@ -22,7 +22,6 @@ package org.csc.phynixx.connection;
 
 
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.common.exceptions.ExceptionUtils;
 import org.csc.phynixx.common.generator.IDGenerator;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
@@ -46,19 +45,21 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
     private static final IDGenerator idGenerator = new IDGenerator(1);
 
     private Class<C> connectionInterface;
+    private CloseStrategy<C> closeStrategy=null;
 
-    DynaPhynixxManagedConnectionFactory(Class<C> connectionInterface, boolean synchronize) {
+    DynaPhynixxManagedConnectionFactory(Class<C> connectionInterface, CloseStrategy<C> closeStrategy, boolean synchronize) {
         super(new Class<?>[]{connectionInterface},
                 new Class[]{IPhynixxConnection.class, IPhynixxManagedConnection.class},
                 new Class[]{IXADataRecorderAware.class, ICloseable.class},
                 synchronize);
         this.connectionInterface = connectionInterface;
+        this.closeStrategy= closeStrategy;
 
 
     }
 
-    DynaPhynixxManagedConnectionFactory(Class<C> connectionInterface) {
-        this(connectionInterface, true);
+    DynaPhynixxManagedConnectionFactory(Class<C> connectionInterface,CloseStrategy<C> closeStrategy) {
+        this(connectionInterface, closeStrategy, true);
     }
 
     IPhynixxManagedConnection<C> getManagedConnection(C coreConnection) {
@@ -67,7 +68,7 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
         synchronized (idGenerator) {
             connectionId = idGenerator.generateLong();
         }
-        ConnectionPhynixxGuard proxy = new ConnectionPhynixxGuard(connectionId, connectionInterface, coreConnection);
+        ConnectionPhynixxGuard proxy = new ConnectionPhynixxGuard(connectionId, connectionInterface, coreConnection,closeStrategy);
 
         IPhynixxManagedConnection<C> proxied = (IPhynixxManagedConnection<C>)
                 Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
@@ -87,8 +88,8 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
          */
         private IPhynixxManagedConnection<C> proxiedObject;
 
-        ConnectionPhynixxGuard(long id, Class<C> connectionInterface, C connection) {
-            super(id, connectionInterface, connection);
+        ConnectionPhynixxGuard(long id, Class<C> connectionInterface, C connection, CloseStrategy<C> closeStrategy) {
+            super(id, connectionInterface, connection,closeStrategy);
         }
 
         /**
@@ -194,11 +195,10 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
                     return obj;
                 }
             } catch (InvocationTargetException targetEx) {
-                targetEx.getTargetException().printStackTrace();
-                log.fatal("Error calling method " + method + " on " + target + " :: " + targetEx.getMessage() + "\n" + ExceptionUtils.getStackTrace(targetEx.getTargetException()));
+                // log.fatal("Error calling method " + method + " on " + target + " :: " + targetEx.getMessage() + "\n" + ExceptionUtils.getStackTrace(targetEx.getTargetException()));
                 throw new DelegatedRuntimeException("Invoking " + method, targetEx.getTargetException());
             } catch (Throwable ex) {
-                log.fatal("Error calling method " + method + " on " + target + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+                // log.fatal("Error calling method " + method + " on " + target + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
                 throw new DelegatedRuntimeException("Invoking " + method, ex);
             }
         }

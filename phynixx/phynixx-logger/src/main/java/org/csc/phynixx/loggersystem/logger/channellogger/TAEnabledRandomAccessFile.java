@@ -21,8 +21,12 @@ package org.csc.phynixx.loggersystem.logger.channellogger;
  */
 
 
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.channels.FileLock;
 
 /**
  * Basisklasse zur Verwaltung von Filezugriffen.
@@ -30,8 +34,6 @@ import java.io.RandomAccessFile;
  * A RandomAccessFile provides random access to the file's content.
  */
 class TAEnabledRandomAccessFile {
-
-    private static final long SHORT_BYTES = 2;
 
     /**
      * Groesse in Byte fuer Datentyp int
@@ -41,24 +43,50 @@ class TAEnabledRandomAccessFile {
      * Groesse in Byte fuer Datentyp long
      */
     public static final int LONG_BYTES = 8;
-
     /**
      * Groesse eines Bytes
      */
 
     public static final int BYTE_BYTES = 1;
-
     /**
      * max. Inhalt eines Byte als int *
      */
     public static final int MAX_BYTE_VALUE = (int) Byte.MAX_VALUE;
-
-
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(TAEnabledRandomAccessFile.class);
+    private static final long SHORT_BYTES = 2;
     /**
      * Das RandomAccessFile, dass zum Schreiben u. Lesen geoeffnet wird.
      */
     private RandomAccessFile raf = null;
 
+
+    private FileLock fileLock = null;
+
+
+    /**
+     * Initialisierungs-Methode
+     *
+     * @param raf - RandomAccessFile
+     * @throws IOException
+     */
+    TAEnabledRandomAccessFile(RandomAccessFile raf) throws IOException {
+        this.raf = raf;
+        fileLock = getFileLock(raf);
+        this.restoreCommittedSize();
+    }
+
+    private FileLock getFileLock(RandomAccessFile raf) throws IOException {
+            return raf.getChannel().lock();
+    }
+
+    /**
+     * liefert die Groesse des Headerbereiches
+     *
+     * @return Groesse des Header
+     */
+    public static int getHeaderSize() {
+        return LONG_BYTES;
+    }
 
     /**
      * Gibt das RandomAccessFile zurueck
@@ -71,28 +99,6 @@ class TAEnabledRandomAccessFile {
         }
         return this.raf;
     }
-
-    /**
-     * Initialisierungs-Methode
-     *
-     * @param raf - RandomAccessFile
-     * @throws IOException
-     */
-    TAEnabledRandomAccessFile(RandomAccessFile raf) throws IOException {
-        this.raf = raf;
-        this.restoreCommittedSize();
-    }
-
-
-    /**
-     * liefert die Groesse des Headerbereiches
-     *
-     * @return Groesse des Header
-     */
-    public static int getHeaderSize() {
-        return LONG_BYTES;
-    }
-
 
     /**
      * ueberpueft die Gueltigkeit eine Dateiposition bzgl. des Nutzbereichs
@@ -172,10 +178,16 @@ class TAEnabledRandomAccessFile {
         if (raf != null) {
 
             // gibt Lock auf datei frei
-            raf.getChannel().lock().release();
-            // Schliessen der Daten-Datei
-            raf.close();
-            raf = null;
+            try {
+                if (this.fileLock != null) {
+                    this.fileLock.release();
+                }
+            } finally {
+                // Schliessen der Daten-Datei
+                this.fileLock = null;
+                raf.close();
+                raf = null;
+            }
         }
     }
 

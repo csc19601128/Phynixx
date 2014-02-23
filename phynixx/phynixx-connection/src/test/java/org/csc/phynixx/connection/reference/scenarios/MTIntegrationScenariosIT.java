@@ -226,14 +226,14 @@ public class MTIntegrationScenariosIT extends TestCase {
         public void recorderResourceClosed(IXARecorderResource recorderResource) {
 
             this.openLoggerCounter--;
-            //System.out.println("Logger "+logger + " closed - No of open Threads " + openLoggerCounter);
+            //System.out.println("Logger "+logger + " closed - No of reopen Threads " + openLoggerCounter);
 
         }
 
         @Override
         public void recorderResourceOpened(IXARecorderResource recorderResource) {
             this.openLoggerCounter++;
-            System.out.println("Logger " + logger + " opened - No of open Threads " + openLoggerCounter);
+            System.out.println("Logger " + logger + " opened - No of reopen Threads " + openLoggerCounter);
 
         }
     }

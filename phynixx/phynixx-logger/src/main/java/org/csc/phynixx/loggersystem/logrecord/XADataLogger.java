@@ -105,7 +105,7 @@ public class XADataLogger {
      * @throws InterruptedException
      */
     void prepareForWrite(PhynixxXADataRecorder dataRecorder) throws IOException, InterruptedException {
-        this.dataLogger.open(AccessMode.WRITE);
+        this.dataLogger.reopen(AccessMode.WRITE);
         this.writeStartSequence(dataRecorder);
     }
 
@@ -116,7 +116,7 @@ public class XADataLogger {
      * @throws InterruptedException
      */
     void prepareForAppend(PhynixxXADataRecorder dataRecorder) throws IOException, InterruptedException {
-        this.dataLogger.open(AccessMode.APPEND);
+        this.dataLogger.reopen(AccessMode.APPEND);
     }
 
     /**
@@ -128,7 +128,7 @@ public class XADataLogger {
      * @throws InterruptedException
      */
     void prepareForRead(PhynixxXADataRecorder dataRecorder) throws IOException, InterruptedException {
-        this.dataLogger.open(AccessMode.READ);
+        this.dataLogger.reopen(AccessMode.READ);
     }
 
     /**

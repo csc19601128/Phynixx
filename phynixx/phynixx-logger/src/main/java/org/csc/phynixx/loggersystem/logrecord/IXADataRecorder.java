@@ -26,6 +26,8 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 public interface IXADataRecorder extends IDataRecordSequence {
 
+    boolean isEmpty();
+
     /**
      * logs the given data
      *
@@ -91,7 +93,7 @@ public interface IXADataRecorder extends IDataRecordSequence {
     IDataRecord createDataRecord(XALogRecordType logRecordType, byte[][] recordData);
 
     /**
-     * closes the dataLogger, but keeps all resources, so the dataLogger can be re-open
+     * closes the dataLogger, but keeps all resources, so the dataLogger can be re-reopen
      */
     void close();
 

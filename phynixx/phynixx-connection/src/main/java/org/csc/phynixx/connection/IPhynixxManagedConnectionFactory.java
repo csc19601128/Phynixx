@@ -52,6 +52,18 @@ public interface IPhynixxManagedConnectionFactory<C extends IPhynixxConnection> 
 
 
     /**
+     *
+     */
+    void setSynchronizeConnection(boolean state);
+
+
+    /**
+     *
+     */
+    boolean isSynchronizeConnection();
+
+
+    /**
      * recovers all connection that have not completed transactions.
      * The recovered connections are handed to the callback after recovering.
      * All connections are closed after returning from this method

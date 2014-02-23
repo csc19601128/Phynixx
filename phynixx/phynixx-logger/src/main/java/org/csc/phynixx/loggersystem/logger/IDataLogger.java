@@ -26,6 +26,11 @@ import org.csc.phynixx.loggersystem.logrecord.ILogRecordReplayListener;
 
 import java.io.IOException;
 
+/**
+ * A logger ist able to write data in an atomic manner. The data is entirely written or the data ist rejected.
+ *
+ * This class is not thread safe . Use facades to protect instances
+ */
 public interface IDataLogger {
 
     /**
@@ -36,12 +41,16 @@ public interface IDataLogger {
      * @param data record data to be logged.
      * @return a log key that can be used to de-reference the record.
      * <p/>
-     * TODO was mache ich mit der reference -- besseres Konzept
      */
     long write(short type, byte[][] data)
             throws InterruptedException, IOException;
 
 
+    /**
+     * callback method to replay the data of the logger.
+     * @param replayListener
+     * @throws IOException
+     */
     void replay(ILogRecordReplayListener replayListener) throws IOException;
 
     /**
@@ -53,6 +62,17 @@ public interface IDataLogger {
     boolean isClosed();
 
     /**
+     * opens the logger with the specified ACCESS_MODE. If the logger isn't closed it is closed.
+     *
+     * @param accessMode
+     * @throws IOException
+     *
+     * @see #reopen(org.csc.phynixx.loggersystem.logger.channellogger.AccessMode)
+     */
+    void open(AccessMode accessMode) throws IOException;
+
+    /**
+     * reopens the datalogger. It is assumed that the logger is open.
      * <pre>
      *    READ   - position to position 0
      *    WRITE  - position to position 0 and resets the committed size to 0
@@ -63,7 +83,7 @@ public interface IDataLogger {
      * @throws IOException
      * @throws InterruptedException
      */
-    void open(AccessMode accessMode) throws IOException, InterruptedException;
+    void reopen(AccessMode accessMode) throws IOException, InterruptedException;
 
 
     /**

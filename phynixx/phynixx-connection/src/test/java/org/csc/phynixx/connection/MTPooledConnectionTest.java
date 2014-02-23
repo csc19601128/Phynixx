@@ -35,15 +35,18 @@ import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFa
 import org.csc.phynixx.phynixx.testconnection.*;
 
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 public class MTPooledConnectionTest extends TestCase {
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
-    private PooledPhynixxManagedConnectionFactory factory = null;
+    private PooledPhynixxManagedConnectionFactory<ITestConnection> factory = null;
 
-    private static final int POOL_SIZE = 30;
-
+    private static final int CONNECTION_POOL_SIZE = 30;
 
     private TmpDirectory tmpDir = null;
 
@@ -53,16 +56,18 @@ public class MTPooledConnectionTest extends TestCase {
 
         this.tmpDir = new TmpDirectory("howllogger");
 
+        // clears all existing file in dem tmp directory
+        this.tmpDir.clear();
+
         GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
-        cfg.setMaxTotal(POOL_SIZE);
+        cfg.setMaxTotal(CONNECTION_POOL_SIZE);
         this.factory = new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
+        this.factory.setSynchronizeConnection(true);
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
         LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
         this.factory.setLoggerSystemStrategy(strategy);
-        TestConnectionStatusListener recoveryListner = new TestConnectionStatusListener();
-        this.factory.addConnectionProxyDecorator(recoveryListner);
 
     }
 
@@ -71,7 +76,7 @@ public class MTPooledConnectionTest extends TestCase {
 
 
         // delete all tmp files ...
-        this.tmpDir.clear();
+        this.tmpDir.delete();
 
         this.factory = null;
     }
@@ -83,66 +88,73 @@ public class MTPooledConnectionTest extends TestCase {
 
     private static List exceptions = Collections.synchronizedList(new ArrayList());
 
-    private class Runner implements Runnable {
+    private class Caller implements Callable<Object> {
 
         private IActOnConnection actOnConnection = null;
 
-        public Runner(IActOnConnection actOnConnection) {
-            this.actOnConnection = actOnConnection;
+        private int repeats= 1;
+
+        private long msecsDelay= -1;
+
+        public Caller(IActOnConnection actOnConnection) {
+            this(actOnConnection,1);
         }
 
-        public void run() {
+
+        public Caller(IActOnConnection actOnConnection, int repeats) {
+            this.actOnConnection = actOnConnection;
+            this.repeats= repeats;
+        }
+        public Object call() {
             ITestConnection con = null;
-            int repeats = 1; //(int) (System.currentTimeMillis() % 13)+1;
+            Object conId=null;
             try {
-                Object poolObj = MTPooledConnectionTest.this.factory.getConnection();
 
-                try {
-                    con = (ITestConnection) poolObj;
-                } catch (ClassCastException e) {
-                    throw new ClassCastException("Expected ITestConnection; return " + poolObj.getClass());
-                }
-
-                for (int i = 0; i < repeats; i++) {
-                    long millis = (long) (System.currentTimeMillis() % 133);
-                    Thread.currentThread().sleep(millis);
+                for (int i = 0; i < repeats; i++)
+                {
                     try {
-                        this.actOnConnection.doWork((ITestConnection) con);
+                    con = MTPooledConnectionTest.this.factory.getConnection();
+                    conId= con.getConnectionId();
+                    if(msecsDelay > 0) {
+                        Thread.currentThread().sleep(msecsDelay);
+                    }
+                    try {
+                        this.actOnConnection.doWork(con);
                     } catch (ActionInterruptedException e) {
                     } catch (DelegatedRuntimeException e) {
                         if (!(e.getRootCause() instanceof ActionInterruptedException)) {
                             throw e;
                         }
                     }
+                    } finally {
+                        if (con != null) {
+                            con.close();
+                        }
+                    }
                 }
             } catch (Throwable ex) {
                 ex.printStackTrace();
                 exceptions.add(new DelegatedRuntimeException("Thread " + Thread.currentThread(), ex));
-            } finally {
-                if (con != null) {
-                    con.close();
-                }
             }
+            return conId;
         }
-    }
+    };
 
     private void startRunners(IActOnConnection actOnConnection, int numThreads) throws Exception {
         exceptions.clear();
+        ExecutorService executorService= Executors.newFixedThreadPool(numThreads);
 
-        Set workers = new HashSet();
         for (int i = 0; i < numThreads; i++) {
-            Runner runner = new Runner(actOnConnection);
-            Thread worker = new Thread(runner);
-            workers.add(worker);
-            worker.start();
+            Callable<Object> task = new Caller(actOnConnection);
+            executorService.submit(task);
         }
 
-        // wait until all threads are ready ..
-        for (Iterator iterator = workers.iterator(); iterator.hasNext(); ) {
-            Thread worker = (Thread) iterator.next();
-            worker.join();
-        }
 
+        executorService.shutdown();
+        boolean inTime= executorService.awaitTermination(10*CONNECTION_POOL_SIZE, TimeUnit.SECONDS);
+        if(!inTime) {
+            throw new IllegalStateException("Execution was stopped after "+10*CONNECTION_POOL_SIZE +" seconds");
+        }
         if (exceptions.size() > 0) {
             for (int i = 0; i < exceptions.size(); i++) {
                 Exception ex = (Exception) exceptions.get(i);
@@ -150,29 +162,27 @@ public class MTPooledConnectionTest extends TestCase {
             }
             throw new AssertionFailedError("Error occurred");
         }
-
-
     }
 
 
     public void testGoodCase() throws Exception {
 
-        final int[] counter = new int[1];
-
         IActOnConnection actOnConnection = new IActOnConnection() {
             public Object doWork(ITestConnection con) {
+                try {
                 con.act(5);
                 con.act(7);
-                synchronized (counter) {
-                    counter[0] = con.getCounter();
-                }
                 con.rollback();
+            } finally {
+                con.close();
+
+            }
 
                 return con.getConnectionId();
             }
         };
 
-        this.startRunners(actOnConnection, POOL_SIZE * 4);
+        this.startRunners(actOnConnection,CONNECTION_POOL_SIZE*2);
 
         // nothing has to be recoverd ...
 
@@ -189,17 +199,17 @@ public class MTPooledConnectionTest extends TestCase {
                 Object conId=con.getConnectionId();
                 try {
                     con.act(5);
+                    con.setInterruptFlag(TestInterruptionPoint.ACT);
                     con.act(7);
-                     TestConnection coreCon = (TestConnection) ((IPhynixxManagedConnection) con).getCoreConnection();
-                    coreCon.setInterruptFlag(TestInterruptionPoint.ACT);
                     con.rollback();
-                    } finally {
-                        return conId;
-                    }
+                } finally {
+                    con.close();
+                    return conId;
+                }
             }
         };
 
-        this.startRunners(actOnConnection, POOL_SIZE * 4);
+        this.startRunners(actOnConnection, CONNECTION_POOL_SIZE);
 
         this.factory.recover(null);
 

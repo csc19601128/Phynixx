@@ -93,9 +93,9 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
             return;
         }
 
-        // if commit/rollback was performed, nothing happend. If no the logged data is closed but not destroy. So recovery can happen
+        // if commit/rollback was performed, nothing happened. If no the logged data is closed but not destroy. So recovery can happen
         xaDataRecorder.reset();
-        messageAwareConnection.setXADataRecorder(null);
+        // messageAwareConnection.setXADataRecorder(null);
 
 
     }
@@ -124,7 +124,12 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
         }
 
         // if commit/rollback was performed, nothing happend. If no the logged data is closed but not destroy. So recovery can happen
-        xaDataRecorder.close();
+
+        if( event.getManagedConnection().hasTransactionalData()) {
+            xaRecorderResource.close(); // cklose without removing the revoer data
+        } else {
+            xaDataRecorder.destroy();
+        }
         messageAwareConnection.setXADataRecorder(null);
 
     }
@@ -175,9 +180,9 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
         }
 
         // if the rollback is completed the rollback data isn't needed
-        xaDataRecorder.destroy();
+        xaDataRecorder.reset();
 
-        messageAwareConnection.setXADataRecorder(null);
+        // messageAwareConnection.setXADataRecorder(null);
 
         event.getManagedConnection().removeConnectionListener(this);
     }
@@ -198,10 +203,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
         if (xaDataRecorder == null) {
             return;
         }
-        xaDataRecorder.destroy();
-        messageAwareConnection.setXADataRecorder(null);
-
-        event.getManagedConnection().removeConnectionListener(this);
+        xaDataRecorder.reset();
     }
 
 
@@ -224,7 +226,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
         // Transaction is closed and the logger is destroyed ...
         else if (xaDataRecorder.isClosed()) {
             xaDataRecorder = null;
-            xaDataRecorder.destroy();
+            xaDataRecorder.close();
         }
 
         if (xaDataRecorder == null) {
@@ -268,7 +270,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
             for (Iterator<IXADataRecorder> iterator = xaDataRecorders.iterator(); iterator.hasNext(); ) {
                 IXADataRecorder dataRecorder = iterator.next();
 
-                if (!dataRecorder.isCompleted()) {
+                if (!dataRecorder.isCompleted() && !dataRecorder.isEmpty() ) {
                     messageSequences.add(dataRecorder);
                 } else {
                     dataRecorder.destroy();
