@@ -27,8 +27,10 @@ import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
-import org.csc.phynixx.connection.IPhynixxManagedConnectionFactory;
+import org.csc.phynixx.connection.IPhynixxRecovery;
+import org.csc.phynixx.connection.PhynixxRecovery;
 import org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory;
+import org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
@@ -114,7 +116,12 @@ public class RecoveryIT {
         PooledPhynixxManagedConnectionFactory<ITestConnection> fac= this.createManagedConnectionFactory();
 
         final ITestConnection[] recoveredConnection = new ITestConnection[1];
-        fac.recover(new IPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
+
+        PhynixxRecovery<ITestConnection> recovery= new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
+        IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy=  this.factory.getLoggerSystemStrategy();
+        loggerStrategy.close();
+
+        recovery.recover(new IPhynixxRecovery.IRecoveredManagedConnection<ITestConnection>() {
 
             @Override
             public void managedConnectionRecovered(ITestConnection con) {
@@ -144,7 +151,14 @@ public class RecoveryIT {
         con.close();
 
         final ITestConnection[] recoveredConnection = new ITestConnection[1];
-        this.factory.recover(new IPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
+
+
+
+        PhynixxRecovery<ITestConnection> recovery= new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
+        IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy=  this.factory.getLoggerSystemStrategy();
+        loggerStrategy.close();
+
+        recovery.recover(new IPhynixxRecovery.IRecoveredManagedConnection<ITestConnection>() {
 
             @Override
             public void managedConnectionRecovered(ITestConnection con) {
@@ -178,7 +192,12 @@ public class RecoveryIT {
         Assert.assertTrue(!statusStack.isCommitted());
 
         final ITestConnection[] recoveredConnection = new ITestConnection[1];
-        this.factory.recover(new IPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
+
+        PhynixxRecovery<ITestConnection> recovery= new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
+        IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy=  this.factory.getLoggerSystemStrategy();
+        loggerStrategy.close();
+
+        recovery.recover(new IPhynixxRecovery.IRecoveredManagedConnection<ITestConnection>() {
 
             @Override
             public void managedConnectionRecovered(ITestConnection con) {
@@ -217,7 +236,13 @@ public class RecoveryIT {
         con.close();
 
         final ITestConnection[] recoveredConnection = new ITestConnection[1];
-        this.factory.recover(new IPhynixxManagedConnectionFactory.IRecoveredManagedConnection<ITestConnection>() {
+
+
+        PhynixxRecovery<ITestConnection> recovery= new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
+        IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy=  this.factory.getLoggerSystemStrategy();
+        loggerStrategy.close();
+
+        recovery.recover(new IPhynixxRecovery.IRecoveredManagedConnection<ITestConnection>() {
 
             @Override
             public void managedConnectionRecovered(ITestConnection con) {

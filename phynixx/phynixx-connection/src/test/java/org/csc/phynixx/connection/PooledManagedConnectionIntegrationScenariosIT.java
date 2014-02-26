@@ -29,6 +29,7 @@ import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.common.logger.PrintLogManager;
 import org.csc.phynixx.common.logger.PrintLogger;
+import org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
@@ -41,23 +42,32 @@ import java.util.Set;
 
 public class PooledManagedConnectionIntegrationScenariosIT extends TestCase {
 
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PooledManagedConnectionIntegrationScenariosIT.class);
+    TmpDirectory tmpDirectory = null;
+    private PooledPhynixxManagedConnectionFactory<ITestConnection> factory;
+
     protected void setUp() throws Exception {
         this.tmpDirectory = new TmpDirectory();
         PhynixxLogManager.setLogManager(new PrintLogManager(PrintLogger.ERROR));
+
+
+        // instanciate a connection pool
+        this.factory = this.createConnectionFactory(10);
+        TestConnectionStatusListener eventListener = new TestConnectionStatusListener();
+        factory.addConnectionProxyDecorator(eventListener);
     }
-
-
-    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PooledManagedConnectionIntegrationScenariosIT.class);
 
     protected void tearDown() throws Exception {
+        // instanciate a connection pool
+        this.factory.close();
+
+
         this.tmpDirectory.clear();
+
     }
 
-    TmpDirectory tmpDirectory = null;
-
     public void testSampleConnectionFactory() throws Exception {
-        // instanciate a connection pool
-        PooledPhynixxManagedConnectionFactory<ITestConnection> factory = this.createConnectionFactory(10);
+
 
         ITestConnection con = null;
         try {
@@ -85,7 +95,6 @@ public class PooledManagedConnectionIntegrationScenariosIT extends TestCase {
     public void testSampleConnectionPool() throws Exception {
         // instanciate a connection pool
 
-        PooledPhynixxManagedConnectionFactory factory = createConnectionFactory(5);
 
         ITestConnection con = null;
         try {
@@ -115,8 +124,6 @@ public class PooledManagedConnectionIntegrationScenariosIT extends TestCase {
     }
 
     public void testDecorationConnections() throws Exception {
-        // instanciate a connection pool
-        PooledPhynixxManagedConnectionFactory<ITestConnection> factory = createConnectionFactory(5);
 
         ITestConnection con = null;
         try {
@@ -155,37 +162,31 @@ public class PooledManagedConnectionIntegrationScenariosIT extends TestCase {
      * if the connection has no transactiona data no rollback/commit is performed
      * a connection is said tro have transactional dat if at least one method with {@link @RequiresTransaction}
      * is called an no rollback/commit closes the transactional data
+     *
      * @throws Exception
      */
     public void testHasTransactionalData1() throws Exception {
-        // instanciate a connection pool
-        PooledPhynixxManagedConnectionFactory<ITestConnection> factory = createConnectionFactory(5);
-        TestConnectionStatusListener eventListener = new TestConnectionStatusListener();
-        factory.addConnectionProxyDecorator(eventListener);
 
         ITestConnection con = null;
-            // get a connection ....
-            con = factory.getConnection();
-            // rollback the connection ....
-            con.rollback();
-            LOG.info(TestConnectionStatusManager.toDebugString());
-            TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
-            Assert.assertTrue(!statusStack.isRolledback());
-            Assert.assertTrue(!statusStack.isCommitted());
-            Assert.assertTrue(!statusStack.isReleased());
+        // get a connection ....
+        con = factory.getConnection();
+        // rollback the connection ....
+        con.rollback();
+        LOG.info(TestConnectionStatusManager.toDebugString());
+        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
+        Assert.assertTrue(!statusStack.isRolledback());
+        Assert.assertTrue(!statusStack.isCommitted());
+        Assert.assertTrue(!statusStack.isReleased());
     }
 
     /**
      * if the connection has no transactiona data no rollback/commit is performed
      * a connection is said tro have transactional dat if at least one method with {@link @RequiresTransaction}
      * is called an no rollback/commit closes the transactional data
+     *
      * @throws Exception
      */
     public void testHasTransactionalData2() throws Exception {
-        // instanciate a connection pool
-        PooledPhynixxManagedConnectionFactory<ITestConnection> factory = createConnectionFactory(5);
-        TestConnectionStatusListener eventListener = new TestConnectionStatusListener();
-        factory.addConnectionProxyDecorator(eventListener);
 
         ITestConnection con = null;
 
@@ -204,50 +205,53 @@ public class PooledManagedConnectionIntegrationScenariosIT extends TestCase {
     }
 
     public void testRecovery() throws Exception {
-        // instanciate a connection pool
-        PooledPhynixxManagedConnectionFactory factory = createConnectionFactory(5);
-        ITestConnection con = null;
-            // get a connection ....
-            con = (ITestConnection) factory.getConnection();
 
-            con.setInitialCounter(43);
+        ITestConnection con =  factory.getConnection();
 
-            // expection when act is called the 3rd time
-            con.setInterruptFlag(TestInterruptionPoint.ACT, 3);
-            con.act(6);
-            con.act(-3);
+        con.setInitialCounter(43);
 
-            try {
-                con.act(7);
-                throw new AssertionFailedError("ActionInterrupted expected");
-            } catch(Exception e) {}
+        // expection when act is called the 3rd time
+        con.setInterruptFlag(TestInterruptionPoint.ACT, 3);
+        con.act(6);
+        con.act(-3);
 
-            // increments are performed during commit -- act(7) is not registered in con
-            Assert.assertEquals(46, con.getCounter());
+        try {
+            con.act(7);
+            throw new AssertionFailedError("ActionInterrupted expected");
+        } catch (Exception e) {
+        }
 
-            // close the factory and leave the connection in a recoverable state
-            // rollback the connection ....
-            factory.close();
+        // increments are performed during commit -- act(7) is not registered in con
+        Assert.assertEquals(46, con.getCounter());
+
+        // connection is not closed ...
+
+        // close the factory and leave the connection in a recoverable state
+        // rollback the connection ....
+        factory.close();
 
         // instanciate a new connection pool
 
         TestConnectionStatusManager.clear();
+        PhynixxRecovery<ITestConnection> recovery = new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
+        IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy = factory.getLoggerSystemStrategy();
+        loggerStrategy.close();
+        recovery.setLoggerSystemStrategy(loggerStrategy);
+        recovery.addConnectionProxyDecorator(new TestConnectionStatusListener());
 
-        factory = createConnectionFactory(5);
-
-        factory.recover(null);
+        recovery.recover(null);
 
         LOG.info(TestConnectionStatusManager.toDebugString());
         Set<TestStatusStack> statusStacks = TestConnectionStatusManager.getStatusStacks();
         Assert.assertEquals(1, statusStacks.size());
 
-        TestStatusStack statusStack= statusStacks.iterator().next();
+        TestStatusStack statusStack = statusStacks.iterator().next();
 
         Assert.assertTrue(statusStack.isRecoverd());
         Assert.assertTrue(!statusStack.isCommitted());
 
         // recovering closes the recovered connection
-        Assert.assertTrue(statusStack.isReleased());
+        Assert.assertTrue(statusStack.isFreed());
 
     }
 
@@ -263,8 +267,8 @@ public class PooledManagedConnectionIntegrationScenariosIT extends TestCase {
         factory.setLoggerSystemStrategy(new LoggerPerTransactionStrategy(loggerFactory));
 
 
-        TestConnectionStatusListener eventListener = new TestConnectionStatusListener();
-        factory.addConnectionProxyDecorator(eventListener); 
+        TestConnectionStatusListener statusListener = new TestConnectionStatusListener();
+        factory.addConnectionProxyDecorator(statusListener);
         return factory;
     }
 

@@ -134,9 +134,18 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
      * @throws IOException
      */
     public synchronized IDataLogger instanciateLogger(String loggerName) throws IOException {
+       return this.instanciateLogger(loggerName,AccessMode.APPEND);
+    }
+
+    /**
+     * @param loggerName unique Identifier of the logger (concering to the logger system)
+     * @return dataLogger encapsulating the logfile
+     * @throws IOException
+     */
+    public synchronized IDataLogger instanciateLogger(String loggerName, AccessMode accessMode) throws IOException {
 
         File logFile = this.provideFile(createQualifiedLoggerName(loggerName, 1), this.directory);
-        return new FileChannelDataLogger(logFile);
+        return new FileChannelDataLogger(logFile, accessMode);
     }
 
     /**

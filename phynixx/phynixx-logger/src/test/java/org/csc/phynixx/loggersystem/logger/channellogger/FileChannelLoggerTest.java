@@ -64,9 +64,9 @@ public class FileChannelLoggerTest {
                 new FileChannelDataLoggerFactory("test", this.tmpDir.getDirectory().getAbsolutePath());
 
         File loggerFile = new File(this.tmpDir.getDirectory().getAbsolutePath() + "/+logger_1.log");
-        FileChannelDataLogger logger = new FileChannelDataLogger(loggerFile);
+        FileChannelDataLogger logger = new FileChannelDataLogger(loggerFile,AccessMode.APPEND);
 
-        Assert.assertTrue(logger.getAccessMode() == AccessMode.WRITE);
+        Assert.assertTrue(logger.getAccessMode() == AccessMode.APPEND);
 
         byte[] data1 = "abcde".getBytes();
         byte[] data2 = "abcdef".getBytes();

@@ -209,40 +209,6 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
         return this.getConnectionFactory().getConnectionInterface();
     }
 
-    @Override
-    public void recover(IRecoveredManagedConnection<C> recoveredManagedConnectionCallback) {
-
-        if( this.loggerSystemStrategy!=null) {
-            this.loggerSystemStrategy.close();
-        } else {
-            return;
-        }
-        // get all recoverable transaction data
-        List<IXADataRecorder> messageLoggers = this.loggerSystemStrategy.readIncompleteTransactions();
-        IPhynixxManagedConnection<C> con = null;
-        for (int i = 0; i < messageLoggers.size(); i++) {
-            try {
-                IXADataRecorder msgLogger = messageLoggers.get(i);
-                con = this.getManagedConnection();
-                if (!ImplementorUtils.isImplementationOf(con, IXADataRecorderAware.class)) {
-                    throw new IllegalStateException("Connection does not support " + IXADataRecorderAware.class + " and can't be recovered");
-                } else {
-                    (ImplementorUtils.cast(con, IXADataRecorderAware.class)).setXADataRecorder(msgLogger);
-                }
-
-                con.recover();
-
-                if (recoveredManagedConnectionCallback != null) {
-                    recoveredManagedConnectionCallback.managedConnectionRecovered(con.toConnection());
-                }
-            } finally {
-                if (con != null) {
-                    con.close();
-                }
-            }
-        }
-
-    }
 
     @Override
     public void close() {

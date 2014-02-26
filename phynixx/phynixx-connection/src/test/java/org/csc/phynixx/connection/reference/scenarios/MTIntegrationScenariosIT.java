@@ -27,7 +27,9 @@ import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
+import org.csc.phynixx.connection.PhynixxRecovery;
 import org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory;
+import org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnectionFactory;
@@ -35,6 +37,8 @@ import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logrecord.IXARecorderResource;
 import org.csc.phynixx.loggersystem.logrecord.IXARecorderResourceListener;
+import org.csc.phynixx.phynixx.testconnection.ITestConnection;
+import org.csc.phynixx.phynixx.testconnection.TestConnectionFactory;
 import org.csc.phynixx.phynixx.testconnection.TestConnectionStatusListener;
 
 import java.util.*;
@@ -209,7 +213,13 @@ public class MTIntegrationScenariosIT extends TestCase {
 
 
     public void recover() {
-        this.factory.recover(null);
+
+
+        PhynixxRecovery<ITestConnection> recovery= new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
+        IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy=  this.factory.getLoggerSystemStrategy();
+        loggerStrategy.close();
+
+        recovery.recover(null);
 
     }
 

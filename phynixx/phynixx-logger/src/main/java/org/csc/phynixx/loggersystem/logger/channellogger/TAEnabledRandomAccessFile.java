@@ -73,6 +73,7 @@ class TAEnabledRandomAccessFile {
         this.raf = raf;
         fileLock = acquireFileLock(raf);
         this.restoreCommittedSize();
+        check();
     }
 
     private FileLock acquireFileLock(RandomAccessFile raf) throws IOException {
@@ -94,9 +95,7 @@ class TAEnabledRandomAccessFile {
      * @return RandomAccessFile
      */
     RandomAccessFile getRandomAccessFile() {
-        if (isClose()) {
-            throw new IllegalStateException("TAEnabledChanneList is closed");
-        }
+        check();
         return this.raf;
     }
 
@@ -120,6 +119,7 @@ class TAEnabledRandomAccessFile {
      * @throws IOException
      */
     public long available() throws IOException {
+        check();
         return this.getCommittedSize() - this.position();
     }
 
@@ -133,10 +133,18 @@ class TAEnabledRandomAccessFile {
      * @see
      */
     long position() throws IOException {
-        if (isClose()) {
-            throw new IOException("TAEnabledRandomAccessFile ist geschlossen");
-        }
+        check();
         return this.raf.getFilePointer() - getHeaderLength();
+    }
+
+    private void check()  {
+        if (isClose()) {
+            throw new IllegalStateException("TAEnabledRandomAccessFile ist geschlossen");
+        }
+
+        if( this.fileLock==null || !fileLock.isValid()) {
+            throw new IllegalStateException("Filelock ist nicht valide");
+        }
     }
 
 
@@ -150,9 +158,7 @@ class TAEnabledRandomAccessFile {
      */
     public void position(long newPosition) throws IOException {
 
-        if (isClose()) {
-            throw new IOException("TAEnabledChannelist geschlossen");
-        }
+        check();
         checkPosition(newPosition);
         this.getRandomAccessFile().seek(newPosition + getHeaderLength());
     }
@@ -165,6 +171,7 @@ class TAEnabledRandomAccessFile {
      * @author Phynixx
      */
     public void incPosition(long length) throws IOException {
+        check();
         long newPosition = this.position() + length;
         this.position(newPosition);
     }
@@ -176,11 +183,16 @@ class TAEnabledRandomAccessFile {
      */
     public void close() throws IOException {
         if (raf != null) {
-
             // gibt Lock auf datei frei
             try {
                 if (this.fileLock != null) {
-                    this.fileLock.release();
+                    if( fileLock.isValid()) {
+                     this.fileLock.release();
+                    } else {
+                        LOG.error("Filelock not valid");
+                    }
+                } else {
+                    LOG.error("Kein Filelock gesetzt");
                 }
             } finally {
                 // Schliessen der Daten-Datei
@@ -209,9 +221,7 @@ class TAEnabledRandomAccessFile {
      * @throws java.io.IOException IO-Fehler
      */
     public long getCommittedSize() throws IOException {
-        if (isClose()) {
-            throw new IOException("TAEnabledChannelist geschlossen");
-        }
+        check();
 
         long cp = this.position();
 
@@ -231,9 +241,7 @@ class TAEnabledRandomAccessFile {
      * @author Schmidt-Casdorff
      */
     public int readInt() throws IOException {
-        if (isClose()) {
-            throw new IOException("TAEnabledChannelist geschlossen");
-        }
+        check();
         return raf.readInt();
     }
 
@@ -245,9 +253,7 @@ class TAEnabledRandomAccessFile {
      * @author Schmidt-Casdorff
      */
     public short readShort() throws IOException {
-        if (isClose()) {
-            throw new IOException("TAEnabledChannelist geschlossen");
-        }
+        check();
         return raf.readShort();
     }
 
@@ -258,9 +264,7 @@ class TAEnabledRandomAccessFile {
      * @return ByteBuffer mit dem Inhalt der Datei
      */
     public byte[] readContent() throws IOException {
-        if (isClose()) {
-            throw new IOException("TAEnabledChanneList geschlossen");
-        }
+        check();
         long comSize = getCommittedSize();
         //Wenn die Datei leer ist, einen ByteBuffer der Groesse 0 Bytes zurueckgeben
         if (comSize == 0) {
@@ -286,6 +290,8 @@ class TAEnabledRandomAccessFile {
      * @throws java.io.IOException IO-Fehler
      */
     public byte[] read(long length) throws IOException {
+        check();
+
         if (length >= new Long(Integer.MAX_VALUE).longValue()) {
             throw new IllegalArgumentException("Length of read area may not exeed " + Integer.MAX_VALUE);
         }
@@ -319,6 +325,8 @@ class TAEnabledRandomAccessFile {
      * @throws java.io.IOException , falls irgendetwas beim Schreiben schief geht
      */
     public void write(byte[] buffer) throws IOException {
+        check();
+
         //assert buffer != null : "Der Buffer ist null";
         if (isClose()) {
             throw new IOException("TAEnabledChanneList geschlossen");
@@ -339,9 +347,7 @@ class TAEnabledRandomAccessFile {
      * @throws java.io.IOException IO-Fehler
      */
     public void writeShort(short value) throws IOException {
-        if (isClose()) {
-            throw new IOException("TAEnabledChanneList geschlossen");
-        }
+        check();
         long currentPosition = this.position();
 
 
@@ -360,9 +366,7 @@ class TAEnabledRandomAccessFile {
      * @throws java.io.IOException IO-Fehler
      */
     public void writeInt(int value) throws IOException {
-        if (isClose()) {
-            throw new IOException("TAEnabledChanneList geschlossen");
-        }
+        check();
         long currentPosition = this.position();
 
 
@@ -382,9 +386,7 @@ class TAEnabledRandomAccessFile {
      * @throws java.io.IOException IO-Fehler
      */
     public void writeLong(long value) throws IOException {
-        if (isClose()) {
-            throw new IOException("TAEnabledChanneList geschlossen");
-        }
+        check();
         long currentPosition = this.position();
 
         // increments the current position
@@ -404,9 +406,7 @@ class TAEnabledRandomAccessFile {
      * @throws java.io.IOException , Fehler beim Schreiben der Datei.
      */
     public void commit() throws IOException {
-        if (isClose()) {
-            throw new IOException("TAEnabledChanneList geschlossen");
-        }
+        check();
         //Hole die Position der Nutzdaten
         long currentPosition = this.position();
 
@@ -428,9 +428,7 @@ class TAEnabledRandomAccessFile {
      * @throws java.io.IOException IO-Fehler
      */
     public void rollback() throws IOException {
-        if (isClose()) {
-            throw new IOException("TAEnabledChanneList geschlossen");
-        }
+        check();
         this.getRandomAccessFile().seek(0);
         // Hole bestaetigte Groesse der Nutzdaten
         long newPosition = getRandomAccessFile().readLong();
@@ -460,7 +458,7 @@ class TAEnabledRandomAccessFile {
      */
     private void restoreCommittedSize() throws IOException {
 
-
+        check();
         this.getRandomAccessFile().seek(0);
         if (this.raf.length() < HEADER_LENGTH) {
             this.getRandomAccessFile().writeLong(0);

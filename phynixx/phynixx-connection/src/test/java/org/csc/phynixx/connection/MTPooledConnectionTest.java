@@ -29,6 +29,7 @@ import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
+import org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
@@ -155,8 +156,11 @@ public class MTPooledConnectionTest extends TestCase {
         executorService.shutdown();
 
         // 10 seconds per execution
-        boolean inTime= executorService.awaitTermination(10*CONNECTION_POOL_SIZE, TimeUnit.SECONDS);
+        boolean inTime= executorService.awaitTermination(100*CONNECTION_POOL_SIZE, TimeUnit.SECONDS);
         if(!inTime) {
+            if(!executorService.isShutdown()) {
+                 List<Runnable> runnables = executorService.shutdownNow();
+            }
             throw new IllegalStateException("Execution was stopped after "+10*CONNECTION_POOL_SIZE +" seconds");
         }
         if (exceptions.size() > 0) {
@@ -215,7 +219,11 @@ public class MTPooledConnectionTest extends TestCase {
 
         this.startRunners(actOnConnection, CONNECTION_POOL_SIZE*2);
 
-        this.factory.recover(null);
+        PhynixxRecovery<ITestConnection> recovery= new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
+        IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy=  this.factory.getLoggerSystemStrategy();
+        loggerStrategy.close();
+
+        recovery.recover(null);
 
         // TestStatusStack statusStack= TestConnectionStatusManager.getStatusStack(con.)
 

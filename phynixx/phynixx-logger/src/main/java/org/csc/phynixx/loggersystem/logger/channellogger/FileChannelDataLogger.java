@@ -110,10 +110,26 @@ public class FileChannelDataLogger implements IDataLogger {
      * @param logFileAccess
      * @throws IOException
      */
-    public FileChannelDataLogger(File logFileAccess) throws IOException {
+    @Deprecated
+    private FileChannelDataLogger(File logFileAccess) throws IOException {
         this.logFileAccess = new FileAccessor(logFileAccess);
         associatedRandomAccessFile();
-        this.reopen(AccessMode.WRITE);
+        this.reopen(AccessMode.APPEND);
+    }
+
+    /**
+     * Opens a logger on base of die given logfile. A RandomAccessFile is created .
+     *
+     * The accessMode of the logger is {@link org.csc.phynixx.loggersystem.logger.channellogger.AccessMode#WRITE}, so you can start writting date
+     *
+     *
+     * @param logFileAccess
+     * @throws IOException
+     */
+    public FileChannelDataLogger(File logFileAccess,AccessMode aceessMode) throws IOException {
+        this.logFileAccess = new FileAccessor(logFileAccess);
+        associatedRandomAccessFile();
+        this.reopen(aceessMode);
     }
 
     public AccessMode getAccessMode() {
@@ -284,8 +300,9 @@ public class FileChannelDataLogger implements IDataLogger {
             return;
         }
         try {
+
             this.randomAccess.close();
-            // LOG.error(Thread.currentThread() +".release lock on "+this.logFileAccess+" succeeded");
+            LOG.error(Thread.currentThread() +".release lock on "+this.logFileAccess+" succeeded");
         } catch(IOException e) {
             LOG.error(Thread.currentThread() +".release lock on "+this.logFileAccess,e);
             throw e;
