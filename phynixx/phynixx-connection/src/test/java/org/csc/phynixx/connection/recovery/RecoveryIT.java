@@ -113,13 +113,13 @@ public class RecoveryIT {
         // Close the factory an close the pooled connections
         this.factory.close();
 
-        PooledPhynixxManagedConnectionFactory<ITestConnection> fac= this.createManagedConnectionFactory();
-
         final ITestConnection[] recoveredConnection = new ITestConnection[1];
 
         PhynixxRecovery<ITestConnection> recovery= new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
         IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy=  this.factory.getLoggerSystemStrategy();
         loggerStrategy.close();
+        recovery.setLoggerSystemStrategy(loggerStrategy);
+        recovery.addConnectionProxyDecorator(new TestConnectionStatusListener());
 
         recovery.recover(new IPhynixxRecovery.IRecoveredManagedConnection<ITestConnection>() {
 
@@ -128,10 +128,12 @@ public class RecoveryIT {
                 recoveredConnection[0] = con;
             }
         });
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
-        Assert.assertTrue(recoveredConnection[0]==null);
 
-        fac.close();
+        // in XADataLogger.openForWrite() wird die DatRecorderID als erster Satz geschrieben. Dieser zaehlt mit
+        // da Protokll neben commitForward/rollbackData ist genau zu spezifizieren
+        Assert.assertTrue(recoveredConnection[0] == null);
 
 
     }
@@ -157,6 +159,7 @@ public class RecoveryIT {
         PhynixxRecovery<ITestConnection> recovery= new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
         IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy=  this.factory.getLoggerSystemStrategy();
         loggerStrategy.close();
+        recovery.setLoggerSystemStrategy(loggerStrategy);
 
         recovery.recover(new IPhynixxRecovery.IRecoveredManagedConnection<ITestConnection>() {
 
@@ -165,7 +168,7 @@ public class RecoveryIT {
                 recoveredConnection[0] = con;
             }
         });
-
+        LOG.info(TestConnectionStatusManager.toDebugString());
         Assert.assertTrue(recoveredConnection[0]==null);
     }
 
@@ -196,6 +199,8 @@ public class RecoveryIT {
         PhynixxRecovery<ITestConnection> recovery= new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
         IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy=  this.factory.getLoggerSystemStrategy();
         loggerStrategy.close();
+        recovery.addConnectionProxyDecorator(new TestConnectionStatusListener());
+        recovery.setLoggerSystemStrategy(loggerStrategy);
 
         recovery.recover(new IPhynixxRecovery.IRecoveredManagedConnection<ITestConnection>() {
 
@@ -210,7 +215,7 @@ public class RecoveryIT {
 
         TestStatusStack recoveredStatusStack = TestConnectionStatusManager.getStatusStack(recoveredConnection[0].getConnectionId());
         Assert.assertTrue(recoveredStatusStack.isRecoverd());
-        Assert.assertTrue(recoveredStatusStack.isReleased());
+        Assert.assertTrue(recoveredStatusStack.isFreed());
 
     }
 
@@ -237,10 +242,11 @@ public class RecoveryIT {
 
         final ITestConnection[] recoveredConnection = new ITestConnection[1];
 
-
         PhynixxRecovery<ITestConnection> recovery= new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
         IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy=  this.factory.getLoggerSystemStrategy();
         loggerStrategy.close();
+        recovery.addConnectionProxyDecorator(new TestConnectionStatusListener());
+        recovery.setLoggerSystemStrategy(loggerStrategy);
 
         recovery.recover(new IPhynixxRecovery.IRecoveredManagedConnection<ITestConnection>() {
 
@@ -255,7 +261,7 @@ public class RecoveryIT {
 
         TestStatusStack recoveredStatusStack = TestConnectionStatusManager.getStatusStack(recoveredConnection[0].getConnectionId());
         Assert.assertTrue(recoveredStatusStack.isRecoverd());
-        Assert.assertTrue(recoveredStatusStack.isReleased());
+        Assert.assertTrue(recoveredStatusStack.isFreed());
 
 
     }

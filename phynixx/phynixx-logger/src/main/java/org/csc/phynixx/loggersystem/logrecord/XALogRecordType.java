@@ -64,7 +64,7 @@ package org.csc.phynixx.loggersystem.logrecord;
  *
  * @author Christoph Schmidt-Casdorff
  */
-public class XALogRecordType {
+public final class XALogRecordType {
 
     /**
      * recorded by XALogger to mark records

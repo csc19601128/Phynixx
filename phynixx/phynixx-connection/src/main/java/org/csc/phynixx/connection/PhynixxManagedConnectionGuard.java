@@ -131,12 +131,14 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     void setClosed(boolean closed) {
         this.closed = closed;
+        this.transactionalData=false;
     }
 
     @Override
     public void reopen() {
+
         if(this.hasTransactionalData()) {
-            throw new IllegalStateException("Connection "+this+" has tranactional data and has to be cloased safely");
+            LOG.warn("Connection " + this + " has tranactional data and has to be closed safely");
         }
         this.setClosed(false);
         this.reset();

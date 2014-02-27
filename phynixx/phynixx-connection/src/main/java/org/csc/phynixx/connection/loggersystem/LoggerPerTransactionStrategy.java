@@ -21,14 +21,16 @@ package org.csc.phynixx.connection.loggersystem;
  */
 
 
+import org.apache.commons.io.IOUtils;
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.io.LogRecordWriter;
 import org.csc.phynixx.connection.*;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
-import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
-import org.csc.phynixx.loggersystem.logrecord.IXARecorderResource;
-import org.csc.phynixx.loggersystem.logrecord.IXARecorderResourceListener;
-import org.csc.phynixx.loggersystem.logrecord.PhynixxXARecorderResource;
+import org.csc.phynixx.loggersystem.logrecord.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -205,6 +207,18 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
         xaDataRecorder.reset();
     }
 
+
+    /**
+     * start sequence writes the ID of the XADataLogger to identify the content of the logger
+     *
+     * @param dataRecorder DataRecorder that uses /operates on the current physical logger
+     */
+    private void writeStartSequence(IXADataRecorder dataRecorder) throws IOException, InterruptedException {
+
+        LogRecordWriter writer= new LogRecordWriter();
+        writer.writeLong(dataRecorder.getXADataRecorderId());
+        dataRecorder.writeRollbackData(writer.toByteArray());
+    }
 
     @Override
     public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {

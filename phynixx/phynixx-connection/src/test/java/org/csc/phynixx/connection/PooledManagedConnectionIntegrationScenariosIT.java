@@ -107,7 +107,7 @@ public class PooledManagedConnectionIntegrationScenariosIT extends TestCase {
             con.act(-3);
 
             // increments are performed during commit
-            Assert.assertEquals(43, con.getCounter());
+            Assert.assertEquals(46, con.getCounter());
 
             // rollback the connection ....
             con.rollback();

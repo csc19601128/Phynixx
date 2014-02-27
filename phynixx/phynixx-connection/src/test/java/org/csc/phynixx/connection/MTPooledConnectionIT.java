@@ -42,7 +42,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 
-public class MTPooledConnectionTest extends TestCase {
+public class MTPooledConnectionIT extends TestCase {
     private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
 
     private PooledPhynixxManagedConnectionFactory<ITestConnection> factory = null;
@@ -116,7 +116,7 @@ public class MTPooledConnectionTest extends TestCase {
                 for (int i = 0; i < repeats; i++)
                 {
                     try {
-                    con = MTPooledConnectionTest.this.factory.getConnection();
+                    con = MTPooledConnectionIT.this.factory.getConnection();
                     conId= con.getConnectionId();
                     if(msecsDelay > 0) {
                         Thread.currentThread().sleep(msecsDelay);
@@ -222,6 +222,7 @@ public class MTPooledConnectionTest extends TestCase {
         PhynixxRecovery<ITestConnection> recovery= new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
         IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy=  this.factory.getLoggerSystemStrategy();
         loggerStrategy.close();
+        recovery.setLoggerSystemStrategy(loggerStrategy);
 
         recovery.recover(null);
 
