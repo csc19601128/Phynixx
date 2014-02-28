@@ -49,8 +49,17 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
     private RandomAccessFile raf = null;
     private IXADataRecorder xaDataRecorder;
 
+    private boolean autoCommit=false;
+
     private long rollbackPosition;
 
+    public boolean isAutoCommit() {
+        return autoCommit;
+    }
+
+    public void setAutoCommit(boolean autoCommit) {
+        this.autoCommit = autoCommit;
+    }
 
     /**
      * Schliesst die Datei und den FileChannel
@@ -61,7 +70,6 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
             // close Quietly
             try {
                 raf.getChannel().lock().release();
-
                 // Schliessen der Daten-Datei
                 raf.close();
             } catch (Exception e) {
@@ -152,7 +160,7 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
      * bereitet die Writer zur Wiederverwendung vor
      */
     @Override
-    public void open() {
+    public void reset() {
         try {
             this.close();
         } catch (Exception e) {

@@ -21,7 +21,7 @@ package org.csc.phynixx.connection.jmx;
  */
 
 
-import org.csc.phynixx.loggersystem.XAResourceLogger;
+import org.csc.phynixx.loggersystem.logrecord.IXARecorderRepository;
 import org.csc.phynixx.loggersystem.logrecord.IXARecorderResourceListener;
 
 public class LoggerSystemManagement implements LoggerSystemManagementMBean, IXARecorderResourceListener {
@@ -35,14 +35,14 @@ public class LoggerSystemManagement implements LoggerSystemManagementMBean, IXAR
         return this.openLoggerCounter;
     }
 
-    public synchronized void loggerClosed(XAResourceLogger logger) {
-        this.openLoggerCounter++;
 
+    @Override
+    public synchronized void  recorderResourceClosed(IXARecorderRepository recorderResource) {
+        this.openLoggerCounter++;
     }
 
-    public synchronized void loggerOpened(XAResourceLogger logger) {
+    @Override
+    public synchronized  void recorderResourceOpened(IXARecorderRepository recorderResource) {
         this.openLoggerCounter--;
     }
-
-
 }
