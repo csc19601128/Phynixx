@@ -361,7 +361,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         this.fireConnectionRecovering();
         IDataRecordReplay dataRecordReplay = con.recoverReplayListener();
 
-        msgLogger.recover();
+        // msgLogger.recover();
         msgLogger.replayRecords(dataRecordReplay);
 
         this.fireConnectionRecovered();

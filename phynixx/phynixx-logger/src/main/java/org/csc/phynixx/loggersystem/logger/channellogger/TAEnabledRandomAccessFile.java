@@ -418,6 +418,11 @@ class TAEnabledRandomAccessFile {
 
         // write through
         this.raf.getChannel().force(false);
+
+        long comSize = getCommittedSize();
+        if( comSize!=currentPosition) {
+            throw new IllegalStateException("commited size has unexpected value");
+        }
     }
 
     /**
@@ -459,13 +464,15 @@ class TAEnabledRandomAccessFile {
     private void restoreCommittedSize() throws IOException {
 
         check();
+        long privCommittedSize=-1;
         this.getRandomAccessFile().seek(0);
         if (this.raf.length() < HEADER_LENGTH) {
             this.getRandomAccessFile().writeLong(0);
+            privCommittedSize=0;
         } else {
-            this.getRandomAccessFile().writeLong(this.raf.length() - this.getHeaderLength());
+            privCommittedSize = this.getRandomAccessFile().readLong();
         }
-        this.position(this.getCommittedSize());
+        this.position(privCommittedSize);
     }
 
 

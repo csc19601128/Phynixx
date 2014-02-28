@@ -101,10 +101,9 @@ public class RecoveryIT {
 
         ITestConnection con = RecoveryIT.this.factory.getConnection();
 
+        con.setInitialCounter(17);
+
         con.act(5);
-        con.act(7);
-        int counter = con.getCounter();
-        Assert.assertEquals(12, counter);
 
         con.commit();
 
@@ -114,6 +113,10 @@ public class RecoveryIT {
         this.factory.close();
 
         final ITestConnection[] recoveredConnection = new ITestConnection[1];
+
+        LOG.info(TestConnectionStatusManager.toDebugString());
+
+        TestConnectionStatusManager.clear();
 
         PhynixxRecovery<ITestConnection> recovery= new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
         IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy=  this.factory.getLoggerSystemStrategy();
@@ -126,13 +129,14 @@ public class RecoveryIT {
             @Override
             public void managedConnectionRecovered(ITestConnection con) {
                 recoveredConnection[0] = con;
+                System.out.println(con.getCounter());
             }
         });
         LOG.info(TestConnectionStatusManager.toDebugString());
 
 
         // in XADataLogger.openForWrite() wird die DatRecorderID als erster Satz geschrieben. Dieser zaehlt mit
-        // da Protokll neben commitForward/rollbackData ist genau zu spezifizieren
+        // da Protokoll neben commitForward/rollbackData ist genau zu spezifizieren
         Assert.assertTrue(recoveredConnection[0] == null);
 
 
@@ -257,6 +261,7 @@ public class RecoveryIT {
             }
         });
 
+        Assert.assertTrue(recoveredConnection[0]!=null);
         LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack recoveredStatusStack = TestConnectionStatusManager.getStatusStack(recoveredConnection[0].getConnectionId());

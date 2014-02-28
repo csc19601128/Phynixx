@@ -182,7 +182,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
 
         for (int i = 0; i < messages.size(); i++) {
             IDataRecord msg = this.messages.get(i);
-            if (msg.getLogRecordType().equals(XALogRecordType.USER)) {
+            if (msg.getLogRecordType().equals(XALogRecordType.ROLLBACK_DATA)) {
                 if (!this.isCompleted() && !this.isCommitting()) {
                     replay.replayRollback(msg);
                 }

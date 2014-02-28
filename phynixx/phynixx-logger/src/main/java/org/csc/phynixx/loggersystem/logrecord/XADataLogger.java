@@ -63,7 +63,6 @@ public class XADataLogger {
 
 
         public void onRecord(XALogRecordType recordType, byte[][] fieldData) {
-        int count=0;
         if (count == 0) {
                 dataRecorder.setMessageSequenceId(recoverMessageSequenceId(fieldData[0]));
             } else{
@@ -82,7 +81,8 @@ public class XADataLogger {
                         break;
                 }
         }
-            count++;
+
+         count++;
         }
 
     }

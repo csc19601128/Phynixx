@@ -58,9 +58,6 @@ package org.csc.phynixx.loggersystem.logrecord;
 
 
 /**
- * Define record types used by Logger implementations.
- * <p/>
- * contains the constants needed by the xaresource specific implementation of a howl logger
  *
  * @author Christoph Schmidt-Casdorff
  */
@@ -113,7 +110,7 @@ public final class XALogRecordType {
     public static final XALogRecordType XA_START = new XALogRecordType(XA_START_TYPE, "XA_START");
     public static final XALogRecordType UNKNOWN = new XALogRecordType(UNKNOWN_TYPE, "?");
     public static final XALogRecordType ROLLBACK_DATA = new XALogRecordType(ROLLBACK_DATA_TYPE, "ROLLBACK_DATA");
-    ;
+
 
     public static XALogRecordType resolve(short type) {
 
@@ -126,6 +123,8 @@ public final class XALogRecordType {
                 return XA_PREPARED;
             case ROLLFORWARD_DATA_TYPE:
                 return ROLLFORWARD_DATA;
+            case ROLLBACK_DATA_TYPE:
+                return ROLLBACK_DATA;
             case XA_DONE_TYPE:
                 return XA_DONE;
             default:

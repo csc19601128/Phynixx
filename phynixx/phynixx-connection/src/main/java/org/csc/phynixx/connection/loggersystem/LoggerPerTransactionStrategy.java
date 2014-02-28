@@ -95,7 +95,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
         }
 
         // if commit/rollback was performed, nothing happened. If no the logged data is closed but not destroy. So recovery can happen
-        xaDataRecorder.reset();
+        xaDataRecorder.close();
 
     }
 
@@ -179,8 +179,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 
         // if the rollback is completed the rollback data isn't needed
         xaDataRecorder.reset();
-
-        // messageAwareConnection.setXADataRecorder(null);
+        messageAwareConnection.setXADataRecorder(null);
 
         event.getManagedConnection().removeConnectionListener(this);
     }
@@ -202,6 +201,8 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
             return;
         }
         xaDataRecorder.reset();
+        messageAwareConnection.setXADataRecorder(null);
+
     }
 
 
