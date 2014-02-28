@@ -30,7 +30,6 @@ class AbstractDynaProxyFactory {
     private Class[] optionalInterfaces = null;
     private Class[] implementedInterfaces = null;
 
-    private boolean synchronize = false;
 
     /**
      * @param supportedInterfaces
@@ -39,7 +38,6 @@ class AbstractDynaProxyFactory {
      * @param synchronize
      */
     protected AbstractDynaProxyFactory(Class[] supportedInterfaces, Class[] requiredInterfaces, Class[] optionalInterfaces, boolean synchronize) {
-        this.synchronize = synchronize;
         if (supportedInterfaces == null || supportedInterfaces.length == 0) {
             throw new IllegalArgumentException("supportedInterfaces are missing");
         }
@@ -56,9 +54,6 @@ class AbstractDynaProxyFactory {
 
     }
 
-    boolean isSynchronize() {
-        return synchronize;
-    }
 
     private Class[] addRequiredInterface(Class[] implementedInterfaces, Class requiredInterface) {
         for (int i = 0; i < implementedInterfaces.length; i++) {

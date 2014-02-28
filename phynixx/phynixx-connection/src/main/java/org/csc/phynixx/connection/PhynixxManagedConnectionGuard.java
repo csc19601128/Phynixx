@@ -77,8 +77,9 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     // indicates, that the core connection is transactionalData
     private volatile boolean transactionalData = false;
 
-    private volatile boolean closed = false;
+    private volatile boolean synchronizedConnection=true;
 
+    private volatile boolean closed = false;
 
     private CloseStrategy closeStrategy;
 
@@ -108,6 +109,16 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     }
 
     @Override
+    public void setSynchronized(boolean state) {
+        this.synchronizedConnection=state;
+    }
+
+    @Override
+    public boolean isSynchronized() {
+        return this.synchronizedConnection;
+    }
+
+    @Override
     public long getManagedConnectionId() {
         return id;
     }
@@ -132,6 +143,11 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     void setClosed(boolean closed) {
         this.closed = closed;
         this.transactionalData=false;
+        if( closed) {
+            this.closeStack=new Exception(Thread.currentThread().getName());
+        } else {
+            closeStack=null;
+        }
     }
 
     @Override
@@ -163,8 +179,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     private void setConnection(C con) {
         if ((this.connection == null && con == null) ||
-                (this.connection != null && this.connection.equals(con))
-                ) {
+                (this.connection != null && this.connection.equals(con))  ) {
             return;
         }
         this.connection = con;
@@ -206,6 +221,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         if (!this.isClosed() && this.getCoreConnection() != null) {
             this.setClosed(true);
             this.closeStrategy.close(this);
+
         }
     }
 
@@ -254,7 +270,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     private void checkClosed() {
         if(this.isClosed()) {
-            throw new IllegalStateException(Thread.currentThread()+" Connection " +this+" is already closed by \n"+ ExceptionUtils.getStackTrace(closeStack));
+            throw new IllegalStateException(Thread.currentThread()+" Connection " +this+" is already closed by \n"+ ExceptionUtils.getStackTrace(closeStack) +" $$$$$$");
         }
     }
 
@@ -287,7 +303,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         }
     }
 
-    public synchronized void commit() {
+    public void commit() {
 
         if(!hasTransactionalData()) {
             return;

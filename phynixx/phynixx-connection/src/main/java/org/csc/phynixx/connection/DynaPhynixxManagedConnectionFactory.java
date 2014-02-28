@@ -82,6 +82,8 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
     class ConnectionPhynixxGuard<C extends IPhynixxConnection> extends PhynixxManagedConnectionGuard<C> implements InvocationHandler {
 
 
+
+
         private final IPhynixxLogger log = PhynixxLogManager.getLogger(ConnectionPhynixxGuard.class);
         /**
          * As the proxy contains more information than the current implentation we have to store
@@ -131,7 +133,7 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
 
                     // System.out.println("Thread " + Thread.currentThread()+" Connection IF expected to " + this+" on "+method);
                     Object obj = null;
-                    if (DynaPhynixxManagedConnectionFactory.this.isSynchronize()) {
+                    if (this.isSynchronized()) {
                         synchronized (this) {
                             obj = method.invoke(this, args);
                         }
@@ -148,7 +150,7 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
                     Object obj = null;
                     boolean requireTransaction = this.requiresTransaction(method);
                     try {
-                        if (DynaPhynixxManagedConnectionFactory.this.isSynchronize()) {
+                        if (this.isSynchronized()) {
                             synchronized (this) {
                                 if (requireTransaction) {
                                     this.fireConnectionRequiresTransaction();
@@ -186,7 +188,7 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
                     }
                 } else {
                     Object obj = null;
-                    if (DynaPhynixxManagedConnectionFactory.this.isSynchronize()) {
+                    if (this.isSynchronized()) {
                         synchronized (this) {
                             obj = method.invoke(this, args);
                         }

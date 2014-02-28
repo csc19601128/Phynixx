@@ -47,7 +47,7 @@ public class MTPooledConnectionIT extends TestCase {
 
     private PooledPhynixxManagedConnectionFactory<ITestConnection> factory = null;
 
-    private static final int CONNECTION_POOL_SIZE = 20;
+    private static final int CONNECTION_POOL_SIZE = 1;
 
     private TmpDirectory tmpDir = null;
 

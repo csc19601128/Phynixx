@@ -38,6 +38,18 @@ package org.csc.phynixx.connection;
 public interface IPhynixxManagedConnection<C extends IPhynixxConnection> extends IPhynixxConnection, ICloseable //, IPhynixxConnectionHandle<C>
 {
     /**
+     * set the thread safeness of the connection.
+     * @param state
+     */
+    void setSynchronized(boolean state);
+
+    /**
+     *
+     * @return shows if the connection is thread safe
+     */
+    boolean isSynchronized();
+
+    /**
      * @return Id unique for the scope of the factory
      */
     long getManagedConnectionId();
