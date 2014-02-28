@@ -169,6 +169,8 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
                  */
                 managedConnection.addConnectionListener(PhynixxManagedConnectionFactory.this);
 
+                managedConnection.setSynchronized(this.isSynchronizeConnection());
+
                 if (PhynixxManagedConnectionFactory.this.loggerSystemStrategy != null) {
                     managedConnection = PhynixxManagedConnectionFactory.this.loggerSystemStrategy.decorate(managedConnection);
                 }

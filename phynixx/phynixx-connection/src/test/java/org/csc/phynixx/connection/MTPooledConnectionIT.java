@@ -47,7 +47,7 @@ public class MTPooledConnectionIT extends TestCase {
 
     private PooledPhynixxManagedConnectionFactory<ITestConnection> factory = null;
 
-    private static final int CONNECTION_POOL_SIZE = 1;
+    private static final int CONNECTION_POOL_SIZE = 20;
 
     private TmpDirectory tmpDir = null;
 
@@ -156,7 +156,7 @@ public class MTPooledConnectionIT extends TestCase {
         executorService.shutdown();
 
         // 10 seconds per execution
-        boolean inTime= executorService.awaitTermination(100*CONNECTION_POOL_SIZE, TimeUnit.SECONDS);
+        boolean inTime= executorService.awaitTermination(10000*CONNECTION_POOL_SIZE, TimeUnit.SECONDS);
         if(!inTime) {
             if(!executorService.isShutdown()) {
                  List<Runnable> runnables = executorService.shutdownNow();

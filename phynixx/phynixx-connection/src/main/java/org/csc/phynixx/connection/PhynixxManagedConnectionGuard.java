@@ -124,7 +124,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     }
 
     public String toString() {
-        if (this.getCoreConnection() != null) {
+        if (hasCoreConnection()) {
             return this.getCoreConnection().toString();
         }
         return "no core connection";
@@ -153,6 +153,9 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     @Override
     public void reopen() {
 
+        if(connection==null) {
+            throw new IllegalStateException("Connection is already set free");
+        }
         if(this.hasTransactionalData()) {
             LOG.warn("Connection " + this + " has tranactional data and has to be closed safely");
         }
@@ -187,7 +190,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
 
     public IXADataRecorder getXADataRecorder() {
-        if (this.getCoreConnection() != null && ImplementorUtils.isImplementationOf(getCoreConnection(), IXADataRecorderAware.class)) {
+        if (hasCoreConnection() && ImplementorUtils.isImplementationOf(getCoreConnection(), IXADataRecorderAware.class)) {
             return ImplementorUtils.cast(getCoreConnection(), IXADataRecorderAware.class).getXADataRecorder();
         }
         return null;
@@ -196,20 +199,23 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     @Override
     public IDataRecordReplay recoverReplayListener() {
-        if (this.getCoreConnection() != null && ImplementorUtils.isImplementationOf(getCoreConnection(), IXADataRecorderAware.class)) {
+        if (hasCoreConnection() && ImplementorUtils.isImplementationOf(getCoreConnection(), IXADataRecorderAware.class)) {
             return ImplementorUtils.cast(getCoreConnection(), IXADataRecorderAware.class).recoverReplayListener();
         }
         return null;
     }
 
     public void setXADataRecorder(IXADataRecorder dataRecorder) {
-        if (this.getCoreConnection() != null && ImplementorUtils.isImplementationOf(getCoreConnection(), IXADataRecorderAware.class)) {
+        if (hasCoreConnection() && ImplementorUtils.isImplementationOf(getCoreConnection(), IXADataRecorderAware.class)) {
             ImplementorUtils.cast(getCoreConnection(), IXADataRecorderAware.class).setXADataRecorder(dataRecorder);
         }
     }
 
     @Override
     public C getCoreConnection() {
+        if( this.connection==null) {
+            throw new IllegalStateException("Connection is already set free and is invalid");
+        }
         return this.connection;
     }
 
@@ -218,8 +224,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
      */
     @Override
     public void close() {
-        if (!this.isClosed() && this.getCoreConnection() != null) {
-            this.setClosed(true);
+        if (!this.isClosed() && hasCoreConnection()) {
             this.closeStrategy.close(this);
 
         }
@@ -233,18 +238,24 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     @Override
     public void free() {
         try {
-        if(this.getCoreConnection()!=null) {
+        if(hasCoreConnection()) {
             this.getCoreConnection().close();
         }
         this.fireConnectionFreed();
 
     } finally {
         this.setClosed(true);
-
-        // state may be important for Stat-Listener, so its set after the listener did their work
+        // state may be important for State-Listener, so its set after the listener did their work
         setTransactionalData(false);
+
+        // re-opem is not possible
+        this.connection=null;
     }
 
+    }
+
+    private boolean hasCoreConnection() {
+        return this.getCoreConnection()!=null;
     }
 
 
@@ -253,7 +264,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
      */
     public void release() {
         try {
-            if(this.getCoreConnection()!=null) {
+            if(hasCoreConnection()) {
                 this.setClosed(true);
                 this.getCoreConnection().reset();
                 this.fireConnectionReleased();
@@ -275,14 +286,14 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     }
 
     public boolean isAutoCommit() {
-        if (this.getCoreConnection() != null) {
+        if (hasCoreConnection()) {
             return this.getCoreConnection().isAutoCommit();
         }
         return false;
     }
 
     public void setAutoCommit(boolean autoCommit) {
-        if (this.getCoreConnection() != null) {
+        if (hasCoreConnection()) {
             checkClosed();
             this.getCoreConnection().setAutoCommit(autoCommit);
             this.fireAutocommitChanged();
@@ -295,7 +306,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
      * As a connection proxy shields a xa resource, the current connection is not closed but dereferenced (==released)
      */
     public void reset() {
-        if (this.getCoreConnection() != null) {
+        if (hasCoreConnection()) {
             this.getCoreConnection().reset();
             setTransactionalData(false);
             // notify the action
@@ -309,7 +320,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
             return;
         }
         fireConnectionCommitting();
-        if (this.getCoreConnection() != null) {
+        if (hasCoreConnection()) {
             checkClosed();
             this.getCoreConnection().commit();
             setTransactionalData(false);
@@ -326,7 +337,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         }
 
         this.fireConnectionPreparing();
-        if (this.getCoreConnection() != null) {
+        if (hasCoreConnection()) {
             checkClosed();
             this.getCoreConnection().prepare();
         }
@@ -341,7 +352,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         }
 
         fireConnectionRollingBack();
-        if (this.getCoreConnection() != null) {
+        if (hasCoreConnection()) {
 
             checkClosed();
             this.getCoreConnection().rollback();

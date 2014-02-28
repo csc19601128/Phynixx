@@ -33,6 +33,13 @@ package org.csc.phynixx.connection;
  * <p/>
  * Impl. of this IF represents the access to the core connections in this FW
  *
+ * h1. Thread Safeness
+ *
+ * When this connection is used in a pool ({@link org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory} it is strongly recommend to synchronized
+ * the connection {@link #setSynchronized(boolean)}.
+ *
+ * When a connection is get from the pool or if it is released to it some functionality of the connection is used.
+ * It is no obvious if the pools implementation of {@link org.apache.commons.pool2.impl.GenericObjectPool} is strictly thread safe.
  * @author christoph
  */
 public interface IPhynixxManagedConnection<C extends IPhynixxConnection> extends IPhynixxConnection, ICloseable //, IPhynixxConnectionHandle<C>

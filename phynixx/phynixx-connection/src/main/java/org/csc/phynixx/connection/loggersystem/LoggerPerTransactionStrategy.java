@@ -82,6 +82,12 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
      */
     @Override
     public void connectionReleased(IManagedConnectionProxyEvent<C> event) {
+
+        // physical connection is already set free
+        if(  event.getManagedConnection().getCoreConnection()==null) {
+                return;
+        }
+
         C con = event.getManagedConnection().getCoreConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
@@ -108,7 +114,10 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 
     @Override
     public void connectionFreed(IManagedConnectionProxyEvent<C> event) {
-
+        // physical connection is already set free
+        if(  event.getManagedConnection().getCoreConnection()==null) {
+            return;
+        }
         C con = event.getManagedConnection().getCoreConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;
@@ -139,6 +148,10 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
      */
     @Override
     public void connectionRecovered(IManagedConnectionProxyEvent<C> event) {
+        // physical connection is already set free
+        if(  event.getManagedConnection().getCoreConnection()==null) {
+            return;
+        }
         IPhynixxConnection con = event.getManagedConnection().getCoreConnection();
         if (con == null || !(con instanceof IXADataRecorderAware)) {
             return;

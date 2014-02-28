@@ -900,18 +900,18 @@ public class XAResourceIntegrationTest extends TestCase {
      */
     public void testMixedLocalGlobalTransactionAndSuspend() throws Exception {
 
-        IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
+        IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
 
         this.getTransactionManager().begin();
 
-        ITestConnection con3 = xaCon1.getConnection();
-        con3.act(3);
+        ITestConnection con0 = xaCon.getConnection();
+        con0.act(3);
 
         Transaction transaction = this.getTransactionManager().getTransaction();
         this.getTransactionManager().suspend();
 
         // con1 on local transaction
-        ITestConnection con1 = xaCon1.getConnection();
+        ITestConnection con1 = xaCon.getConnection();
         con1.act(1);
         con1.act(2);
         con1.commit();
@@ -920,18 +920,19 @@ public class XAResourceIntegrationTest extends TestCase {
 
         // con2 on global transaction
         this.getTransactionManager().begin();
-        ITestConnection con2 = xaCon1.getConnection();
+        ITestConnection con2 = xaCon.getConnection();
         con2.act(1);
 
         this.getTransactionManager().rollback();
 
         this.getTransactionManager().resume(transaction);
 
-        con3.act(2);
+        con0.act(2);
 
         this.getTransactionManager().rollback();
 
-        Assert.assertTrue(con1.getConnectionId()!=con2.getConnectionId());
+        Assert.assertTrue(con0.getConnectionId()!=con2.getConnectionId());
+        Assert.assertTrue(con1.getConnectionId()==con2.getConnectionId());
 
         log.info(TestConnectionStatusManager.toDebugString());
 

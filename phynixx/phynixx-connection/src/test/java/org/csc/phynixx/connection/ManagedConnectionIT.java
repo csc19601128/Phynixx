@@ -139,12 +139,19 @@ public class ManagedConnectionIT {
         con.commit();
         Assert.assertEquals(25, con.getCounter());
 
+        // read it before connection is closed
+        int counter = con.getCounter();
+
+        Object connectionId = con.getConnectionId();
         con.close();
 
-        Assert.assertEquals(0, con.getCounter());
+        try {
+            con.getCounter();
+            throw new AssertionFailedError("Connection is already set free");
+        } catch (Exception e) {}
 
         LOG.info(TestConnectionStatusManager.toDebugString());
-        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(con.getConnectionId());
+        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(connectionId);
         Assert.assertTrue(statusStack.isFreed());
 
 
