@@ -402,7 +402,6 @@ class Watchdog implements Runnable, IWatchdog {
             try {
                 Thread.currentThread().sleep(10);
             } catch (InterruptedException e) {
-                continue; // interrupted and stopped ...
             }
         }
         // acknowledge the thread starvation for all waiting for the dead of the thread

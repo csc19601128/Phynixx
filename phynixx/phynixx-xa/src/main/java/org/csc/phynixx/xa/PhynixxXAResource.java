@@ -60,8 +60,6 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     private Object xaId = null;
 
-    private TransactionManager transactionManager = null;
-
     private PhynixxXAResourceFactory<C> xaResourceFactory = null;
 
     /**
@@ -81,7 +79,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
             TransactionManager transactionManager,
             PhynixxXAResourceFactory<C> xaResourceFactory) {
         this.xaId = xaId;
-        this.transactionManager = transactionManager;
+        TransactionManager transactionManager1 = transactionManager;
         this.xaResourceFactory = xaResourceFactory;
         this.xaConnectionHandle = new PhynixxManagedXAConnection(this, transactionManager, xaResourceFactory.getXATransactionalBranchRepository(), xaResourceFactory.getManagedConnectionFactory());
 
@@ -376,7 +374,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
                 // Find the current Branch
 
-                if (!transactionalBranch.isActive()) {
+                if (transactionalBranch.isInActive()) {
                     throw new XAException(XAException.XAER_PROTO);
                 }
 

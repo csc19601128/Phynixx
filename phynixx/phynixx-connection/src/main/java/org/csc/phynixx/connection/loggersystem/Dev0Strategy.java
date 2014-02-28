@@ -47,19 +47,17 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedCo
     private static class Dev0Logger implements IXADataRecorder {
 
         @Override
-        public void commitRollforwardData(byte[][] data) {
+        public void writeRollforwardData(byte[][] data) {
         }
 
         @Override
-        public void commitRollforwardData(byte[] data) {
+        public void writeRollforwardData(byte[] data) {
         }
 
-        @Override
         public boolean isCommitting() {
             return false;
         }
 
-        @Override
         public boolean isCompleted() {
             return false;
         }
@@ -69,7 +67,6 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedCo
             return false;
         }
 
-        @Override
         public boolean isPrepared() {
             return false;
         }

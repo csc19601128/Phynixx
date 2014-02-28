@@ -180,7 +180,7 @@ public class TestConnection implements ITestConnection {
         try {
             byte[] bytes = new LogRecordWriter().writeInt(this.initialValue).writeInt(this.increment).toByteArray();
             if (this.getXADataRecorder() != null) {
-                this.getXADataRecorder().commitRollforwardData(bytes);
+                this.getXADataRecorder().writeRollforwardData(bytes);
             }
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
@@ -214,7 +214,9 @@ public class TestConnection implements ITestConnection {
 
         TestConnection that = (TestConnection) o;
 
-        if (connectionId != null ? !connectionId.equals(that.connectionId) : that.connectionId != null) return false;
+        if (connectionId != null ? !connectionId.equals(that.connectionId) : that.connectionId != null) {
+            return false;
+        }
 
         return true;
     }

@@ -63,23 +63,25 @@ public class XADataLogger {
 
 
         public void onRecord(XALogRecordType recordType, byte[][] fieldData) {
-            if (count == 0) {
+        int count=0;
+        if (count == 0) {
                 dataRecorder.setMessageSequenceId(recoverMessageSequenceId(fieldData[0]));
-            } else {
+            } else{
                 short typeId = recordType.getType();
                 switch (typeId) {
                     case XALogRecordType.XA_START_TYPE:
                     case XALogRecordType.XA_PREPARED_TYPE:
-                    case XALogRecordType.XA_COMMIT_TYPE:
+                    case XALogRecordType.ROLLFORWARD_DATA_TYPE:
                     case XALogRecordType.XA_DONE_TYPE:
                     case XALogRecordType.USER_TYPE:
+                    case XALogRecordType.ROLLBACK_DATA_TYPE:
                         XADataLogger.this.recoverData(dataRecorder, recordType, fieldData);
                         break;
                     default:
                         LOGGER.error("Unknown LogRecordtype " + recordType);
                         break;
                 }
-            }
+        }
             count++;
         }
 
@@ -88,7 +90,7 @@ public class XADataLogger {
 
     private static final IPhynixxLogger LOGGER = PhynixxLogManager.getLogger(XADataLogger.class);
 
-    private static int HEADER_SIZE = 8 + 4;
+    private static final int HEADER_SIZE = 8 + 4;
 
     private IDataLogger dataLogger;
 
@@ -250,7 +252,11 @@ public class XADataLogger {
      * start sequence writes the ID of the XADataLogger to identify the content of the logger
      *
      * @param dataRecorder DataRecorder that uses /operates on the current physical logger
+     *
+     *
+     * deprecated
      */
+
     private void writeStartSequence(IXADataRecorder dataRecorder) throws IOException, InterruptedException {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
         try {

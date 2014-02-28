@@ -29,7 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * thisclas is backwards bound to the PhynixxXARecorderResource. The current class manages LogEntries but not know the persistence logger.
+ * thisclas is backwards bound to the PhynixxXARecorderRepository. The current class manages LogEntries but not know the persistence logger.
  */
 public class PhynixxXADataRecorder implements IXADataRecorder {
 
@@ -157,16 +157,16 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
      * create a new Message with the given data
      */
     public  void writeRollbackData(byte[][] data) {
-        IDataRecord msg = this.createDataRecord(XALogRecordType.USER, data);
+        IDataRecord msg = this.createDataRecord(XALogRecordType.ROLLBACK_DATA, data);
     }
 
 
-    public void commitRollforwardData(byte[] data) {
-        this.commitRollforwardData(toBytesBytes(data));
+    public void writeRollforwardData(byte[] data) {
+        this.writeRollforwardData(toBytesBytes(data));
     }
 
-    public void commitRollforwardData(byte[][] data) {
-        IDataRecord msg = this.createDataRecord(XALogRecordType.XA_COMMIT, data);
+    public void writeRollforwardData(byte[][] data) {
+        IDataRecord msg = this.createDataRecord(XALogRecordType.ROLLFORWARD_DATA, data);
     }
 
     public void addMessage(IDataRecord message) {
@@ -186,7 +186,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
                 if (!this.isCompleted() && !this.isCommitting()) {
                     replay.replayRollback(msg);
                 }
-            } else if (msg.getLogRecordType().equals(XALogRecordType.XA_COMMIT)) {
+            } else if (msg.getLogRecordType().equals(XALogRecordType.ROLLFORWARD_DATA)) {
                 if (this.isCommitting()) {
                     replay.replayRollforward(msg);
                 }
@@ -226,7 +226,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
 
         if (this.isCommitting() && !logRecordType.equals(XALogRecordType.XA_DONE)) {
             if (logRecordType == XALogRecordType.USER) {
-                throw new IllegalStateException("Sequence in State COMMITTING, only XA_DONE/XA_COMMIT are accepted");
+                throw new IllegalStateException("Sequence in State COMMITTING, only XA_DONE/ROLLFORWARD_DATA are accepted");
             }
         }
 
@@ -240,7 +240,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
             this.prepared = true;
         }
 
-        if (logRecordType.equals(XALogRecordType.XA_COMMIT)) {
+        if (logRecordType.equals(XALogRecordType.ROLLFORWARD_DATA)) {
             this.committing = true;
             this.completed = false;
             this.prepared = false;
@@ -306,7 +306,8 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
 
 
     /**
-     * rewinds the dataLoger to start without removing content
+     * rewinds the dataLoger to start without removing the persistent content of the rdataLogger
+     * the cached messages are removed but can re re-build by analysing the content of the dataLogger.
      */
     void rewind() {
         this.committing = false;
@@ -316,6 +317,9 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     }
 
 
+    /**rewinds the recorder and resets the dataLogger. Information of the dataLogger is removed
+     *
+     */
     public void reset() {
         this.committing = false;
         this.completed = false;
@@ -330,13 +334,14 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     }
 
     /**
-     * current sequence is closed and can be forgotten
+     * closes the current datalogger and rewinds
      */
     public void close() {
         if (dataRecorderLifycycleListner != null) {
             this.dataRecorderLifycycleListner.recorderDataRecorderClosed(this);
         }
         this.dataLogger.close();
+        this.rewind();
     }
 
     @Override
@@ -344,6 +349,9 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         return this.dataLogger.isClosed();
     }
 
+    /**
+     * destroyes the current dataLogger
+     */
     @Override
     public void destroy() {
         try {

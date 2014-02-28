@@ -35,7 +35,7 @@ import org.csc.phynixx.connection.reference.IReferenceConnection;
 import org.csc.phynixx.connection.reference.ReferenceConnectionFactory;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
-import org.csc.phynixx.loggersystem.logrecord.IXARecorderResource;
+import org.csc.phynixx.loggersystem.logrecord.IXARecorderRepository;
 import org.csc.phynixx.loggersystem.logrecord.IXARecorderResourceListener;
 import org.csc.phynixx.phynixx.testconnection.ITestConnection;
 import org.csc.phynixx.phynixx.testconnection.TestConnectionFactory;
@@ -233,7 +233,7 @@ public class MTIntegrationScenariosIT extends TestCase {
 
 
         @Override
-        public void recorderResourceClosed(IXARecorderResource recorderResource) {
+        public void recorderResourceClosed(IXARecorderRepository recorderResource) {
 
             this.openLoggerCounter--;
             //System.out.println("Logger "+logger + " closed - No of reopen Threads " + openLoggerCounter);
@@ -241,7 +241,7 @@ public class MTIntegrationScenariosIT extends TestCase {
         }
 
         @Override
-        public void recorderResourceOpened(IXARecorderResource recorderResource) {
+        public void recorderResourceOpened(IXARecorderRepository recorderResource) {
             this.openLoggerCounter++;
             System.out.println("Logger " + logger + " opened - No of reopen Threads " + openLoggerCounter);
 

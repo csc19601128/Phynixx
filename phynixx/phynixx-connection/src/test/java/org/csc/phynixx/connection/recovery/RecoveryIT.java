@@ -184,7 +184,7 @@ public class RecoveryIT {
         try {
             con.commit();
             throw new AssertionFailedError("ActionInterruptedException expected");
-        } catch (Exception e) {;}
+        } catch (Exception e) {}
 
         // close on an incomplete connections does not destroy the restore data
         con.close();

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>phynixx</artifactId>
-        <groupId>org.csc.phynixx.phynixx</groupId>
+        <groupId>org.csc.phynixx</groupId>
         <version>2.0-SNAPSHOT</version>
     </parent>
     <artifactId>phynixx-jmx</artifactId>
@@ -35,19 +35,19 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.csc.phynixx.phynixx</groupId>
+            <groupId>org.csc.phynixx</groupId>
             <artifactId>phynixx-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.csc.phynixx.phynixx</groupId>
+            <groupId>org.csc.phynixx</groupId>
             <artifactId>phynixx-watchdog</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.csc.phynixx.phynixx</groupId>
+            <groupId>org.csc.phynixx</groupId>
             <artifactId>phynixx-watchdog</artifactId>
             <version>${project.version}</version>
             <classifier>tests</classifier>
@@ -55,7 +55,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.csc.phynixx.phynixx</groupId>
+            <groupId>org.csc.phynixx</groupId>
             <artifactId>phynixx-xa</artifactId>
             <version>${project.version}</version>
         </dependency>

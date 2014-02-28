@@ -26,5 +26,5 @@ package org.csc.phynixx.phynixx.testconnection;
  */
 public enum TestInterruptionPoint {
 
-    ACT, COMMIT, ROLLBACK, PREPARE, CLOSE;
+    ACT, COMMIT, ROLLBACK, PREPARE, CLOSE
 }

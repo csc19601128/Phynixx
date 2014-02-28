@@ -34,7 +34,10 @@ public enum XAResourceProgressState {
 
     ROLLEDBACK,
 
-    CLOSED, COMMITTING, ROLLING_BACK, PREPARING;
+    CLOSED,
+    COMMITTING,
+    ROLLING_BACK,
+    PREPARING
 
 
 }

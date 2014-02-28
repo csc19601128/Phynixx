@@ -355,7 +355,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
         // the connection has to re establish the state of the message LOG
         IXADataRecorder msgLogger = this.getXADataRecorder();
-        if (msgLogger.isCompleted()) {
+        if (msgLogger.isEmpty()) {
             return;
         }
         this.fireConnectionRecovering();

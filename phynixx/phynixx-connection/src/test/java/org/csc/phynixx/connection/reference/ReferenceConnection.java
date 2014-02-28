@@ -162,7 +162,7 @@ public class ReferenceConnection implements IReferenceConnection, IXADataRecorde
         for (Iterator iterator = this.increments.iterator(); iterator.hasNext(); ) {
             Integer inc = (Integer) iterator.next();
             // the data is stored for recovering the committing phase
-            this.getXADataRecorder().commitRollforwardData(inc.toString().getBytes());
+            this.getXADataRecorder().writeRollforwardData(inc.toString().getBytes());
             this.counter = this.counter + inc.intValue();
         }
         /**

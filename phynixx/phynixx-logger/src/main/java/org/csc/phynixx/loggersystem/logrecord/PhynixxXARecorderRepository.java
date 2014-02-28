@@ -83,7 +83,7 @@ import java.util.*;
  *
  * @author christoph
  */
-public class PhynixxXARecorderResource implements IXARecorderResource {
+public class PhynixxXARecorderRepository implements IXARecorderRepository {
 
 
     public interface IEventDeliver {
@@ -109,7 +109,7 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
     private IDGenerator<Long> messageSeqGenerator = IDGenerators.synchronizeGenerator(IDGenerators.createLongGenerator(1l));
 
 
-    public PhynixxXARecorderResource(IDataLoggerFactory dataLoggerFactory) {
+    public PhynixxXARecorderRepository(IDataLoggerFactory dataLoggerFactory) {
         this.dataLoggerFactory = dataLoggerFactory;
         if (this.dataLoggerFactory == null) {
             throw new IllegalArgumentException("No dataLoggerFactory set");
@@ -145,6 +145,10 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
     }
 
     @Override
+    public IXADataRecorder findXADataRecord(long dataRecordId) {
+        return this.xaDataRecorders.get(dataRecordId);
+    }
+
     public String getLoggerSystemName() {
         return dataLoggerFactory.getLoggerSystemName();
     }
@@ -168,7 +172,7 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final PhynixxXARecorderResource other = (PhynixxXARecorderResource) obj;
+        final PhynixxXARecorderRepository other = (PhynixxXARecorderRepository) obj;
         if (getLoggerSystemName() == null) {
             if (other.getLoggerSystemName() != null)
                 return false;
@@ -185,12 +189,10 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
     /**
      * logs user data into the message sequence
      */
-    @Override
     public void logUserData(IXADataRecorder xaDataRecorder, byte[][] data) {
         IDataRecord message = xaDataRecorder.createDataRecord(XALogRecordType.USER, data);
     }
 
-    @Override
     public void logUserData(IXADataRecorder sequence, byte[] data) throws InterruptedException, IOException {
         this.logUserData(sequence, new byte[][]{data});
     }
@@ -208,7 +210,6 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
      * @throws IOException
      * @throws InterruptedException
      */
-    @Override
     public void preparedXA(IXADataRecorder dataRecorder) throws IOException {
         IDataRecord message = dataRecorder.createDataRecord(XALogRecordType.XA_PREPARED, EMPTY_DATA);
     }
@@ -225,9 +226,8 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
      * @throws IOException
      * @throws InterruptedException
      */
-    @Override
     public void committingXA(IXADataRecorder dataRecorder, byte[][] data) throws IOException {
-        IDataRecord message = dataRecorder.createDataRecord(XALogRecordType.XA_COMMIT, data);
+        IDataRecord message = dataRecorder.createDataRecord(XALogRecordType.ROLLFORWARD_DATA, data);
     }
 
 
@@ -243,7 +243,6 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
      * @throws IOException
      * @throws InterruptedException
      */
-    @Override
     public void startXA(IXADataRecorder dataRecorder, String resourceId, byte[] xid) throws IOException {
         DataOutputStream outputIO = null;
         try {
@@ -277,14 +276,12 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
      * @throws InterruptedException
      * @throws IOException
      */
-    @Override
     public void doneXA(IXADataRecorder dataRecorder) throws IOException {
 
         IDataRecord message = dataRecorder.createDataRecord(XALogRecordType.XA_DONE, new byte[][]{});
     }
 
 
-    @Override
     public synchronized void open() throws IOException, InterruptedException {
         if (this.dataLoggerFactory == null) {
             throw new IllegalStateException("No logger set");
@@ -395,7 +392,7 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
     protected void fireXARecorderResourceClosed() {
         IEventDeliver deliver = new IEventDeliver() {
             public void fireEvent(IXARecorderResourceListener listener) {
-                listener.recorderResourceClosed(PhynixxXARecorderResource.this);
+                listener.recorderResourceClosed(PhynixxXARecorderRepository.this);
             }
         };
         fireEvents(deliver);
@@ -404,7 +401,7 @@ public class PhynixxXARecorderResource implements IXARecorderResource {
     protected void fireXARecorderResourceOpened() {
         IEventDeliver deliver = new IEventDeliver() {
             public void fireEvent(IXARecorderResourceListener listener) {
-                listener.recorderResourceOpened(PhynixxXARecorderResource.this);
+                listener.recorderResourceOpened(PhynixxXARecorderRepository.this);
             }
         };
         fireEvents(deliver);

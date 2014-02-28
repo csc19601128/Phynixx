@@ -86,7 +86,7 @@ public class MTXAResourceLoggerTest extends TestCase {
      private int chunkSize;
      private PhynixxXADataRecorder messageSequence;
 
-     private MessageSampler(String xaDataRecorderId, PhynixxXARecorderResource logger,
+     private MessageSampler(String xaDataRecorderId, PhynixxXARecorderRepository logger,
      String message, int chunkSize) throws IOException, InterruptedException {
      this.message = message;
      this.chunkSize = chunkSize;

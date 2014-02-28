@@ -63,10 +63,7 @@ public class ObjectImplementor<O> implements IImplementor {
             throw new IllegalArgumentException("Parameter 'cls' muss angegeben werden");
         }
         final Class<?> beanClass = bean.getClass();
-        if (cls.isAssignableFrom(beanClass)) {
-            return true;
-        }
-        return false;
+        return cls.isAssignableFrom(beanClass);
 
     }
 

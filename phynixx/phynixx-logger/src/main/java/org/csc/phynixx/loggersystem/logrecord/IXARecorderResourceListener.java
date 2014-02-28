@@ -26,8 +26,8 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 public interface IXARecorderResourceListener {
 
-    void recorderResourceClosed(IXARecorderResource recorderResource);
+    void recorderResourceClosed(IXARecorderRepository recorderResource);
 
-    void recorderResourceOpened(IXARecorderResource recorderResource);
+    void recorderResourceOpened(IXARecorderRepository recorderResource);
 
 }

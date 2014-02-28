@@ -36,7 +36,6 @@ import javax.transaction.xa.XAResource;
 public class SampleTransactionResourceManager implements TransactionResourceManager {
 
     public void returnXAResource(String rmName, XAResource rmXares) {
-        return;
 
     }
 

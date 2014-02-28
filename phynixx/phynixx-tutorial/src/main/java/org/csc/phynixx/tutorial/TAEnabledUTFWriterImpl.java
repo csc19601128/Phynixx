@@ -180,7 +180,7 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
     public void commit() {
         try {
             LogRecordWriter logRecordWriter = new LogRecordWriter().writeLong(position());
-            this.getXADataRecorder().commitRollforwardData(logRecordWriter.toByteArray());
+            this.getXADataRecorder().writeRollforwardData(logRecordWriter.toByteArray());
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
         }

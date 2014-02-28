@@ -54,9 +54,9 @@ public class XADataRecorderTest {
     public void testMessageLogger() throws Exception {
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", new TmpDirectory().getDirectory());
-        PhynixxXARecorderResource xaResource = new PhynixxXARecorderResource(loggerFactory);
+        PhynixxXARecorderRepository xaResource = new PhynixxXARecorderRepository(loggerFactory);
 
-        IXADataRecorder xaDataRecorder = xaResource.createXADataRecorder();
+        PhynixxXADataRecorder xaDataRecorder = (PhynixxXADataRecorder) xaResource.createXADataRecorder();
 
 
         TestCase.assertTrue(!xaDataRecorder.isCommitting());
@@ -65,10 +65,10 @@ public class XADataRecorderTest {
         xaDataRecorder.writeRollbackData(new byte[][]{"XYZ".getBytes(), "ZYX".getBytes()});
 
         TestCase.assertTrue(!xaDataRecorder.isCommitting());
-        xaDataRecorder.commitRollforwardData(new byte[][]{"XYZ".getBytes(), "ZYX".getBytes()});
+        xaDataRecorder.writeRollforwardData(new byte[][]{"XYZ".getBytes(), "ZYX".getBytes()});
         TestCase.assertTrue(xaDataRecorder.isCommitting());
 
-        xaDataRecorder.commitRollforwardData(new byte[][]{"ABCD".getBytes()});
+        xaDataRecorder.writeRollforwardData(new byte[][]{"ABCD".getBytes()});
 
         try {
             xaDataRecorder.writeRollbackData(new byte[][]{});

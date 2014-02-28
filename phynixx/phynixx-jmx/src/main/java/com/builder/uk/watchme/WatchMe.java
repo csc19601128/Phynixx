@@ -34,7 +34,6 @@ import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 
 public class WatchMe {
-    private MBeanServer mbs = null;
 
     public static void main(String[] args) {
 
@@ -44,7 +43,7 @@ public class WatchMe {
     WatchMeBean smb;
 
     public WatchMe() {
-        mbs = ManagementFactory.getPlatformMBeanServer();
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 
         smb = new WatchMeBean();
         Thread t = new Thread(smb);

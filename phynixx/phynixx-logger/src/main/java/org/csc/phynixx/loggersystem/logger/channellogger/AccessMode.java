@@ -29,5 +29,5 @@ public enum AccessMode {
     NONE,
     WRITE,
     APPEND,
-    READ;
+    READ
 }

@@ -31,7 +31,7 @@ public enum TestConnectionStatus {
     FREED,
     RECOVERED,
     RESET,
-    ERROR_OCCURRED;
+    ERROR_OCCURRED
 
 
 }

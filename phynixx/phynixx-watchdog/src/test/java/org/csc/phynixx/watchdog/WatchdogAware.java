@@ -104,7 +104,6 @@ public class WatchdogAware extends TimeoutCondition implements Runnable, IWatche
         this.setActive(true);
         wd.registerCondition(this);
         this.watchdog = wd;
-        return;
     }
 
     public void run() {

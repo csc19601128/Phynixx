@@ -86,7 +86,7 @@ public class XAResourceLoggerTest {
 
         // Start XALogger ....
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        PhynixxXARecorderResource xaRecorderResource = new PhynixxXARecorderResource(loggerFactory);
+        PhynixxXARecorderRepository xaRecorderResource = new PhynixxXARecorderRepository(loggerFactory);
 
         int countMessages = 0;
 
@@ -95,7 +95,7 @@ public class XAResourceLoggerTest {
             xaRecorderResource.open();
 
             // start the sequence to be tested
-            IXADataRecorder xaDataRecorder1 = xaRecorderResource.createXADataRecorder();
+            PhynixxXADataRecorder xaDataRecorder1 = (PhynixxXADataRecorder) xaRecorderResource.createXADataRecorder();
 
             xaRecorderResource.startXA(xaDataRecorder1, "test1", "XID".getBytes());
             LogRecordWriter logWriter1 = new LogRecordWriter();
@@ -139,7 +139,7 @@ public class XAResourceLoggerTest {
 
             TestCase.assertEquals(1, xaDataRecorders.size());
 
-            IXADataRecorder dataRecorder2 = xaDataRecorders.iterator().next();
+            PhynixxXADataRecorder dataRecorder2 = (PhynixxXADataRecorder) xaDataRecorders.iterator().next();
             List<IDataRecord> messages = dataRecorder2.getDataRecords();
 
             TestCase.assertTrue(dataRecorder2.isCompleted());
@@ -159,7 +159,7 @@ public class XAResourceLoggerTest {
             TestCase.assertTrue(msg.getLogRecordType() == XALogRecordType.XA_PREPARED);
 
             msg = (IDataRecord) messages.get(3);
-            TestCase.assertTrue(msg.getLogRecordType() == XALogRecordType.XA_COMMIT);
+            TestCase.assertTrue(msg.getLogRecordType() == XALogRecordType.ROLLFORWARD_DATA);
             TestCase.assertEquals(2, msg.getData().length);
             //TestCase.assertTrue(Arrays.equals("A".getBytes(), msg.getData()[0]));
             //TestCase.assertTrue(Arrays.equals("B".getBytes(), msg.getData()[1]));

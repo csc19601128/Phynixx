@@ -72,38 +72,71 @@ import java.util.Set;
  *
  * @author christoph
  */
-public interface IXARecorderResource extends IXADataRecorderLifecycleListener {
+public interface IXARecorderRepository extends IXADataRecorderLifecycleListener {
 
+
+    /**
+
+     void open() throws IOException, InterruptedException;
+
+     String getLoggerSystemName();
+
+     void logUserData(IXADataRecorder dataRecorder, byte[][] data) throws InterruptedException, IOException;
+
+     void logUserData(IXADataRecorder dataRecorder, byte[] data) throws InterruptedException, IOException;
+
+     void preparedXA(IXADataRecorder dataRecorder) throws IOException;
+
+     void committingXA(IXADataRecorder dataRecorder, byte[][] data) throws InterruptedException, IOException;
+
+     void startXA(IXADataRecorder dataRecorder, String resourceId, byte[] xid) throws IOException, InterruptedException;
+
+     void doneXA(IXADataRecorder dataRecorder) throws IOException;
+
+     */
 
     boolean isClosed();
 
+    /**
+     * cerets a brand new recorder. This recorder is managed by the repository
+     * @return
+     * @throws IOException
+     *
+     * @see #findXADataRecord(long) find
+     */
     IXADataRecorder createXADataRecorder() throws IOException;
 
-    String getLoggerSystemName();
-
-    void logUserData(IXADataRecorder dataRecorder, byte[][] data) throws InterruptedException, IOException;
-
-    void logUserData(IXADataRecorder dataRecorder, byte[] data) throws InterruptedException, IOException;
-
-    void preparedXA(IXADataRecorder dataRecorder) throws IOException;
-
-    void committingXA(IXADataRecorder dataRecorder, byte[][] data) throws InterruptedException, IOException;
-
-    void startXA(IXADataRecorder dataRecorder, String resourceId, byte[] xid) throws IOException, InterruptedException;
-
-    void doneXA(IXADataRecorder dataRecorder) throws IOException;
-
-    void open() throws IOException, InterruptedException;
-
+    /**
+     * closes all open recorder.
+     * The recorder are {@link IXADataRecorder#close()} and removed from the repository.
+     *
+     * Depending on recording closed recorder could recovered if it contains relevant information
+     * and it is not destroyed but can be re-established by {@lonk #recover}
+     */
     void close();
 
+    /**
+     * destroys all open recorder.
+     * The recorder are {@link org.csc.phynixx.loggersystem.logrecord.IXADataRecorder#destroy()} and removed from the repository.
+     */
     void destroy() throws IOException, InterruptedException;
 
+    /**
+     * tries to reestablish all recorders. The logger system is closed.
+     * All remaining (already closed) recorder are reopen and coneved to the current repository
+     */
     void recover();
 
     /**
+     * looks for a dataRecorder with the given ID
+     * @param dataRecordId
+     * @return the found recorder or null if no recorder is found
+     */
+    IXADataRecorder findXADataRecord(long dataRecordId);
+
+    /**
      *
-     *
+     * @return all currently open loggers.
      */
     Set<IXADataRecorder> getXADataRecorders();
 }

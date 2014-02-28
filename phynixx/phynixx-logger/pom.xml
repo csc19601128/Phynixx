@@ -3,9 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>phynixx</artifactId>
-        <groupId>org.csc.phynixx.phynixx</groupId>
+        <groupId>org.csc.phynixx</groupId>
         <version>2.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>phynixx-logger</artifactId>
     <packaging>jar</packaging>
@@ -35,13 +34,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.csc.phynixx.phynixx</groupId>
+            <groupId>org.csc.phynixx</groupId>
             <artifactId>phynixx-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.csc.phynixx.phynixx</groupId>
+            <groupId>org.csc.phynixx</groupId>
             <artifactId>phynixx-common</artifactId>
             <version>${project.version}</version>
             <classifier>tests</classifier>

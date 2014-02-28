@@ -28,7 +28,7 @@ public enum XAResourceActivationState {
      */
     ACTIVE,
 
-    SUSPENDED;
+    SUSPENDED
 
 
 }

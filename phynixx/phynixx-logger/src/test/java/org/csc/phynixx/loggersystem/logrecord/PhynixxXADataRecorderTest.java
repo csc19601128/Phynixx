@@ -87,7 +87,7 @@ public class PhynixxXADataRecorderTest {
         logRecordWriter1.writeUTF(MESSAGE1);
         byte[][] content1 = new byte[1][];
         content1[0] = logRecordWriter1.toByteArray();
-        dataRecorder.commitRollforwardData(content1);
+        dataRecorder.writeRollforwardData(content1);
 
         dataRecorder.close();
 

@@ -141,7 +141,7 @@ public class MTPooledConnectionIT extends TestCase {
             }
             return conId;
         }
-    };
+    }
 
     private void startRunners(IActOnConnection actOnConnection, int numThreads) throws Exception {
         exceptions.clear();
@@ -218,6 +218,9 @@ public class MTPooledConnectionIT extends TestCase {
         };
 
         this.startRunners(actOnConnection, CONNECTION_POOL_SIZE*2);
+
+
+        this.factory.close();
 
         PhynixxRecovery<ITestConnection> recovery= new PhynixxRecovery<ITestConnection>(new TestConnectionFactory());
         IPhynixxLoggerSystemStrategy<ITestConnection> loggerStrategy=  this.factory.getLoggerSystemStrategy();

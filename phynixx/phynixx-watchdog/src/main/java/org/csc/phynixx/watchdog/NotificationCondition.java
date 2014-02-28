@@ -52,7 +52,6 @@ public class NotificationCondition implements IWatchedCondition {
     }
 
     public void conditionViolated() {
-        return;
     }
 
 

@@ -34,12 +34,10 @@ public class WatchdogInfo implements Serializable {
 
     private String info = null;
 
-    private String id = null;
-
     private String[] conditions;
 
     public WatchdogInfo(IWatchdog wd) {
-        this.id = wd.getId().toString();
+        String id = wd.getId().toString();
         this.setConditions(wd);
         this.setInfo(wd);
     }

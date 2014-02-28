@@ -108,7 +108,6 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
                 xaTransactionalBranch= this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid, localTransactionProxy.getConnection());
             }
             this.transactionBinding = new GlobalTransactionProxy<C>(xaTransactionalBranch);
-            return;
 
             // no transaction binding
         } else if (transactionBindingType == TransactionBindingType.NoTransaction) {
@@ -122,7 +121,6 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
                 this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid, physicalConnection);
             }
             this.transactionBinding = new GlobalTransactionProxy<C>(xaTransactionalBranch);
-            return;
 
             // if bound to a global TX it has to be the same XID
         } else if (transactionBindingType == TransactionBindingType.GlobalTransaction) {
@@ -301,15 +299,12 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
             }
         } else if (transactionBindingType == TransactionBindingType.NoTransaction) {
             this.transactionBinding = new LocalTransactionProxy<C>(this.managedConnectionFactory.getManagedConnection());
-            return;
         } else     // In Global Transaction and associated to a global transaction => nothing to do
             if (this.isInGlobalTransaction() && transactionBindingType == TransactionBindingType.GlobalTransaction) {
-                return;
             } else
 
                 // Not in Global Transaction and associated to a local transaction => nothing to do
                 if (!this.isInGlobalTransaction() && transactionBindingType == TransactionBindingType.LocalTransaction) {
-                    return;
                 }
 
     }
@@ -322,9 +317,8 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
 
         PhynixxManagedXAConnection that = (PhynixxManagedXAConnection) o;
 
-        if (!xaResource.equals(that.xaResource)) return false;
+        return xaResource.equals(that.xaResource);
 
-        return true;
     }
 
     @Override

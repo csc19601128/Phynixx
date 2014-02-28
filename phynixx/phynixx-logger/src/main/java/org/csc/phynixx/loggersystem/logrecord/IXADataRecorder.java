@@ -26,13 +26,17 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 public interface IXADataRecorder extends IDataRecordSequence {
 
+    /**
+     *
+     * @return true if no records
+     */
     boolean isEmpty();
 
     /**
      * logs the given data
      *
      * These data can be replyed to perform rollback.
-     * If commitRollforwardData is called once this method can not be called any more
+     * If writeRollforwardData is called once this method can not be called any more
      *
      * @param data
      */
@@ -40,7 +44,7 @@ public interface IXADataRecorder extends IDataRecordSequence {
 
     /**
      * logs the given data to perform rollback
-     * If commitRollforwardData is called once
+     * If writeRollforwardData is called once
      * this method can not be called any more
      *
      * @param data
@@ -49,37 +53,34 @@ public interface IXADataRecorder extends IDataRecordSequence {
 
     /**
      * logs the given data to perfrom rollforward
-     * If commitRollforwardData is called once
+     * If writeRollforwardData is called once
      * this method can not be called any more
      *
      * @param data
      */
-    void commitRollforwardData(byte[][] data);
+    void writeRollforwardData(byte[][] data);
 
 
     /**
      * logs the given data to perfrom rollforward
-     * If commitRollforwardData is called once
+     * If writeRollforwardData is called once
      * this method can not be called any more
      *
      * @param data
      */
-    void commitRollforwardData(byte[] data);
+    void writeRollforwardData(byte[] data);
 
+    /**
+     * tries to recover all persistent information
+     */
     void recover();
 
     /**
-     * @return indicates that current sequence has received a XA_COMMIT message no more logrecord are
+     * @return indicates that current sequence has received a ROLLFORWARD_DATA message no more logrecord are
      * accepted except XA_DONE to complete the sequence ....
      */
     public boolean isCommitting();
 
-    /**
-     * @return indicates that current sequence is completed (received a XA_DONE) and no more logrecord are accepted
-     */
-    public boolean isCompleted();
-
-    public boolean isPrepared();
 
     /**
      * @param replay
@@ -93,7 +94,7 @@ public interface IXADataRecorder extends IDataRecordSequence {
     IDataRecord createDataRecord(XALogRecordType logRecordType, byte[][] recordData);
 
     /**
-     * closes the dataLogger, but keeps all resources, so the dataLogger can be re-reopen
+     * closes the dataLogger, but keeps all resources, so the dataLogger can be reopened
      */
     void close();
 
