@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
+    <file url="file://$PROJECT_DIR$/phynixx" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phynixx/phynixx-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phynixx/phynixx-connection" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phynixx/phynixx-doc" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phynixx/phynixx-howl" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phynixx/phynixx-jmx" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phynixx/phynixx-logger" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phynixx/phynixx-tutorial" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phynixx/phynixx-watchdog" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phynixx/phynixx-xa" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>
+

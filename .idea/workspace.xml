@@ -1,0 +1,2619 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SCOPE_TYPE" value="2" />
+  </component>
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/recovery/XARecoveryTest.java" line="182" mnemonic="2" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d4d38fa2-655c-4f78-839c-0b30bb7bb831" name="Default" comment="XAResourceRecorder restructured">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_cli_commons_cli_1_1.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_io_commons_io_2_4.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_logging_commons_logging_1_0_3.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__geronimo_spec_geronimo_spec_jta_1_0_1B_rc4.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__howl_howl_logger_0_1_11.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_resource_connector_1_0.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_resource_connector_api_1_5.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_transaction_jta_1_0_1B.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jotm_jotm_2_0_10.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jotm_jotm_jrmp_stubs_2_0_10.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_11.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__log4j_log4j_1_2_17.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_pool2_2_1.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mockito_mockito_all_1_9_5.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_objectweb_carol_carol_2_0_5.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_objectweb_howl_howl_1_0_1_1.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_ow2_jotm_jotm_core_2_3_1_M1.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_ow2_jotm_jotm_standalone_2_3_1_M1.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_ow2_spec_ee_ow2_jta_1_1_spec_1_0_13.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_ow2_util_i18n_i18n_2_0_0.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_ow2_util_log_log_api_2_0_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/AbstractDynaProxyFactory.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/AbstractDynaProxyFactory.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/log/CheckConditionFailedLog.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/log/CheckConditionFailedLog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/log/ConditionViolatedLog.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/log/ConditionViolatedLog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/ConstantsPrinter.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/ConstantsPrinter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/IDGenerator.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/IDGenerator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/objectref/IObjectReference.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/objectref/IObjectReference.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/IPhynixxConnection.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/IPhynixxConnection.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/IPhynixxConnectionFactory.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/IPhynixxConnectionFactory.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/IPhynixxConnectionHandle.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/IPhynixxConnectionHandle.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/IPhynixxConnectionProxyDecorator.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/IPhynixxConnectionProxyDecorator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/IPhynixxXAConnection.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/IPhynixxXAConnection.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/IPhynixxXAResourceListener.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/IPhynixxXAResourceListener.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/recovery/IRecoveryManager.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/recovery/IRecoveryManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/IWatchdog.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/IWatchdog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/IWatchedCondition.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/IWatchedCondition.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/main/java/org/csc/phynixx/connection/jmx/LoggerSystemManagement.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/main/java/org/csc/phynixx/connection/jmx/LoggerSystemManagement.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/NotificationCondition.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/NotificationCondition.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/objectref/ObjectReference.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/objectref/ObjectReference.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxConnectionProxyEvent.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxConnectionProxyEvent.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResource.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResource.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResourceEvent.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResourceEvent.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/RestartCondition.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/RestartCondition.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/recovery/SampleTransactionResourceManager.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/recovery/SampleTransactionResourceManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-common/src/test/java/org/csc/phynixx/common/TestUtils.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-common/src/test/java/org/csc/phynixx/common/TestUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/TimeoutCondition.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/TimeoutCondition.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-common/src/test/java/org/csc/phynixx/common/TmpDirectory.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-common/src/test/java/org/csc/phynixx/common/TmpDirectory.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/main/java/org/csc/phynixx/watchdog/jmx/WatchTheWatchdogs.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/main/java/org/csc/phynixx/watchdog/jmx/WatchTheWatchdogs.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/main/java/org/csc/phynixx/watchdog/jmx/WatchTheWatchdogsMBean.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/main/java/org/csc/phynixx/watchdog/jmx/WatchTheWatchdogsMBean.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/Watchdog.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/Watchdog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/test/java/org/csc/phynixx/watchdog/WatchdogAware.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/test/java/org/csc/phynixx/watchdog/WatchdogAware.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/test/java/org/csc/phynixx/watchdog/WatchdogConsole.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/test/java/org/csc/phynixx/watchdog/WatchdogConsole.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/WatchdogInfo.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/WatchdogInfo.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/test/java/org/csc/phynixx/watchdog/jmx/WatchdogMBeanMainTestCase.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/test/java/org/csc/phynixx/watchdog/jmx/WatchdogMBeanMainTestCase.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/main/java/org/csc/phynixx/watchdog/jmx/WatchdogManagement.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/main/java/org/csc/phynixx/watchdog/jmx/WatchdogManagement.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/main/java/org/csc/phynixx/watchdog/jmx/WatchdogManagementMBean.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/main/java/org/csc/phynixx/watchdog/jmx/WatchdogManagementMBean.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/WatchdogReference.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/WatchdogReference.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/WatchdogRegistry.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/WatchdogRegistry.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/test/java/org/csc/phynixx/watchdog/WatchdogTest.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/test/java/org/csc/phynixx/watchdog/WatchdogTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/test/java/org/csc/phynixx/watchdog/jmx/WatchdogTestCase.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-jmx/src/test/java/org/csc/phynixx/watchdog/jmx/WatchdogTestCase.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/objectref/WeakObjectReference.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/objectref/WeakObjectReference.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/recovery/XARecoveryTest.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/recovery/XARecoveryTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/recovery/XidWrapper.java" afterPath="$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/recovery/XidWrapper.java" />
+    </list>
+    <list id="f96cb2fc-8c2c-4533-8360-d2e75e153a13" name="Rejected commit: Default" comment="phynixx-logger extracted" />
+    <list id="f446adf4-30e6-4e33-b9cf-2407c0336d00" name="restoring commiited size in XAEnabledRandomAccessFile" comment="" />
+    <ignored path="Phynixx.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="Commander">
+    <leftPanel />
+    <rightPanel url="file://$PROJECT_DIR$/phynixx/phynixx-common" />
+    <splitter proportion="0.5" />
+  </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/Phynixx$XAResourceIntegrationTest_testSuspend.coverage" NAME="XAResourceIntegrationTest.testSuspend Coverage Results" MODIFIED="1392983230228" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>org.csc.phynixx.xa.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Phynixx$MTPooledConnectionIT.coverage" NAME="MTPooledConnectionIT Coverage Results" MODIFIED="1393606563601" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>org.csc.phynixx.connection.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Phynixx$MTPooledConnectionTest_testInterruptedRollback.coverage" NAME="MTPooledConnectionTest.testInterruptedRollback Coverage Results" MODIFIED="1393058927154" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>org.csc.phynixx.connection.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Phynixx$org_csc_phynixx_in_phynixx_logger.coverage" NAME="org.csc.phynixx in phynixx-logger Coverage Results" MODIFIED="1391963169847" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>org.csc.phynixx.*</FILTER>
+    </SUITE>
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints />
+  </component>
+  <component name="DebuggerManager">
+    <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="&#13;&#13;JAVA" />
+        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
+      </breakpoint>
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="&#13;&#13;JAVA" />
+        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
+      </breakpoint>
+    </breakpoint_any>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
+    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/PooledManagedConnectionIntegrationScenariosIT.java" line="257" class="org.csc.phynixx.connection.PooledManagedConnectionIntegrationScenariosIT" package="org.csc.phynixx.connection">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/phynixx/testconnection/TestConnectionStatusListener.java" line="80" class="org.csc.phynixx.phynixx.testconnection.TestConnectionStatusListener" package="org.csc.phynixx.phynixx.testconnection">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logger/channellogger/FileChannelDataLogger.java" line="371" class="org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLogger" package="org.csc.phynixx.loggersystem.logger.channellogger">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="&#13;&#13;JAVA" />
+        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/recovery/RecoveryIT.java" line="144" class="org.csc.phynixx.connection.recovery.RecoveryIT" package="org.csc.phynixx.connection.recovery">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/PooledManagedConnectionIntegrationScenariosIT.java" line="241" class="org.csc.phynixx.connection.PooledManagedConnectionIntegrationScenariosIT" package="org.csc.phynixx.connection">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/AutoCommitListener.java" line="37" class="org.csc.phynixx.connection.AutoCommitListener" package="org.csc.phynixx.connection">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/PhynixxXADataRecorder.java" line="178" class="org.csc.phynixx.loggersystem.logrecord.PhynixxXADataRecorder" package="org.csc.phynixx.loggersystem.logrecord">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/XADataLogger.java" line="206" class="org.csc.phynixx.loggersystem.logrecord.XADataLogger" package="org.csc.phynixx.loggersystem.logrecord">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/XADataLogger.java" line="228" class="org.csc.phynixx.loggersystem.logrecord.XADataLogger" package="org.csc.phynixx.loggersystem.logrecord">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/recovery/RecoveryIT.java" line="254" class="org.csc.phynixx.connection.recovery.RecoveryIT" package="org.csc.phynixx.connection.recovery">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/recovery/RecoveryIT.java" line="126" class="org.csc.phynixx.connection.recovery.RecoveryIT" package="org.csc.phynixx.connection.recovery">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/recovery/RecoveryIT.java" line="107" class="org.csc.phynixx.connection.recovery.RecoveryIT" package="org.csc.phynixx.connection.recovery">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/loggersystem/LoggerPerTransactionStrategy.java" line="120" class="org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy" package="org.csc.phynixx.connection.loggersystem">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logger/channellogger/TAEnabledRandomAccessFile.java" line="267" class="org.csc.phynixx.loggersystem.logger.channellogger.TAEnabledRandomAccessFile" package="org.csc.phynixx.loggersystem.logger.channellogger">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logger/channellogger/FileChannelDataLogger.java" line="206" class="org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLogger" package="org.csc.phynixx.loggersystem.logger.channellogger">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/MTPooledConnectionIT.java" line="192" class="org.csc.phynixx.connection.MTPooledConnectionIT" package="org.csc.phynixx.connection">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxManagedConnectionGuard.java" line="266" class="org.csc.phynixx.connection.PhynixxManagedConnectionGuard" package="org.csc.phynixx.connection">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PooledPhynixxManagedConnectionFactory.java" line="153" class="org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory" package="org.csc.phynixx.connection">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/impl/GenericObjectPool.java" line="577" class="org.apache.commons.pool2.impl.GenericObjectPool" package="org.apache.commons.pool2.impl">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PooledPhynixxManagedConnectionFactory.java" line="202" class="org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory" package="org.csc.phynixx.connection">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </line_breakpoints>
+    <breakpoint_rules />
+    <ui_properties />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="Phynixx" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="XAResourceIntegrationTest.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/XAResourceIntegrationTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="1160" column="30" selection-start="41080" selection-end="41080" vertical-scroll-proportion="0.42767295" vertical-offset="19261" max-vertical-offset="20621">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TestXAResourceFactory.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/TestXAResourceFactory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="37" column="67" selection-start="1411" selection-end="1435" vertical-scroll-proportion="0.0" vertical-offset="254" max-vertical-offset="1088">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PhynixxXAResource.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResource.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="628" column="101" selection-start="26246" selection-end="26246" vertical-scroll-proportion="-4.12" vertical-offset="10470" max-vertical-offset="12036">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#5436#5437#0" expanded="true" />
+                <element signature="e#5474#5475#0" expanded="true" />
+                <element signature="e#5537#5538#0" expanded="true" />
+                <element signature="e#5591#5592#0" expanded="true" />
+                <element signature="e#5853#5854#0" expanded="true" />
+                <element signature="e#5899#5900#0" expanded="true" />
+                <element signature="e#5932#5933#0" expanded="true" />
+                <element signature="e#5961#5962#0" expanded="true" />
+                <element signature="e#26739#26740#0" expanded="true" />
+                <element signature="e#26771#26772#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PhynixxXAResourceFactory.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResourceFactory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="76" column="0" selection-start="1937" selection-end="2175" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="3247">
+              <folding>
+                <element signature="e#2018#2019#0" expanded="true" />
+                <element signature="e#2056#2057#0" expanded="true" />
+                <element signature="e#2119#2120#0" expanded="true" />
+                <element signature="e#2173#2174#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PhynixxManagedXAConnection.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxManagedXAConnection.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="128" column="0" selection-start="5818" selection-end="5818" vertical-scroll-proportion="0.0" vertical-offset="1745" max-vertical-offset="5593">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LoggerPerTransactionStrategy.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/loggersystem/LoggerPerTransactionStrategy.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="86" column="14" selection-start="2649" selection-end="2649" vertical-scroll-proportion="-3.4" vertical-offset="1292" max-vertical-offset="5559">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#9895#9912#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="XATransactionalBranch.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/XATransactionalBranch.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="194" column="60" selection-start="5873" selection-end="5873" vertical-scroll-proportion="0.0" vertical-offset="2651" max-vertical-offset="5576">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PhynixxManagedConnectionGuard.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxManagedConnectionGuard.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="266" column="11" selection-start="8517" selection-end="8517" vertical-scroll-proportion="-3.42" vertical-offset="4351" max-vertical-offset="11730">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#4043#4044#0" expanded="true" />
+                <element signature="e#4092#4093#0" expanded="true" />
+                <element signature="e#4145#4146#0" expanded="true" />
+                <element signature="e#4195#4196#0" expanded="true" />
+                <element signature="e#4253#4254#0" expanded="true" />
+                <element signature="e#4278#4279#0" expanded="true" />
+                <element signature="e#4586#4587#0" expanded="true" />
+                <element signature="e#4615#4616#0" expanded="true" />
+                <element signature="e#11276#11277#0" expanded="true" />
+                <element signature="e#11320#11321#0" expanded="true" />
+                <element signature="e#12940#12978#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ManagedConnectionIT.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/ManagedConnectionIT.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="145" column="20" selection-start="4328" selection-end="4328" vertical-scroll-proportion="0.0" vertical-offset="2034" max-vertical-offset="4930">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MTPooledConnectionIT.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/MTPooledConnectionIT.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="229" column="8" selection-start="7642" selection-end="7642" vertical-scroll-proportion="0.0" vertical-offset="3360" max-vertical-offset="4012">
+              <folding>
+                <element signature="e#7384#7401#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindManager">
+    <FindUsagesManager>
+      <setting name="OPEN_NEW_TAB" value="false" />
+    </FindUsagesManager>
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="csc19601128" />
+      </list>
+    </option>
+    <option name="UPDATE_TYPE" value="MERGE" />
+    <option name="SYNC_SETTING" value="DONT" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="gh-pages" />
+      </map>
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="changedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/TransactionBindingType.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/XAResourceActivationState.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/XAResourceProgressState.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-common/src/main/java/org/csc/phynixx/common/cast/ObjectImplementor.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/Watchdog.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-watchdog/src/main/java/org/csc/phynixx/watchdog/NotificationCondition.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxManagedXAConnection.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/recovery/SampleTransactionResourceManager.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/IXARecorderResource.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/IXARecorderRepository.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/PhynixxXARecorderResource.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/PhynixxXARecorderRepository.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/IXADataRecorder.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-logger/src/test/java/org/csc/phynixx/loggersystem/logrecord/XAResourceLoggerTest.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-logger/src/test/java/org/csc/phynixx/loggersystem/logrecord/XADataRecorderTest.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/loggersystem/Dev0Strategy.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxRecovery.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/phynixx/testconnection/TestConnection.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/XADataLogger.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/XALogRecordType.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-logger/src/test/java/org/csc/phynixx/loggersystem/logrecord/XALogRecordTypeTest.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/PhynixxXADataRecorder.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logger/channellogger/TAEnabledRandomAccessFile.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/recovery/RecoveryIT.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/reference/scenarios/MTIntegrationScenariosIT.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/pom.xml" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-doc/pom.xml" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-howl/pom.xml" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-jmx/pom.xml" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-logger/pom.xml" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-tutorial/pom.xml" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-watchdog/pom.xml" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-xa/pom.xml" />
+        <option value="$PROJECT_DIR$/phynixx/pom.xml" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-common/pom.xml" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-jmx/src/main/java/org/csc/phynixx/connection/jmx/LoggerSystemManagement.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-tutorial/src/main/java/org/csc/phynixx/tutorial/TAEnabledUTFWriterImpl.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/AbstractDynaProxyFactory.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/DynaPhynixxManagedConnectionFactory.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxManagedConnectionFactory.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/IPhynixxManagedConnection.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/MTPooledConnectionIT.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/IManagedConnectionProxyEvent.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PooledPhynixxManagedConnectionFactory.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/XATransactionalBranch.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/loggersystem/LoggerPerTransactionStrategy.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxManagedConnectionGuard.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/ManagedConnectionIT.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResourceFactory.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResource.java" />
+        <option value="$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/XAResourceIntegrationTest.java" />
+      </list>
+    </option>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="checksumPolicy" value="WARN" />
+        <option name="failureBehavior" value="FAST" />
+        <option name="mavenHome" value="Y:\apache\maven\apache-maven-3.1.1" />
+        <option name="nonRecursive" value="true" />
+        <option name="userSettingsFile" value="Y:\apache\maven\apache-maven-3.1.1\conf\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="downloadDocsAutomatically" value="true" />
+        <option name="downloadSourcesAutomatically" value="true" />
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+    <option name="enabledProfiles">
+      <list>
+        <option value="jdk16" />
+      </list>
+    </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <treeState>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="phynixx-tutorial" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="phynixx-tutorial" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Lifecycle" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$LifecycleNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Profiles" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProfilesNode" />
+        </PATH_ELEMENT>
+      </PATH>
+    </treeState>
+  </component>
+  <component name="MavenRunner">
+    <option name="environmentProperties">
+      <map>
+        <entry key="MAVEN_OPTS" value="-Xms512m -Xmx1024m -Djavax.net.ssl.trustStore=Y:\apache\maven\trust\trust.jks -Djavax.net.ssl.trustStorePassword=anfang1" />
+        <entry key="javax.net.ssl.trustStore" value="Y:\apache\maven\trust\truts.jks" />
+      </map>
+    </option>
+    <option name="skipTests" value="true" />
+    <option name="vmOptions" value="-Xms512m -Xmx1024m -Djavax.net.ssl.trustStore=Y:\apache\maven\trust\trust.jks -Djavax.net.ssl.trustStorePassword=anfang1" />
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>Abstraction issues</id>
+          </State>
+          <State>
+            <id>Android Lint</id>
+          </State>
+          <State>
+            <id>CDI(Contexts and Dependency Injection) issues</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Abstraction issues</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <OptionsSetting value="true" id="Undo Check Out" />
+    <OptionsSetting value="true" id="Get Latest Version" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectReloadState">
+    <option name="STATE" value="0" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="PackagesPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-tutorial" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-common" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-common" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="org.csc.phynixx.common" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="GoToClass.includeLibraries" value="false" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="MemberChooser.sorted" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
+    <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="options.lastSelected" value="MavenSettings" />
+    <property name="options.splitter.main.proportions" value="0.3" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/phynixx" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="dynamic.classpath" value="false" />
+    <property name="FullScreen" value="false" />
+    <property name="recentsLimit" value="5" />
+    <property name="restartRequiresConfirmation" value="true" />
+    <property name="LayoutCode.rearrangeEntriesXML" value="false" />
+    <property name="last_directory_selection" value="$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection" />
+    <property name="LayoutCode.rearrangeEntriesPlain text" value="false" />
+    <property name="LayoutCode.rearrangeEntriesJava" value="true" />
+    <property name="OverrideImplement.combined" value="true" />
+    <property name="OverrideImplement.overriding.sorted" value="false" />
+    <property name="LayoutCode.rearrangeEntries" value="false" />
+    <property name="extract.method.default.visibility" value="private" />
+    <property name="SearchEverywhereHistory" value="" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit4" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.includeInheritedMembers" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.csc.phynixx.loggersystem.logrecord" />
+      <recent name="org.csc.phynixx.common.utils" />
+      <recent name="org.csc.phynixx.common.util" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.csc.phynixx.connection" />
+      <recent name="org.csc.phynixx.xa" />
+      <recent name="org.csc.phynixx.phynixx.test_connection" />
+      <recent name="org.csc.phynixx.xa.deprecated" />
+      <recent name="org.csc.phynixx.common.utils" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="Y:\git-repos\phynixx\Phynixx\phynixx\phynixx-xa\src\main\java\org\csc\phynixx\xa\deprecated" />
+      <recent name="Y:\git-repos\phynixx\Phynixx\phynixx\phynixx-common\src\main\java\org\csc\phynixx\cast" />
+      <recent name="Y:\git-repos\phynixx\Phynixx\phynixx\src\site" />
+      <recent name="Y:\git-repos\phynixx\Phynixx\phynixx\phynixx-common\src\site" />
+      <recent name="Y:\git-repos\phynixx\Phynixx\phynixx\phynixx-jmx\src\site" />
+    </key>
+    <key name="ExtractSuperBase.RECENT_KEYS">
+      <recent name="org.csc.phynixx.loggersystem" />
+      <recent name="org.csc.phynixx.loggersystem.logger.channellogger" />
+    </key>
+    <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="org.csc.phynixx.connection.IPhynixxRecovery" />
+      <recent name="org.csc.phynixx.connection.IManagedConnectionFactory" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="org.csc.phynixx.common.generator" />
+      <recent name="org.csc.phynixx.xa" />
+      <recent name="org.csc.phynixx.tutorial" />
+      <recent name="org.csc.phynixx.connection" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="org.csc.phynixx.connection" />
+      <recent name="org.csc.phynixx.connection.recovery" />
+      <recent name="org.csc.phynixx.xa" />
+      <recent name="org.csc.phynixx" />
+      <recent name="org.csc" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="Y:\git-repos\phynixx\Phynixx\phynixx\phynixx-xa\src\license" />
+      <recent name="Y:\git-repos\phynixx\Phynixx\phynixx" />
+      <recent name="Y:\git-repos\phynixx\Phynixx\phynixx\phynixx-logger\src\site" />
+      <recent name="Y:\git-repos\phynixx\Phynixx\phynixx\phynixx-connection\src\test\java\org\csc\phynixx\connection" />
+      <recent name="Y:\git-repos\phynixx\Phynixx\phynixx\phynixx-logger\src" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.XAResourceIntegrationTest.testTimeoutNotSupported">
+    <configuration default="false" name="XAResourceIntegrationTest.testSuspendOneXAConnection" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="org.csc.phynixx.xa.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="phynixx-xa" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="org.csc.phynixx.xa" />
+      <option name="MAIN_CLASS_NAME" value="org.csc.phynixx.xa.XAResourceIntegrationTest" />
+      <option name="METHOD_NAME" value="testSuspendOneXAConnection" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="&lt;default&gt;" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="package" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="wholeProject" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="All in phynixx-xa" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="phynixx-xa" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="package" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="XAResourceIntegrationTest.testTimeout1" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="org.csc.phynixx.xa.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="phynixx-xa" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="org.csc.phynixx.xa" />
+      <option name="MAIN_CLASS_NAME" value="org.csc.phynixx.xa.XAResourceIntegrationTest" />
+      <option name="METHOD_NAME" value="testTimeout1" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="XAResourceIntegrationTest.testTimeoutNotSupported" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="org.csc.phynixx.xa.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="phynixx-xa" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="org.csc.phynixx.xa" />
+      <option name="MAIN_CLASS_NAME" value="org.csc.phynixx.xa.XAResourceIntegrationTest" />
+      <option name="METHOD_NAME" value="testTimeoutNotSupported" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="true" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list />
+            </option>
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method />
+    </configuration>
+    <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
+      <module name="" />
+      <option name="TESTING_TYPE" value="0" />
+      <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
+      <method />
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <method />
+    </configuration>
+    <configuration default="false" name="XAResourceIntegrationTest.testSuspend" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="org.csc.phynixx.xa.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="phynixx-xa" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="org.csc.phynixx.xa" />
+      <option name="MAIN_CLASS_NAME" value="org.csc.phynixx.xa.XAResourceIntegrationTest" />
+      <option name="METHOD_NAME" value="testSuspend" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Cover" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Cover" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="site phynixx" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="clean" />
+                <option value="site" />
+                <option value="-X" />
+              </list>
+            </option>
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$/phynixx" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="site doc" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="site:site" />
+              </list>
+            </option>
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$/phynixx/phynixx-doc" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <list size="8">
+      <item index="0" class="java.lang.String" itemvalue="JUnit.XAResourceIntegrationTest.testSuspend" />
+      <item index="1" class="java.lang.String" itemvalue="Maven.site phynixx" />
+      <item index="2" class="java.lang.String" itemvalue="Maven.site doc" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.XAResourceIntegrationTest.testSuspendOneXAConnection" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.&lt;default&gt;" />
+      <item index="5" class="java.lang.String" itemvalue="JUnit.All in phynixx-xa" />
+      <item index="6" class="java.lang.String" itemvalue="JUnit.XAResourceIntegrationTest.testTimeout1" />
+      <item index="7" class="java.lang.String" itemvalue="JUnit.XAResourceIntegrationTest.testTimeoutNotSupported" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="JUnit.XAResourceIntegrationTest.testTimeoutNotSupported" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.XAResourceIntegrationTest.testTimeout1" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.All in phynixx-xa" />
+        <item index="3" class="java.lang.String" itemvalue="JUnit.&lt;default&gt;" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.XAResourceIntegrationTest.testSuspendOneXAConnection" />
+      </list>
+    </recent_temporary>
+    <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
+      <Host>localhost</Host>
+      <Port>5050</Port>
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="StructuralSearchPlugin">
+    <replaceConfiguration name="user defined" text="Ivens" recursive="false" caseInsensitive="false" type="XML" reformatAccordingToStyle="false" shortenFQN="false" replacement="phynixx" history="1" />
+    <replaceConfiguration name="user defined" text="${artifactId}" recursive="false" caseInsensitive="false" type="XML" reformatAccordingToStyle="false" shortenFQN="false" replacement="${project.artifactId}" history="1" />
+    <replaceConfiguration name="user defined" text="${artifactId}" recursive="false" caseInsensitive="true" type="XML" reformatAccordingToStyle="false" shortenFQN="false" replacement="${project.artifactId}" history="1" />
+    <replaceConfiguration name="user defined" text="${artifactId}" recursive="false" caseInsensitive="true" type="XML" reformatAccordingToStyle="true" shortenFQN="true" replacement="${project.artifactId}" history="1" />
+  </component>
+  <component name="StructureViewFactory">
+    <option name="AUTOSCROLL_MODE" value="false" />
+    <option name="ACTIVE_ACTIONS" value=",SHOW_PROPERTIES" />
+    <option name="SHOW_TOOLBAR" value="true" />
+  </component>
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false" SSL_PROTOCOLS="all">
+    <option name="USER" value="" />
+    <option name="PASSWORD" value="" />
+    <option name="mySSHConnectionTimeout" value="30000" />
+    <option name="mySSHReadTimeout" value="30000" />
+    <option name="LAST_MERGED_REVISION" />
+    <option name="MERGE_DRY_RUN" value="false" />
+    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
+    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
+    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
+    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
+    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
+    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
+    <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
+    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d4d38fa2-655c-4f78-839c-0b30bb7bb831" name="Default" comment="" />
+      <created>1387826138842</created>
+      <updated>1393590533097</updated>
+      <workItem from="1387826153088" duration="209000" />
+      <workItem from="1387826366506" duration="1483000" />
+      <workItem from="1387827859528" duration="157000" />
+      <workItem from="1387976426900" duration="963000" />
+      <workItem from="1387995033018" duration="1888000" />
+      <workItem from="1388048366935" duration="615000" />
+      <workItem from="1388763482248" duration="10662000" />
+      <workItem from="1388775745769" duration="1066000" />
+      <workItem from="1388777074210" duration="482000" />
+      <workItem from="1388777639323" duration="88000" />
+      <workItem from="1388927183000" duration="2103000" />
+      <workItem from="1388988825990" duration="22000" />
+      <workItem from="1388988853958" duration="1441000" />
+      <workItem from="1388995190897" duration="7370000" />
+      <workItem from="1389003160804" duration="190000" />
+      <workItem from="1389003375246" duration="357000" />
+      <workItem from="1389021074016" duration="724000" />
+      <workItem from="1389026989954" duration="794000" />
+      <workItem from="1389110213124" duration="7108000" />
+      <workItem from="1389117551788" duration="7350000" />
+      <workItem from="1389190316909" duration="1096000" />
+      <workItem from="1389191421143" duration="923000" />
+      <workItem from="1389200061841" duration="164000" />
+      <workItem from="1389200227820" duration="12954000" />
+      <workItem from="1389252179574" duration="2386000" />
+      <workItem from="1389256789075" duration="6911000" />
+      <workItem from="1389274248391" duration="209000" />
+      <workItem from="1389284276296" duration="982000" />
+      <workItem from="1389286654254" duration="1201000" />
+      <workItem from="1389367513500" duration="49000" />
+      <workItem from="1389367588091" duration="1136000" />
+      <workItem from="1389368728588" duration="948000" />
+      <workItem from="1389369701104" duration="892000" />
+      <workItem from="1389370615104" duration="7062000" />
+      <workItem from="1389430837087" duration="542000" />
+      <workItem from="1389431416114" duration="4007000" />
+      <workItem from="1389444381183" duration="1768000" />
+      <workItem from="1389446176812" duration="2909000" />
+      <workItem from="1389449111334" duration="7585000" />
+      <workItem from="1389513288911" duration="1399000" />
+      <workItem from="1389514710650" duration="2654000" />
+      <workItem from="1389517386093" duration="198000" />
+      <workItem from="1389593159936" duration="5335000" />
+      <workItem from="1389630727994" duration="1576000" />
+      <workItem from="1389632339398" duration="12630000" />
+      <workItem from="1389685382050" duration="416000" />
+      <workItem from="1389725034489" duration="5569000" />
+      <workItem from="1389801776063" duration="13729000" />
+      <workItem from="1391179525796" duration="4870000" />
+      <workItem from="1391335073827" duration="16335000" />
+      <workItem from="1391353386515" duration="2127000" />
+      <workItem from="1391356167963" duration="2188000" />
+      <workItem from="1391447119986" duration="182000" />
+      <workItem from="1391447322807" duration="4490000" />
+      <workItem from="1391532774825" duration="4998000" />
+      <workItem from="1391619803482" duration="10290000" />
+      <workItem from="1391851516635" duration="6520000" />
+      <workItem from="1391940089104" duration="650000" />
+      <workItem from="1391941086552" duration="341000" />
+      <workItem from="1391941462598" duration="3702000" />
+      <workItem from="1391945593960" duration="323000" />
+      <workItem from="1391962860728" duration="2391000" />
+      <workItem from="1392021445455" duration="347000" />
+      <workItem from="1392021837948" duration="20956000" />
+      <workItem from="1392304798124" duration="680000" />
+      <workItem from="1392305536580" duration="3732000" />
+      <workItem from="1392482496160" duration="5501000" />
+      <workItem from="1392538800094" duration="9719000" />
+      <workItem from="1392650918255" duration="11356000" />
+      <workItem from="1392978346478" duration="235000" />
+      <workItem from="1392978628871" duration="17611000" />
+      <workItem from="1393007814471" duration="25377000" />
+      <workItem from="1393151375935" duration="8542000" />
+      <workItem from="1393432602924" duration="7102000" />
+      <workItem from="1393515705083" duration="2579000" />
+      <workItem from="1393575621263" duration="14858000" />
+      <workItem from="1393590533384" duration="3239000" />
+      <workItem from="1393605913814" duration="5731000" />
+      <workItem from="1393674694578" duration="247000" />
+      <workItem from="1393675523627" duration="6181000" />
+    </task>
+    <task id="LOCAL-00001" summary="Repositories updated">
+      <created>1387827974400</created>
+      <updated>1387827974400</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Repositories updated&#10;">
+      <created>1388774814766</created>
+      <updated>1388774814766</updated>
+    </task>
+    <task id="LOCAL-00003" summary="license management v1&#10;">
+      <created>1388999243386</created>
+      <updated>1388999243386</updated>
+    </task>
+    <task id="LOCAL-00004" summary="license management : apache 2.0 license Header added&#10;">
+      <created>1389000707858</created>
+      <updated>1389000707858</updated>
+    </task>
+    <task id="LOCAL-00005" summary="license management : apache 2.0 license Header added and Header Completion&#10;">
+      <created>1389001002718</created>
+      <updated>1389001002718</updated>
+    </task>
+    <task id="LOCAL-00006" summary="3rd party licenses integrated&#10;">
+      <created>1389112468711</created>
+      <updated>1389112468711</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Repositories updated&#10;">
+      <created>1389113407679</created>
+      <updated>1389113407679</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Repositories updated&#10;">
+      <created>1389113474379</created>
+      <updated>1389113474379</updated>
+    </task>
+    <task id="LOCAL-00009" summary="version upgrade commons-io --&gt; 2.4&#10;             log4j --&gt; 1.2.17">
+      <created>1389115563069</created>
+      <updated>1389115563069</updated>
+    </task>
+    <task id="LOCAL-00010" summary="version upgrade slf4j-logfj12 --&gt; 1.7.5&#10;                           slf4j-api --&gt; 1.7.5">
+      <created>1389115782932</created>
+      <updated>1389115782932</updated>
+    </task>
+    <task id="LOCAL-00011" summary="phynixx-logger extracted">
+      <created>1389213207727</created>
+      <updated>1389213207727</updated>
+    </task>
+    <task id="LOCAL-00012" summary="XAResourceRecorder restructured">
+      <created>1389370922012</created>
+      <updated>1389370922012</updated>
+    </task>
+    <task id="LOCAL-00013" summary="XAResourceRecorder restructured">
+      <created>1389373282839</created>
+      <updated>1389373282839</updated>
+    </task>
+    <task id="LOCAL-00014" summary="XAResourceRecorder restructured">
+      <created>1389517569631</created>
+      <updated>1389517569631</updated>
+    </task>
+    <task id="LOCAL-00015" summary="XAResourceRecorder restructured">
+      <created>1389593979092</created>
+      <updated>1389593979092</updated>
+    </task>
+    <task id="LOCAL-00016" summary="XAResourceRecorder restructured">
+      <created>1389594712436</created>
+      <updated>1389594712436</updated>
+    </task>
+    <task id="LOCAL-00017" summary="XAResourceRecorder restructured">
+      <created>1389598492323</created>
+      <updated>1389598492323</updated>
+    </task>
+    <task id="LOCAL-00018" summary="XAResourceRecorder restructured">
+      <created>1389644989278</created>
+      <updated>1389644989278</updated>
+    </task>
+    <task id="LOCAL-00019" summary="ManagedConnectionfacatory restructured">
+      <created>1389730745489</created>
+      <updated>1389730745489</updated>
+    </task>
+    <task id="LOCAL-00020" summary="ManagedConnectionfacatory restructured">
+      <created>1389817730508</created>
+      <updated>1389817730508</updated>
+    </task>
+    <task id="LOCAL-00021" summary="org.apache.commons:commons-pool2 eingefuehrt">
+      <created>1391188052001</created>
+      <updated>1391188052001</updated>
+    </task>
+    <task id="LOCAL-00022" summary="XAResourceRecorder restructured">
+      <created>1391357095079</created>
+      <updated>1391357095079</updated>
+    </task>
+    <task id="LOCAL-00023" summary="XAResourceRecorder restructured">
+      <created>1391358378865</created>
+      <updated>1391358378865</updated>
+    </task>
+    <task id="LOCAL-00024" summary="phynixx-tutorial">
+      <created>1391451402096</created>
+      <updated>1391451402096</updated>
+    </task>
+    <task id="LOCAL-00025" summary="phynixx-tutorial">
+      <created>1391451477658</created>
+      <updated>1391451477658</updated>
+    </task>
+    <task id="LOCAL-00026" summary="phynixx-tutorial">
+      <created>1391451523401</created>
+      <updated>1391451523401</updated>
+    </task>
+    <task id="LOCAL-00027" summary="XAResourceRecorder restructured">
+      <created>1391451785274</created>
+      <updated>1391451785274</updated>
+    </task>
+    <task id="LOCAL-00028" summary="phynixx-tutorial">
+      <created>1391540716381</created>
+      <updated>1391540716381</updated>
+    </task>
+    <task id="LOCAL-00029" summary="XAResourceRecorder restructured">
+      <created>1391630516549</created>
+      <updated>1391630516549</updated>
+    </task>
+    <task id="LOCAL-00030" summary="XAResourceRecorder restructured">
+      <created>1392482704472</created>
+      <updated>1392482704472</updated>
+    </task>
+    <task id="LOCAL-00031" summary="XAResourceRecorder restructured">
+      <created>1392487107718</created>
+      <updated>1392487107718</updated>
+    </task>
+    <task id="LOCAL-00032" summary="XAResourceRecorder restructured">
+      <created>1392488028311</created>
+      <updated>1392488028311</updated>
+    </task>
+    <task id="LOCAL-00033" summary="XAResourceRecorder restructured">
+      <created>1392548518984</created>
+      <updated>1392548518984</updated>
+    </task>
+    <task id="LOCAL-00034" summary="XAResourceRecorder restructured">
+      <created>1392662227122</created>
+      <updated>1392662227122</updated>
+    </task>
+    <task id="LOCAL-00035" summary="XAResourceRecorder restructured">
+      <created>1392983783401</created>
+      <updated>1392983783401</updated>
+    </task>
+    <task id="LOCAL-00036" summary="XAResourceRecorder restructured">
+      <created>1392996397700</created>
+      <updated>1392996397700</updated>
+    </task>
+    <task id="LOCAL-00037" summary="XAResourceRecorder restructured">
+      <created>1392996754431</created>
+      <updated>1392996754431</updated>
+    </task>
+    <task id="LOCAL-00038" summary="XAResourceRecorder restructured">
+      <created>1393007698525</created>
+      <updated>1393007698525</updated>
+    </task>
+    <task id="LOCAL-00039" summary="XAResourceRecorder restructured">
+      <created>1393008316068</created>
+      <updated>1393008316068</updated>
+    </task>
+    <task id="LOCAL-00040" summary="XAResourceRecorder restructured">
+      <created>1393056980383</created>
+      <updated>1393056980383</updated>
+    </task>
+    <task id="LOCAL-00041" summary="XAResourceRecorder restructured">
+      <created>1393150815686</created>
+      <updated>1393150815686</updated>
+    </task>
+    <task id="LOCAL-00042" summary="XAResourceRecorder restructured">
+      <created>1393166489141</created>
+      <updated>1393166489141</updated>
+    </task>
+    <task id="LOCAL-00043" summary="XAResourceRecorder restructured">
+      <created>1393439684259</created>
+      <updated>1393439684259</updated>
+    </task>
+    <task id="LOCAL-00044" summary="XAResourceRecorder restructured">
+      <created>1393517861945</created>
+      <updated>1393517861945</updated>
+    </task>
+    <task id="LOCAL-00045" summary="XAResourceRecorder restructured">
+      <created>1393584058401</created>
+      <updated>1393584058401</updated>
+    </task>
+    <task id="LOCAL-00047" summary="XAResourceRecorder restructured">
+      <created>1393590471762</created>
+      <updated>1393590471762</updated>
+    </task>
+    <task id="LOCAL-00048">
+      <changelist id="f446adf4-30e6-4e33-b9cf-2407c0336d00" name="restoring commiited size in XAEnabledRandomAccessFile" comment="" />
+      <created>1393590481692</created>
+      <updated>1393590532653</updated>
+      <workItem from="1393590520376" duration="13000" />
+    </task>
+    <task id="LOCAL-00049" summary="XAResourceRecorder restructured">
+      <created>1393604498528</created>
+      <updated>1393604498528</updated>
+    </task>
+    <task id="LOCAL-00050" summary="XAResourceRecorder restructured">
+      <created>1393608773128</created>
+      <updated>1393608773128</updated>
+    </task>
+    <task id="LOCAL-00051" summary="XAResourceRecorder restructured">
+      <created>1393611650872</created>
+      <updated>1393611650872</updated>
+    </task>
+    <task id="LOCAL-00052" summary="XAResourceRecorder restructured">
+      <created>1393676339160</created>
+      <updated>1393676339161</updated>
+    </task>
+    <task id="LOCAL-00053" summary="XAResourceRecorder restructured">
+      <created>1393682184912</created>
+      <updated>1393682184912</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
+    <option name="clearContext" value="false" />
+    <option name="createBranch" value="false" />
+    <servers>
+      <GitHub shared="false" url="github.com">
+        <commitMessageFormat>{id} {summary}</commitMessageFormat>
+        <password />
+        <token>dfcfdf9fdf9bdfcfdf9cdf9bdfccdfccdf92dfcfdf99df98df9adf93df93df9fdf9adfccdf93df9fdfcedf92df98dfcedfcfdfcbdfc9df9bdfcfdf9fdfc9df9adf92dfc8dfcbdf9ddf98df98dfcedf98</token>
+        <option name="loginAnonymously" value="false" />
+        <option name="repoAuthor" value="csc19601128" />
+        <option name="repoName" value="phynixx" />
+        <option name="shouldFormatCommitMessage" value="false" />
+        <option name="useHttpAuthentication" value="false" />
+        <option name="useProxy" value="false" />
+        <option name="user" value="csc19601128" />
+        <username />
+      </GitHub>
+    </servers>
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="345715000" />
+  </component>
+  <component name="TodoView" selected-index="0">
+    <todo-panel id="selected-file">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="default-changelist">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6414634" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32925472" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37708566" sideWeight="0.6608094" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6340378" sideWeight="0.79925454" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31838074" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33941606" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30812013" sideWeight="0.49893504" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31838074" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16506922" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.30525032" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.088924386" sideWeight="0.4983315" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28221512" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.41713014" sideWeight="0.9116081" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.088924386" sideWeight="0.5005562" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21512248" sideWeight="0.49816176" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Metrics" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295711" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4108352" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6414634" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31838074" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33941606" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.088924386" sideWeight="0.5005562" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31838074" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28221512" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21512248" sideWeight="0.49816176" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.41713014" sideWeight="0.9116081" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32925472" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37708566" sideWeight="0.6608094" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.6340378" sideWeight="0.79925454" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30812013" sideWeight="0.49893504" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Metrics" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295711" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16506922" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.30525032" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.088924386" sideWeight="0.4983315" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4108352" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <option name="myTodoPanelSettings">
+      <TodoPanelSettings />
+    </option>
+    <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="false" />
+    <MESSAGE value="Repositories updated" />
+    <MESSAGE value="license management v1&#10;" />
+    <MESSAGE value="license management : apache 2.0 license Header added&#10;" />
+    <MESSAGE value="license management : apache 2.0 license Header added and Header Completion&#10;" />
+    <MESSAGE value="3rd party licenses integrated&#10;" />
+    <MESSAGE value="version upgrade commons-io --&gt; 2.4&#10;             log4j --&gt; 1.2.17" />
+    <MESSAGE value="version upgrade slf4j-logfj12 --&gt; 1.7.5&#10;                           slf4j-api --&gt; 1.7.5" />
+    <MESSAGE value="Repositories updated&#10;" />
+    <MESSAGE value="phynixx-logger extracted" />
+    <MESSAGE value="ManagedConnectionfacatory restructured" />
+    <MESSAGE value="org.apache.commons:commons-pool2 eingefuehrt" />
+    <MESSAGE value="phynixx-tutorial" />
+    <MESSAGE value="XAResourceRecorder restructured" />
+    <option name="LAST_COMMIT_MESSAGE" value="XAResourceRecorder restructured" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints-dialog>
+        <breakpoints-dialog>
+          <selected-grouping-rules>
+            <grouping-rule id="XBreakpointGroupingByClassRule" />
+          </selected-grouping-rules>
+        </breakpoints-dialog>
+      </breakpoints-dialog>
+    </breakpoint-manager>
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
+  <component name="com.sixrr.metrics.MetricsReloaded">
+    <option name="selectedProfile" value="" />
+    <option name="autoscroll" value="false" />
+    <option name="showOnlyWarnings" value="false" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/XALogRecordType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="144" column="0" selection-start="4982" selection-end="4982" vertical-scroll-proportion="0.0" vertical-offset="1760" max-vertical-offset="2448" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxRecovery.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="70" column="48" selection-start="2518" selection-end="2518" vertical-scroll-proportion="0.0" vertical-offset="288" max-vertical-offset="1904" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/phynixx/testconnection/TestConnectionStatusManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="0" selection-start="1641" selection-end="1641" vertical-scroll-proportion="0.0" vertical-offset="703" max-vertical-offset="1258" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/phynixx/testconnection/TestConnectionStatusListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="41" column="0" selection-start="1469" selection-end="1469" vertical-scroll-proportion="0.0" vertical-offset="465" max-vertical-offset="1547">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="17" selection-start="364" selection-end="364" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2244" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-doc/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="17" selection-start="367" selection-end="367" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-howl/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="17" selection-start="364" selection-end="364" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2057" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-jmx/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="17" selection-start="364" selection-end="364" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2040" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-logger/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="17" selection-start="364" selection-end="364" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1904" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-tutorial/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="17" selection-start="376" selection-end="376" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1003" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-watchdog/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="17" selection-start="364" selection-end="364" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1853" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="17" selection-start="364" selection-end="364" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2499" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="26" selection-start="342" selection-end="356" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="11220">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-common/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="41" selection-start="389" selection-end="389" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1394" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/IXARecorderResourceListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="17" selection-start="714" selection-end="714" vertical-scroll-proportion="0.0" vertical-offset="186" max-vertical-offset="663" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-jmx/src/main/java/org/csc/phynixx/connection/jmx/LoggerSystemManagement.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="11" selection-start="1340" selection-end="1340" vertical-scroll-proportion="0.0" vertical-offset="407" max-vertical-offset="884" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-tutorial/src/main/java/org/csc/phynixx/tutorial/TAEnabledUTFWriterImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="62" column="0" selection-start="1788" selection-end="1788" vertical-scroll-proportion="0.0" vertical-offset="776" max-vertical-offset="3825" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/PhynixxXARecorderRepository.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="364" column="0" selection-start="11436" selection-end="11436" vertical-scroll-proportion="0.0" vertical-offset="5842" max-vertical-offset="6834" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logger/channellogger/TAEnabledRandomAccessFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="422" column="0" selection-start="12728" selection-end="12728" vertical-scroll-proportion="0.0" vertical-offset="6966" max-vertical-offset="8126">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/XADataLogger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="191" column="0" selection-start="6419" selection-end="6419" vertical-scroll-proportion="0.0" vertical-offset="2988" max-vertical-offset="4845">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logger/channellogger/FileChannelDataLogger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="326" column="0" selection-start="10603" selection-end="10603" vertical-scroll-proportion="0.0" vertical-offset="5232" max-vertical-offset="6239">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="uml://JAVA/org.csc.phynixx.connection">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>JAVA</ID>
+          <OriginalElement>org.csc.phynixx.connection</OriginalElement>
+          <nodes>
+            <node x="1017.6963595583157" y="254.0">org.csc.phynixx.connection.UnpooledConnectionCloseStrategy</node>
+            <node x="1231.375" y="432.0">org.csc.phynixx.connection.IPhynixxRecovery</node>
+            <node x="1516.1963595583156" y="166.0">org.csc.phynixx.connection.AutoCommitListener</node>
+            <node x="608.2499999999999" y="432.0">org.csc.phynixx.connection.IPooledConnection</node>
+            <node x="240.0" y="751.0">org.csc.phynixx.connection.IPhynixxConnectionHandle</node>
+            <node x="2156.361783988957" y="678.0">org.csc.phynixx.connection.recovery</node>
+            <node x="2305.736783988957" y="254.0">org.csc.phynixx.connection.loggersystem</node>
+            <node x="1680.1963595583156" y="254.0">org.csc.phynixx.connection.AutoCommitDecorator</node>
+            <node x="942.9611628709447" y="166.0">org.csc.phynixx.connection.CloseStrategy</node>
+            <node x="782.0" y="751.0">org.csc.phynixx.connection.jmx</node>
+            <node x="2337.411783988957" y="520.0">org.csc.phynixx.connection.ManagedConnectionIT</node>
+            <node x="1705.4963595583158" y="520.0">org.csc.phynixx.connection.PhynixxRecovery</node>
+            <node x="657.4046928916491" y="678.0">org.csc.phynixx.connection.PooledManagedConnectionIntegrationScenariosIT</node>
+            <node x="1840.1963595583156" y="254.0">org.csc.phynixx.connection.IPhynixxConnectionFactory</node>
+            <node x="1609.6006211180122" y="88.0">org.csc.phynixx.connection.PhynixxManagedConnectionListenerAdapter</node>
+            <node x="265.6867839889569" y="254.0">org.csc.phynixx.connection.ICloseable</node>
+            <node x="414.2499999999999" y="432.0">org.csc.phynixx.connection.IPhynixxManagedConnection</node>
+            <node x="778.7499999999999" y="254.0">org.csc.phynixx.connection.PooledConnectionCloseStrategy</node>
+            <node x="0.0" y="520.0">org.csc.phynixx.connection.IXADataRecorderAware</node>
+            <node x="1681.6963595583156" y="432.0">org.csc.phynixx.connection.PhynixxManagedConnectionFactory</node>
+            <node x="336.16116287094474" y="520.0">org.csc.phynixx.connection.PhynixxConnectionProxyEvent</node>
+            <node x="625.0" y="751.0">org.csc.phynixx.connection.listener</node>
+            <node x="202.25" y="432.0">org.csc.phynixx.connection.IManagedConnectionProxyEvent</node>
+            <node x="1434.565424430641" y="0.0">org.csc.phynixx.connection.IPhynixxManagedConnectionListener</node>
+            <node x="753.2499999999999" y="520.0">org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory</node>
+            <node x="1275.079692891649" y="678.0">org.csc.phynixx.connection.MTPooledConnectionIT</node>
+            <node x="1330.1963595583156" y="166.0">org.csc.phynixx.connection.AbstractDynaProxyFactory</node>
+            <node x="1238.6963595583156" y="254.0">org.csc.phynixx.connection.DynaPhynixxManagedConnectionFactory</node>
+            <node x="122.19635955831563" y="678.0">org.csc.phynixx.connection.PhynixxManagedConnectionGuard</node>
+            <node x="2072.4111628709447" y="166.0">org.csc.phynixx.connection.IPhynixxConnectionProxyDecorator</node>
+            <node x="525.436783988957" y="254.0">org.csc.phynixx.connection.IPhynixxConnection</node>
+            <node x="2027.1963595583156" y="254.0">org.csc.phynixx.connection.IPhynixxManagedConnectionFactory</node>
+            <node x="0.0" y="751.0">org.csc.phynixx.connection.IPhynixxConnectionProxyFactory</node>
+            <node x="448.0" y="751.0">org.csc.phynixx.connection.RequiresTransaction</node>
+          </nodes>
+          <notes />
+          <edges>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionGuard" target="org.csc.phynixx.connection.PhynixxConnectionProxyEvent">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.MTPooledConnectionIT" target="org.csc.phynixx.connection.PhynixxRecovery">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.loggersystem" target="org.csc.phynixx.connection.IPhynixxManagedConnectionListener">
+              <point x="52.875" y="-14.0" />
+              <point x="2429.111783988957" y="234.0" />
+              <point x="2404.861783988957" y="234.0" />
+              <point x="2404.861783988957" y="48.0" />
+              <point x="1631.4225672877842" y="48.0" />
+              <point x="90.85714285714289" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.recovery" target="org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.IPhynixxManagedConnectionListener">
+              <point x="-41.39999999999998" y="-14.0" />
+              <point x="1743.7963595583158" y="372.0" />
+              <point x="1505.6963595583156" y="372.0" />
+              <point x="1505.6963595583156" y="68.0" />
+              <point x="1510.2797101449269" y="68.0" />
+              <point x="-30.28571428571422" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionGuard" target="org.csc.phynixx.connection.ICloseable">
+              <point x="0.0" y="-14.0" />
+              <point x="221.69635955831563" y="648.0" />
+              <point x="191.75" y="648.0" />
+              <point x="191.75" y="412.0" />
+              <point x="286.6867839889569" y="412.0" />
+              <point x="-21.0" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.IPhynixxManagedConnectionFactory">
+              <point x="41.39999999999998" y="-14.0" />
+              <point x="1826.5963595583157" y="352.0" />
+              <point x="2132.6963595583156" y="352.0" />
+              <point x="0.0" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.UnpooledConnectionCloseStrategy" target="org.csc.phynixx.connection.CloseStrategy">
+              <point x="0.0" y="-14.0" />
+              <point x="1118.1963595583156" y="234.0" />
+              <point x="1014.3611628709447" y="234.0" />
+              <point x="20.400000000000006" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PooledConnectionCloseStrategy" target="org.csc.phynixx.connection.CloseStrategy">
+              <point x="0.0" y="-14.0" />
+              <point x="872.7499999999999" y="234.0" />
+              <point x="973.5611628709447" y="234.0" />
+              <point x="-20.400000000000006" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.recovery" target="org.csc.phynixx.connection.loggersystem">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.PhynixxManagedConnectionListenerAdapter">
+              <point x="-27.600000000000023" y="-14.0" />
+              <point x="1757.5963595583157" y="362.0" />
+              <point x="1669.6963595583156" y="362.0" />
+              <point x="1669.6963595583156" y="141.0" />
+              <point x="1733.1006211180122" y="141.0" />
+              <point x="0.0" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.IPhynixxConnectionProxyDecorator">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.MTPooledConnectionIT" target="org.csc.phynixx.connection.loggersystem">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.ManagedConnectionIT" target="org.csc.phynixx.connection.PhynixxManagedConnectionFactory">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.DynaPhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.AbstractDynaProxyFactory">
+              <point x="58.0" y="-14.0" />
+              <point x="0.0" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.ManagedConnectionIT" target="org.csc.phynixx.connection.loggersystem">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.recovery" target="org.csc.phynixx.connection.PhynixxRecovery">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxConnectionProxyEvent" target="org.csc.phynixx.connection.IPhynixxManagedConnection">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.IPooledConnection" target="org.csc.phynixx.connection.IPhynixxConnection">
+              <point x="0.0" y="-14.0" />
+              <point x="670.2499999999999" y="412.0" />
+              <point x="622.936783988957" y="412.0" />
+              <point x="32.5" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PooledManagedConnectionIntegrationScenariosIT" target="org.csc.phynixx.connection.loggersystem">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionListenerAdapter" target="org.csc.phynixx.connection.IPhynixxManagedConnectionListener">
+              <point x="0.0" y="-14.0" />
+              <point x="1733.1006211180122" y="68.0" />
+              <point x="1570.8511387163555" y="68.0" />
+              <point x="30.285714285714334" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.DynaPhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.CloseStrategy">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.UnpooledConnectionCloseStrategy">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.IPhynixxManagedConnection" target="org.csc.phynixx.connection.ICloseable">
+              <point x="-43.5" y="-14.0" />
+              <point x="457.7499999999999" y="412.0" />
+              <point x="328.6867839889569" y="412.0" />
+              <point x="21.0" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.loggersystem" target="org.csc.phynixx.connection.PhynixxManagedConnectionListenerAdapter">
+              <point x="-17.625" y="-14.0" />
+              <point x="2358.611783988957" y="234.0" />
+              <point x="2382.861783988957" y="234.0" />
+              <point x="2382.861783988957" y="141.0" />
+              <point x="1815.4339544513455" y="141.0" />
+              <point x="82.33333333333326" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.PooledConnectionCloseStrategy">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.AutoCommitListener" target="org.csc.phynixx.connection.PhynixxManagedConnectionListenerAdapter">
+              <point x="32.5" y="-14.0" />
+              <point x="1613.6963595583156" y="141.0" />
+              <point x="1650.767287784679" y="141.0" />
+              <point x="-82.33333333333331" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.AutoCommitDecorator">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.loggersystem" target="org.csc.phynixx.connection.IPhynixxConnectionProxyDecorator">
+              <point x="-52.875" y="-14.0" />
+              <point x="2323.361783988957" y="214.0" />
+              <point x="2252.6611628709447" y="214.0" />
+              <point x="77.25" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionGuard" target="org.csc.phynixx.connection.IPhynixxManagedConnectionListener">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.IPhynixxConnectionFactory">
+              <point x="13.800000000000011" y="-14.0" />
+              <point x="1798.9963595583158" y="332.0" />
+              <point x="1881.9463595583156" y="332.0" />
+              <point x="-41.75" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionGuard" target="org.csc.phynixx.connection.CloseStrategy">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.loggersystem" target="org.csc.phynixx.connection.loggersystem">
+              <point x="0.0" y="0.0" />
+              <point x="2376.236783988957" y="230.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionGuard" target="org.csc.phynixx.connection.IPhynixxManagedConnection">
+              <point x="28.42857142857133" y="-14.0" />
+              <point x="250.12493098688697" y="618.0" />
+              <point x="325.66116287094474" y="618.0" />
+              <point x="325.66116287094474" y="500.0" />
+              <point x="443.2499999999999" y="500.0" />
+              <point x="-58.0" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxRecovery" target="org.csc.phynixx.connection.loggersystem">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.AutoCommitDecorator" target="org.csc.phynixx.connection.AutoCommitListener">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxRecovery" target="org.csc.phynixx.connection.PhynixxManagedConnectionFactory">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.PhynixxManagedConnectionFactory">
+              <point x="79.66666666666669" y="-14.0" />
+              <point x="952.4166666666665" y="500.0" />
+              <point x="1702.3963595583157" y="500.0" />
+              <point x="-82.80000000000001" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.IPhynixxManagedConnection" target="org.csc.phynixx.connection.IPhynixxConnection">
+              <point x="43.5" y="-14.0" />
+              <point x="544.7499999999999" y="412.0" />
+              <point x="557.936783988957" y="412.0" />
+              <point x="-32.5" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.IPhynixxManagedConnection">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.CloseStrategy">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxConnectionProxyEvent" target="org.csc.phynixx.connection.IManagedConnectionProxyEvent">
+              <point x="-45.5" y="-14.0" />
+              <point x="381.66116287094474" y="490.0" />
+              <point x="298.25" y="490.0" />
+              <point x="0.0" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PooledManagedConnectionIntegrationScenariosIT" target="org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PooledManagedConnectionIntegrationScenariosIT" target="org.csc.phynixx.connection.PhynixxRecovery">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.DynaPhynixxManagedConnectionFactory">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionGuard" target="org.csc.phynixx.connection.IXADataRecorderAware">
+              <point x="-85.28571428571428" y="-14.0" />
+              <point x="136.4106452726014" y="658.0" />
+              <point x="74.5" y="658.0" />
+              <point x="0.0" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.MTPooledConnectionIT" target="org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxManagedConnectionFactory" target="org.csc.phynixx.connection.loggersystem">
+              <point x="0.0" y="0.0" />
+              <point x="0.0" y="0.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.AutoCommitDecorator" target="org.csc.phynixx.connection.IPhynixxConnectionProxyDecorator">
+              <point x="35.0" y="-14.0" />
+              <point x="1785.1963595583156" y="234.0" />
+              <point x="2098.1611628709447" y="234.0" />
+              <point x="-77.25" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.AutoCommitListener" target="org.csc.phynixx.connection.IPhynixxManagedConnectionListener">
+              <point x="-32.5" y="-14.0" />
+              <point x="1548.6963595583156" y="68.0" />
+              <point x="1540.565424430641" y="68.0" />
+              <point x="0.0" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.PhynixxRecovery" target="org.csc.phynixx.connection.IPhynixxRecovery">
+              <point x="-44.25" y="-14.0" />
+              <point x="1720.2463595583158" y="490.0" />
+              <point x="1292.375" y="490.0" />
+              <point x="0.0" y="14.0" />
+            </edge>
+          </edges>
+          <settings layout="Hierarchic Group" zoom="0.7000000000000001" x="631.0" y="339.0" />
+          <SelectedNodes />
+          <Categories />
+          <SCOPE>Project Files</SCOPE>
+          <VISIBILITY>private</VISIBILITY>
+        </state>
+      </provider>
+    </entry>
+    <entry file="uml://JAVA/org.csc.phynixx.connection.loggersystem">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>JAVA</ID>
+          <OriginalElement>org.csc.phynixx.connection.loggersystem</OriginalElement>
+          <nodes>
+            <node x="201.0" y="78.0">org.csc.phynixx.connection.loggersystem.Dev0Strategy</node>
+            <node x="78.0" y="0.0">org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy</node>
+            <node x="0.0" y="78.0">org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy</node>
+          </nodes>
+          <notes />
+          <edges>
+            <edge source="org.csc.phynixx.connection.loggersystem.Dev0Strategy" target="org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy">
+              <point x="0.0" y="-14.0" />
+              <point x="251.5" y="53.0" />
+              <point x="217.5" y="53.0" />
+              <point x="46.5" y="14.0" />
+            </edge>
+            <edge source="org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy" target="org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy">
+              <point x="0.0" y="-14.0" />
+              <point x="90.5" y="53.0" />
+              <point x="124.5" y="53.0" />
+              <point x="-46.5" y="14.0" />
+            </edge>
+          </edges>
+          <settings layout="Hierarchic Group" zoom="1.0" x="-230.0" y="-120.0" />
+          <SelectedNodes />
+          <Categories />
+          <SCOPE>All</SCOPE>
+          <VISIBILITY>private</VISIBILITY>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/impl/GenericObjectPoolConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="65" selection-start="1157" selection-end="1177" vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="2125" />
+      </provider>
+    </entry>
+    <entry file="jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/impl/BaseObjectPoolConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="240" column="45" selection-start="8525" selection-end="8554" vertical-scroll-proportion="0.0" vertical-offset="3213" max-vertical-offset="8415" />
+      </provider>
+    </entry>
+    <entry file="jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/PooledObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="199" column="22" selection-start="6044" selection-end="6057" vertical-scroll-proportion="0.0" vertical-offset="3017" max-vertical-offset="3366" />
+      </provider>
+    </entry>
+    <entry file="jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/impl/BaseGenericObjectPool.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="846" column="0" selection-start="32631" selection-end="32631" vertical-scroll-proportion="0.0" vertical-offset="12748" max-vertical-offset="15997" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/AbstractDynaProxyFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="57" selection-start="1567" selection-end="1567" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1887" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxManagedConnectionFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="171" column="0" selection-start="5780" selection-end="5780" vertical-scroll-proportion="0.0" vertical-offset="2417" max-vertical-offset="3859" />
+      </provider>
+    </entry>
+    <entry file="jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/impl/DefaultPooledObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="64" column="0" selection-start="2291" selection-end="2291" vertical-scroll-proportion="0.0" vertical-offset="627" max-vertical-offset="4981" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PooledConnectionCloseStrategy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="0" selection-start="936" selection-end="936" vertical-scroll-proportion="0.0" vertical-offset="381" max-vertical-offset="663">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/phynixx/testconnection/TestConnection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="180" column="0" selection-start="5249" selection-end="5249" vertical-scroll-proportion="0.0" vertical-offset="3060" max-vertical-offset="4777" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/LocalTransactionProxy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="67" column="0" selection-start="1908" selection-end="1908" vertical-scroll-proportion="0.0" vertical-offset="1023" max-vertical-offset="1666">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/GlobalTransactionProxy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="97" column="0" selection-start="2925" selection-end="2925" vertical-scroll-proportion="0.0" vertical-offset="1401" max-vertical-offset="1649">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/recovery/RecoveryIT.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="257" column="73" selection-start="8988" selection-end="8988" vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="4386">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/impl/GenericObjectPool.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="664" column="0" selection-start="25521" selection-end="25521" vertical-scroll-proportion="0.0" vertical-offset="10514" max-vertical-offset="18241">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/DynaPhynixxManagedConnectionFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="201" column="0" selection-start="8099" selection-end="8099" vertical-scroll-proportion="0.0" vertical-offset="3158" max-vertical-offset="3570">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/IManagedConnectionProxyEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="29" selection-start="761" selection-end="786" vertical-scroll-proportion="0.0" vertical-offset="203" max-vertical-offset="697">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/IPhynixxManagedConnection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="66" column="23" selection-start="2289" selection-end="2306" vertical-scroll-proportion="0.0" vertical-offset="946" max-vertical-offset="1853">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PooledPhynixxManagedConnectionFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="148" column="35" selection-start="5673" selection-end="5673" vertical-scroll-proportion="0.0" vertical-offset="2209" max-vertical-offset="3825">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/loggersystem/Dev0Strategy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="136" column="86" selection-start="3444" selection-end="3444" vertical-scroll-proportion="0.0" vertical-offset="1937" max-vertical-offset="2618">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/XATransactionalBranch.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="194" column="60" selection-start="5873" selection-end="5873" vertical-scroll-proportion="0.0" vertical-offset="2651" max-vertical-offset="5576">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/loggersystem/LoggerPerTransactionStrategy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="86" column="14" selection-start="2649" selection-end="2649" vertical-scroll-proportion="-3.4" vertical-offset="1292" max-vertical-offset="5559">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#9895#9912#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/MTPooledConnectionIT.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="229" column="8" selection-start="7642" selection-end="7642" vertical-scroll-proportion="0.0" vertical-offset="3360" max-vertical-offset="4012">
+          <folding>
+            <element signature="e#7384#7401#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxManagedConnectionGuard.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="266" column="11" selection-start="8517" selection-end="8517" vertical-scroll-proportion="-3.42" vertical-offset="4351" max-vertical-offset="11730">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4043#4044#0" expanded="true" />
+            <element signature="e#4092#4093#0" expanded="true" />
+            <element signature="e#4145#4146#0" expanded="true" />
+            <element signature="e#4195#4196#0" expanded="true" />
+            <element signature="e#4253#4254#0" expanded="true" />
+            <element signature="e#4278#4279#0" expanded="true" />
+            <element signature="e#4586#4587#0" expanded="true" />
+            <element signature="e#4615#4616#0" expanded="true" />
+            <element signature="e#11276#11277#0" expanded="true" />
+            <element signature="e#11320#11321#0" expanded="true" />
+            <element signature="e#12940#12978#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/ManagedConnectionIT.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="145" column="20" selection-start="4328" selection-end="4328" vertical-scroll-proportion="0.0" vertical-offset="2034" max-vertical-offset="4930">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResourceFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="76" column="0" selection-start="1937" selection-end="2175" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="3247">
+          <folding>
+            <element signature="e#2018#2019#0" expanded="true" />
+            <element signature="e#2056#2057#0" expanded="true" />
+            <element signature="e#2119#2120#0" expanded="true" />
+            <element signature="e#2173#2174#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/TestXAResourceFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="67" selection-start="1411" selection-end="1435" vertical-scroll-proportion="0.0" vertical-offset="419" max-vertical-offset="1088">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxManagedXAConnection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="128" column="0" selection-start="5818" selection-end="5818" vertical-scroll-proportion="0.0" vertical-offset="1745" max-vertical-offset="5593">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResource.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="628" column="101" selection-start="26246" selection-end="26246" vertical-scroll-proportion="-4.12" vertical-offset="10470" max-vertical-offset="12036">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#5436#5437#0" expanded="true" />
+            <element signature="e#5474#5475#0" expanded="true" />
+            <element signature="e#5537#5538#0" expanded="true" />
+            <element signature="e#5591#5592#0" expanded="true" />
+            <element signature="e#5853#5854#0" expanded="true" />
+            <element signature="e#5899#5900#0" expanded="true" />
+            <element signature="e#5932#5933#0" expanded="true" />
+            <element signature="e#5961#5962#0" expanded="true" />
+            <element signature="e#26739#26740#0" expanded="true" />
+            <element signature="e#26771#26772#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/XAResourceIntegrationTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1160" column="30" selection-start="41080" selection-end="41080" vertical-scroll-proportion="0.42767295" vertical-offset="19261" max-vertical-offset="20621">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>No facets are configured</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>jdk 6</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>phynixx</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.6</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>Maven: commons-io:commons-io:2.4</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+  <component name="mavenExecuteGoalHistory">
+    <option value="$PROJECT_DIR$/phynixx" />
+    <option value="clean install" />
+  </component>
+</project>
+

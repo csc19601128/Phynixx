@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Maven: org.csc.phynixx:phynixx-connection:tests:1.3-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://Y:/repo/org/csc/phynixx/phynixx-connection/1.3-SNAPSHOT/phynixx-connection-1.3-SNAPSHOT-tests.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/phynixx/phynixx-connection/phynixx-connection-1.3-SNAPSHOT-test-javadoc.jar!/" />
+      <root url="jar://Y:/repo/org/csc/phynixx/phynixx-connection/1.3-SNAPSHOT/phynixx-connection-1.3-SNAPSHOT-test-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/phynixx/phynixx-connection/phynixx-connection-1.3-SNAPSHOT-test-sources.jar!/" />
+      <root url="jar://Y:/repo/org/csc/phynixx/phynixx-connection/1.3-SNAPSHOT/phynixx-connection-1.3-SNAPSHOT-test-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
