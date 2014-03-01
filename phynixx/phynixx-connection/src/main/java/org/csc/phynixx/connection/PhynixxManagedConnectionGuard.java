@@ -85,13 +85,29 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     final Long id;
 
-    private Exception closeStack=null;
+    private volatile Long boundThreadId =null;
 
     protected PhynixxManagedConnectionGuard(long id, Class<C> connectionInterface, C connection, CloseStrategy<C> closeStrategy) {
         this.id = id;
         this.connectionInterface = connectionInterface;
         this.setConnection(connection);
         this.closeStrategy=closeStrategy;
+        this.bindToCurrentThread();
+    }
+
+    private void bindToCurrentThread() {
+        this.boundThreadId= Thread.currentThread().getId();
+    }
+    
+    private void releaseThreadBinding() {
+        this.boundThreadId=null; 
+    }
+    
+    private void checkThreadBinding() {
+        long currentThreadBinding = Thread.currentThread().getId();
+        if( this.boundThreadId!=null && currentThreadBinding!=this.boundThreadId) {
+            throw new IllegalStateException("Connection ist bound to Thread "+this.boundThreadId+" but called by Thread "+ currentThreadBinding);
+        }
     }
 
     @Override
@@ -144,9 +160,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         this.closed = closed;
         this.transactionalData=false;
         if( closed) {
-            this.closeStack=new Exception(Thread.currentThread().getName());
-        } else {
-            closeStack=null;
+            this.boundThreadId =null;
         }
     }
 
@@ -161,6 +175,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         }
         this.setClosed(false);
         this.reset();
+        this.bindToCurrentThread();
     }
 
     /**
@@ -191,6 +206,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     public IXADataRecorder getXADataRecorder() {
         if (hasCoreConnection() && ImplementorUtils.isImplementationOf(getCoreConnection(), IXADataRecorderAware.class)) {
+            this.checkThreadBinding();
             return ImplementorUtils.cast(getCoreConnection(), IXADataRecorderAware.class).getXADataRecorder();
         }
         return null;
@@ -226,14 +242,15 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     public void close() {
         if (!this.isClosed() && hasCoreConnection()) {
             this.closeStrategy.close(this);
-
         }
     }
 
     /**
-     * marks a connection a freed. This connection won't be used any more
+     * marks a connection a freed. This connection won't be used any more.
      *
-     * The implementation delegates to {@link org.csc.phynixx.connection.CloseStrategy}.
+     * The connection is released from the bound thread an can be bind to an other thread
+     *
+     * The thread binding is not checked as this method is called in emergency and has to be robust
      */
     @Override
     public void free() {
@@ -242,6 +259,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
             this.getCoreConnection().close();
         }
         this.fireConnectionFreed();
+        this.boundThreadId= Thread.currentThread().getId();
 
     } finally {
         this.setClosed(true);
@@ -250,6 +268,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
         // re-opem is not possible
         this.connection=null;
+        this.releaseThreadBinding();
     }
 
     }
@@ -265,6 +284,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     public void release() {
         try {
             if(hasCoreConnection()) {
+                checkThreadBinding();
                 this.setClosed(true);
                 this.getCoreConnection().reset();
                 this.fireConnectionReleased();
@@ -275,15 +295,11 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
             // state may be important for Stat-Listener, so its set after the listener did their work
             setTransactionalData(false);
+
+            this.releaseThreadBinding();
         }
     }
 
-
-    private void checkClosed() {
-        if(this.isClosed()) {
-            throw new IllegalStateException(Thread.currentThread()+" Connection " +this+" is already closed by \n"+ ExceptionUtils.getStackTrace(closeStack) +" $$$$$$");
-        }
-    }
 
     public boolean isAutoCommit() {
         if (hasCoreConnection()) {
@@ -294,7 +310,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     public void setAutoCommit(boolean autoCommit) {
         if (hasCoreConnection()) {
-            checkClosed();
+            checkThreadBinding();
             this.getCoreConnection().setAutoCommit(autoCommit);
             this.fireAutocommitChanged();
         }
@@ -307,6 +323,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
      */
     public void reset() {
         if (hasCoreConnection()) {
+
+            checkThreadBinding();
             this.getCoreConnection().reset();
             setTransactionalData(false);
             // notify the action
@@ -321,7 +339,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         }
         fireConnectionCommitting();
         if (hasCoreConnection()) {
-            checkClosed();
+            checkThreadBinding();
             this.getCoreConnection().commit();
             setTransactionalData(false);
         }
@@ -338,7 +356,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
         this.fireConnectionPreparing();
         if (hasCoreConnection()) {
-            checkClosed();
+            checkThreadBinding();
             this.getCoreConnection().prepare();
         }
         this.fireConnectionPrepared();
@@ -353,8 +371,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
         fireConnectionRollingBack();
         if (hasCoreConnection()) {
-
-            checkClosed();
+            checkThreadBinding();
             this.getCoreConnection().rollback();
             setTransactionalData(false);
 
