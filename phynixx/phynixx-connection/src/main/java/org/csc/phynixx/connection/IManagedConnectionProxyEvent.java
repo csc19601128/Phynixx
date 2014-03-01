@@ -25,6 +25,7 @@ public interface IManagedConnectionProxyEvent<C extends IPhynixxConnection> {
 
     IPhynixxManagedConnection<C> getManagedConnection();
 
+
     /**
      * @return exception, that raises the event
      */

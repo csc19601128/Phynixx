@@ -71,6 +71,8 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     private ITimeoutCondition timeoutCondition = null;
 
+    private boolean supportsTimeOut= false;
+
     /**
      * TODO timeOut ueber einen Listener steuern und Konfigierbar machen
      */
@@ -85,16 +87,16 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
         // start a watchdog to watch the timeout ...
         // this condition is not active
-        this.timeoutCondition = new TimeoutCondition(DEFAULT_TIMEOUT) {
-            public void conditionViolated() {
-                PhynixxXAResource.this.conditionViolated();
-            }
-        };
-        // synchronize the watched condition
-        this.timeoutCondition = this.timeoutCondition;
+        if( this.isSupportsTimeOut()) {
+            this.timeoutCondition = new TimeoutCondition(DEFAULT_TIMEOUT) {
+                public void conditionViolated() {
+                    PhynixxXAResource.this.conditionViolated();
+                }
+            };
+            // it is registered at the resource xaResourceFactory's watchdog  ....
+            xaResourceFactory.registerWatchCondition(this.timeoutCondition);
+        }
 
-        // it is registered at the resource xaResourceFactory's watchdog  ....
-        xaResourceFactory.registerWatchCondition(this.timeoutCondition);
     }
 
 
@@ -119,16 +121,32 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                     }
             }
             if (LOG.isInfoEnabled()) {
-                String logString = "SampleXAResource.expired :: XAResource " + this.getId() + " is expired (time out occurred) and all associated TX are rollbacked ";
+                String logString = "PhynixxXAResource.expired :: XAResource " + this.getId() + " is expired (time out occurred) and all associated TX are rollbacked ";
                 LOG.info(new ConditionViolatedLog(this.timeoutCondition, logString).toString());
             }
 
         } finally {
             // no monitoring anymore
-            this.timeoutCondition.setActive(false);
+            setTimeOutActive(false);
         }
 
     }
+
+    private void setTimeOutActive(boolean active) {
+        if(this.timeoutCondition!=null) {
+        this.setTimeOutActive(active);
+        }
+    }
+
+
+    public boolean isSupportsTimeOut() {
+        return supportsTimeOut;
+    }
+
+    public void setSupportsTimeOut(boolean supportsTimeOut) {
+        this.supportsTimeOut = supportsTimeOut;
+    }
+
 
 
     /**
@@ -197,7 +215,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                 this.xaConnectionHandle.startTransactionalBranch(xid);
             }
             LOG.debug(
-                    "SampleXAResource[" + this.getId() + "]:start xid='"
+                    "PhynixxXAResource[" + this.getId() + "]:start xid='"
                             + xid
                             + "' flags='"
                             + ConstantsPrinter.getXAResourceMessage(flags)
@@ -207,10 +225,10 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
 
             // start monitoring the timeout
-            this.timeoutCondition.setActive(true);
+        this.setTimeOutActive(true);
 
         } catch (XAException xaExc) {
-            LOG.error("SampleXAResource[" + this.getId() + "]:start xid='"
+            LOG.error("PhynixxXAResource[" + this.getId() + "]:start xid='"
                     + xid
                     + "' flags='"
                     + ConstantsPrinter.getXAResourceMessage(flags)
@@ -218,7 +236,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                     + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
             throw xaExc;
         } catch (Exception ex) {
-            LOG.error("SampleXAResource.start(" + xid + "," + flags + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            LOG.error("PhynixxXAResource.start(" + xid + "," + flags + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
             throw new DelegatedRuntimeException("start(" + xid + "," + flags + ") on XAResourceProgressState " + this.xaId, ex);
 
         }
@@ -249,14 +267,14 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
         try {
             transactionalBranch.commit(onePhase);
         } catch (XAException xaExc) {
-            LOG.error("SampleXAResource[" + this.getId() + "]:end xid='"
+            LOG.error("PhynixxXAResource[" + this.getId() + "]:end xid='"
                     + xid
                     + "' onePhase='" + onePhase
                     + "            ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
             throw xaExc;
 
         } catch (Exception ex) {
-            LOG.error("SampleXAResource.commit(" + xid + "," + onePhase + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            LOG.error("PhynixxXAResource.commit(" + xid + "," + onePhase + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
             throw new DelegatedRuntimeException("commit(" + xid + "," + onePhase + ") on XAResourceProgressState " + this.xaId, ex);
         } finally {
             try {
@@ -264,7 +282,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                 this.xaConnectionHandle.closeTransactionalBranch(xid);
             } finally {
                 // stop monitoring the timeout
-                this.timeoutCondition.setActive(false);
+            this.setTimeOutActive(false);
 
             }
         }
@@ -292,7 +310,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     public int prepare(Xid xid) throws XAException {
         try {
             LOG.debug(
-                    "SampleXAResource[" + this.getId() + "]:prepare prepare to perform a commit for XID=" + xid);
+                    "PhynixxXAResource[" + this.getId() + "]:prepare prepare to perform a commit for XID=" + xid);
 
             XATransactionalBranch<C> transactionalBranch = this.xaConnectionHandle.toGlobalTransactionBranch();
             if (xid == null) {
@@ -321,12 +339,12 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
             return retVal;
 
         } catch (XAException xaExc) {
-            LOG.error("SampleXAResource[" + this.getId() + "]:prepare xid='"
+            LOG.error("PhynixxXAResource[" + this.getId() + "]:prepare xid='"
                     + xid
                     + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
             throw xaExc;
         } catch (Exception ex) {
-            LOG.error("SampleXAResource.prepare(" + xid + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            LOG.error("PhynixxXAResource.prepare(" + xid + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
             throw new DelegatedRuntimeException("prepare(" + xid + ") on XAResourceProgressState " + this.xaId, ex);
 
         }
@@ -353,7 +371,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     public void rollback(Xid xid) throws XAException {
         {
             try {
-                LOG.debug("SampleXAResource[" + this.getId() + "]:rollback started xid=" + xid);
+                LOG.debug("PhynixxXAResource[" + this.getId() + "]:rollback started xid=" + xid);
 
                 XATransactionalBranch<C> transactionalBranch = this.xaConnectionHandle.toGlobalTransactionBranch();
                 if (xid == null) {
@@ -387,18 +405,18 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
 
             } catch (XAException xaExc) {
-                LOG.error("SampleXAResource[" + this.getId() + "]:rollback xid='"
+                LOG.error("PhynixxXAResource[" + this.getId() + "]:rollback xid='"
                         + xid
                         + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
                 throw xaExc;
 
             } catch (Exception ex) {
-                LOG.error("SampleXAResource.rollback(" + xid + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+                LOG.error("PhynixxXAResource.rollback(" + xid + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
                 throw new DelegatedRuntimeException("rollback(" + xid + ") on XAResourceProgressState " + this.xaId, ex);
 
             } finally {
                 // stop monitoring the timeout
-                this.timeoutCondition.setActive(false);
+            this.setTimeOutActive(false);
 
             }
         }
@@ -432,9 +450,9 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     public void end(Xid xid, int flags) throws XAException {
         try {
             //not tested XS
-            LOG.debug("SampleXAResource:end");
+            LOG.debug("PhynixxXAResource:end");
             LOG.debug(
-                    "SampleXAResource[" + this.getId() + "]:end xid='" + xid + "' flags='" + ConstantsPrinter.getXAResourceMessage(flags) + "'");
+                    "PhynixxXAResource[" + this.getId() + "]:end xid='" + xid + "' flags='" + ConstantsPrinter.getXAResourceMessage(flags) + "'");
 
             if (xid == null) {
                 LOG.error("No XID");
@@ -467,7 +485,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
             }
 
         } catch (XAException xaExc) {
-            LOG.error("SampleXAResource[" + this.getId() + "]:end xid='"
+            LOG.error("PhynixxXAResource[" + this.getId() + "]:end xid='"
                     + xid
                     + "' flags='"
                     + ConstantsPrinter.getXAResourceMessage(flags)
@@ -475,7 +493,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                     + " ERROR  " + ConstantsPrinter.getXAErrorCode(xaExc.errorCode));
             throw xaExc;
         } catch (Exception ex) {
-            LOG.error("SampleXAResource.end(" + xid + "," + flags + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            LOG.error("PhynixxXAResource.end(" + xid + "," + flags + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
             throw new DelegatedRuntimeException("end(" + xid + "," + flags + ") on XAResourceProgressState " + this.xaId, ex);
         }
     }
@@ -488,7 +506,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
      */
     public void forget(Xid xid) throws XAException {
         try {
-            LOG.debug("SampleXAResource[" + this.getId() + "]:forget forget with Xid");
+            LOG.debug("PhynixxXAResource[" + this.getId() + "]:forget forget with Xid");
             if (xid == null)
                 throw new XAException(XAException.XAER_INVAL);
 
@@ -501,7 +519,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
         } finally {
             // stop monitoring the timeout
-            this.timeoutCondition.setActive(false);
+        this.setTimeOutActive(false);
 
         }
     }
@@ -523,12 +541,12 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     public boolean isSameRM(XAResource xaResource) throws XAException {
         if (this.equals(xaResource)) { // if the same object
-            LOG.debug("SampleXAResource[" + this.getId() + "]:isSameRM isSameRM");
+            LOG.debug("PhynixxXAResource[" + this.getId() + "]:isSameRM isSameRM");
             return true; // then definitely the same RM
         }
         if (!(xaResource instanceof PhynixxXAResource)) {
             // if it's not one of our wrappers
-            LOG.debug("SampleXAResource[" + this.getId() + "]:isSameRM not isSameRM");
+            LOG.debug("PhynixxXAResource[" + this.getId() + "]:isSameRM not isSameRM");
             return false; // then it's definitely not the same RM
         }
         PhynixxXAResource sampleXARes = (PhynixxXAResource) xaResource;
@@ -537,14 +555,14 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
             // cast to something more convenient
             if (xaResourceFactory.equals(sampleXARes.xaResourceFactory)) {
                 // if they originate from same data source
-                LOG.debug("SampleXAResource[" + this.getId() + "]:isSameRM isSameRM (equal XAResourceFactory)");
+                LOG.debug("PhynixxXAResource[" + this.getId() + "]:isSameRM isSameRM (equal XAResourceFactory)");
                 return true; // then they're the same RM
             } else {
-                LOG.debug("SampleXAResource[" + this.getId() + "]:isSameRM not isSameRM (not equal XAResourceFactory)");
+                LOG.debug("PhynixxXAResource[" + this.getId() + "]:isSameRM not isSameRM (not equal XAResourceFactory)");
                 return false;
             }
         } catch (Exception ex) {
-            LOG.error("SampleXAResource.isSameRM(" + sampleXARes.xaId + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
+            LOG.error("PhynixxXAResource.isSameRM(" + sampleXARes.xaId + ") on XAResourceProgressState " + this.xaId + " :: " + ex + "\n" + ExceptionUtils.getStackTrace(ex));
             throw new DelegatedRuntimeException("isSameRM(" + sampleXARes.xaId + ") on XAResourceProgressState " + this.xaId, ex);
 
         }
@@ -568,14 +586,14 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
         this.closed = true;
         this.notifyClosed();
 
-        LOG.debug("SampleXAResource[" + this.getId() + "]:closed ");
+        LOG.debug("PhynixxXAResource[" + this.getId() + "]:closed ");
     }
 
     /**
      * the system is recovered by the xaResourceFactory representing the persistence management system,
      */
     public Xid[] recover(int flags) throws XAException {
-        LOG.info("SampleXAResource[" + this.getId() + "]:recover recover flags=" + ConstantsPrinter.getXAResourceMessage(flags));
+        LOG.info("PhynixxXAResource[" + this.getId() + "]:recover recover flags=" + ConstantsPrinter.getXAResourceMessage(flags));
         if (flags != TMSTARTRSCAN && flags != TMENDRSCAN && flags != TMNOFLAGS) {
             throw new XAException(XAException.XAER_INVAL);
         }
@@ -606,6 +624,11 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
      * @returns true if transaction timeout value is set successfully; otherwise false.
      */
     public boolean setTransactionTimeout(int seconds) throws XAException {
+
+        if(!this.isSupportsTimeOut()) {
+            throw new IllegalStateException("TimeOut is not supported  --> call setSupportsTimeOut");
+
+        }
         if (seconds < 0) {
             throw new XAException(XAException.XAER_INVAL);
         }
@@ -638,7 +661,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     public String toString()
 	{
 		StringBuffer sb = new StringBuffer();
-		sb.append("SampleXAResource "+this.xaId+" :\n");
+		sb.append("PhynixxXAResource "+this.xaId+" :\n");
 		sb.append("     is closed =<"+this.isClosed() + ">\n");
 		sb.append("     next timeOut =<"+this.nextTimeout + ">\n");
 		sb.append("     timeOut period =<"+this.timeoutPeriod + ">\n");

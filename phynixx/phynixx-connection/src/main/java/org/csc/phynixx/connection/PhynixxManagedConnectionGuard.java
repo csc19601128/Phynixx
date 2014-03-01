@@ -106,7 +106,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     private void checkThreadBinding() {
         long currentThreadBinding = Thread.currentThread().getId();
         if( this.boundThreadId!=null && currentThreadBinding!=this.boundThreadId) {
-            throw new IllegalStateException("Connection ist bound to Thread "+this.boundThreadId+" but called by Thread "+ currentThreadBinding);
+            throw new IllegalStateException("Connection is bound to Thread "+this.boundThreadId+" but called by Thread "+ currentThreadBinding);
         }
     }
 
@@ -159,9 +159,6 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     void setClosed(boolean closed) {
         this.closed = closed;
         this.transactionalData=false;
-        if( closed) {
-            this.boundThreadId =null;
-        }
     }
 
     @Override
@@ -267,14 +264,15 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         setTransactionalData(false);
 
         // re-opem is not possible
-        this.connection=null;
+        // this.connection=null;
         this.releaseThreadBinding();
     }
 
     }
 
-    private boolean hasCoreConnection() {
-        return this.getCoreConnection()!=null;
+    @Override
+    public boolean hasCoreConnection() {
+        return this.connection!=null;
     }
 
 

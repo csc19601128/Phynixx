@@ -83,6 +83,8 @@ public interface IPhynixxManagedConnection<C extends IPhynixxConnection> extends
      */
     void free();
 
+    boolean hasCoreConnection();
+
     void recover();
 
 

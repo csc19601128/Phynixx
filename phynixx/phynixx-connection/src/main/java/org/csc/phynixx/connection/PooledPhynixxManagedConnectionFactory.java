@@ -146,7 +146,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
      * @param connection
      */
     public void releaseConnection(IPhynixxManagedConnection<C> connection) {
-        if (connection == null || connection.getCoreConnection()==null) {
+        if (connection == null || !connection.hasCoreConnection()) {
             return;
         }
         try {
@@ -195,7 +195,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
      */
     public void connectionReleased(IManagedConnectionProxyEvent<C> event) {
         IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
-        if (proxy.getCoreConnection() == null) {
+        if (!proxy.hasCoreConnection()) {
             return;
         } else {
             this.releaseConnection(proxy);
@@ -211,7 +211,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
      */
     public void connectionFreed(IManagedConnectionProxyEvent<C> event) {
         IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
-        if (proxy.getCoreConnection() == null) {
+        if (!proxy.hasCoreConnection()) {
             return;
         } else {
             this.freeConnection(proxy);

@@ -89,7 +89,7 @@ public class MTPooledConnectionIT extends TestCase {
     }
 
 
-    private static List exceptions = Collections.synchronizedList(new ArrayList());
+    private static List<Exception> exceptions = Collections.synchronizedList(new ArrayList());
 
     private class Caller implements Callable<Object> {
 
@@ -131,7 +131,7 @@ public class MTPooledConnectionIT extends TestCase {
                     }
                     } finally {
                         if (con != null) {
-                            con.close();
+                            //con.close();
                         }
                     }
                 }
@@ -168,7 +168,7 @@ public class MTPooledConnectionIT extends TestCase {
                 Exception ex = (Exception) exceptions.get(i);
                 ex.printStackTrace();
             }
-            throw new AssertionFailedError("Error occurred");
+            throw new IllegalStateException("Error occurred",exceptions.get(0));
         }
     }
 

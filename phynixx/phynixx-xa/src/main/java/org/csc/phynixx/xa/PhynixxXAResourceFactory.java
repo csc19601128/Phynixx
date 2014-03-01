@@ -65,6 +65,16 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
 
     private TransactionManager transactionManager = null;
 
+    private boolean supportsTimeOut= false;
+
+    public boolean isSupportsTimeOut() {
+        return supportsTimeOut;
+    }
+
+    public void setSupportsTimeOut(boolean supportsTimeOut) {
+        this.supportsTimeOut = supportsTimeOut;
+    }
+
     /**
      * checks timeouts
      */

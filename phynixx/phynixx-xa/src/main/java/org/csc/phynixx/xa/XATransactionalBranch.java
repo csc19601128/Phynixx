@@ -192,7 +192,7 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
     }
 
     private void checkRollback() throws XAException {
-        if (this.getManagedConnection().getCoreConnection() == null ||
+        if (!this.getManagedConnection().hasCoreConnection() ||
                 this.getManagedConnection().isClosed()) {
             this.setProgressState(XAResourceProgressState.ROLLING_BACK);
             throw new XAException(XAException.XA_RBROLLBACK);

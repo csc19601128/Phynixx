@@ -144,12 +144,6 @@ public class ManagedConnectionIT {
 
         Object connectionId = con.getConnectionId();
         con.close();
-
-        try {
-            con.getCounter();
-            throw new AssertionFailedError("Connection is already set free");
-        } catch (Exception e) {}
-
         LOG.info(TestConnectionStatusManager.toDebugString());
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(connectionId);
         Assert.assertTrue(statusStack.isFreed());
