@@ -3,9 +3,9 @@ Tutorial
 
 SourceCode findet sich im Module <i>phynixx-tutorial</i>
 
-In eine Datei können fortlaufend String geschrieben werden. 
+In eine Datei können fortlaufend Strings geschrieben werden. Diese Schreiboperationen sollen transaktional unterstützt werden, so dass auch eine Rollback möglich ist.
 
-Im Rahmen einer Transaktion soll bei einem Rollback der Stand der datei bei beginn der Transaktion wiederhergestellt werden.
+Im Rahmen einer Transaktion soll bei einem Rollback der Stand der Datei bei Beginn der Transaktion wiederhergestellt werden.
 
 Folgender Testfall beschreibt die Arbeit mit dieser Klasse <code>org.csc.phynixx.tutorial.TAEnabledUTFWriter</code>
 
@@ -24,7 +24,7 @@ Folgender Testfall beschreibt die Arbeit mit dieser Klasse <code>org.csc.phynixx
          writer.close();
        }
 
-       // Liest den Inhaltr der Datei wieder ein
+       // Liest den Inhalt der Datei wieder ein
        writer = TAEnabledUTFWriter.recoverWriter(file);
        try {
          List<String> content = writer.getContent();
@@ -37,6 +37,6 @@ Folgender Testfall beschreibt die Arbeit mit dieser Klasse <code>org.csc.phynixx
       
     }
     
-Diese Funktionalität soll nicht transaktional unterstützt werden. dazu muss sie im ersten Schritt das Interface <code></code>
+Diese Funktionalität soll transaktional unterstützt werden. Dazu muss sie im ersten Schritt das Interface <code></code>
 
    
