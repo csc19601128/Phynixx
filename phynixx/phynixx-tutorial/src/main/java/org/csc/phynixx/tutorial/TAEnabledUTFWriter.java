@@ -34,10 +34,17 @@ import java.util.List;
  */
 public interface TAEnabledUTFWriter extends IPhynixxConnection, IXADataRecorderAware {
 
+    /**
+     * resets the content of the file associated with die current transaction
+     * @throws IOException
+     */
     @RequiresTransaction
     void resetContent() throws IOException;
 
     @RequiresTransaction
+    /**
+     * opens a file and associates it with the current transaction
+     */
     void open(File file);
 
     @RequiresTransaction
