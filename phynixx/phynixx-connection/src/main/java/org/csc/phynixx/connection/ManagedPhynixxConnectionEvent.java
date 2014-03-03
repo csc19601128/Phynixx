@@ -21,7 +21,7 @@ package org.csc.phynixx.connection;
  */
 
 
-class PhynixxConnectionProxyEvent<C extends IPhynixxConnection> implements IManagedConnectionProxyEvent<C> {
+class ManagedPhynixxConnectionEvent<C extends IPhynixxConnection> implements IManagedConnectionEvent<C> {
 
     private Exception exception = null;
 
@@ -32,12 +32,12 @@ class PhynixxConnectionProxyEvent<C extends IPhynixxConnection> implements IMana
      */
     private static final long serialVersionUID = 2146374246818609618L;
 
-    public PhynixxConnectionProxyEvent(IPhynixxManagedConnection<C> source) {
+    public ManagedPhynixxConnectionEvent(IPhynixxManagedConnection<C> source) {
         this.source = source;
     }
 
 
-    public PhynixxConnectionProxyEvent(IPhynixxManagedConnection<C> source, Exception exception) {
+    public ManagedPhynixxConnectionEvent(IPhynixxManagedConnection<C> source, Exception exception) {
         this(source);
         this.exception = exception;
     }

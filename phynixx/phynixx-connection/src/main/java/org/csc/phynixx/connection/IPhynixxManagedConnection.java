@@ -88,6 +88,9 @@ public interface IPhynixxManagedConnection<C extends IPhynixxConnection> extends
     void recover();
 
 
+    void commit(boolean onePhaseCommit);
+
+
     /**
      * opens a connection that may have been reset. After calling this method
      * {@link #isClosed()}==false and {@link IPhynixxConnection#reset()} is called on the physical connection.

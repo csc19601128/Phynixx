@@ -86,12 +86,12 @@ class LocalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManaged
 
 
     @Override
-    public void connectionReleased(IManagedConnectionProxyEvent<C> event) {
+    public void connectionReleased(IManagedConnectionEvent<C> event) {
         event.getManagedConnection().removeConnectionListener(this);
     }
 
     @Override
-    public void connectionFreed(IManagedConnectionProxyEvent<C> event) {
+    public void connectionFreed(IManagedConnectionEvent<C> event) {
         event.getManagedConnection().removeConnectionListener(this);
     }
 }

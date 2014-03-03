@@ -24,31 +24,28 @@ package org.csc.phynixx.phynixx.testconnection;
  */
 
 
-import org.csc.phynixx.connection.IManagedConnectionProxyEvent;
-import org.csc.phynixx.connection.IPhynixxConnectionProxyDecorator;
-import org.csc.phynixx.connection.IPhynixxManagedConnection;
-import org.csc.phynixx.connection.PhynixxManagedConnectionListenerAdapter;
+import org.csc.phynixx.connection.*;
 
 public class TestConnectionStatusListener extends PhynixxManagedConnectionListenerAdapter<ITestConnection> implements IPhynixxConnectionProxyDecorator<ITestConnection> {
 
 
     @Override
-    public void connectionCommitted(IManagedConnectionProxyEvent<ITestConnection> event) {
+    public void connectionCommitted(IManagedConnectionCommitEvent<ITestConnection> event) {
         TestConnectionStatusManager.registerStatus(event.getManagedConnection(), TestConnectionStatus.COMMITTED);
     }
 
     @Override
-    public void connectionReset(IManagedConnectionProxyEvent<ITestConnection> event) {
+    public void connectionReset(IManagedConnectionEvent<ITestConnection> event) {
         TestConnectionStatusManager.registerStatus(event.getManagedConnection(), TestConnectionStatus.RESET);
     }
 
     @Override
-    public void connectionReleased(IManagedConnectionProxyEvent<ITestConnection> event) {
+    public void connectionReleased(IManagedConnectionEvent<ITestConnection> event) {
         TestConnectionStatusManager.registerStatus(event.getManagedConnection(), TestConnectionStatus.RELEASED);
     }
 
     @Override
-    public void connectionFreed(IManagedConnectionProxyEvent<ITestConnection> event) {
+    public void connectionFreed(IManagedConnectionEvent<ITestConnection> event) {
         try {
             TestConnectionStatusManager.registerStatus(event.getManagedConnection(), TestConnectionStatus.FREED);
         } finally {
@@ -57,27 +54,27 @@ public class TestConnectionStatusListener extends PhynixxManagedConnectionListen
     }
 
     @Override
-    public void connectionErrorOccurred(IManagedConnectionProxyEvent<ITestConnection> event) {
+    public void connectionErrorOccurred(IManagedConnectionEvent<ITestConnection> event) {
         TestConnectionStatusManager.registerStatus(event.getManagedConnection(), TestConnectionStatus.ERROR_OCCURRED);
     }
 
     @Override
-    public void connectionRequiresTransaction(IManagedConnectionProxyEvent<ITestConnection> event) {
+    public void connectionRequiresTransaction(IManagedConnectionEvent<ITestConnection> event) {
         TestConnectionStatusManager.registerStatus(event.getManagedConnection(), TestConnectionStatus.REQUIRES_TRANSACTION);
     }
 
     @Override
-    public void connectionPrepared(IManagedConnectionProxyEvent<ITestConnection> event) {
+    public void connectionPrepared(IManagedConnectionEvent<ITestConnection> event) {
         TestConnectionStatusManager.registerStatus(event.getManagedConnection(), TestConnectionStatus.PREPARED);
     }
 
     @Override
-    public void connectionRolledback(IManagedConnectionProxyEvent<ITestConnection> event) {
+    public void connectionRolledback(IManagedConnectionEvent<ITestConnection> event) {
         TestConnectionStatusManager.registerStatus(event.getManagedConnection(), TestConnectionStatus.ROLLEDBACK);
     }
 
     @Override
-    public void connectionRecovered(IManagedConnectionProxyEvent<ITestConnection> event) {
+    public void connectionRecovered(IManagedConnectionEvent<ITestConnection> event) {
         TestConnectionStatusManager.registerStatus(event.getManagedConnection(), TestConnectionStatus.RECOVERED);
     }
 

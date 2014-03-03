@@ -186,7 +186,7 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
         }
 
         this.setProgressState(XAResourceProgressState.COMMITTING);
-        this.getManagedConnection().commit();
+        this.getManagedConnection().commit(onePhase);
         this.setProgressState(XAResourceProgressState.COMMITTED);
 
     }
@@ -332,17 +332,17 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManaged
     }
 
     @Override
-    public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {
+    public void connectionRequiresTransaction(IManagedConnectionEvent<C> event) {
         this.setReadOnly(false);
     }
 
     @Override
-    public void connectionReleased(IManagedConnectionProxyEvent<C> event) {
+    public void connectionReleased(IManagedConnectionEvent<C> event) {
         event.getManagedConnection().removeConnectionListener(this);
     }
 
     @Override
-    public void connectionFreed(IManagedConnectionProxyEvent<C> event) {
+    public void connectionFreed(IManagedConnectionEvent<C> event) {
         event.getManagedConnection().removeConnectionListener(this);
     }
 

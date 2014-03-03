@@ -33,47 +33,60 @@ public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnectio
      * @param event current connection
      */
     @Override
-    public void connectionReset(IManagedConnectionProxyEvent<C> event) {
+    public void connectionReset(IManagedConnectionEvent<C> event) {
     }
 
     /**
      * NOOP
      */
     @Override
-    public void connectionReleased(IManagedConnectionProxyEvent<C> event) {
+    public void connectionReleased(IManagedConnectionEvent<C> event) {
     }
 
     /**
      * NOOP
      */
     @Override
-    public void connectionErrorOccurred(IManagedConnectionProxyEvent<C> event) {
+    public void connectionErrorOccurred(IManagedConnectionEvent<C> event) {
     }
 
     /**
      * NOOP
      */
     @Override
-    public void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event) {
+    public void connectionRequiresTransaction(IManagedConnectionEvent<C> event) {
     }
 
     @Override
-    public void connectionRequiresTransactionExecuted(IManagedConnectionProxyEvent<C> event) {
-
-    }
-
-    @Override
-    public void connectionCommitting(IManagedConnectionProxyEvent<C> event) {
+    public void connectionRequiresTransactionExecuted(IManagedConnectionEvent<C> event) {
 
     }
 
     @Override
-    public void connectionPrepared(IManagedConnectionProxyEvent<C> event) {
+    public void connectionCommitting(IManagedConnectionCommitEvent<C> event) {
 
     }
 
     @Override
-    public void connectionPreparing(IManagedConnectionProxyEvent<C> event) {
+    public void connectionPrepared(IManagedConnectionEvent<C> event) {
+
+    }
+
+    @Override
+    public void connectionPreparing(IManagedConnectionEvent<C> event) {
+
+    }
+
+    /**
+     * NOOP
+     * @param event
+     */
+    @Override
+    public void connectionCommitted(IManagedConnectionCommitEvent<C> event) {
+    }
+
+    @Override
+    public void connectionRollingBack(IManagedConnectionEvent<C> event) {
 
     }
 
@@ -81,19 +94,7 @@ public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnectio
      * NOOP
      */
     @Override
-    public void connectionCommitted(IManagedConnectionProxyEvent<C> event) {
-    }
-
-    @Override
-    public void connectionRollingBack(IManagedConnectionProxyEvent<C> event) {
-
-    }
-
-    /**
-     * NOOP
-     */
-    @Override
-    public void connectionRolledback(IManagedConnectionProxyEvent<C> event) {
+    public void connectionRolledback(IManagedConnectionEvent<C> event) {
     }
 
 
@@ -101,22 +102,18 @@ public class PhynixxManagedConnectionListenerAdapter<C extends IPhynixxConnectio
      * NOOP
      */
     @Override
-    public void connectionFreed(IManagedConnectionProxyEvent<C> event) {
+    public void connectionFreed(IManagedConnectionEvent<C> event) {
     }
 
 
     @Override
-    public void connectionRecovered(IManagedConnectionProxyEvent<C> event) {
+    public void connectionRecovered(IManagedConnectionEvent<C> event) {
 
     }
 
     @Override
-    public void connectionRecovering(IManagedConnectionProxyEvent<C> event) {
+    public void connectionRecovering(IManagedConnectionEvent<C> event) {
 
     }
 
-    @Override
-    public void autocommitChanged(IManagedConnectionProxyEvent<C> event) {
-
-    }
 }

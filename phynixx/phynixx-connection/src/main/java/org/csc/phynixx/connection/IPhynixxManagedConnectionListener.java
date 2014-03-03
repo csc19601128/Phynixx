@@ -34,7 +34,7 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
      *
      * @param event current connection
      */
-    void connectionReset(IManagedConnectionProxyEvent<C> event);
+    void connectionReset(IManagedConnectionEvent<C> event);
 
     /**
      * called after the connection is close.
@@ -44,12 +44,12 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
      *
      * @param event current connection
      */
-    void connectionReleased(IManagedConnectionProxyEvent<C> event);
+    void connectionReleased(IManagedConnectionEvent<C> event);
 
     /**
      * connection dereferenced
      */
-    void connectionFreed(IManagedConnectionProxyEvent<C> event);
+    void connectionFreed(IManagedConnectionEvent<C> event);
 
 
     /**
@@ -58,7 +58,7 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
      *
      * @param event current connection
      */
-    void connectionErrorOccurred(IManagedConnectionProxyEvent<C> event);
+    void connectionErrorOccurred(IManagedConnectionEvent<C> event);
 
     /**
      * connectionRequiresTransaction - an action should be performed that
@@ -66,7 +66,7 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
      *
      * @param event current connection
      */
-    void connectionRequiresTransaction(IManagedConnectionProxyEvent<C> event);
+    void connectionRequiresTransaction(IManagedConnectionEvent<C> event);
 
     /**
      * connectionRequiresTransaction - an action was performed that
@@ -75,25 +75,26 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
      *
      * @param event current connection
      */
-    void connectionRequiresTransactionExecuted(IManagedConnectionProxyEvent<C> event);
+    void connectionRequiresTransactionExecuted(IManagedConnectionEvent<C> event);
 
 
     /**
      * connectionRolledback
      */
-    void connectionRolledback(IManagedConnectionProxyEvent<C> event);
+    void connectionRolledback(IManagedConnectionEvent<C> event);
 
     /**
      * connection enters state 'committing'
      *
      * @param event
      */
-    void connectionCommitting(IManagedConnectionProxyEvent<C> event);
+    void connectionCommitting(IManagedConnectionCommitEvent<C> event);
 
     /**
      * connectionCommitted
+     * @param event
      */
-    void connectionCommitted(IManagedConnectionProxyEvent<C> event);
+    void connectionCommitted(IManagedConnectionCommitEvent<C> event);
 
 
     /**
@@ -101,13 +102,13 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
      *
      * @param event
      */
-    void connectionPreparing(IManagedConnectionProxyEvent<C> event);
+    void connectionPreparing(IManagedConnectionEvent<C> event);
 
 
     /**
      * connection is prepared
      */
-    void connectionPrepared(IManagedConnectionProxyEvent<C> event);
+    void connectionPrepared(IManagedConnectionEvent<C> event);
 
 
 
@@ -116,24 +117,19 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
      *
      * @param event
      */
-    void connectionRecovering(IManagedConnectionProxyEvent<C> event);
+    void connectionRecovering(IManagedConnectionEvent<C> event);
 
     /**
      * connection recovered
      */
-    void connectionRecovered(IManagedConnectionProxyEvent<C> event);
+    void connectionRecovered(IManagedConnectionEvent<C> event);
 
     /**
      * starts rolling back the connection
      *
      * @param event
      */
-    void connectionRollingBack(IManagedConnectionProxyEvent<C> event);
+    void connectionRollingBack(IManagedConnectionEvent<C> event);
 
 
-    /**
-     * steAutoCommit has been Called. The current state of autocommit has to be requested
-     * @param event
-     */
-    void autocommitChanged(IManagedConnectionProxyEvent<C> event) ;
 }

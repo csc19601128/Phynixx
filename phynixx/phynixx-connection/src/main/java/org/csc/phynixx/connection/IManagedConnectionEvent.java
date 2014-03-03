@@ -21,7 +21,7 @@ package org.csc.phynixx.connection;
  */
 
 
-public interface IManagedConnectionProxyEvent<C extends IPhynixxConnection> {
+public interface IManagedConnectionEvent<C extends IPhynixxConnection> {
 
     IPhynixxManagedConnection<C> getManagedConnection();
 

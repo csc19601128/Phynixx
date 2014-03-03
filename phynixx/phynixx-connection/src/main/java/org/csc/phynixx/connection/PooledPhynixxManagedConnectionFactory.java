@@ -193,7 +193,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
     /**
      * the connection is sent back to the pool
      */
-    public void connectionReleased(IManagedConnectionProxyEvent<C> event) {
+    public void connectionReleased(IManagedConnectionEvent<C> event) {
         IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
         if (!proxy.hasCoreConnection()) {
             return;
@@ -209,7 +209,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
     /**
      * the connection is set free an released from the pool
      */
-    public void connectionFreed(IManagedConnectionProxyEvent<C> event) {
+    public void connectionFreed(IManagedConnectionEvent<C> event) {
         IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
         if (!proxy.hasCoreConnection()) {
             return;

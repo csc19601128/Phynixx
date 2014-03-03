@@ -31,7 +31,7 @@ import org.csc.phynixx.common.cast.ImplementorUtils;
 class AutoCommitListener<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxManagedConnectionListener<C> {
 
     @Override
-    public void connectionRequiresTransactionExecuted(IManagedConnectionProxyEvent<C> event) {
+    public void connectionRequiresTransactionExecuted(IManagedConnectionEvent<C> event) {
 
         if(!event.getManagedConnection().hasCoreConnection()) {
             return;

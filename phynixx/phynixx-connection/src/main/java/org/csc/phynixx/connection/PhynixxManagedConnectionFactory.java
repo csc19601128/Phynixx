@@ -27,7 +27,6 @@ import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.connection.loggersystem.Dev0Strategy;
 import org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy;
-import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -227,7 +226,7 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
     /**
      * the connection is released to the pool
      */
-    public void connectionReleased(IManagedConnectionProxyEvent<C> event) {
+    public void connectionReleased(IManagedConnectionEvent<C> event) {
         IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Proxy " + proxy + " released");
@@ -236,7 +235,7 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
     }
 
     @Override
-    public void connectionFreed(IManagedConnectionProxyEvent<C> event) {
+    public void connectionFreed(IManagedConnectionEvent<C> event) {
         IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Proxy " + proxy + " set free");

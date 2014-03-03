@@ -22,7 +22,6 @@ package org.csc.phynixx.connection;
 
 
 import org.csc.phynixx.common.cast.ImplementorUtils;
-import org.csc.phynixx.common.exceptions.ExceptionUtils;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
@@ -177,7 +176,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     /**
      * If this proxy is implemented by a DynProxy. If a referene to this object has to be propagated
-     * ({@link #fireEvents(PhynixxManagedConnectionGuard.IEventDeliver)}, it would leads to invalid references
+     * ({@link #fireEvent(PhynixxManagedConnectionGuard.IEventDeliver)}, it would leads to invalid references
      * if <code>this</code> is returned but not the implementing DynaProxy.
      * <p/>
      * See the implementation of a java proxy.
@@ -335,18 +334,26 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         }
     }
 
-    public void commit() {
+    public void commit(boolean onePhaseCommit) {
 
         if(!hasTransactionalData()) {
             return;
         }
-        fireConnectionCommitting();
+        fireConnectionCommitting(onePhaseCommit);
         if (hasCoreConnection()) {
             checkThreadBinding();
+            if( onePhaseCommit) {
+                this.getCoreConnection().prepare();
+            }
             this.getCoreConnection().commit();
             setTransactionalData(false);
         }
-        this.fireConnectionCommitted();
+        this.fireConnectionCommitted(onePhaseCommit);
+
+    }
+
+    public void commit() {
+        this.commit(true);
 
     }
 
@@ -416,31 +423,18 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     }
 
 
-    private void fireConnectionReset() {
-
-        IEventDeliver<C> deliver = new IEventDeliver<C>() {
-            public void fireEvent(IPhynixxManagedConnectionListener<C> listener, IManagedConnectionProxyEvent<C> event) {
-                listener.connectionReset(event);
-            }
-
-            public String toString() {
-                return "connectionRest";
-            }
-        };
-        fireEvents(deliver);
+    interface IEventDeliver<X extends IPhynixxConnection,Y extends IManagedConnectionEvent<X>> {
+        void fireEvent(IPhynixxManagedConnectionListener<X> listener, Y event);
     }
 
 
-    interface IEventDeliver<X extends IPhynixxConnection> {
-        void fireEvent(IPhynixxManagedConnectionListener<X> listener, IManagedConnectionProxyEvent<X> event);
-    }
 
     private List<IPhynixxManagedConnectionListener<C>> listeners = new ArrayList<IPhynixxManagedConnectionListener<C>>();
 
     public void addConnectionListener(IPhynixxManagedConnectionListener<C> listener) {
         if (!listeners.contains(listener)) {
-            this.listeners.add(listener);
-        }
+        this.listeners.add(listener);
+    }
     }
 
     public synchronized void removeConnectionListener(IPhynixxManagedConnectionListener<C> listener) {
@@ -448,14 +442,19 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         this.listeners.remove(listener);
     }
 
-    private void fireEvents(IEventDeliver<C> deliver) {
-        fireEvents(deliver, null);
+    private  <E extends IManagedConnectionEvent<C>> void fireEvent(IEventDeliver<C, IManagedConnectionEvent<C>> deliver) {
+        fireEventWithException(deliver, null);
     }
 
-    private void fireEvents(IEventDeliver<C> deliver, Exception exception) {
+    private void fireEventWithException(IEventDeliver<C, IManagedConnectionEvent<C>> deliver, Exception exception) {
+        ManagedPhynixxConnectionEvent<C> event = new ManagedPhynixxConnectionEvent<C>(getObservableProxy(), exception);
+        deliverEvent(deliver, event);
+    }
+
+
+    private <E extends IManagedConnectionEvent<C>> void deliverEvent(IEventDeliver<C, E> deliver, E event) {
         // copy all listeners as the callback may change the list of listeners ...
         List<IPhynixxManagedConnectionListener<C>> tmp = new ArrayList(this.listeners);
-        PhynixxConnectionProxyEvent<C> event = new PhynixxConnectionProxyEvent<C>(getObservableProxy(), exception);
         for (int i = 0; i < tmp.size(); i++) {
             IPhynixxManagedConnectionListener<C> listener = tmp.get(i);
             if (LOG.isDebugEnabled()) {
@@ -467,8 +466,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
 
     protected void fireConnectionReleased() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener<C> listener, IManagedConnectionEvent<C> event) {
                 listener.connectionReleased(event);
             }
 
@@ -476,12 +475,12 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionReleased";
             }
         };
-        fireEvents(deliver);
+        fireEvent(deliver);
     }
 
     protected void fireConnectionErrorOccurred(final Exception exception) {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener<C> listener, IManagedConnectionEvent<C> event) {
                 listener.connectionErrorOccurred(event);
             }
 
@@ -489,12 +488,12 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionErrorOccurred";
             }
         };
-        fireEvents(deliver, exception);
+        fireEventWithException(deliver, exception);
     }
 
     protected void fireConnectionRequiresTransactionFinished() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionEvent event) {
                 listener.connectionRequiresTransaction(event);
             }
 
@@ -502,14 +501,14 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionRequiresTransaction";
             }
         };
-        fireEvents(deliver);
+        fireEvent(deliver);
     }
 
 
     protected void fireConnectionRequiresTransaction() {
 
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionEvent event) {
                 listener.connectionRequiresTransaction(event);
             }
 
@@ -517,14 +516,14 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionRequiresTransaction";
             }
         };
-        fireEvents(deliver);
+        fireEvent(deliver);
 
         this.setTransactionalData(true);
     }
 
     protected void fireConnectionRequiresTransactionExecuted(Exception exception) {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionEvent event) {
                 listener.connectionRequiresTransactionExecuted(event);
             }
 
@@ -532,12 +531,12 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionRequiresTransactionExecuted";
             }
         };
-        fireEvents(deliver, exception);
+        fireEventWithException(deliver, exception);
     }
 
     protected void fireConnectionRequiresTransactionExecuted() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionEvent event) {
                 listener.connectionRequiresTransactionExecuted(event);
             }
 
@@ -545,13 +544,13 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionRequiresTransactionExecuted";
             }
         };
-        fireEvents(deliver);
+        fireEvent(deliver);
     }
 
 
     protected void fireConnectionRolledback() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionEvent event) {
                 listener.connectionRolledback(event);
             }
 
@@ -559,14 +558,14 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionRolledback";
             }
         };
-        fireEvents(deliver);
+        fireEvent(deliver);
     }
 
 
 
     protected void fireConnectionPreparing() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionEvent event) {
                 listener.connectionPreparing(event);
             }
 
@@ -574,12 +573,12 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionPreparing";
             }
         };
-        fireEvents(deliver);
+        fireEvent(deliver);
     }
 
     protected void fireConnectionPrepared() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionEvent event) {
                 listener.connectionPrepared(event);
             }
 
@@ -587,12 +586,13 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionPrepared";
             }
         };
-        fireEvents(deliver);
+        fireEvent(deliver);
     }
 
-    protected void fireConnectionCommitting() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+    protected void fireConnectionCommitting(boolean onePhase) {
+        ManagedPhynixxConnectionCommitEvent<C> event = new ManagedPhynixxConnectionCommitEvent<C>(getObservableProxy(), onePhase);
+        IEventDeliver<C, IManagedConnectionCommitEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionCommitEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener<C> listener, IManagedConnectionCommitEvent<C> event) {
                 listener.connectionCommitting(event);
             }
 
@@ -600,12 +600,13 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionCommitting";
             }
         };
-        fireEvents(deliver);
+        deliverEvent(deliver, event);
     }
 
-    protected void fireConnectionCommitted() {
-        IEventDeliver deliver = new IEventDeliver<C>() {
-            public void fireEvent(IPhynixxManagedConnectionListener<C> listener, IManagedConnectionProxyEvent<C> event) {
+    protected void fireConnectionCommitted(boolean onePhase) {
+        ManagedPhynixxConnectionCommitEvent<C> event = new ManagedPhynixxConnectionCommitEvent<C>(getObservableProxy(), onePhase);
+        IEventDeliver<C, IManagedConnectionCommitEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionCommitEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener<C> listener, IManagedConnectionCommitEvent<C> event) {
                 listener.connectionCommitted(event);
             }
 
@@ -613,13 +614,13 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionCommitted";
             }
         };
-        fireEvents(deliver);
+        deliverEvent(deliver, event);
     }
 
 
     protected void fireConnectionFreed() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionEvent event) {
                 listener.connectionFreed(event);
             }
 
@@ -627,14 +628,14 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionFreed";
             }
         };
-        fireEvents(deliver);
+        fireEvent(deliver);
     }
 
 
 
     protected void fireConnectionRecovering() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionEvent event) {
                 listener.connectionRecovering(event);
             }
 
@@ -642,12 +643,12 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionRecovering";
             }
         };
-        fireEvents(deliver);
+        fireEvent(deliver);
     }
 
     protected void fireConnectionRollingBack() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionEvent event) {
                 listener.connectionRollingBack(event);
             }
 
@@ -655,12 +656,12 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionRollingBack";
             }
         };
-        fireEvents(deliver);
+        fireEvent(deliver);
     }
 
     protected void fireConnectionRecovered() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionEvent event) {
                 listener.connectionRecovered(event);
             }
 
@@ -668,8 +669,20 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
                 return "connectionRecovered";
             }
         };
-        fireEvents(deliver);
+        fireEvent(deliver);
     }
+    private void fireConnectionReset() {
 
+        IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C,IManagedConnectionEvent<C>>() {
+            public void fireEvent(IPhynixxManagedConnectionListener<C> listener, IManagedConnectionEvent<C> event) {
+                listener.connectionReset(event);
+            }
+
+            public String toString() {
+                return "connectionRest";
+            }
+        };
+        fireEvent(deliver);
+    }
 
 }
