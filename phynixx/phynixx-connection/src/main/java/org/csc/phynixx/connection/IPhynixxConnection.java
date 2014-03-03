@@ -33,17 +33,6 @@ public interface IPhynixxConnection {
     void reset();
 
     /**
-     * set Autocommit
-     */
-    void setAutoCommit(boolean autocommit);
-
-
-    /**
-     * @return
-     */
-    boolean isAutoCommit();
-
-    /**
      */
     void commit();
 

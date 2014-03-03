@@ -51,7 +51,7 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
     DynaPhynixxManagedConnectionFactory(Class<C> connectionInterface, CloseStrategy<C> closeStrategy, boolean synchronize) {
         super(new Class<?>[]{connectionInterface},
                 new Class[]{IPhynixxConnection.class, IPhynixxManagedConnection.class},
-                new Class[]{IXADataRecorderAware.class, ICloseable.class},
+                new Class[]{IXADataRecorderAware.class, ICloseable.class, IAutoCommitAware.class},
                 synchronize);
         this.connectionInterface = connectionInterface;
         this.closeStrategy= closeStrategy;

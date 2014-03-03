@@ -21,6 +21,8 @@ package org.csc.phynixx.connection;
  */
 
 
+import org.csc.phynixx.common.cast.ImplementorUtils;
+
 /**
  * checks, if the method is called in autocommit mode.
  *
@@ -31,7 +33,17 @@ class AutoCommitListener<C extends IPhynixxConnection> extends PhynixxManagedCon
     @Override
     public void connectionRequiresTransactionExecuted(IManagedConnectionProxyEvent<C> event) {
 
-        if (!event.getManagedConnection().isAutoCommit()) {
+        if(!event.getManagedConnection().hasCoreConnection()) {
+            return;
+        }
+
+        if(!ImplementorUtils.isImplementationOf(event.getManagedConnection().getCoreConnection(), IAutoCommitAware.class)) {
+            return;
+        }
+
+
+        IAutoCommitAware autoCommitAware= ImplementorUtils.cast(event.getManagedConnection().getCoreConnection(),IAutoCommitAware.class);
+        if (!autoCommitAware.isAutoCommit()) {
             return;
         }
 

@@ -66,7 +66,7 @@ import java.util.List;
  *
  * @param <C>
  */
-abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> implements IPhynixxManagedConnection<C>, IXADataRecorderAware, ICloseable {
+abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> implements IPhynixxManagedConnection<C>, IXADataRecorderAware, ICloseable , IAutoCommitAware{
 
     private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PhynixxManagedConnectionGuard.class);
 
@@ -301,16 +301,21 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     public boolean isAutoCommit() {
         if (hasCoreConnection()) {
-            return this.getCoreConnection().isAutoCommit();
+            checkThreadBinding();
+            if(ImplementorUtils.isImplementationOf(this.getCoreConnection(), IAutoCommitAware.class)) {
+                return ImplementorUtils.cast(this.getCoreConnection(),IAutoCommitAware.class).isAutoCommit();
+            }
         }
         return false;
+
     }
 
     public void setAutoCommit(boolean autoCommit) {
         if (hasCoreConnection()) {
             checkThreadBinding();
-            this.getCoreConnection().setAutoCommit(autoCommit);
-            this.fireAutocommitChanged();
+            if(ImplementorUtils.isImplementationOf(this.getCoreConnection(), IAutoCommitAware.class)) {
+                ImplementorUtils.cast(this.getCoreConnection(),IAutoCommitAware.class).setAutoCommit(autoCommit);
+            }
         }
     }
 
@@ -557,20 +562,6 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         fireEvents(deliver);
     }
 
-
-
-    protected void fireAutocommitChanged() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionProxyEvent event) {
-                listener.autocommitChanged(event);
-            }
-
-            public String toString() {
-                return "autocommitChanged";
-            }
-        };
-        fireEvents(deliver);
-    }
 
 
     protected void fireConnectionPreparing() {

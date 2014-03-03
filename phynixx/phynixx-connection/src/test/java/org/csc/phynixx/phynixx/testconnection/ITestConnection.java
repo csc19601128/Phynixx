@@ -21,6 +21,7 @@ package org.csc.phynixx.phynixx.testconnection;
  */
 
 
+import org.csc.phynixx.connection.IAutoCommitAware;
 import org.csc.phynixx.connection.IPhynixxConnection;
 import org.csc.phynixx.connection.IXADataRecorderAware;
 import org.csc.phynixx.connection.RequiresTransaction;
@@ -30,7 +31,7 @@ import org.csc.phynixx.connection.RequiresTransaction;
  *
  * @author christoph
  */
-public interface ITestConnection extends IPhynixxConnection, IXADataRecorderAware {
+public interface ITestConnection extends IPhynixxConnection, IXADataRecorderAware, IAutoCommitAware {
 
 
     /**
