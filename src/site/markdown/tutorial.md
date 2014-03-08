@@ -71,7 +71,7 @@ Dort werden folgende Methoden implementiert
 </table>
 &nbsp;
 
-Die Methoden _open, resetContent, write_ verändern den Zustand der Ressource und müssen daher an einer Transaktion teilnehmen, damit diese korrekt funktionieren. Dies wird durch die Annotation <i>@RequiresTransaction</i> angezeigt.
+Die Methoden _open, resetContent, write_ verändern den Zustand der Ressource und müssen daher an einer Transaktion teilnehmen, damit diese korrekt funktionieren. Dies wird durch die Annotation <i>\@RequiresTransaction</i> angezeigt.
 
 Um sicherzustellen, dass die Datei auch bei unvorhergesehenem Abbruch der Transaktion wiederherzustellen ist, wird ein persistenter _XADataRecorder_ angefordert. Mittels diesem können Wiederherstellungsinformation gesichert werden.
 Dazu muss das Interface _import org.csc.phynixx.connection.IXADataRecorderAware_ implementiert werden. Sobald eine Transaktion geöffnet wird, so wird der eine XARecoder via <code>setXADataRecorder(IXADataRecorder xaDataRecorder)</code> injeziert.
