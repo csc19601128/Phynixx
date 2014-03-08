@@ -4,11 +4,13 @@
     <body>
 
         <menu name="Documentation">
+            <!--
             <item name="Dokumentation" href="index.html"/>
             <item name="Phynixx" href="phynixx.html"/>
-            <item name="Gitting Started" href="gettingstarted.html"/>
-            <item name="Tutorial" href="tutorial.html"/>
             <item name="Referenzen" href="references.html"/>
+            -->
+            <item name="Getting Started" href="getting-started.html"/>
+            <item name="Tutorial" href="tutorial.html"/>
         </menu>
 
 
