@@ -61,7 +61,7 @@
                               
       <li>
   
-                          <a href="gettingstarted.html" title="Getting Started">
+                          <a href="getting-started.html" title="Getting Started">
           <i class="none"></i>
         Getting Started</a>
             </li>
@@ -92,13 +92,14 @@
         <div id="bodyColumn"  class="span9" >
                                   
             <h1>Tutorial</h1>
-<p>SourceCode findet sich im Module <i>phynixx-tutorial</i>. Das Projekt Phynixx bietet eine einfache M&#xf6;glichkeit f&#xfc;r Ressourcen an Transaktionen teilnehmen zu nehmen, seien es lokale oder globale (XA-protokoll, 2PC-) Transaktionen. Um eine Vorstellung vom Programmiermodell zu erhalten, stellen Sie sich eine Datenbank <tt>javax.sql.Connection</tt> vor, eine herk&#xf6;mmliche Datenbankverbindung. Diese Verbindung ist transaktional und kann, je nach zu grundeliegender DatenSource, auch an XA-Transaktionen teilnehmen.<br />Neben der <i>Connection</i> ist die <i>DateSource</i> in ihrer Rolle als <i>ConnectionFactory</i> wichtig. </p>
+<p>SourceCode findet sich im Module <i>phynixx-tutorial</i>. </p>
+<p>Das Projekt Phynixx bietet eine einfache M&#xf6;glichkeit f&#xfc;r Ressourcen an Transaktionen teilnehmen zu nehmen, seien es lokale oder globale (XA-protokoll, 2PC-) Transaktionen. Um eine Vorstellung vom Programmiermodell zu erhalten, stellen Sie sich eine Datenbank <tt>javax.sql.Connection</tt> vor, eine herk&#xf6;mmliche Datenbankverbindung. Diese Verbindung ist transaktional und kann, je nach zu grundeliegender DatenSource, auch an XA-Transaktionen teilnehmen.<br />Neben der <i>Connection</i> ist die <i>DateSource</i> in ihrer Rolle als <i>ConnectionFactory</i> wichtig. </p>
 <p>Auch im Programmiermodell von Phynixx wird ihre transaktionale Ressource als Connection bezeichnet, ebenso existiert eine ConnectionFactory um die Connections zu erzeugen. </p>
 <div class="section">
 <h2>Beispiel<a name="Beispiel"></a></h2>
 <p>In eine Datei sollen fortlaufend Strings geschrieben werden k&#xf6;nnen. Diese Schreiboperationen sollen transaktional unterst&#xfc;tzt werden, so dass auch eine Rollback m&#xf6;glich ist. Dazu wird der Bereich des g&#xfc;ltigen Inhalts durch eine Positionsangabe relativ zum Dateianfang gegeben. Mittels dieser Positionsangabe wird ein eventuelles Rollback implementiert, denn mittels der Dateiposition kann der Inhalt der Datei relativ zu dieser Position wiederhergestellt werden. </p>
 <p>Aus der Implementierung ergibt sich, dass nur sequentiell in die Datei geschrieben werden kann.</p>
-<p>Im Rahmen einer Transaktion soll bei einem Rollback der Stand der Datei bei Beginn der Transaktion wiederhergestellt werden. Die Anfangsdateipsoition wird aus der aktuellen L&#xe4;nge der Datei ermittelt. </p>
+<p>Im Rahmen einer Transaktion soll bei einem Rollback der Stand der Datei zu Beginn der Transaktion wiederhergestellt werden. Die Anfangsdateiposition wird aus der aktuellen L&#xe4;nge der Datei ermittelt. </p>
 <p>Folgender Testfall beschreibt die Arbeit mit dieser Klasse <tt>org.csc.phynixx.tutorial.TAEnabledUTFWriter</tt></p>
 
 <div class="source">
@@ -129,7 +130,9 @@ public void testTAEnabledUTFWriter() throws Exception {
   }      
 }
 </pre></div>
-<p><i>Listing 1 :</i> Arbeit mit der Ressource <tt>TAEnabledUTFWriter</tt></p>
+<p><i>Listing 1 :</i> Arbeit mit der Ressource <tt>TAEnabledUTFWriter</tt></p></div>
+<div class="section">
+<h2>lokale Transaktionen<a name="lokale_Transaktionen"></a></h2>
 <p>Diese Funktionalit&#xe4;t soll transaktional unterst&#xfc;tzt werden. Dazu muss sie im ersten Schritt das Interface <tt>org.csc.phynixx.connection.IPhynixxConnection</tt> unterst&#xfc;tzen. Dort wird geregelt, wie die transaktionale Ressource (in unserem Fall <i>TAEnabledUTFWriter</i>) auf die unterschiedlichen Situationen innerhalb einer Transaktionn reagieren soll.</p>
 
 <table border="0" class="table table-striped">
@@ -147,26 +150,14 @@ public void testTAEnabledUTFWriter() throws Exception {
 <td>Nichts geschieht, da Datei fortlaufend beschrieben wird und damit im Gutfall konsistent ist</td></tr>
 
 <tr class="b">
-<td>open</td>
-<td>&#xd6;ffnet eine Datei zum schreiben. Es wird die aktuelle Position der Datei als 'rollback'-Information gesichert</td></tr>
-
-<tr class="a">
-<td>resetContent</td>
-<td>Inhalt der Datei wird verworfen. </td></tr>
-
-<tr class="b">
-<td>write</td>
-<td>Es wird ein String in die Datei geschrieben.</td></tr>
-
-<tr class="a">
 <td>reset</td>
 <td>Connection wird neu genutzt und der bisherige Zustand wird verworfen</td></tr>
 
-<tr class="b">
+<tr class="a">
 <td>close</td>
 <td>Connection wird nicht weiter genutzt und freigesetzt</td></tr>
 </table>
-<p>&lt;nbsp;&gt; Die Funktionalit&#xe4;t zur Erfassung der Strings findet in <tt>TAEnabledUTFWriter</tt>, eine Subklasse von <tt>IPhynixxConnection</tt>. Dort werden folgende Methoden implementiert </p>
+<p>*Table 1 :*Implementierungen des Interfaces <i>IPhynixx</i> &lt;nbsp;&gt; Die Funktionalit&#xe4;t zur Erfassung der Strings findet in <tt>TAEnabledUTFWriter</tt>, eine Subklasse von <tt>IPhynixxConnection</tt>. Dort werden folgende Methoden implementiert </p>
 <table border="0" class="table table-striped"> 
 <tr class="a">
 <th>Methode</th>
@@ -279,6 +270,14 @@ public void testRollback() throws Exception {
 }
 </pre></div>
 <p><i>Listing 4 :</i> Beipiel die Einbindung der Ressource <tt>TAEnabledUTFWriter</tt> in eine lokale Transaktion mit Rollback</p></div>
+<div class="section">
+<h2>Globale Transaktionen<a name="Globale_Transaktionen"></a></h2></div>
+<div class="section">
+<h2>Integration mit Spring<a name="Integration_mit_Spring"></a></h2>
+<div class="section">
+<h3>lokale Transaktionen<a name="lokale_Transaktionen"></a></h3></div>
+<div class="section">
+<h3>globale Transaktionen<a name="globale_Transaktionen"></a></h3></div></div>
                   </div>
             </div>
           </div>
