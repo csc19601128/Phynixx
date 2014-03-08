@@ -59,12 +59,10 @@
                 <ul class="nav nav-list">
                     <li class="nav-header">Documentation</li>
                               
-      <li>
+      <li class="active">
   
-                          <a href="getting-started.html" title="Getting Started">
-          <i class="none"></i>
-        Getting Started</a>
-            </li>
+            <a href="#"><i class="none"></i>Getting Started</a>
+          </li>
                 
       <li>
   
@@ -93,11 +91,12 @@
                 
         <div id="bodyColumn"  class="span9" >
                                   
-            <h1>Bibliography</h1>
-<p>[JTA 1.1] Spezifikation (JSR-) des JTA Standards JTA Specification 1.1 [http://java.sun.com/javaee/technologies/jta/index.jsp]. Sun Microsystems Inc. 2007</p>
-<p>[XA Spec] XA Specification [http://www.opengroup.org/onlinepubs/009680699/toc.pdf]. X/Open Ltd 1991</p>
-<p>[data_direct-2005] Nur auf Basis der Begrifflichkeiten der JTA wie XAResource und XMID werden unterschieldliche Szenarien der Kommunikation zwischen TA-manager und XAresource demonstriert. Understanding JTA [http://www.datadirect.com/resources/resource-library/jdbc-developer-center/jdbc-tutorials/understanding-jta&#x2014;the-java-transaction-api/distributed-transactions-and-the-transaction-manager]. DATA DIRECT Technology. May 2005.</p>
-<p>[mike_spille-2004] Umfangreiche und detailierte Diskussion der unterschiedlichen Szenarien eines XA Protokolls. XA Exposed Part I-III[ http://jroller.com/pyrasun/category/XA]. Mike Spille (im Rahmen TheServerSide.com). 2004. [gupta-1997] Grundlagen zu OLTP. Commit Processing in Distributed On-Line and Real-Time Transaction Processing Systems [ http://dsl.serc.iisc.ernet.in/publications/thesis/rkg.ps.gz]. Ramesh Kumar Gupta (Promotion am Indian Institute of Science , Bangalore). 1997. [rich-2006] Java Transaction Design Strategies by Mark Richards on May 14, 2006 [http://www.infoq.com/minibooks/JTDS]</p>
+            <h1>Getting Started</h1>
+<p>Das Projekt <i>Phynixx</i> bietet eine einfache M&#xf6;glichkeit f&#xfc;r Ressourcen an Transaktionen teilnehmen zu nehmen, seien es lokale oder globale (XA-protokoll, 2PC-) Transaktionen. Stellen Sie sich z.B. jede Form von Ressource vor, deren Zustand sich an dem Ausgang einer Datenbanktransaktion orientiert. + Dateioperationen + Operationen an Filesysteme + Operationen an Archivsystemen ( welche keine eigenes Transaktionshandling anbieten; z.B. Centera von EMC). + Implementierung des Command-Pattern nach GoF. Dies enth&#xe4;lt eine Form von <i>rollback</i> durch <i>undo</i>.</p>
+<p>All diese Beispiele stellen transaktionale Ressourcen dar. Sie m&#xfc;ssen an lokalen Transaktionen (Transaktionen,.welche sich nur auf diese Ressource beziehen) oder globalen Transaktionen ( 2-Phase oder auch XA-Transaktionen) teilnehmen teilnehmen k&#xf6;nnen.</p>
+<p>Ein solche Ressource muss einen Minimum an Funktionalit&#xe4;t bereitsstellen und Phynixx erm&#xf6;glich ihr die Teilnahme an beiden Transaktionsprotokollen.</p>
+<p>Im Tutorial (siehe <a href="tutorial.html">Tutorial</a>) wird gezeigt, wie das sequentielle Schreiben in eine Datei transaktional mit Phynixx unterst&#xfc;tzt wird.</p>
+<p>Viel Spa&#xdf; damit.</p>
                   </div>
             </div>
           </div>
