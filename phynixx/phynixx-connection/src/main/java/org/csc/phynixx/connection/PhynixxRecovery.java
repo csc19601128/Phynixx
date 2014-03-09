@@ -53,12 +53,12 @@ public class PhynixxRecovery<C extends IPhynixxConnection> implements IPhynixxRe
     }
 
     public List<IPhynixxConnectionProxyDecorator<C>> getConnectionProxyDecorators() {
-        return this.managedConnectionFactory.getConnectionProxyDecorators();
+        return this.managedConnectionFactory.getManagedConnectionDecorators();
     }
 
     public void addConnectionProxyDecorator(
             IPhynixxConnectionProxyDecorator<C> connectionProxyDecorator) {
-        this.managedConnectionFactory.addConnectionProxyDecorator(connectionProxyDecorator);
+        this.managedConnectionFactory.addManagedConnectionDecorator(connectionProxyDecorator);
     }
 
 

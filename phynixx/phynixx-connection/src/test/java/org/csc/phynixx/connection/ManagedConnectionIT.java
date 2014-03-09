@@ -73,7 +73,7 @@ public class ManagedConnectionIT {
                 new PhynixxManagedConnectionFactory<ITestConnection>(new TestConnectionFactory());
         connectionFactory.setLoggerSystemStrategy(strategy);
 
-        connectionFactory.addConnectionProxyDecorator(new TestConnectionStatusListener());
+        connectionFactory.addManagedConnectionDecorator(new TestConnectionStatusListener());
 
         return connectionFactory;
     }

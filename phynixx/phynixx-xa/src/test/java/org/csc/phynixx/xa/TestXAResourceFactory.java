@@ -61,7 +61,7 @@ public class TestXAResourceFactory extends PhynixxXAResourceFactory<ITestConnect
             factory.setLoggerSystemStrategy(strategy);
         }
 
-        factory.addConnectionProxyDecorator(new TestConnectionStatusListener());
+        factory.addManagedConnectionDecorator(new TestConnectionStatusListener());
 
         return factory;
     }

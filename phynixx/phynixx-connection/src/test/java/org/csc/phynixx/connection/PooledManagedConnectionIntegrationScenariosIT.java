@@ -54,7 +54,7 @@ public class PooledManagedConnectionIntegrationScenariosIT extends TestCase {
         // instanciate a connection pool
         this.factory = this.createConnectionFactory(10);
         TestConnectionStatusListener eventListener = new TestConnectionStatusListener();
-        factory.addConnectionProxyDecorator(eventListener);
+        factory.addManagedConnectionDecorator(eventListener);
     }
 
     protected void tearDown() throws Exception {
@@ -268,7 +268,7 @@ public class PooledManagedConnectionIntegrationScenariosIT extends TestCase {
 
 
         TestConnectionStatusListener statusListener = new TestConnectionStatusListener();
-        factory.addConnectionProxyDecorator(statusListener);
+        factory.addManagedConnectionDecorator(statusListener);
         return factory;
     }
 

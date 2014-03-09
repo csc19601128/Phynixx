@@ -122,11 +122,11 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
         return connectionFactory;
     }
 
-    public List<IPhynixxConnectionProxyDecorator<C>> getConnectionProxyDecorators() {
+    public List<IPhynixxConnectionProxyDecorator<C>> getManagedConnectionDecorators() {
         return Collections.unmodifiableList(managedConnectionDecorators);
     }
 
-    public void addConnectionProxyDecorator(
+    public void addManagedConnectionDecorator(
             IPhynixxConnectionProxyDecorator<C> connectionProxyDecorator) {
         this.managedConnectionDecorators.add(connectionProxyDecorator);
     }

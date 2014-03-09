@@ -80,7 +80,7 @@ public class RecoveryIT {
         LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
 
         fac.setLoggerSystemStrategy(strategy);
-        fac.addConnectionProxyDecorator(new TestConnectionStatusListener());
+        fac.addManagedConnectionDecorator(new TestConnectionStatusListener());
 
         return fac;
     }

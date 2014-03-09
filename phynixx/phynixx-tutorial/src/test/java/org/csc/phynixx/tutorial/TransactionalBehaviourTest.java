@@ -23,7 +23,6 @@ package org.csc.phynixx.tutorial;
 
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.connection.IPhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.IPhynixxRecovery;
 import org.csc.phynixx.connection.PhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.PhynixxRecovery;
@@ -65,7 +64,7 @@ public class TransactionalBehaviourTest {
         this.connectionFactory =
                 new PhynixxManagedConnectionFactory<TAEnabledUTFWriter>(new TAEnabledUTFWriterFactoryImpl());
         connectionFactory.setLoggerSystemStrategy(strategy);
-        connectionFactory.addConnectionProxyDecorator(new DumpManagedConnectionListener<TAEnabledUTFWriter>());
+        connectionFactory.addManagedConnectionDecorator(new DumpManagedConnectionListener<TAEnabledUTFWriter>());
 
     }
 
