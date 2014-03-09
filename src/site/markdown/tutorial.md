@@ -11,7 +11,7 @@ Neben der _Connection_ ist die _DateSource_ in ihrer Rolle als _ConnectionFactor
 Auch im Programmiermodell von Phynixx wird ihre transaktionale Ressource als Connection bezeichnet, ebenso existiert eine ConnectionFactory um die Connections zu erzeugen. 
 
 ##  Fahrplan des Tutorials ##
-In diesem Tutorial wird beschrieben, wie welche Voraussetzungen geschaffen werden, dass eine Ressource am Transaktionsprotokoll teilnehmen kann. Als Beispiel dient sequemtielles Schreiben in eine Datei. Dies soll transaktional unterstützt werden und solwohl in an lokalen als auch globalen Transaktionen teilnehmen können. 
+In diesem Tutorial wird beschrieben, welche Voraussetzungen geschaffen werden müssen, dass eine Ressource am Transaktionsprotokoll teilnehmen kann. Als Beispiel dient sequentielles Schreiben in eine Datei. Dies soll transaktional unterstützt werden und solwohl in an lokalen als auch globalen Transaktionen teilnehmen können.
 
 ## Beispiel ##
 In eine Datei kann sequentiell geschrieben werden. Diese Schreiboperationen sollen transaktional unterstützt werden, so dass auch eine Rollback möglich ist.
