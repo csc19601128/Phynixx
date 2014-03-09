@@ -39,6 +39,22 @@
         <system>GitHub Issues</system>
     </issueManagement>
 
+    <profiles>
+            <profile>
+                <id>github</id>
+                <build>
+                    <plugins>
+                            <plugin>
+                                <groupId>com.github.github</groupId>
+                                <artifactId>site-maven-plugin</artifactId>
+                            </plugin>
+                    </plugins>
+                </build>
+
+            </profile>
+
+    </profiles>
+
 	<build>
 		<resources>
 			<resource>
@@ -49,6 +65,7 @@
 				<targetPath>META-INF</targetPath>
 			</resource>
 		</resources>
+
 
         <pluginManagement>
             <plugins>
@@ -207,13 +224,9 @@
                 <artifactId>maven-site-plugin</artifactId>
             </plugin>
 
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-            </plugin>
+            <!-- guthub is execute by profile -->
 
         </plugins>
-
 
     </build>
 
