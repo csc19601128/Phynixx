@@ -97,7 +97,7 @@
 <p>Auch im Programmiermodell von Phynixx wird ihre transaktionale Ressource als Connection bezeichnet, ebenso existiert eine ConnectionFactory um die Connections zu erzeugen. </p>
 <div class="section">
 <h2>Fahrplan des Tutorials<a name="Fahrplan_des_Tutorials"></a></h2>
-<p>In diesem Tutorial wird beschrieben, wie welche Voraussetzungen geschaffen werden, dass eine Ressource am Transaktionsprotokoll teilnehmen kann. Als Beispiel dient sequemtielles Schreiben in eine Datei. Dies soll transaktional unterst&#xfc;tzt werden und solwohl in an lokalen als auch globalen Transaktionen teilnehmen k&#xf6;nnen. </p></div>
+<p>In diesem Tutorial wird beschrieben, welche Voraussetzungen geschaffen werden m&#xfc;ssen, dass eine Ressource am Transaktionsprotokoll teilnehmen kann. Als Beispiel dient sequentielles Schreiben in eine Datei. Dies soll transaktional unterst&#xfc;tzt werden und solwohl in an lokalen als auch globalen Transaktionen teilnehmen k&#xf6;nnen.</p></div>
 <div class="section">
 <h2>Beispiel<a name="Beispiel"></a></h2>
 <p>In eine Datei kann sequentiell geschrieben werden. Diese Schreiboperationen sollen transaktional unterst&#xfc;tzt werden, so dass auch eine Rollback m&#xf6;glich ist. Dazu wird der Bereich des g&#xfc;ltigen Inhalts durch eine Positionsangabe relativ zum Dateianfang gegeben. Mittels dieser Positionsangabe wird ein eventuelles Rollback implementiert, denn mittels der Dateiposition kann der Inhalt der Datei relativ zu dieser Position wiederhergestellt werden. </p>
