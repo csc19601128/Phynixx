@@ -21,6 +21,7 @@ package org.csc.phynixx.tutorial;
  */
 
 
+import org.csc.phynixx.connection.IAutoCommitAware;
 import org.csc.phynixx.connection.IPhynixxConnection;
 import org.csc.phynixx.connection.IXADataRecorderAware;
 import org.csc.phynixx.connection.RequiresTransaction;
@@ -32,7 +33,7 @@ import java.util.List;
 /**
  * Created by zf4iks2 on 04.02.14.
  */
-public interface TAEnabledUTFWriter extends IPhynixxConnection, IXADataRecorderAware {
+public interface TAEnabledUTFWriter extends IPhynixxConnection, IXADataRecorderAware, IAutoCommitAware {
 
     /**
      * resets the content of the file associated with die current transaction
@@ -41,14 +42,25 @@ public interface TAEnabledUTFWriter extends IPhynixxConnection, IXADataRecorderA
     @RequiresTransaction
     void resetContent() throws IOException;
 
+    /**writes a string to file
+     *
+     * @param value
+     * @return
+     * @throws IOException
+     */
+    @RequiresTransaction
+    TAEnabledUTFWriter write(String value) throws IOException;
+
     @RequiresTransaction
     /**
      * opens a file and associates it with the current transaction
      */
     void open(File file);
 
-    @RequiresTransaction
-    TAEnabledUTFWriter write(String value) throws IOException;
 
-    List<String> getContent();
+    /**
+     * reads the content
+     * @return
+     */
+    List<String> readContent() throws IOException;
 }

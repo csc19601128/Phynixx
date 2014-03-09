@@ -22,8 +22,10 @@ package org.csc.phynixx.tutorial;
 
 
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.io.LogRecordReader;
 import org.csc.phynixx.common.io.LogRecordWriter;
 import org.csc.phynixx.connection.RequiresTransaction;
+import org.csc.phynixx.loggersystem.logrecord.IDataRecord;
 import org.csc.phynixx.loggersystem.logrecord.IDataRecordReplay;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
@@ -41,7 +43,6 @@ import java.util.List;
 public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
 
 
-    private List<String> content = new ArrayList<String>();
 
     /**
      * Das RandomAccessFile, dass zum Schreiben u. Lesen geoeffnet wird.
@@ -69,7 +70,6 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
         if (raf != null) {
             // close Quietly
             try {
-                raf.getChannel().lock().release();
                 // Schliessen der Daten-Datei
                 raf.close();
             } catch (Exception e) {
@@ -96,7 +96,6 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
         if (this.isClosed()) {
             throw new IllegalStateException("Writer is closed");
         }
-        this.content.clear();
         this.getRandomAccessFile().getChannel().truncate(0);
 
         this.rollbackPosition = 0;
@@ -114,12 +113,12 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
             throw new IllegalArgumentException("value must not be null");
         }
         this.getRandomAccessFile().writeUTF(value);
-        this.content.add(value);
 
         return this;
     }
 
-    public void recover() throws IOException {
+    @Override
+    public List<String> readContent() throws IOException {
 
         List<String> content = new ArrayList<String>();
 
@@ -133,7 +132,8 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
             content.add(value);
         }
         this.rollbackPosition = position();
-        this.content = content;
+
+        return content;
     }
 
     private void restoreSize(long size) throws IOException {
@@ -144,15 +144,10 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
 
     RandomAccessFile getRandomAccessFile() {
         if (this.isClosed()) {
-            throw new IllegalStateException("RandaomAccessFile is close");
+            throw new IllegalStateException("RandomAccessFile is close");
         }
 
         return raf;
-    }
-
-    @Override
-    public List<String> getContent() {
-        return content;
     }
 
 
@@ -174,9 +169,9 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
     public void open(File file) {
         try {
             this.raf = new RandomAccessFile(file, "rw");
-            this.recover();
+            this.readContent();
             if (this.getXADataRecorder() != null) {
-                LogRecordWriter logRecordWriter = new LogRecordWriter().writeLong(position());
+                LogRecordWriter logRecordWriter = new LogRecordWriter().writeUTF(file.getAbsolutePath()).writeLong(position());
                 this.getXADataRecorder().writeRollbackData(logRecordWriter.toByteArray());
             }
         } catch (Exception e) {
@@ -229,8 +224,32 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
         return xaDataRecorder;
     }
 
+
+    private class DataRecordReplay implements IDataRecordReplay {
+
+        @Override
+        public void replayRollback(IDataRecord record) {
+            LogRecordReader logRecordReader = new LogRecordReader(record.getData()[0]);
+            try {
+                String fileName= logRecordReader.readUTF();
+                long filePosition=logRecordReader.readLong();
+
+                File file= new File(fileName);
+                TAEnabledUTFWriterImpl.this.raf = new RandomAccessFile(file, "rw");
+                TAEnabledUTFWriterImpl.this.restoreSize(filePosition);
+            } catch (IOException e) {
+                throw new DelegatedRuntimeException(e);
+            }
+        }
+
+        @Override
+        public void replayRollforward(IDataRecord record) {
+
+        }
+    }
+
     @Override
     public IDataRecordReplay recoverReplayListener() {
-        return null;
+        return new DataRecordReplay();
     }
 }

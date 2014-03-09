@@ -72,7 +72,7 @@ public class TAEnabledUTFWriterTest {
         TAEnabledUTFWriterImpl recoverWriter = new TAEnabledUTFWriterImpl();
         recoverWriter.open(file);
         try {
-            List<String> content = writer.getContent();
+            List<String> content = recoverWriter.readContent();
             Assert.assertEquals(2, content.size());
             Assert.assertEquals("AA", content.get(0));
             Assert.assertEquals("BB", content.get(1));
