@@ -80,7 +80,7 @@ Die Methoden _open, resetContent, write_ verändern den Zustand der Ressource un
 Um sicherzustellen, dass die Datei auch bei unvorhergesehenem Abbruch der Transaktion wiederherzustellen ist, wird ein persistenter _XADataRecorder_ angefordert. Mittels diesem können Wiederherstellungsinformation gesichert werden.
 Dazu muss das Interface _import org.csc.phynixx.connection.IXADataRecorderAware_ implementiert werden. Sobald eine Transaktion geöffnet wird, so wird der eine XARecoder via <code>setXADataRecorder(IXADataRecorder xaDataRecorder)</code> injeziert.
 
-Es ist sichergestellt, dass der IXADataRecorder injeziert wird, unmittelbar bevor die erste Methode aufgerufen wird, welche durch _@RequireTransaction_ annotiert ist. Die Injezierung wird durch den Aufruf dieser Methode ausgelöst.
+Es ist sichergestellt, dass der IXADataRecorder injeziert wird, unmittelbar bevor die erste Methode aufgerufen wird, welche durch `@RequireTransaction` annotiert ist. Die Injezierung wird durch den Aufruf dieser Methode ausgelöst.
 
 Das Zusammenspiel innerhalb einer (lokalen) Transaktion ist in der Testklasse <code>TransactionalBehaviourTest</code> zu beobachten.
 
@@ -175,7 +175,7 @@ Interessant ist insbesondere das Setup des Tests
     }
 *Listing 4 :* Beipiel die Einbindung der Ressource <code>TAEnabledUTFWriter</code> in eine lokale Transaktion mit Rollback
 
-## _managed Connection_
+## _managed connection_
 Eine Connection in ihrer reinen Form gegeben durch die Implementierung <code>TAEnabledUTFWriterImpl</code> reicht nicht aus, um innerhalb einer Transaktion zu agieren. 
 
 Ein solche Connection muß zu einer _managed connection_ erweitert werden. Diese Erweiterung steuert viele Aspekte bei, welche eine _connection_ erst zu einer transaktionalen Ressource machen.
@@ -196,7 +196,7 @@ Dazu muss ein Listener vom Typ `IPhynixxManagedConnectionListener` implementiert
 
 Mittels dies Prinzips kann eine ManagedConnection auch um eigene Aspekte erweitert werden. 
 
-      connectionFactory.addConnectionProxyDecorator(
+      connectionFactory.addManagedConnectionDecorator(
                  new DumpManagedConnectionListener<TAEnabledUTFWriter>())
 *Abbildung 5 *: Beobachten des Workflows einer _managed connection_
 
