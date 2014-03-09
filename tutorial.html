@@ -217,10 +217,11 @@ public void setUp() throws Exception {
 
     this.connectionFactory =
             new PhynixxManagedConnectionFactory&lt;TAEnabledUTFWriter&gt;(
-                                            new TAEnabledUTFWriterFactoryImpl());
+                            new TAEnabledUTFWriterFactoryImpl());
     IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory(
-                                                 &quot;ta_enabled&quot;, this.tmpDir.getDirectory());
-    IPhynixxLoggerSystemStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
+                             &quot;ta_enabled&quot;, this.tmpDir.getDirectory());
+    IPhynixxLoggerSystemStrategy&lt;TAEnabledUTFWriter&gt; strategy = 
+            new LoggerPerTransactionStrategy&lt;TAEnabledUTFWriter&gt;(loggerFactory);
     connectionFactory.setLoggerSystemStrategy(strategy);
 }
 </pre></div>
@@ -228,9 +229,11 @@ public void setUp() throws Exception {
 
 <ul>
   
-<li>Die <tt>connectionFactory</tt> liefert die Connections der Ressource <tt>TAEnabledUTFWriter</tt>. Eine Connection in ihrer reinen Form gegeben durch die Implementierung <tt>TAEnabledUTFWriterImpl</tt> reicht nicht aus, um innerhalb einer Transaktion zu agieren. Da vollst&#xe4;ndige Management der Integration in eine Transaktion wird durch Implementierungen von <tt>IPhynixxManagedConnection&lt;TAEnabledUTFWriter&gt;</tt> &#xfc;bernommen. Dazu wird der zugh&#xf6;rigen Factory eine Factory &#xfc;bergfebene, welche die reinen Connection erzeugt.</li>
+<li>Die ConnectionFactory <tt>TAEnabledUTFWriterFactoryImpl</tt> liefert die Connections der Ressource <tt>TAEnabledUTFWriter</tt>. Sie wird zusammen it &#x2019;TAEnabledUTFWriterFactory` bereitgestellt.</li>
   
 <li>Um einen persistenten <tt>XADataRecorder</tt> injezieren zu k&#xf6;nnen, muss eine eine Persistenzverfahren an die Factory &#xfc;bergeben werden, welches die Wiederherstellungsinformationen sichert. In dieser Strategie wird festgelegt, auf welche Weise die transaktional relevanten Daten gesichert werden. Die Strategie <tt>LoggerPerTransactionStrategy</tt> erzeugt DataRecoder im Filesystem.</li>
+  
+<li>Um einfach tempor&#xe4;re Dateien erzeugen zu k&#xf6;nnenn, bietet die Klasse <tt>TmpDirectory</tt> reinr Interface, tempor&#xe4;re Datei und Verzeichnisse zu erzeugen</li>
 </ul>
 
 <div class="source">
@@ -270,6 +273,28 @@ public void testRollback() throws Exception {
 }
 </pre></div>
 <p><i>Listing 4 :</i> Beipiel die Einbindung der Ressource <tt>TAEnabledUTFWriter</tt> in eine lokale Transaktion mit Rollback</p></div>
+<div class="section">
+<h2>Rolle von <i>ConnectionFactories</i><a name="Rolle_von_ConnectionFactories"></a></h2>
+<p>Eine Connection in ihrer reinen Form gegeben durch die Implementierung <tt>TAEnabledUTFWriterImpl</tt> reicht nicht aus, um innerhalb einer Transaktion zu agieren. </p>
+<p>Ein solche Connection mu&#xdf; zu einer <i>managed connection</i> erweitert werden. Diese Erweiterung steuert viele Aspekte bei, die die <i>connection</i> erst zu einer transaktionalen Ressource zu machen.</p>
+<p>Um diese Aspekte zu erhalten, muss eine <tt>PhynixxManagedConnectionFactory</tt>eingesetzt werden. Sie veredelt eine normale Connection zu einer <i>managed connection</i> und damit zu einer transaktionalen Ressource. Eine <i>managed connection</i> basiert auf einer normalen connection.</p>
+
+<div class="source">
+<pre>this.connectionFactory =
+            new PhynixxManagedConnectionFactory&lt;TAEnabledUTFWriter&gt;(
+                            new TAEnabledUTFWriterFactoryImpl());
+</pre></div>
+<p><i>Abbildung 4</i> : Beispiel einer PhynixxManagedConnectionFactory</p></div>
+<div class="section">
+<h2>Erweiterung der Funktionalit&#xe4;t einer <i>managed connection</i><a name="Erweiterung_der_Funktionalitt_einer_managed_connection"></a></h2>
+<p>Die Funktionalit&#xe4;t von <i>managed connections</i> wird mittels der Observer Pattern_ [GoF] erweitert. Dazu muss ein Listener vom Typ <tt>IPhynixxManagedConnectionListener</tt> implementiert und der ManagedConnectionFactory &#xfc;bergeben werden. </p>
+<p>Mittels dies Prinzips kann eine ManagedConnection auch um eigene Aspekte erweitert werden. </p>
+
+<div class="source">
+<pre>  connectionFactory.addConnectionProxyDecorator(
+             new DumpManagedConnectionListener&lt;TAEnabledUTFWriter&gt;())
+</pre></div>
+<p><i>Abbildung 5 </i>: </p></div>
 <div class="section">
 <h2>Globale Transaktionen<a name="Globale_Transaktionen"></a></h2></div>
 <div class="section">
