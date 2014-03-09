@@ -48,11 +48,22 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
      * Das RandomAccessFile, dass zum Schreiben u. Lesen geoeffnet wird.
      */
     private RandomAccessFile raf = null;
+
     private IXADataRecorder xaDataRecorder;
 
     private boolean autoCommit=false;
 
     private long rollbackPosition;
+
+    private final String connectionId;
+
+    public TAEnabledUTFWriterImpl(String connectionId) {
+        this.connectionId = connectionId;
+    }
+
+    public String getConnectionId() {
+        return connectionId;
+    }
 
     public boolean isAutoCommit() {
         return autoCommit;
@@ -200,7 +211,6 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
         } catch (IOException e) {
             throw new DelegatedRuntimeException(e);
         }
-
     }
 
     /**
@@ -209,6 +219,13 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
     @Override
     public void prepare() {
 
+    }
+
+    @Override
+    public String toString() {
+        return "TAEnabledUTFWriterImpl{" +
+                "connectionId='" + connectionId + '\'' +
+                '}';
     }
 
     /**

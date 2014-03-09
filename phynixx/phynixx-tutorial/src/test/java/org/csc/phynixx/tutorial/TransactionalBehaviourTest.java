@@ -94,7 +94,7 @@ public class TransactionalBehaviourTest {
             connection.close();
         }
 
-        TAEnabledUTFWriterImpl recoverWriter = new TAEnabledUTFWriterImpl();
+        TAEnabledUTFWriterImpl recoverWriter = new TAEnabledUTFWriterImpl("recover");
         try {
             recoverWriter.open(file);
             List<String> content = recoverWriter.readContent();
@@ -120,6 +120,7 @@ public class TransactionalBehaviourTest {
             connection.open(file);
             connection.resetContent();
             connection.write("AA").write("BB");
+            connection.commit();
         } finally {
             connection.close();
         }

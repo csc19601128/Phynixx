@@ -59,7 +59,7 @@ public class TAEnabledUTFWriterTest {
 
         File file = this.tmpDir.assertExitsFile("my_test.tmp");
 
-        TAEnabledUTFWriterImpl writer = new TAEnabledUTFWriterImpl();
+        TAEnabledUTFWriterImpl writer = new TAEnabledUTFWriterImpl("recover");
         writer.open(file);
         writer.resetContent();
 
@@ -69,7 +69,7 @@ public class TAEnabledUTFWriterTest {
             writer.close();
         }
 
-        TAEnabledUTFWriterImpl recoverWriter = new TAEnabledUTFWriterImpl();
+        TAEnabledUTFWriterImpl recoverWriter = new TAEnabledUTFWriterImpl("recover");
         recoverWriter.open(file);
         try {
             List<String> content = recoverWriter.readContent();

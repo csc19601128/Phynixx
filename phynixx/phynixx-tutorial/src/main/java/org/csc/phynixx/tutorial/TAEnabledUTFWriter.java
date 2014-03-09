@@ -35,6 +35,9 @@ import java.util.List;
  */
 public interface TAEnabledUTFWriter extends IPhynixxConnection, IXADataRecorderAware, IAutoCommitAware {
 
+
+    String getConnectionId();
+
     /**
      * resets the content of the file associated with die current transaction
      * @throws IOException

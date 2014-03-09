@@ -21,15 +21,18 @@ package org.csc.phynixx.tutorial;
  */
 
 
+import org.csc.phynixx.common.generator.IDGenerator;
+import org.csc.phynixx.common.generator.IDGenerators;
 /**
  * Created by zf4iks2 on 04.02.14.
  */
 public class TAEnabledUTFWriterFactoryImpl implements TAEnabledUTFWriterFactory {
 
+    private static final IDGenerator<Long> idGenerator= IDGenerators.createLongGenerator(1,true);
 
     @Override
     public TAEnabledUTFWriter getConnection() {
-        return new TAEnabledUTFWriterImpl();
+        return new TAEnabledUTFWriterImpl(Long.toString(idGenerator.generate()));
     }
 
     @Override
