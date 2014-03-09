@@ -415,6 +415,10 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         this.fireConnectionRecovering();
         IDataRecordReplay dataRecordReplay = con.recoverReplayListener();
 
+        if( dataRecordReplay==null) {
+            throw new IllegalStateException("IPhynixxConnection.recoverReplayListener() has to provide a IDataRecordReplay to be recovered");
+        }
+
         // msgLogger.recover();
         msgLogger.replayRecords(dataRecordReplay);
 

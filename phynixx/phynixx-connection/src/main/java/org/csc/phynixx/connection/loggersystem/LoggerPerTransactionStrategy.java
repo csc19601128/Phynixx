@@ -313,9 +313,9 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 
 
     @Override
-    public IPhynixxManagedConnection<C> decorate(IPhynixxManagedConnection<C> connectionProxy) {
-        connectionProxy.addConnectionListener(this);
-        return connectionProxy;
+    public IPhynixxManagedConnection<C> decorate(IPhynixxManagedConnection<C> managedConnection) {
+        managedConnection.addConnectionListener(this);
+        return managedConnection;
     }
 
 }

@@ -399,6 +399,22 @@ class TAEnabledRandomAccessFile {
     }
 
 
+    public void reset() throws IOException {
+        check();
+
+        this.position(0);
+
+        this.commit();
+
+        // forget about the rest
+        this.getRandomAccessFile().getChannel().truncate(TAEnabledRandomAccessFile.HEADER_LENGTH);
+
+
+
+
+    }
+
+
     /**
      * Schreibt die Position an den Anfang der Datei
      * Die Position entspricht der gueltigen Dateigroesse.
@@ -417,12 +433,15 @@ class TAEnabledRandomAccessFile {
         this.position(currentPosition);
 
         // write through
-        this.raf.getChannel().force(false);
+        this.getRandomAccessFile().getChannel().force(false);
 
+
+        /**
         long comSize = getCommittedSize();
         if( comSize!=currentPosition) {
             throw new IllegalStateException("commited size has unexpected value");
         }
+         **/
     }
 
     /**

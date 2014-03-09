@@ -211,8 +211,7 @@ public class FileChannelDataLogger implements IDataLogger {
                 break;
             case WRITE:
                 maybeWritten();
-                this.randomAccess.position(0L);
-                this.randomAccess.commit();
+                this.randomAccess.reset();
                 break;
             case APPEND:
                 maybeWritten();

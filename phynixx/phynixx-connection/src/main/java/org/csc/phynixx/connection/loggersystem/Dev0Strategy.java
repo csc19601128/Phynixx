@@ -127,9 +127,9 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedCo
     }
 
     @Override
-    public IPhynixxManagedConnection<C> decorate(IPhynixxManagedConnection<C> connectionProxy) {
-        connectionProxy.addConnectionListener(this);
-        return connectionProxy;
+    public IPhynixxManagedConnection<C> decorate(IPhynixxManagedConnection<C> managedConnection) {
+        managedConnection.addConnectionListener(this);
+        return managedConnection;
     }
 
 

@@ -27,8 +27,8 @@ package org.csc.phynixx.connection;
 public class AutoCommitDecorator<C extends IPhynixxConnection> implements IPhynixxConnectionProxyDecorator<C> {
 
     @Override
-    public IPhynixxManagedConnection<C> decorate(IPhynixxManagedConnection<C> connectionProxy) {
-        connectionProxy.addConnectionListener(new AutoCommitListener<C>());
-        return connectionProxy;
+    public IPhynixxManagedConnection<C> decorate(IPhynixxManagedConnection<C> managedConnection) {
+        managedConnection.addConnectionListener(new AutoCommitListener<C>());
+        return managedConnection;
     }
 }

@@ -17,7 +17,7 @@
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.4" level="project" />
     <orderEntry type="module" module-name="phynixx-watchdog" />
     <orderEntry type="module" module-name="phynixx-watchdog" scope="TEST" production-on-test="" />
-    <orderEntry type="module" module-name="phynixx-xa" />
+    <orderEntry type="library" name="Maven: org.csc.phynixx:phynixx-xa:2.0.0-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="phynixx-connection" />
     <orderEntry type="module" module-name="phynixx-logger" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.1" level="project" />

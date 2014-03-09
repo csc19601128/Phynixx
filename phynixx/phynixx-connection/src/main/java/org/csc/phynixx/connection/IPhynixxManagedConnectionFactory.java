@@ -32,6 +32,13 @@ public interface IPhynixxManagedConnectionFactory<C extends IPhynixxConnection> 
 
     /**
      *
+     * @return
+     */
+    C getConnection();
+
+
+    /**
+     *
      *
      * Default ist true
      */

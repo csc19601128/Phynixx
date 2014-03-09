@@ -78,9 +78,9 @@ public class TestConnectionStatusListener extends PhynixxManagedConnectionListen
         TestConnectionStatusManager.registerStatus(event.getManagedConnection(), TestConnectionStatus.RECOVERED);
     }
 
-    public IPhynixxManagedConnection decorate(IPhynixxManagedConnection<ITestConnection> connectionProxy) {
-        connectionProxy.addConnectionListener(this);
-        return connectionProxy;
+    public IPhynixxManagedConnection decorate(IPhynixxManagedConnection<ITestConnection> managedConnection) {
+        managedConnection.addConnectionListener(this);
+        return managedConnection;
 
     }
 

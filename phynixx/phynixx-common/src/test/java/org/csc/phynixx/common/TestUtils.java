@@ -42,8 +42,11 @@ public class TestUtils {
         }
     }
 
-
     public static void configureLogging() {
+        configureLogging("ERROR");
+    }
+
+    public static void configureLogging(String log4jLevel) {
         Set<String> validLogLevels = new HashSet<String>();
         validLogLevels.add("DEBUG");
         validLogLevels.add("INFO");
@@ -77,7 +80,7 @@ public class TestUtils {
         // check if log4j.level is set correctly ; else set the Default to INFO
         String level = log4jProps.getProperty("log4j_level");
         if (level == null || !validLogLevels.contains(level)) {
-            level = "ERROR";
+            level = log4jLevel;
             log4jProps.setProperty("log4j_level", level);
         }
 

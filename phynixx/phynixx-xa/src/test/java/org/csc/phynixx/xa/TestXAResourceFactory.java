@@ -46,17 +46,17 @@ public class TestXAResourceFactory extends PhynixxXAResourceFactory<ITestConnect
     public TestXAResourceFactory(String id,
                                  File dataLoggerDirectory,
                                  TransactionManager transactionManager) {
-        super(id, createManagedConnectionFactory(dataLoggerDirectory), transactionManager);
+        super(id, createManagedConnectionFactory(id,dataLoggerDirectory), transactionManager);
     }
 
-    private static PhynixxManagedConnectionFactory<ITestConnection> createManagedConnectionFactory(File dataLoggerDirectory) {
+    private static PhynixxManagedConnectionFactory<ITestConnection> createManagedConnectionFactory(String id, File dataLoggerDirectory) {
         GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
         cfg.setMaxTotal(POOL_SIZE);
         PooledPhynixxManagedConnectionFactory<ITestConnection> factory =
                 new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
 
         if (dataLoggerDirectory != null) {
-            IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("testResource", dataLoggerDirectory);
+            IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory(id, dataLoggerDirectory);
             LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
             factory.setLoggerSystemStrategy(strategy);
         }

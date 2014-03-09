@@ -34,9 +34,9 @@ public interface IXADataRecorderAware {
     /**
      * sets the current datzaRecorder. It is set bey the environment
      *
-     * @param logger
+     * @param xaDataRecorder
      */
-    void setXADataRecorder(IXADataRecorder logger);
+    void setXADataRecorder(IXADataRecorder xaDataRecorder);
 
 
     /**
