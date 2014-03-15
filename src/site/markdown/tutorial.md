@@ -165,8 +165,9 @@ Selbst um an lokalen Transaktionen in einfacherweise teilzunehmen, sollte die Co
 - Integration in _spring transaktion management_
 
 Um alle diese Aspekte zu erhalten, muss eine `PhynixxManagedConnectionFactory` eingesetzt werden. Sie veredelt eine normale Connection zu einer _managed connection_ und damit zu einer transaktionalen Ressource. 
+
     this.connectionFactory =
-                new PhynixxManagedConnectionFactory<TAEnabledUTFWriter>(new TAEnabledUTFWriterFactoryImpl());
+                new PhynixxManagedConnectionFactory&lt;TAEnabledUTFWriter&gt;(new TAEnabledUTFWriterFactoryImpl());
 *Listing 4* : Beispiel einer PhynixxManagedConnectionFactory
 
 Connection, welche mit dieser Factory erzeugt worden sind, sind voll funktiontionsfähige transaktionale Ressourcen und können an lokalen Transaktionen teilnehmen.  Jede _managed connection_ besitzt eine assoziierte _connection_; bei uns vom Typ `TAEnabledUTFWriter`. Bei Bedarf wendet sich die _managed connection_ an diese.  
