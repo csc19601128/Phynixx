@@ -82,6 +82,9 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     private CloseStrategy closeStrategy;
 
+    private List<IPhynixxManagedConnectionListener<C>> listeners = new ArrayList<IPhynixxManagedConnectionListener<C>>();
+
+
     final Long id;
 
     private volatile Long boundThreadId =null;
@@ -432,9 +435,6 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     }
 
 
-
-    private List<IPhynixxManagedConnectionListener<C>> listeners = new ArrayList<IPhynixxManagedConnectionListener<C>>();
-
     public void addConnectionListener(IPhynixxManagedConnectionListener<C> listener) {
         if (!listeners.contains(listener)) {
         this.listeners.add(listener);
@@ -446,16 +446,35 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         this.listeners.remove(listener);
     }
 
-    private  <E extends IManagedConnectionEvent<C>> void fireEvent(IEventDeliver<C, IManagedConnectionEvent<C>> deliver) {
+    /**
+     *
+     * @param deliver     *
+     * @see #deliverEvent(org.csc.phynixx.connection.PhynixxManagedConnectionGuard.IEventDeliver, IManagedConnectionEvent)
+     *
+     */
+    private  void fireEvent(IEventDeliver<C, IManagedConnectionEvent<C>> deliver) {
         fireEventWithException(deliver, null);
     }
 
+    /**
+     * creates an event an fires at all listeners
+     * @param deliver implementaion of the firing
+     * @param exception expection added to the event if given
+     *
+     * @see #deliverEvent(org.csc.phynixx.connection.PhynixxManagedConnectionGuard.IEventDeliver, IManagedConnectionEvent)
+     */
     private void fireEventWithException(IEventDeliver<C, IManagedConnectionEvent<C>> deliver, Exception exception) {
         ManagedPhynixxConnectionEvent<C> event = new ManagedPhynixxConnectionEvent<C>(getObservableProxy(), exception);
         deliverEvent(deliver, event);
     }
 
 
+    /**
+     *
+     * @param deliver
+     * @param event
+     * @param <E>
+     */
     private <E extends IManagedConnectionEvent<C>> void deliverEvent(IEventDeliver<C, E> deliver, E event) {
         // copy all listeners as the callback may change the list of listeners ...
         List<IPhynixxManagedConnectionListener<C>> tmp = new ArrayList(this.listeners);
@@ -497,7 +516,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     protected void fireConnectionRequiresTransactionFinished() {
         IEventDeliver<C, IManagedConnectionEvent<C>> deliver = new IEventDeliver<C, IManagedConnectionEvent<C>>() {
-            public void fireEvent(IPhynixxManagedConnectionListener listener, IManagedConnectionEvent event) {
+            public void fireEvent(IPhynixxManagedConnectionListener<C> listener, IManagedConnectionEvent<C> event) {
                 listener.connectionRequiresTransaction(event);
             }
 

@@ -26,6 +26,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 /**
  * Created by christoph on 12.01.14.
@@ -85,6 +86,48 @@ public class LogRecordWriter {
 
     public LogRecordWriter writeBoolean(boolean v) throws IOException {
         io.writeBoolean(v);
+        return this;
+    }
+
+    /**
+     * write the object's class name to check the consistency if the restrore fails.
+     *
+     * A null object is accepted
+     *
+     * @param object
+     * @return
+     * @throws IOException
+     */
+    public LogRecordWriter writeObject(Object object) throws IOException {
+        if( object==null) {
+            return this.writeNullObject();
+        }
+        ObjectOutputStream out=null;
+        try {
+            ByteArrayOutputStream byteOutput= new ByteArrayOutputStream();
+            out = new ObjectOutputStream(byteOutput);
+            out.writeObject(object);
+            out.flush();
+            byte[] serBytes=byteOutput.toByteArray();
+            io.writeInt(serBytes.length);
+            io.write(serBytes);
+        } finally {
+            if(out!=null) {
+                IOUtils.closeQuietly(out);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * A null object is accepted
+     *
+     * @return
+     * @throws IOException
+     */
+    private LogRecordWriter writeNullObject() throws IOException {
+            io.writeInt(0);
+            io.write(new byte[] {});
         return this;
     }
 

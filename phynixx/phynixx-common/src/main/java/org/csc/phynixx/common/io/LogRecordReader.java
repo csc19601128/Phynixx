@@ -22,10 +22,9 @@ package org.csc.phynixx.common.io;
 
 
 import org.apache.commons.io.IOUtils;
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by christoph on 12.01.14.
@@ -71,6 +70,29 @@ public class LogRecordReader {
     public short readShort() throws IOException {
         return io.readShort();
     }
+
+    public Object readObject() throws IOException {
+        ObjectInputStream in=null;
+        try {
+            int byteLength= io.readInt();
+            byte[] byteArray= new byte[byteLength];
+            io.readFully(byteArray);
+            if(byteArray.length==0) {
+                return null;
+            }
+            in= new ObjectInputStream(new ByteArrayInputStream(byteArray));
+            try {
+                return in.readObject();
+            } catch (ClassNotFoundException e) {
+                throw new DelegatedRuntimeException("Error restoring Serialiazable", e);
+            }
+        } finally {
+            if(in!=null) {
+                IOUtils.closeQuietly(in);
+            }
+        }
+    }
+
 
     public void close() {
         if (this.byteInput != null) {
