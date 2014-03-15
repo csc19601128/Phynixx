@@ -3,7 +3,7 @@ Tutorial
 
 SourceCode findet sich im Module <i>phynixx-tutorial</i>. 
 
-Grundlagen finden sich in [Getting Started]/getting-started.html). Diese helfen Ihnen, die Schritte im Tutorial leicht nachzuvollziehen.
+Grundlagen finden sich in [Getting Started](getting-started.html). Diese helfen Ihnen, die Schritte im Tutorial leicht nachzuvollziehen.
 
 
 Das Projekt Phynixx bietet eine einfache Möglichkeit für Ressourcen an Transaktionen teilnehmen zu nehmen, seien es lokale oder globale (XA-protokoll, 2PC-) Transaktionen. 
@@ -66,7 +66,7 @@ Diese Funktionalität des Schreibens in eine Datei soll transaktional unterstüt
 <tr><td>reset</td><td>Connection wird neu genutzt und der bisherige Zustand wird verworfen</td></tr>
 <tr><td>close</td><td>Connection wird nicht weiter genutzt und freigesetzt</td></tr>
 </table>
-*Tabelle 1 :*Implementierungen des Interfaces `IPhynixxConnection` für `TAEnabledUTFWriter`
+*Tabelle 1* :Implementierungen des Interfaces `IPhynixxConnection` für `TAEnabledUTFWriter`
 <nbsp;>
 Die Funktionalität zum seqnetiellen Schreiben finden sich in <code>TAEnabledUTFWriter</code>, eine Subklasse von <code>IPhynixxConnection</code>.
 Dort werden folgende Methoden implementiert
@@ -77,6 +77,7 @@ Dort werden folgende Methoden implementiert
 <tr><td>readContent</td><td>Liest den Inhalt aus Datei</td></tr>
 <tr><td>write</td><td>Es wird ein String in die Datei geschrieben.</td></tr>
 </table>
+*Tabelle 2* :Funktionalität von `TAEnabledUTFWriter`
 &nbsp;
 
 Die Methoden _open, resetContent, write_ verändern den Zustand der Ressource und müssen daher an einer Transaktion teilnehmen, damit diese korrekt funktionieren. Dies wird durch die Annotation `@RequiresTransaction ` angezeigt.
@@ -167,7 +168,7 @@ Selbst um an lokalen Transaktionen in einfacherweise teilzunehmen, sollte die Co
 Um alle diese Aspekte zu erhalten, muss eine `PhynixxManagedConnectionFactory` eingesetzt werden. Sie veredelt eine normale Connection zu einer _managed connection_ und damit zu einer transaktionalen Ressource. 
 
     this.connectionFactory =
-                new PhynixxManagedConnectionFactory&lt;TAEnabledUTFWriter&gt;(new TAEnabledUTFWriterFactoryImpl());
+                new PhynixxManagedConnectionFactory<TAEnabledUTFWriter>(new TAEnabledUTFWriterFactoryImpl());
 *Listing 4* : Beispiel einer PhynixxManagedConnectionFactory
 
 Connection, welche mit dieser Factory erzeugt worden sind, sind voll funktiontionsfähige transaktionale Ressourcen und können an lokalen Transaktionen teilnehmen.  Jede _managed connection_ besitzt eine assoziierte _connection_; bei uns vom Typ `TAEnabledUTFWriter`. Bei Bedarf wendet sich die _managed connection_ an diese.  
@@ -217,13 +218,12 @@ Wiederherstellungsinformationen werden über `IXADataRecorder` gesichert. Sobald
 
 Wiederherstellungsinformationen sind notwendig, wenn eine Transaktion aus welchen Gründen auch immer nicht korrekt beendet wurde.
 
-`rollback-`Informationen werden genutzt, um die Ressource auf den Stand bei Beginn der Transaktion wiederherzustellen. Ein `TAEnabledUTFWriter` schreibt die Dateiposition, sobald er mit einer datei verbunden ist. Bei rollback wird die Dateiposition 
+`rollback-`Informationen werden genutzt, um die Ressource auf den Stand bei Beginn der Transaktion wiederherzustellen. 
 
-`rollforward`-Informationen werden genutzt, um eine begonnenes `commit` konsistent zu beenden. Wurde ein commit begonnen, so gibt es kein Zurück und die Ressource muss auf den Stand gebracht werden, den das commit verlangt.
+`rollforward`-Informationen werden genutzt, um eine begonnenes `commit` konsistent zu beenden. 
 
-
-
-
+stellung muss ein rollback ausgeführt werden, um die Ressource auf den Stand bei beginn der Transaktion zu ährend Informationen, welche genutzt werden, um bei _rollback_ die Konsistenz der Ressource wiederherzustellen. 
+- Informationen, welche genutzt werden, um bei 
 
 ## Konfiguration von AutoCommit
 Soll ihrer transaktionale Ressource für lokale Transaktionen _autocommit_ unterstützen, so muss sie das Interface `IAutoCommitAware` unterstützen.
