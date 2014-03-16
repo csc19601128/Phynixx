@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class LogRecordPageWriter {
 
-    public static final byte[][] EMPTY_DATA = new byte[][]{};
+    private static final byte[][] EMPTY_DATA = new byte[][]{};
 
     private List<LogRecordWriter> logWriters = new ArrayList<LogRecordWriter>();
 

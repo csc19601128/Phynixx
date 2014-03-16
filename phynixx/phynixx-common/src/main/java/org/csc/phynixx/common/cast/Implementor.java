@@ -43,7 +43,7 @@ public class Implementor implements IImplementor {
     }
 
     public <X> boolean isImplementationOf(final Class<X> cls) {
-        return cls == null ? false : cls.isAssignableFrom(this.getClass());
+        return (cls != null) && cls.isAssignableFrom(this.getClass());
     }
 
 }

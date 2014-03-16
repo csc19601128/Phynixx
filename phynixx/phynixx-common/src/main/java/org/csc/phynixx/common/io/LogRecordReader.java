@@ -31,9 +31,9 @@ import java.io.*;
  */
 public class LogRecordReader {
 
-    ByteArrayInputStream byteInput;
+    private ByteArrayInputStream byteInput;
 
-    DataInputStream io;
+    private DataInputStream io;
 
     public LogRecordReader(byte[] content) {
         this.byteInput = new ByteArrayInputStream(content);
