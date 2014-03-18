@@ -24,6 +24,9 @@ Umfangreiche und detailierte Diskussion der unterschiedlichen Szenarien eines XA
 XA Exposed Part I-III[ http://jroller.com/pyrasun/category/XA](http://jroller.com/pyrasun/category/XA). Mike Spille (im Rahmen TheServerSide.com).
 2004.
 
+[MSDN]
+[http://msdn.microsoft.com/en-us/library/ms687072%28v=vs.85%29.aspx](http://msdn.microsoft.com/en-us/library/ms687072%28v=vs.85%29.aspx)
+
 
 [gupta-1997]
 
