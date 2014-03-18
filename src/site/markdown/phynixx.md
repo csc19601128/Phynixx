@@ -1,61 +1,92 @@
-Transaktion - Hintergründe
-==========================
+# Transaktionen - kurz und knapp
+Eine transaktionale Ressource ist alles was an einer Transaktion teilnehmen kann, z.B. eine Datenbanverbindung , JMS-Conenction etc.
 
-Zustandsübergänge einer TA-gesicherten Resource
-------------------------------------------------
+## Lokale Transaktionen
+Falls sich Ihre Anwendung an mit einer transaktionalen Ressource verbindet, dort Änderungen vor nimmt und diese dann mittels *commit* bestätigt oder mit *rollback* verwirft, so spricht man von einer lokalen Transaktion.
+In diesem Fall bedarf es keine übergeordneten Koordination der Transaktion, den es ist nur eine Partei involviert.
 
-In [gupta-1997]  Kap 3.2.1 sind die Zustandsübergänge einer transaktionsgesicherten Ressource  in einem 1/2 phase commit Protokoll beschrieben. (Abort(ing) entspricht dem gängigeren rollback(-ing).)
-Bzgl. des 1 phase commit protocols lassen diese wie inAbbildung 1 reduzieren.
 
-Transaktionale Kontext
-=======================
+![single phase commit](images/1PhaseCommit.png)
 
-Transaktionaler Kontext (oder auch transactional states)  beschreibt die Daten, welche durch eine _Commit/Rollback_ auf einer XAResource betroffen sind. Auf den ersten Augenschein sollte man meinen, dass XAResource und transaktionaler Konext sich entsprechend, aber tatsächlich ist es so, dass
+*Abbildung 1:* Zustandsübergänge bei 1 Phase Commit (nach [gupta-1997]  Kap 3.2.1)
 
-* eine XARresource an mehreren Transaktionen teilnehmen kann 
-* XAResource nimmt an mehrern Transaktionen unter [JTA 1.1], Chap 3.4.6
-* einer XAResource nimmt ein einer 'suspended transaction' teil und wird im einer weiteren nicht suspended transaction genutzt[JTA 1.1] Chap.3.2.3
-* In einer Transaktion werden unterschiedliche XAResourcen zu einem transaktionalen Kontext zusammen gefasst werden
-* falls die XAResourcen im Sinne von isSameRM gleich sind, so werden diese zusammen gefasst (start(.., TMJOIN)
+
+## JTA Transaktionen
+
+Nehmen mehr als eine transaktionale Ressource an der Transaktion teil, so reicht ein einfaches *rollback/commit*-Protokoll nicht mehr aus, sondern die Ressourcen müssen koordiniert werden.
+dazu dient das *2 Phase Commit*-Protokoll. Dieses ist für Java-Ressourcen in [JTA 1.2] beschrieben.
+
+
+## Verteilte Transaktionen
+Nehmen auf unterschiedlechn System unterschiedliche transaktionale Ressourcen an der Transaktion teil, so spricht man von einer verteilten (*distributed*) Transaktion.
+Diese Situation stelle besondere Herausforderungen an den Transaktionsmanager, während die transaktionale Ressource im wesentlichen das *2 Phase Commit*-Protokoll unterstützen muss. daher werden wir auf verteilte Transaktionen nicht weiter eingehen.
+
+## *2 Phase Commit*-Protokoll
+
+Transaktionale Ressource, die ein *2 Phase Commit*-Protokoll unterstützen, haben zwei Rollen zu spielen.
+Eine *Connection* ist das Objekt, gegen das die Anwendungslogik ausgeführt wird.
+Der *ResourceManager* (oder auch *XAResource*) stellt die *Connection* bereit und sorgt dafür, das entsprechend der Regeln des *2 Phase Commit* die richtige *Connection* an der aktuellen Transaktion teilnimmt (siehe dazu [JTA 1.2]).
+Dabei sind folgende Situationen zulässig
+
+- eine XARResource nimmt mehreren Transaktionen teil
+- XAResource nimmt an einer zeitweilig stillgelegten Transaktion (*suspended*) und einer aktiven Transaktion teil.
+- In einer Transaktion werden unterschiedliche XAResourcen zu einem transaktionalen Kontext zusammengefasst werden. Falls die XAResourcen im Sinne von *isSameRM* gleich sind, so werden diese zusammen gefasst (start(.., TMJOIN)
+
+Grob gesprochen, gibt es pro Thread nur eine aktive Transaktion.
+
+### Protokoll
+Während der Phase, in der auf der *Connection* Anwendungslogik ausgeführt wird und während des *rollbacks* unterscheidet sich das *2 Phase Commit*-Protokoll nicht vom *Single Phase Commit*-Protokoll.
+
+Das Commit verläuft dagegen in zwei Phasen. In der Phase *prepare* wird die Ressource von Transaktionsmanager gebeten, ein *Commit* vorzubereiten. Zu diesem zeitpunkt kann die Ressource gegen ein *Commit* stimmen und damit die gesamte Transaktion abbrechen lassen. Haben alle Ressourcen zugestimmt, so geibt es kein Zurück und in der nächsten Phase fordert der Transaktionsmanager von aller Ressourcen ein *Commit* .
+
+### Transaktionaler Kontext
+
+Transaktionaler Kontext (oder auch *transactional states*) beschreibt die Daten, welche durch eine  *Commit/Rollback* auf einer XAResource betroffen sind. Auf den ersten Augenschein sollte man meinen, dass XAResource und transaktionaler Kontext sich entsprechend, aber tatsächlich ist es so, dass eine XAResource mehrere transaktionale Kontexte unterstützen kann.
+
+Beispielsweise kann sie an einer *suspended* Transaktion und an einer aktiven Transaktion teilnehmen. Das *Commit* auf der aktiven Transaktion darf nur die Änderungen bestätigen, die im Rahmen dieser Transaktion vorgenommen wurden. Änderungen der *suspended* Transaktion müssen unbenommen bleiben. Daher muss die *XAResource* in diesem Fall zwei transaktionale Kontext unterstützen.
 
 Der einer XAResource zugeordnete transaktionale Kontext wird über Transaktion (genauer die XID) qualifiziert.
 Mit den Angaben (XAResource, XID) wird der transaktionale Kontext qualifiziert. Es benötigt beide Angaben, um ihn zu bestimmen.
 
+Eine XAResource wird durch einen Transaktion-ID identifiziert, die sogenannte *XID*. Diese wird durch den Transaktionsmanager der XAResource übergeben, wenn diese eine *Connection* bereitstellen soll.
+Vereinfacht gesprochen entspricht pro XARessource jede *XID* einem transaktionalen Kontext.
 
 
-Lokale Transaktionen
-=====================
 
-siehe [JTRA 1.1] Chap. 3.4.7 
-The resource adapter is encouraged to support the usage of both local and global transactions within the same transactional connection. 
-Local transactions are transactions that are started and coordinated by the resource manager internally. The 
-XAResource interface is not used for local transactions.
-When using the same connection to perform both local and global 
-transactions, the following rules apply:
-• The local transaction must be committed (or rolled back) before starting a 
-global transaction in the connection.
-• The global transaction must be disassociated from the connection before any 
-local transaction is started.
-If a resource adapter does not support mixing local and global transactions 
-within the same connection, the resource adapter should throw the resource 
-specific exception. For example, java.sql.SQLException is thrown to the 22
-application if the resource manager for the underlying RDBMS does not support 
-mixing local and global transactions within the same JDBC connection.
 
 Technologischer Kontext
 Transaktionssteuerung
 Zustandsübergänge einer TA-gesicherten Resource
-In [gupta-1997]  Kap 3.2.1 sind die Zustandsübergänge einer transaktionsgesicherten Ressource  in einem 1/2 phase commit Protokoll beschrieben. (Abort(ing) entspricht dem gängigeren rollback(-ing).)
+In [gupta-1997]  Kap 3.2.1 sind die Zustandsübergänge einer transaktionsgesicherten Ressource  in einem *2 phase commit*-Protokoll beschrieben. (Abort(ing) entspricht dem gängigeren rollback(-ing).)
 Bzgl. des 1 phase commit protocols lassen diese wie inAbbildung 1 reduzieren.
-
-![one phase commit](images/1PhaseCommit.png)
-
-*Abbildung 1:* Zustandsübergänge bei 1 Phase Commit
 
 
 ![two phase commit](images/2PhaseCommit.png)
 
-*Abbildung 2:* Zustandsübergänge bei 2 Phase Commit
+*Abbildung 2:* Zustandsübergänge bei 2 Phase Commit (nach [gupta-1997]  Kap 3.2.1)
+
+
+
+## Lokale Transaktionen
+
+
+siehe [JTA 1.1] Chap. 3.4.7
+The resource adapter is encouraged to support the usage of both local and global transactions within the same transactional connection.
+Local transactions are transactions that are started and coordinated by the resource manager internally. The
+XAResource interface is not used for local transactions.
+When using the same connection to perform both local and global
+transactions, the following rules apply:
+• The local transaction must be committed (or rolled back) before starting a
+global transaction in the connection.
+• The global transaction must be disassociated from the connection before any
+local transaction is started.
+If a resource adapter does not support mixing local and global transactions
+within the same connection, the resource adapter should throw the resource
+specific exception. For example, java.sql.SQLException is thrown to the 22
+application if the resource manager for the underlying RDBMS does not support
+mixing local and global transactions within the same JDBC connection.
+
+
 
 ## 1x1 der  Transaktionen
 Transaktion
@@ -68,12 +99,13 @@ XARessource
 
 <table>
 <tr><th></th><th></th> </tr>
-<tr><td></td> <td></td></tr>
-<tr> </tr>
-<tr> </tr>
-<tr> </tr>
-<tr> </tr>
-<tr> </tr>
+<tr><td>transaktionale Ressource</td> <td>Jede </td> </tr>
+<tr><td>lokale Transaktion</td> <td>Transaktion, die direkt auf der tr</td></tr>
+<tr><td>XA-Transaktion</td> <td>verteilte oder auch 2 Phase Commit Transaktion; Transaktion, an der mehr als eine transaktionale Ressourece teilnimmt</td> </tr>
+<tr><td>Transaktionsmanager</td> <td>Koordiniert eine Transaktion</td> </tr>
+<tr><td></td> <td></td> </tr>
+<tr><td></td> <td></td> </tr>
+<tr><td></td> <td></td> </tr>
 </table>
 
 Diese beiden Zustandsübergange sind Grundlage für die weiteren Diskussionen.
