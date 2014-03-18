@@ -2,11 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9f1fa8d5-7828-41f7-80bb-fee159e9d26a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-doc/src/main/resources/phynixx-connection.odt" afterPath="$PROJECT_DIR$/phynixx/phynixx-doc/src/main/resources/phynixx-connection.odt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-doc/src/main/resources/phynixx-graphics.odg" afterPath="$PROJECT_DIR$/phynixx/phynixx-doc/src/main/resources/phynixx-graphics.odg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/site/markdown/phynixx.md" afterPath="$PROJECT_DIR$/src/site/markdown/phynixx.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/site/markdown/references.md" afterPath="$PROJECT_DIR$/src/site/markdown/references.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="PhynixxDoc.iws" />
@@ -78,79 +73,12 @@
     <leaf>
       <file leaf-file-name="phynixx.md" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/site/markdown/phynixx.md">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="31" column="78" selection-start="2044" selection-end="2044" vertical-scroll-proportion="0.25701943" vertical-offset="408" max-vertical-offset="4267">
+          <provider editor-type-id="text-editor">
+            <state line="31" column="78" selection-start="2044" selection-end="2044" vertical-scroll-proportion="0.0" vertical-offset="527" max-vertical-offset="4267">
               <folding />
             </state>
           </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="references.md" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/site/markdown/references.md">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="656" selection-start="907" selection-end="907" vertical-scroll-proportion="-6.8" vertical-offset="0" max-vertical-offset="765">
-              <folding />
-            </state>
-          </provider>
-          <provider editor-type-id="MarkdownPreviewEditor">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="1PhaseCommit.png" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/site/resources/images/1PhaseCommit.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="phynixx.html" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/phynixx.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2363">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="2 phase commit.png" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/images/2 phase commit.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="2 phase commit - extended protocol.png" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/images/2 phase commit - extended protocol.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="2 phase commit - extended protocol.png" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/site/resources/images/2 phase commit - extended protocol.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="2PhaseCommitWithLogData.png" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/site/resources/images/2PhaseCommitWithLogData.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="2PhaseCommit.png" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/site/resources/images/2PhaseCommit.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="1PhaseCommitWithLogData.png" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/site/resources/images/1PhaseCommitWithLogData.png">
-          <provider selected="true" editor-type-id="images">
+          <provider selected="true" editor-type-id="MarkdownPreviewEditor">
             <state />
           </provider>
         </entry>
@@ -181,8 +109,8 @@
         <option value="$PROJECT_DIR$/src/site/markdown/index.md" />
         <option value="$PROJECT_DIR$/src/site/markdown/getting-started.md" />
         <option value="$PROJECT_DIR$/src/site/markdown/tutorial.md" />
-        <option value="$PROJECT_DIR$/src/site/markdown/references.md" />
         <option value="$PROJECT_DIR$/src/site/markdown/phynixx.md" />
+        <option value="$PROJECT_DIR$/src/site/markdown/references.md" />
       </list>
     </option>
   </component>
@@ -284,46 +212,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="PhynixxDoc" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PhynixxDoc" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PhynixxDoc" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="site" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PhynixxDoc" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PhynixxDoc" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="site" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="markdown" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -672,7 +560,7 @@
       <workItem from="1394380556285" duration="1956000" />
       <workItem from="1394897237450" duration="4218000" />
       <workItem from="1394968217342" duration="5700000" />
-      <workItem from="1395160678322" duration="4381000" />
+      <workItem from="1395160678322" duration="4630000" />
     </task>
     <task id="LOCAL-00001" summary="jkk">
       <created>1388855823134</created>
@@ -798,11 +686,19 @@
       <created>1394995279646</created>
       <updated>1394995279646</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="2.0.0-SNAPSHOT&#10;">
+      <created>1395165081532</created>
+      <updated>1395165081532</updated>
+    </task>
+    <task id="LOCAL-00033" summary="2.0.0-SNAPSHOT&#10;">
+      <created>1395165214561</created>
+      <updated>1395165214561</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="38442000" />
+    <option name="totallyTimeSpent" value="38691000" />
   </component>
   <component name="TodoView" selected-index="4">
     <todo-panel id="selected-file">
@@ -839,21 +735,21 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.40970653" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.41647854" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32852387" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3303671" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Metrics" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24973376" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14774115" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14774115" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13186814" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.40970653" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18253969" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.41647854" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -912,7 +808,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/site/markdown/tutorial.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="179" column="11" selection-start="9608" selection-end="9608" vertical-scroll-proportion="0.0" vertical-offset="2709" max-vertical-offset="4318" />
+        <state line="179" column="11" selection-start="9608" selection-end="9608" vertical-scroll-proportion="0.0" vertical-offset="2709" max-vertical-offset="4318">
+          <folding />
+        </state>
       </provider>
       <provider editor-type-id="MarkdownPreviewEditor">
         <state />
@@ -920,7 +818,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/site/markdown/index.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="31" selection-start="211" selection-end="211" vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="272" />
+        <state line="9" column="31" selection-start="211" selection-end="211" vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="272">
+          <folding />
+        </state>
       </provider>
       <provider editor-type-id="MarkdownPreviewEditor">
         <state />
@@ -960,7 +860,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/site/markdown/tutorial.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="173" selection-start="1000" selection-end="1000" vertical-scroll-proportion="0.0" vertical-offset="221" max-vertical-offset="3944" />
+        <state line="13" column="173" selection-start="1000" selection-end="1000" vertical-scroll-proportion="0.0" vertical-offset="221" max-vertical-offset="3944">
+          <folding />
+        </state>
       </provider>
       <provider editor-type-id="MarkdownPreviewEditor">
         <state />
@@ -968,7 +870,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/site/markdown/index.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="31" selection-start="211" selection-end="211" vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="272" />
+        <state line="9" column="31" selection-start="211" selection-end="211" vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="272">
+          <folding />
+        </state>
       </provider>
       <provider editor-type-id="MarkdownPreviewEditor">
         <state />
@@ -1008,7 +912,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/site/markdown/tutorial.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="94" column="0" selection-start="5554" selection-end="5554" vertical-scroll-proportion="0.0" vertical-offset="1275" max-vertical-offset="3621" />
+        <state line="94" column="0" selection-start="5554" selection-end="5554" vertical-scroll-proportion="0.0" vertical-offset="1275" max-vertical-offset="3621">
+          <folding />
+        </state>
       </provider>
       <provider editor-type-id="MarkdownPreviewEditor">
         <state />
@@ -1016,7 +922,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/site/markdown/index.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="3" selection-start="109" selection-end="109" vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="272" />
+        <state line="6" column="3" selection-start="109" selection-end="109" vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="272">
+          <folding />
+        </state>
       </provider>
       <provider editor-type-id="MarkdownPreviewEditor">
         <state />
@@ -1053,12 +961,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/site/markdown/tutorial.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="197" selection-start="4313" selection-end="4313" vertical-scroll-proportion="0.0" vertical-offset="918" max-vertical-offset="3247" />
+        <state line="73" column="197" selection-start="4313" selection-end="4313" vertical-scroll-proportion="0.0" vertical-offset="918" max-vertical-offset="3247">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/site/markdown/index.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="28" selection-start="129" selection-end="129" vertical-scroll-proportion="0.0" vertical-offset="85" max-vertical-offset="238" />
+        <state line="5" column="28" selection-start="129" selection-end="129" vertical-scroll-proportion="0.0" vertical-offset="85" max-vertical-offset="238">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/site/markdown/references.md">
@@ -1116,25 +1028,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/site/markdown/index.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="31" selection-start="211" selection-end="211" vertical-scroll-proportion="0.31941545" vertical-offset="0" max-vertical-offset="479" />
-      </provider>
-      <provider editor-type-id="MarkdownPreviewEditor">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/site/markdown/getting-started.md">
       <provider selected="true" editor-type-id="text-editor">
         <state line="28" column="173" selection-start="2125" selection-end="2125" vertical-scroll-proportion="0.0" vertical-offset="112" max-vertical-offset="952" />
-      </provider>
-      <provider editor-type-id="MarkdownPreviewEditor">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/site/markdown/tutorial.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="179" column="11" selection-start="9608" selection-end="9608" vertical-scroll-proportion="-13.36" vertical-offset="2709" max-vertical-offset="4318" />
       </provider>
       <provider editor-type-id="MarkdownPreviewEditor">
         <state />
@@ -1216,8 +1112,28 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/site/markdown/references.md">
+      <provider editor-type-id="text-editor">
+        <state line="27" column="136" selection-start="2096" selection-end="2096" vertical-scroll-proportion="0.0" vertical-offset="55" max-vertical-offset="816">
+          <folding />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="MarkdownPreviewEditor">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/site/markdown/index.md">
+      <provider editor-type-id="text-editor">
+        <state line="9" column="31" selection-start="211" selection-end="211" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="272">
+          <folding />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="MarkdownPreviewEditor">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/site/markdown/tutorial.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="656" selection-start="907" selection-end="907" vertical-scroll-proportion="-6.8" vertical-offset="0" max-vertical-offset="765">
+        <state line="179" column="11" selection-start="9608" selection-end="9608" vertical-scroll-proportion="0.7731481" vertical-offset="2709" max-vertical-offset="4318">
           <folding />
         </state>
       </provider>
@@ -1226,12 +1142,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/site/markdown/phynixx.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="78" selection-start="2044" selection-end="2044" vertical-scroll-proportion="0.25701943" vertical-offset="408" max-vertical-offset="4267">
+      <provider editor-type-id="text-editor">
+        <state line="31" column="78" selection-start="2044" selection-end="2044" vertical-scroll-proportion="0.0" vertical-offset="527" max-vertical-offset="4267">
           <folding />
         </state>
       </provider>
-      <provider editor-type-id="MarkdownPreviewEditor">
+      <provider selected="true" editor-type-id="MarkdownPreviewEditor">
         <state />
       </provider>
     </entry>
