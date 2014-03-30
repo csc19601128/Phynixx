@@ -5,13 +5,15 @@
         <artifactId>phynixx</artifactId>
         <groupId>org.csc.phynixx</groupId>
         <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
+
     <artifactId>phynixx-logger</artifactId>
     <packaging>jar</packaging>
 
     <name>phynixx-logger</name>
     <url>https://phynixx.codematters.org/phynixx-logger</url>
-    <description>enabled an arbitrary peristence media to support transactions</description>
+    <description>enabled an arbitrary persistence media to support transactions</description>
 
     <scm>
         <connection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk</connection>
@@ -37,6 +39,7 @@
             <groupId>org.csc.phynixx</groupId>
             <artifactId>phynixx-common</artifactId>
             <version>${project.version}</version>
+            <type>jar</type>
         </dependency>
 
         <dependency>
@@ -58,6 +61,7 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <scope>compile</scope>
+            <type>jar</type>
         </dependency>
 
     </dependencies>
