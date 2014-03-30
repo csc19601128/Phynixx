@@ -16,8 +16,10 @@
         <module>phynixx-xa</module>
         <module>phynixx-jmx</module>
         <module>phynixx-doc</module>
-        <module>phynixx-howl</module>
         <module>phynixx-tutorial</module>
+        <!--
+        <module>phynixx-howl</module>
+        -->
     </modules>
 
     <properties>
@@ -296,7 +298,7 @@
                         <execution>
                             <id>attach-javadocs</id>
                             <goals>
-                                <goal>aggregate</goal>
+                                <goal>javadoc</goal>
                             </goals>
                         </execution>
 
@@ -355,6 +357,7 @@
                 <plugin>
                     <groupId>org.kohsuke</groupId>
                     <artifactId>pgp-maven-plugin</artifactId>
+                    <version>1.0</version>
                     <executions>
                         <execution>
                             <goals>
@@ -394,6 +397,7 @@
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.4</version>
                 </plugin>
+
 
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -527,11 +531,6 @@
 
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
-
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
             </plugin>
@@ -540,10 +539,28 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
             </plugin>
-
+<!--
             <plugin>
                 <groupId>org.kohsuke</groupId>
                 <artifactId>pgp-maven-plugin</artifactId>
+            </plugin>
+            -->
+
+            <!--call it manually via mvn javadoc:aggregate-jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <detectJavaApiLink>true</detectJavaApiLink>
+                    <detectLinks>true</detectLinks>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>aggregate-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
 
@@ -554,18 +571,11 @@
 
     <reporting>
         <plugins>
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.5</version>
-            </plugin>
-            -->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.1</version>
+
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -579,7 +589,6 @@
                             <report>issue-tracking</report>
                             <report>license</report>
                             <report>scm</report>
-                            <report>javadoc</report>
 
 
                         </reports>
@@ -588,20 +597,30 @@
                     </reportSet>
                 </reportSets>
             </plugin>
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
                 <version>2.3</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                </configuration>
+            </plugin>
+            -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
                 <reportSets>
                     <reportSet>
-                        <id>aggregate</id>
-                        <inherited>false</inherited>
+                        <id>b</id>
                         <reports>
                             <report>aggregate</report>
                         </reports>
                     </reportSet>
                 </reportSets>
             </plugin>
+
             <!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -657,10 +676,6 @@
     <profiles>
         <profile>
             <id>tests-included</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-
             <build>
                 <pluginManagement>
                     <plugins>
@@ -681,6 +696,9 @@
 
         <profile>
             <id>tests-excluded</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <pluginManagement>
                     <plugins>
