@@ -1293,7 +1293,7 @@
       <workItem from="1395160515981" duration="2154000" />
       <workItem from="1395852539850" duration="3276000" />
       <workItem from="1396192034652" duration="6414000" />
-      <workItem from="1397918679139" duration="1169000" />
+      <workItem from="1397918679139" duration="2062000" />
     </task>
     <task id="LOCAL-00058" summary="Isolation autocommit behaviour in interface IAutoCommitAware">
       <created>1393860105683</created>
@@ -1367,7 +1367,7 @@
     </servers>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="390040000" />
+    <option name="totallyTimeSpent" value="390933000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
