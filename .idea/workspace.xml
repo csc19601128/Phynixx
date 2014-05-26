@@ -8,18 +8,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4d38fa2-655c-4f78-839c-0b30bb7bb831" name="Default" comment="XAResourceRecorder restructured">
-      <change type="DELETED" beforePath="Y:\git-repos\phynixx\Phynixx\params.json" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-doc/src/main/resources/phynixx-connection.odt" afterPath="$PROJECT_DIR$/phynixx/phynixx-doc/src/main/resources/phynixx-connection.odt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-doc/src/main/resources/phynixx-graphics.odg" afterPath="$PROJECT_DIR$/phynixx/phynixx-doc/src/main/resources/phynixx-graphics.odg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-common/phynixx-common.iml" afterPath="$PROJECT_DIR$/phynixx/phynixx-common/phynixx-common.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-connection/phynixx-connection.iml" afterPath="$PROJECT_DIR$/phynixx/phynixx-connection/phynixx-connection.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-doc/phynixx-doc.iml" afterPath="$PROJECT_DIR$/phynixx/phynixx-doc/phynixx-doc.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-jmx/phynixx-jmx.iml" afterPath="$PROJECT_DIR$/phynixx/phynixx-jmx/phynixx-jmx.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-logger/phynixx-logger.iml" afterPath="$PROJECT_DIR$/phynixx/phynixx-logger/phynixx-logger.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-tutorial/phynixx-tutorial.iml" afterPath="$PROJECT_DIR$/phynixx/phynixx-tutorial/phynixx-tutorial.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-watchdog/phynixx-watchdog.iml" afterPath="$PROJECT_DIR$/phynixx/phynixx-watchdog/phynixx-watchdog.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-xa/phynixx-xa.iml" afterPath="$PROJECT_DIR$/phynixx/phynixx-xa/phynixx-xa.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-doc/src/site/resources/images/1PhaseCommitWithLogData.png" afterPath="$PROJECT_DIR$/phynixx/phynixx-doc/src/site/resources/images/1PhaseCommitWithLogData.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx.iml" afterPath="$PROJECT_DIR$/phynixx/phynixx.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-doc/src/site/markdown/phynixx.md" afterPath="$PROJECT_DIR$/phynixx/phynixx-doc/src/site/markdown/phynixx.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-doc/src/site/markdown/references.md" afterPath="$PROJECT_DIR$/phynixx/phynixx-doc/src/site/markdown/references.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/phynixx/phynixx-doc/src/site/site.xml" afterPath="$PROJECT_DIR$/phynixx/phynixx-doc/src/site/site.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="f96cb2fc-8c2c-4533-8360-d2e75e153a13" name="Rejected commit: Default" comment="phynixx-logger extracted" />
@@ -59,44 +53,7 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
-      <breakpoint>
-        <option name="NOTIFY_CAUGHT" value="true" />
-        <option name="NOTIFY_UNCAUGHT" value="true" />
-        <option name="ENABLED" value="false" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="&#13;&#13;JAVA" />
-        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
-      </breakpoint>
-      <breakpoint>
-        <option name="NOTIFY_CAUGHT" value="true" />
-        <option name="NOTIFY_UNCAUGHT" value="true" />
-        <option name="ENABLED" value="false" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="&#13;&#13;JAVA" />
-        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
-      </breakpoint>
-    </breakpoint_any>
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
-    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
+    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true" converted="true">
       <breakpoint url="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/PooledManagedConnectionIntegrationScenariosIT.java" line="257" class="org.csc.phynixx.connection.PooledManagedConnectionIntegrationScenariosIT" package="org.csc.phynixx.connection">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
@@ -398,8 +355,44 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </line_breakpoints>
-    <breakpoint_rules />
-    <ui_properties />
+    <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true" converted="true">
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="&#13;&#13;JAVA" />
+        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
+      </breakpoint>
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="&#13;&#13;JAVA" />
+        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
+      </breakpoint>
+    </breakpoint_any>
+    <ui_properties converted="true" />
+    <breakpoint_rules converted="true" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
@@ -410,7 +403,8 @@
       <file leaf-file-name="XAResourceIntegrationTest.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/XAResourceIntegrationTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1182" column="5" selection-start="41771" selection-end="41771" vertical-scroll-proportion="0.0" vertical-offset="19720" max-vertical-offset="20604">
+            <state vertical-scroll-proportion="0.0" vertical-offset="20094" max-vertical-offset="20859">
+              <caret line="1182" column="5" selection-start-line="1182" selection-start-column="5" selection-end-line="1182" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -418,44 +412,78 @@
       </file>
       <file leaf-file-name="documentation.md" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/phynixx/phynixx-doc/src/site/markdown/documentation.md">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="187">
-              <folding />
-            </state>
-          </provider>
           <provider editor-type-id="MarkdownPreviewEditor">
             <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="187">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="phynixx.md" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/phynixx/phynixx-doc/src/site/markdown/phynixx.md">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="289">
-              <folding />
-            </state>
-          </provider>
           <provider editor-type-id="MarkdownPreviewEditor">
             <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4267">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="references.md" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="references.md" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/phynixx/phynixx-doc/src/site/markdown/references.md">
+          <provider editor-type-id="MarkdownPreviewEditor">
+            <state />
+          </provider>
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="0" selection-start="1076" selection-end="1076" vertical-scroll-proportion="0.5550181" vertical-offset="0" max-vertical-offset="827">
+            <state vertical-scroll-proportion="-14.28" vertical-offset="0" max-vertical-offset="816">
+              <caret line="21" column="18" selection-start-line="21" selection-start-column="18" selection-end-line="21" selection-end-column="18" />
               <folding />
             </state>
           </provider>
-          <provider editor-type-id="MarkdownPreviewEditor">
-            <state />
+        </entry>
+      </file>
+      <file leaf-file-name="phynixx-all.iml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/phynixx-all.iml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="374">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="connection-hierarchy.graphml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/doc/connection-hierarchy.graphml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="8551">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-doc/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.13934426" vertical-offset="0" max-vertical-offset="854">
+              <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
+              <folding />
+            </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="TestXAResourceFactory.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/TestXAResourceFactory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="37" column="67" selection-start="1411" selection-end="1435" vertical-scroll-proportion="0.0" vertical-offset="629" max-vertical-offset="1275">
+            <state vertical-scroll-proportion="0.0" vertical-offset="629" max-vertical-offset="1275">
+              <caret line="37" column="67" selection-start-line="37" selection-start-column="67" selection-end-line="37" selection-end-column="67" />
               <folding />
             </state>
           </provider>
@@ -464,16 +492,8 @@
       <file leaf-file-name="PhynixxXAResource.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResource.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="628" column="101" selection-start="26246" selection-end="26246" vertical-scroll-proportion="0.0" vertical-offset="10470" max-vertical-offset="12036">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PhynixxXAResourceFactory.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResourceFactory.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="76" column="0" selection-start="1937" selection-end="2175" vertical-scroll-proportion="0.0" vertical-offset="1292" max-vertical-offset="3621">
+            <state vertical-scroll-proportion="0.0" vertical-offset="10676" max-vertical-offset="12036">
+              <caret line="628" column="101" selection-start-line="628" selection-start-column="101" selection-end-line="628" selection-end-column="101" />
               <folding />
             </state>
           </provider>
@@ -482,25 +502,8 @@
       <file leaf-file-name="PhynixxManagedXAConnection.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxManagedXAConnection.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="128" column="0" selection-start="5818" selection-end="5818" vertical-scroll-proportion="0.0" vertical-offset="2176" max-vertical-offset="5865">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PhynixxManagedConnectionGuard.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxManagedConnectionGuard.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="266" column="0" selection-start="8554" selection-end="8554" vertical-scroll-proportion="0.0" vertical-offset="4522" max-vertical-offset="12189">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ManagedConnectionIT.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/ManagedConnectionIT.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="145" column="20" selection-start="4330" selection-end="4330" vertical-scroll-proportion="0.0" vertical-offset="2465" max-vertical-offset="5168">
+            <state vertical-scroll-proportion="0.0" vertical-offset="2176" max-vertical-offset="5865">
+              <caret line="128" column="0" selection-start-line="128" selection-start-column="0" selection-end-line="128" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -663,9 +666,8 @@
     <option name="vmOptions" value="-Xms512m -Xmx1024m -Djavax.net.ssl.trustStore=Y:\apache\maven\trust\trust.jks -Djavax.net.ssl.trustStorePassword=anfang1" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1936" />
+    <option name="x" value="54" />
+    <option name="width" value="1987" />
     <option name="height" value="1056" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -709,7 +711,7 @@
     <option name="STATE" value="0" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
+    <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -721,76 +723,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Phynixx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Phynixx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="phynixx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Phynixx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="phynixx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="phynixx-doc" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Phynixx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="phynixx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="phynixx-doc" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Phynixx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="phynixx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="phynixx-doc" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="phynixx-doc" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="Scope" />
       <pane id="PackagesPane">
         <subPane>
@@ -842,6 +774,396 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="phynixx" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-logger" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-jmx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-jmx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-howl" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-doc" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-connection" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-connection" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test-resources" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-connection" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-connection" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="site" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-connection" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-connection" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="license" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-connection" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="doc" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-common" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-common" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="target" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-common" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test-resources" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-common" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-common" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="site" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-common" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Phynixx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="phynixx-common" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="license" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -1081,6 +1403,7 @@
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
     <configuration default="true" type="MavenRunConfiguration" factoryName="Maven">
@@ -1113,7 +1436,7 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
-    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
       <method />
     </configuration>
     <configuration default="true" type="Applet" factoryName="Applet">
@@ -1210,6 +1533,7 @@
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
     <configuration default="false" name="XAResourceIntegrationTest.testSuspend" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
@@ -1338,22 +1662,8 @@
     <option name="ACTIVE_ACTIONS" value=",SHOW_PROPERTIES" />
     <option name="SHOW_TOOLBAR" value="true" />
   </component>
-  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false" SSL_PROTOCOLS="all">
-    <option name="USER" value="" />
-    <option name="PASSWORD" value="" />
-    <option name="mySSHConnectionTimeout" value="30000" />
-    <option name="mySSHReadTimeout" value="30000" />
-    <option name="LAST_MERGED_REVISION" />
-    <option name="MERGE_DRY_RUN" value="false" />
-    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
-    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
-    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
-    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
-    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
-    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
-    <option name="FORCE_UPDATE" value="false" />
-    <option name="IGNORE_EXTERNALS" value="false" />
-    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+  <component name="SvnConfiguration" myUseAcceleration="nothing">
+    <configuration />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -1441,6 +1751,8 @@
       <workItem from="1393674694578" duration="247000" />
       <workItem from="1393675523627" duration="6181000" />
       <workItem from="1397921614176" duration="161000" />
+      <workItem from="1401115281864" duration="225000" />
+      <workItem from="1401115852420" duration="493000" />
     </task>
     <task id="LOCAL-00001" summary="Repositories updated">
       <created>1387827974400</created>
@@ -1672,7 +1984,7 @@
     </servers>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="345876000" />
+    <option name="totallyTimeSpent" value="346594000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1695,7 +2007,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="54" y="0" width="1987" height="1056" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1703,6 +2015,7 @@
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32925472" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37708566" sideWeight="0.6608094" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6340378" sideWeight="0.79925454" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1715,14 +2028,13 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.30525032" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.088924386" sideWeight="0.4983315" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28221512" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31622604" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.41713014" sideWeight="0.9116081" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.088924386" sideWeight="0.5005562" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21512248" sideWeight="0.49816176" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37708566" sideWeight="0.6608094" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30812013" sideWeight="0.49893504" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Metrics" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295711" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4108352" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -1762,6 +2074,9 @@
     <option name="RECENTLY_FILTERED_USER_GROUPS">
       <collection />
     </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -1790,6 +2105,127 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/PooledManagedConnectionIntegrationScenariosIT.java</url>
+          <line>257</line>
+          <properties />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/phynixx/testconnection/TestConnectionStatusListener.java</url>
+          <line>80</line>
+          <properties />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logger/channellogger/FileChannelDataLogger.java</url>
+          <line>371</line>
+          <properties />
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/recovery/RecoveryIT.java</url>
+          <line>144</line>
+          <properties />
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/PooledManagedConnectionIntegrationScenariosIT.java</url>
+          <line>241</line>
+          <properties />
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/AutoCommitListener.java</url>
+          <line>37</line>
+          <properties />
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/PhynixxXADataRecorder.java</url>
+          <line>178</line>
+          <properties />
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/XADataLogger.java</url>
+          <line>206</line>
+          <properties />
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/XADataLogger.java</url>
+          <line>228</line>
+          <properties />
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/recovery/RecoveryIT.java</url>
+          <line>254</line>
+          <properties />
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/recovery/RecoveryIT.java</url>
+          <line>126</line>
+          <properties />
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/recovery/RecoveryIT.java</url>
+          <line>107</line>
+          <properties />
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/loggersystem/LoggerPerTransactionStrategy.java</url>
+          <line>120</line>
+          <properties />
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logger/channellogger/TAEnabledRandomAccessFile.java</url>
+          <line>267</line>
+          <properties />
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logger/channellogger/FileChannelDataLogger.java</url>
+          <line>206</line>
+          <properties />
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/MTPooledConnectionIT.java</url>
+          <line>192</line>
+          <properties />
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxManagedConnectionGuard.java</url>
+          <line>266</line>
+          <properties />
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PooledPhynixxManagedConnectionFactory.java</url>
+          <line>153</line>
+          <properties />
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/impl/GenericObjectPool.java</url>
+          <line>577</line>
+          <properties />
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PooledPhynixxManagedConnectionFactory.java</url>
+          <line>202</line>
+          <properties />
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog>
           <selected-grouping-rules>
@@ -1797,6 +2233,7 @@
           </selected-grouping-rules>
         </breakpoints-dialog>
       </breakpoints-dialog>
+      <option name="time" value="20" />
     </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
@@ -1809,107 +2246,118 @@
     <option name="showOnlyWarnings" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/phynixx/testconnection/TestConnectionStatusManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="0" selection-start="1641" selection-end="1641" vertical-scroll-proportion="0.0" vertical-offset="703" max-vertical-offset="1258" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/phynixx/testconnection/TestConnectionStatusListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="0" selection-start="1469" selection-end="1469" vertical-scroll-proportion="0.0" vertical-offset="465" max-vertical-offset="1547">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="17" selection-start="364" selection-end="364" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2244" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-doc/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="17" selection-start="367" selection-end="367" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2244">
+          <caret line="6" column="17" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-howl/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="17" selection-start="364" selection-end="364" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2057" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2057">
+          <caret line="6" column="17" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-jmx/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="17" selection-start="364" selection-end="364" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2040" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2040">
+          <caret line="6" column="17" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-logger/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="17" selection-start="364" selection-end="364" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1904" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1904">
+          <caret line="6" column="17" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-tutorial/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="17" selection-start="376" selection-end="376" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1003" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1003">
+          <caret line="7" column="17" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-watchdog/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="17" selection-start="364" selection-end="364" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1853" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1853">
+          <caret line="6" column="17" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="17" selection-start="364" selection-end="364" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2499" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2499">
+          <caret line="6" column="17" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="26" selection-start="342" selection-end="356" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="11220">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="11220">
+          <caret line="5" column="26" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-common/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="41" selection-start="389" selection-end="389" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1394" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1394">
+          <caret line="7" column="41" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/IXARecorderResourceListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="17" selection-start="714" selection-end="714" vertical-scroll-proportion="0.0" vertical-offset="186" max-vertical-offset="663" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="186" max-vertical-offset="663">
+          <caret line="26" column="17" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-jmx/src/main/java/org/csc/phynixx/connection/jmx/LoggerSystemManagement.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="11" selection-start="1340" selection-end="1340" vertical-scroll-proportion="0.0" vertical-offset="407" max-vertical-offset="884" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="407" max-vertical-offset="884">
+          <caret line="44" column="11" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-tutorial/src/main/java/org/csc/phynixx/tutorial/TAEnabledUTFWriterImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="0" selection-start="1788" selection-end="1788" vertical-scroll-proportion="0.0" vertical-offset="776" max-vertical-offset="3825" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="776" max-vertical-offset="3825">
+          <caret line="62" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/PhynixxXARecorderRepository.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="364" column="0" selection-start="11436" selection-end="11436" vertical-scroll-proportion="0.0" vertical-offset="5842" max-vertical-offset="6834" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="5842" max-vertical-offset="6834">
+          <caret line="364" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logger/channellogger/TAEnabledRandomAccessFile.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="422" column="0" selection-start="12728" selection-end="12728" vertical-scroll-proportion="0.0" vertical-offset="6966" max-vertical-offset="8126">
+        <state vertical-scroll-proportion="0.0" vertical-offset="6966" max-vertical-offset="8126">
+          <caret line="422" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logrecord/XADataLogger.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="191" column="0" selection-start="6419" selection-end="6419" vertical-scroll-proportion="0.0" vertical-offset="2988" max-vertical-offset="4845">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2988" max-vertical-offset="4845">
+          <caret line="191" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-logger/src/main/java/org/csc/phynixx/loggersystem/logger/channellogger/FileChannelDataLogger.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="326" column="0" selection-start="10603" selection-end="10603" vertical-scroll-proportion="0.0" vertical-offset="5232" max-vertical-offset="6239">
+        <state vertical-scroll-proportion="0.0" vertical-offset="5232" max-vertical-offset="6239">
+          <caret line="326" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -2262,193 +2710,260 @@
     </entry>
     <entry file="jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/impl/GenericObjectPoolConfig.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="65" selection-start="1157" selection-end="1177" vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="2125" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="2125">
+          <caret line="30" column="65" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/impl/BaseObjectPoolConfig.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="240" column="45" selection-start="8525" selection-end="8554" vertical-scroll-proportion="0.0" vertical-offset="3213" max-vertical-offset="8415" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="3213" max-vertical-offset="8415">
+          <caret line="240" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/PooledObject.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="199" column="22" selection-start="6044" selection-end="6057" vertical-scroll-proportion="0.0" vertical-offset="3017" max-vertical-offset="3366" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="3017" max-vertical-offset="3366">
+          <caret line="199" column="22" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/impl/BaseGenericObjectPool.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="846" column="0" selection-start="32631" selection-end="32631" vertical-scroll-proportion="0.0" vertical-offset="12748" max-vertical-offset="15997" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="12748" max-vertical-offset="15997">
+          <caret line="846" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/AbstractDynaProxyFactory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="57" selection-start="1567" selection-end="1567" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1887" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1887">
+          <caret line="45" column="57" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxManagedConnectionFactory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="171" column="0" selection-start="5780" selection-end="5780" vertical-scroll-proportion="0.0" vertical-offset="2417" max-vertical-offset="3859" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2417" max-vertical-offset="3859">
+          <caret line="171" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/impl/DefaultPooledObject.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="0" selection-start="2291" selection-end="2291" vertical-scroll-proportion="0.0" vertical-offset="627" max-vertical-offset="4981" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="627" max-vertical-offset="4981">
+          <caret line="64" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PooledConnectionCloseStrategy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="0" selection-start="936" selection-end="936" vertical-scroll-proportion="0.0" vertical-offset="381" max-vertical-offset="663" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="381" max-vertical-offset="663">
+          <caret line="29" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/phynixx/testconnection/TestConnection.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="180" column="0" selection-start="5249" selection-end="5249" vertical-scroll-proportion="0.0" vertical-offset="3060" max-vertical-offset="4777" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="3060" max-vertical-offset="4777">
+          <caret line="180" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/LocalTransactionProxy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="67" column="0" selection-start="1908" selection-end="1908" vertical-scroll-proportion="0.0" vertical-offset="1023" max-vertical-offset="1666" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1023" max-vertical-offset="1666">
+          <caret line="67" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/GlobalTransactionProxy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="97" column="0" selection-start="2925" selection-end="2925" vertical-scroll-proportion="0.0" vertical-offset="1401" max-vertical-offset="1649" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1401" max-vertical-offset="1649">
+          <caret line="97" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/recovery/RecoveryIT.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="257" column="73" selection-start="8988" selection-end="8988" vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="4386">
+        <state vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="4386">
+          <caret line="257" column="73" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="jar://Y:/repo/org/apache/commons/commons-pool2/2.1/commons-pool2-2.1-sources.jar!/org/apache/commons/pool2/impl/GenericObjectPool.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="664" column="0" selection-start="25521" selection-end="25521" vertical-scroll-proportion="0.0" vertical-offset="10514" max-vertical-offset="18241">
+        <state vertical-scroll-proportion="0.0" vertical-offset="10514" max-vertical-offset="18241">
+          <caret line="664" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/DynaPhynixxManagedConnectionFactory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="201" column="0" selection-start="8099" selection-end="8099" vertical-scroll-proportion="0.0" vertical-offset="3158" max-vertical-offset="3570" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="3158" max-vertical-offset="3570">
+          <caret line="201" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/IPhynixxManagedConnection.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="66" column="23" selection-start="2289" selection-end="2306" vertical-scroll-proportion="0.0" vertical-offset="946" max-vertical-offset="1853" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="946" max-vertical-offset="1853">
+          <caret line="66" column="23" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PooledPhynixxManagedConnectionFactory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="148" column="35" selection-start="5673" selection-end="5673" vertical-scroll-proportion="0.0" vertical-offset="2209" max-vertical-offset="3825">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2209" max-vertical-offset="3825">
+          <caret line="148" column="35" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/loggersystem/Dev0Strategy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="136" column="86" selection-start="3444" selection-end="3444" vertical-scroll-proportion="0.0" vertical-offset="1937" max-vertical-offset="2618" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1937" max-vertical-offset="2618">
+          <caret line="136" column="86" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/XATransactionalBranch.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="194" column="60" selection-start="5881" selection-end="5881" vertical-scroll-proportion="0.0" vertical-offset="3298" max-vertical-offset="6052">
-          <folding />
+        <state vertical-scroll-proportion="0.0" vertical-offset="3298" max-vertical-offset="6052">
+          <caret line="194" column="60" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/loggersystem/LoggerPerTransactionStrategy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="14" selection-start="2639" selection-end="2639" vertical-scroll-proportion="0.0" vertical-offset="1292" max-vertical-offset="5559">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1292" max-vertical-offset="5559">
+          <caret line="86" column="14" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/MTPooledConnectionIT.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="229" column="8" selection-start="7642" selection-end="7642" vertical-scroll-proportion="0.0" vertical-offset="3360" max-vertical-offset="4012">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3360" max-vertical-offset="4012">
+          <caret line="229" column="8" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/main/java/org/csc/phynixx/connection/PhynixxManagedConnectionGuard.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="266" column="0" selection-start="8554" selection-end="8554" vertical-scroll-proportion="0.0" vertical-offset="4522" max-vertical-offset="12189">
+        <state vertical-scroll-proportion="0.0" vertical-offset="4522" max-vertical-offset="12189">
+          <caret line="266" column="0" selection-start-line="266" selection-start-column="0" selection-end-line="266" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/test/java/org/csc/phynixx/connection/ManagedConnectionIT.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="145" column="20" selection-start="4330" selection-end="4330" vertical-scroll-proportion="0.0" vertical-offset="2465" max-vertical-offset="5168">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2465" max-vertical-offset="5168">
+          <caret line="145" column="20" selection-start-line="145" selection-start-column="20" selection-end-line="145" selection-end-column="20" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResourceFactory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="0" selection-start="1937" selection-end="2175" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="3247">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1292" max-vertical-offset="3621">
+          <caret line="76" column="0" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/TestXAResourceFactory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="67" selection-start="1411" selection-end="1435" vertical-scroll-proportion="0.0" vertical-offset="419" max-vertical-offset="1088">
+        <state vertical-scroll-proportion="0.0" vertical-offset="629" max-vertical-offset="1275">
+          <caret line="37" column="67" selection-start-line="37" selection-start-column="67" selection-end-line="37" selection-end-column="67" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxManagedXAConnection.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="128" column="0" selection-start="5818" selection-end="5818" vertical-scroll-proportion="0.0" vertical-offset="1745" max-vertical-offset="5593">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2176" max-vertical-offset="5865">
+          <caret line="128" column="0" selection-start-line="128" selection-start-column="0" selection-end-line="128" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/main/java/org/csc/phynixx/xa/PhynixxXAResource.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="628" column="101" selection-start="26246" selection-end="26246" vertical-scroll-proportion="0.0" vertical-offset="10470" max-vertical-offset="12036">
+        <state vertical-scroll-proportion="0.0" vertical-offset="10676" max-vertical-offset="12036">
+          <caret line="628" column="101" selection-start-line="628" selection-start-column="101" selection-end-line="628" selection-end-column="101" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-xa/src/test/java/org/csc/phynixx/xa/XAResourceIntegrationTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1182" column="5" selection-start="41771" selection-end="41771" vertical-scroll-proportion="0.0" vertical-offset="19720" max-vertical-offset="20604">
+        <state vertical-scroll-proportion="0.0" vertical-offset="20094" max-vertical-offset="20859">
+          <caret line="1182" column="5" selection-start-line="1182" selection-start-column="5" selection-end-line="1182" selection-end-column="5" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-doc/src/site/markdown/documentation.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="829">
-          <folding />
-        </state>
-      </provider>
       <provider editor-type-id="MarkdownPreviewEditor">
         <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="829">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-doc/src/site/markdown/phynixx.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="816">
-          <folding />
-        </state>
-      </provider>
       <provider editor-type-id="MarkdownPreviewEditor">
         <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="816">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phynixx/phynixx-doc/src/site/markdown/references.md">
+      <provider editor-type-id="MarkdownPreviewEditor">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="0" selection-start="1076" selection-end="1076" vertical-scroll-proportion="0.5550181" vertical-offset="0" max-vertical-offset="827">
+        <state vertical-scroll-proportion="-14.28" vertical-offset="0" max-vertical-offset="816">
+          <caret line="21" column="18" selection-start-line="21" selection-start-column="18" selection-end-line="21" selection-end-column="18" />
           <folding />
         </state>
       </provider>
-      <provider editor-type-id="MarkdownPreviewEditor">
-        <state />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx-all.iml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="854">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-connection/src/doc/connection-hierarchy.graphml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="8551">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phynixx/phynixx-doc/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.13934426" vertical-offset="0" max-vertical-offset="854">
+          <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
+          <folding />
+        </state>
       </provider>
     </entry>
   </component>
