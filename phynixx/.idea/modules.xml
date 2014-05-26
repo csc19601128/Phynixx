@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/phynixx.iml" filepath="$PROJECT_DIR$/phynixx.iml" />
+      <module fileurl="file://$PROJECT_DIR$/phynixx-common/phynixx-common.iml" filepath="$PROJECT_DIR$/phynixx-common/phynixx-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/phynixx-connection/phynixx-connection.iml" filepath="$PROJECT_DIR$/phynixx-connection/phynixx-connection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/phynixx-doc/phynixx-doc.iml" filepath="$PROJECT_DIR$/phynixx-doc/phynixx-doc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/phynixx-howl/phynixx-howl.iml" filepath="$PROJECT_DIR$/phynixx-howl/phynixx-howl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/phynixx-jmx/phynixx-jmx.iml" filepath="$PROJECT_DIR$/phynixx-jmx/phynixx-jmx.iml" />
+      <module fileurl="file://$PROJECT_DIR$/phynixx-watchdog/phynixx-watchdog.iml" filepath="$PROJECT_DIR$/phynixx-watchdog/phynixx-watchdog.iml" />
+      <module fileurl="file://$PROJECT_DIR$/phynixx-xa/phynixx-xa.iml" filepath="$PROJECT_DIR$/phynixx-xa/phynixx-xa.iml" />
+    </modules>
+  </component>
+</project>
+

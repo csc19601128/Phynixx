@@ -1,0 +1,132 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>phynixx</artifactId>
+        <groupId>org.csc.phynixx</groupId>
+        <version>1.3-SNAPSHOT</version>
+    </parent>
+    <artifactId>phynixx-xa</artifactId>
+    <packaging>jar</packaging>
+
+    <name>phynixx-xa</name>
+    <description>enabled the connection of phynixx-connection take part in a XA protocol</description>
+    <url>https://phynixx.codematters.org/phynixx-xa</url>
+
+    <scm>
+        <connection>scm:svn:https://svn.codematters.org/phynixx/${artifactId}/trunk</connection>
+        <developerConnection>scm:svn:https://svn.codematters.org/phynixx/${artifactId}/trunk</developerConnection>
+        <url>https://svn.codematters.org/phynixx/${artifactId}/trunk</url>
+    </scm>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.csc.phynixx</groupId>
+            <artifactId>phynixx-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.csc.phynixx</groupId>
+            <artifactId>phynixx-common</artifactId>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.csc.phynixx</groupId>
+            <artifactId>phynixx-connection</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.csc.phynixx</groupId>
+            <artifactId>phynixx-connection</artifactId>
+            <classifier>tests</classifier>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.csc.phynixx</groupId>
+            <artifactId>phynixx-watchdog</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>javax.resource</groupId>
+            <artifactId>connector-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-jta</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jotm</groupId>
+            <artifactId>jotm</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
+        </dependency>
+
+    </dependencies>
+
+
+    <build>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

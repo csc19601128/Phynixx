@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: howl:howl-logger:0.1.11">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/howl/howl-logger/0.1.11/howl-logger-0.1.11.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/howl/howl-logger/0.1.11/howl-logger-0.1.11-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/howl/howl-logger/0.1.11/howl-logger-0.1.11-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
