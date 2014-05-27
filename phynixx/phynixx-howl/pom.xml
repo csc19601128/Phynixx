@@ -1,113 +1,113 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>phynixx</artifactId>
-		<groupId>org.csc.phynixx</groupId>
-		<version>1.3-SNAPSHOT</version>
-	</parent>
-	<artifactId>phynixx-howl</artifactId>
-	<packaging>jar</packaging>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>phynixx</artifactId>
+        <groupId>org.csc.phynixx</groupId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>phynixx-howl</artifactId>
+    <packaging>jar</packaging>
 
-	<name>phynixx-howl</name>
+    <name>phynixx-howl</name>
 
-	<description>using the howl-framework for logging</description>
-	<url>http://phynixx.codematters.org/phynixx-howl</url>
+    <description>using the howl-framework for logging</description>
+    <url>http://phynixx.codematters.org/phynixx-howl</url>
 
-	<scm>
-		<connection>scm:svn:https://svn.codematters.org/phynixx/phynixx-howl/trunk</connection>
-		<developerConnection>scm:svn:https://svn.codematters.org/phynixx/phynixx-howl/trunk</developerConnection>
-		<url>https://svn.codematters.org/phynixx/phynixx-howl/trunk</url>
-	</scm>
-	<distributionManagement>
-		<!-- use the following if you're not using a snapshot version. -->
-		<repository>
-			<id>file-repository</id>
-			<url>file://localhost/Y:/maven_repository</url>
-		</repository>
-		<site>
-			<id>codematters scp</id>
-			<url>scp://svn.codematters.org/phynixx/phynixx-howl</url>
-		</site>
-	</distributionManagement>
-
-
-	<dependencies>
+    <scm>
+        <connection>scm:svn:https://svn.codematters.org/phynixx/phynixx-howl/trunk</connection>
+        <developerConnection>scm:svn:https://svn.codematters.org/phynixx/phynixx-howl/trunk</developerConnection>
+        <url>https://svn.codematters.org/phynixx/phynixx-howl/trunk</url>
+    </scm>
+    <distributionManagement>
+        <!-- use the following if you're not using a snapshot version. -->
+        <repository>
+            <id>file-repository</id>
+            <url>file://localhost/Y:/maven_repository</url>
+        </repository>
+        <site>
+            <id>codematters scp</id>
+            <url>scp://svn.codematters.org/phynixx/phynixx-howl</url>
+        </site>
+    </distributionManagement>
 
 
-		<dependency>
-			<groupId>org.csc.phynixx</groupId>
-			<artifactId>phynixx-common</artifactId>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-  			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.csc.phynixx</groupId>
-			<artifactId>phynixx-connection</artifactId>
-  			<version>${project.version}</version>
-		</dependency>
+    <dependencies>
 
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.csc.phynixx</groupId>
+            <artifactId>phynixx-common</artifactId>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+            <version>${project.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.objectweb.howl</groupId>
-			<artifactId>howl</artifactId>
-			<scope>compile</scope>
-		</dependency>
-
-
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<scope>compile</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.csc.phynixx</groupId>
+            <artifactId>phynixx-connection</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 
-	</dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-	<build>
-
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
+        <dependency>
+            <groupId>org.objectweb.howl</groupId>
+            <artifactId>howl</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-			</plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-			</plugin>
+    </dependencies>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-			</plugin>
+    <build>
 
-		</plugins>
-	</build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+    </build>
 
 
 </project>
