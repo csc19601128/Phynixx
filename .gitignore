@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-/target
-/target*
-=======
-
 /phynixx/*/target
->>>>>>> master
+/phynixx/target
+.idea/*
