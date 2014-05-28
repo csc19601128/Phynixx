@@ -11,6 +11,8 @@
 
         <menu ref="modules"/>
 
+        ${reports}
+
 
 
     </body>
