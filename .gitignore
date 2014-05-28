@@ -9,9 +9,10 @@
 .settings
 
 # maven
-*/*/target/
-*/target/**/*.*
-*/target/apidocs/**/*.html
+**/target/**
+**/target/**/*
+**/target/**/*.*
+*.html
 
 
 **/pom.xml.tag
