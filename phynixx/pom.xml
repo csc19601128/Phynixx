@@ -29,7 +29,7 @@
     <scm>
         <connection>scm:git:https://github.com/csc19601128/Phynixx.git</connection>
         <developerConnection>scm:git:https://github.com/csc19601128/Phynixx.git</developerConnection>
-        <url>https://github.com/csc19601128/Phynixx.git</url>
+        <url>https://github.com/csc19601128/Phynixx</url>
     </scm>
 
     <developers>
@@ -46,7 +46,7 @@
         <site>
             <id>github-pages-site</id>
             <name>Deployment through GitHub's site deployment plugin</name>
-            <url>${project.build.directory}/site</url>
+            <url>https://github.com/csc19601128/Phynixx</url>
         </site>
         <snapshotRepository>
             <id>sonatype-nexus-snaphots</id>
@@ -62,8 +62,8 @@
     </distributionManagement>
 
     <issueManagement>
-        <system>jira</system>
-        <url>http://jira.codematters.org/jira/browse/PHYNIXX</url>
+        <system>github</system>
+        <url>https://github.com/csc19601128/Phynixx/issues</url>
     </issueManagement>
 
     <licenses>
@@ -234,11 +234,6 @@
         <pluginManagement>
             <plugins>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.5</version>
-                </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -256,7 +251,6 @@
                         <tempWebappDirectory>${basedir}/target/site/tempdir</tempWebappDirectory>
                         <inputEncoding>UTF-8</inputEncoding>
                         <outputEncoding>UTF-8</outputEncoding>
-                        <stagingDirectory>Y:\tmp/target/stage</stagingDirectory>
                     </configuration>
 
                     <executions>
@@ -265,24 +259,42 @@
                             <goals>
                                 <goal>attach-descriptor</goal>
                             </goals>
-                            <phase>package</phase>
                         </execution>
                         <execution>
                             <id>generate site</id>
                             <goals>
                                 <goal>site</goal>
                             </goals>
-                            <phase>site</phase>
                         </execution>
                         <execution>
                             <id>generate stage</id>
                             <goals>
                                 <goal>stage</goal>
                             </goals>
-                            <phase>site</phase>
-                        </execution>
+                        </execution> <execution>
+                        <id>jar</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
                     </executions>
 
+                </plugin>
+
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.16</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
 
                 <plugin>
@@ -290,6 +302,7 @@
                     <artifactId>maven-project-info-reports-plugin</artifactId>
                     <version>2.7</version>
                 </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -307,7 +320,7 @@
 
                 <plugin>
                     <artifactId>maven-resource-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>2.6</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                         <includes>
@@ -330,7 +343,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.0.2</version>
+                    <version>3.1</version>
                     <configuration>
                         <source>1.6</source>
                         <target>1.6</target>
@@ -487,6 +500,13 @@
                         </execution>
                     </executions>
                 </plugin>
+
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -524,16 +544,6 @@
                 <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-            </plugin>
-
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-            </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -575,48 +585,88 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-
-                <reportSets>
-                    <reportSet>
-                        <reports>
-
-                            <report>dependencies</report>
-                            <report>project-team</report>
-                            <report>mailing-list</report>
-
-                            <!-- <report>cim</report> -->
-
-                            <report>issue-tracking</report>
-                            <report>license</report>
-                            <report>scm</report>
-
-
-                        </reports>
-                        <!-- children should use the reporting config -->
-                        <inherited>true</inherited>
-                    </reportSet>
-                </reportSets>
             </plugin>
-            <!--
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>javancss-maven-plugin</artifactId>
+                <version>2.0</version>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
                 <version>2.3</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                </configuration>
             </plugin>
-            -->
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <reportSets>
                     <reportSet>
+                        <inherited>false</inherited>
                         <id>b</id>
                         <reports>
                             <report>aggregate</report>
                         </reports>
+                    </reportSet>
+                    <reportSet>
+                        <inherited>true</inherited>
+                        <id>x</id>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.17</version>
+                <reportSets>
+                    <reportSet>
+                        <!-- defines unit test reports in the modules -->
+                        <id>unit-tests</id>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                        <configuration>
+                            <alwaysGenerateSurefireReport>false</alwaysGenerateSurefireReport>
+                        </configuration>
+                    </reportSet>
+
+                    <reportSet>
+                        <!-- defines aggregate unit test report -->
+                        <id>unit-tests-aggregate</id>
+                        <inherited>false</inherited>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                        <configuration>
+                            <aggregate>true</aggregate>
+                        </configuration>
+                    </reportSet>
+
+                    <reportSet>
+                        <!-- defines integration test reports in the modules -->
+                        <id>integration-tests</id>
+                        <reports>
+                            <report>failsafe-report-only</report>
+                        </reports>
+                        <configuration>
+                            <alwaysGenerateSurefireReport>false</alwaysGenerateSurefireReport>
+                        </configuration>
+                    </reportSet>
+
+                    <reportSet>
+                        <!-- defines aggregate integration test report -->
+                        <id>integration-tests-aggregate</id>
+                        <inherited>false</inherited>
+                        <reports>
+                            <report>failsafe-report-only</report>
+                        </reports>
+                        <configuration>
+                            <aggregate>true</aggregate>
+                        </configuration>
                     </reportSet>
                 </reportSets>
             </plugin>
@@ -692,6 +742,7 @@
                     </plugins>
                 </pluginManagement>
             </build>
+
         </profile>
 
         <profile>

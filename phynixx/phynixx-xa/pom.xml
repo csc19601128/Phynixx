@@ -11,14 +11,7 @@
 
     <name>phynixx-xa</name>
     <description>enabled the connection of phynixx-connection take part in a XA protocol</description>
-    <url>https://phynixx.codematters.org/phynixx-xa</url>
 
-    <scm>
-        <connection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk</connection>
-        <developerConnection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk
-        </developerConnection>
-        <url>https://svn.codematters.org/phynixx/${project.artifactId}/trunk</url>
-    </scm>
 
     <dependencies>
 

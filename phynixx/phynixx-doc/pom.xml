@@ -8,6 +8,8 @@
         <relativePath>..</relativePath>
     </parent>
     <artifactId>phynixx-doc</artifactId>
+    <name>Phynixx Doc.</name>
+    <description>Documentation of Phynixx</description>
 
 
     <build>

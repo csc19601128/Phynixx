@@ -12,26 +12,7 @@
     <name>phynixx-jmx</name>
 
     <description>jmx extension for all phynixx components</description>
-    <url>https://phynixx.codematters.org/phynixx-jmx</url>
 
-    <scm>
-        <connection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk</connection>
-        <developerConnection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk
-        </developerConnection>
-        <url>https://svn.codematters.org/phynixx/${project.artifactId}/trunk</url>
-    </scm>
-
-    <distributionManagement>
-        <!-- use the following if you're not using a snapshot version. -->
-        <repository>
-            <id>svn.codematters.org</id>
-            <url>scp://svn.codematters.org/home/csc/maven_repository/</url>
-        </repository>
-        <site>
-            <id>svn.codematters.org</id>
-            <url>scp://svn.codematters.org/home/csc/phynixx/sites/${project.artifactId}</url>
-        </site>
-    </distributionManagement>
 
     <dependencies>
         <dependency>

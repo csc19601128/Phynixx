@@ -17,7 +17,32 @@
       <profile default="true" name="Default" enabled="false">
         <processorPath useClasspath="true" />
       </profile>
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="phynixx-common" />
+        <module name="phynixx-connection" />
+        <module name="phynixx-doc" />
+        <module name="phynixx-jmx" />
+        <module name="phynixx-logger" />
+        <module name="phynixx-tutorial" />
+        <module name="phynixx-watchdog" />
+        <module name="phynixx-xa" />
+      </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="phynixx-common" target="1.6" />
+      <module name="phynixx-connection" target="1.6" />
+      <module name="phynixx-doc" target="1.6" />
+      <module name="phynixx-howl" target="1.4" />
+      <module name="phynixx-jmx" target="1.6" />
+      <module name="phynixx-logger" target="1.6" />
+      <module name="phynixx-tutorial" target="1.6" />
+      <module name="phynixx-watchdog" target="1.6" />
+      <module name="phynixx-xa" target="1.6" />
+    </bytecodeTargetLevel>
   </component>
 </project>
 
