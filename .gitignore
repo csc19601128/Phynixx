@@ -10,7 +10,8 @@
 
 # maven
 */*/target/
-*/target/
+*/target/**/*
+*.html
 
 
 **/pom.xml.tag
