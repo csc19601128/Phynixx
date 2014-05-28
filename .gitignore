@@ -11,7 +11,7 @@
 # maven
 */*/target/
 */target/**/*.*
-*/target/**/*.html
+*/target/apidocs/**/*.html
 
 
 **/pom.xml.tag
