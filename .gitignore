@@ -1,7 +1,1 @@
-<<<<<<< HEAD
-/target
-/target*
-=======
-
-/phynixx/*/target
->>>>>>> master
+*.java
