@@ -7,6 +7,7 @@ Das Projekt <i>Phynixx</i> bietet eine einfache Möglichkeit für Ressourcen an 
 Stellen Sie sich z.B. jede Form von Ressource vor, deren Zustand sich an dem Ausgang einer Datenbanktransaktion orientiert.
 + Dateioperationen
 + Operationen an Filesysteme
++ NoSQL-Datenbanken ohne transaktionale Unterestützung
 + Operationen an Archivsystemen ( welche keine eigenes Transaktionshandling anbieten; z.B. Centera von EMC).
 + Implementierung des Command-Pattern nach GoF. Dies enthält eine Form von _rollback_ durch _undo_.
 

@@ -49,4 +49,28 @@
 
     </dependencies>
 
+    <!--
+    -->
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-site</id>
+                        <phase>site</phase>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <configuration>
+                            <generateProjectInfo>false</generateProjectInfo>
+                            <generateReports>false</generateReports>
+                            <generatedSiteDirectory>true</generatedSiteDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
