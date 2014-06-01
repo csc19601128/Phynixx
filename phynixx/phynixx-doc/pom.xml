@@ -17,14 +17,14 @@
     <artifactId>phynixx-doc</artifactId>
     <name>Phynixx Doc.</name>
     <description>Documentation of Phynixx</description>
-    <url>https://github.com/csc19601128/Phynixx/${project.artifactId}</url>
+    <url>https://github.com/csc19601128/Phynixx/</url>
 
     <distributionManagement>
         <!-- use the following if you're not using a snapshot version. -->
         <site>
             <id>github-pages-site</id>
             <name>Deployment through GitHub's site deployment plugin</name>
-            <url>https://github.com/csc19601128/Phynixx/${project.artifactId}</url>
+            <url>https://github.com/csc19601128/Phynixx</url>
         </site>
     </distributionManagement>
 
@@ -64,10 +64,9 @@
                     <configuration>
                         <message>Creating site for ${project.version}</message>
                         <server>github</server>
-                        <outputDirectory>${project.distributionManagement.site.url}</outputDirectory>
-                        <merge>true</merge>
+                        <path>${project.distributionManagement.site.url}</path>
+                        <merge>false</merge>
                         <repositoryName>Phynixx</repositoryName>
-                        <repositoryOwner>csc19601128</repositoryOwner>
                     </configuration>
                     <executions>
                         <execution>
