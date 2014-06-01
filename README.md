@@ -5,6 +5,6 @@ Phynixx is a XA compliant technique for non transactional resources. It's enable
 
 This java solutions is compliant to JTA 1.2
 
-Documentation see [http://csc19601128.github.io/Phynixx/](http://csc19601128.github.io/Phynixx/) (Only German)
+Documentation see [http://csc19601128.github.io/Phynixx/getting-started.html](http://csc19601128.github.io/Phynixx/getting-started.html) (Only German)
 
 It's under construction but V2.0 is coming soon (June 2014). V 2.0 supports jdk6 and is restructured. The new version will be compliant to JTA 1.2
