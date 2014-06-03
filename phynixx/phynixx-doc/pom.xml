@@ -28,6 +28,13 @@
         </site>
     </distributionManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.github.github</groupId>
+            <artifactId>site-maven-plugin</artifactId>
+            <version>0.9</version>
+        </dependency></dependencies>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -65,8 +72,9 @@
                         <message>Creating site for ${project.version}</message>
                         <server>github</server>
                         <path>${project.distributionManagement.site.url}</path>
-                        <merge>false</merge>
+                        <merge>true</merge>
                         <repositoryName>Phynixx</repositoryName>
+                        <force>true</force>
                     </configuration>
                     <executions>
                         <execution>

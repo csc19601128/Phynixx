@@ -3,6 +3,10 @@
 
     <body>
 
+        <menu name="Phynixx">
+            <item name="Project Information"  href="/project-info.html"/>
+        </menu>
+
         <menu name="Documentation">
             <!--
             <item name="Dokumentation" href="index.html"/>

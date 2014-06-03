@@ -5,7 +5,7 @@
     <artifactId>phynixx</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>phynixx parent</name>
+    <name>Phynixx's Parent Project</name>
     <description>Phynixx enables arbitrary resources to join a XA transaction</description>
     <url>https://github.com/csc19601128/Phynixx</url>
     <modules>
@@ -69,8 +69,7 @@
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
-            <url>https://github.com/csc19601128/Phynixx</url>
-            <distribution>repo</distribution>
+            <url>src/license/LICENSE.TXT</url>
         </license>
     </licenses>
 
@@ -301,16 +300,14 @@
                         <execution>
                         <id>site jar</id>
                             <inherited>false</inherited>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <phase>site-deploy</phase>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <phase>site-deploy</phase>
                     </execution>
                     </executions>
 
                 </plugin>
-
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
@@ -614,6 +611,7 @@
                 <artifactId>maven-project-info-reports-plugin</artifactId> <reportSets>
                 <reportSet>
                     <reports>
+                        <report>index</report>
                         <report>dependencies</report>
                         <report>dependency-convergence</report>
                         <report>dependency-info</report>
@@ -636,6 +634,24 @@
                 <artifactId>javancss-maven-plugin</artifactId>
                 <version>2.0</version>
             </plugin>
+
+<!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changes-plugin</artifactId>
+                <version>2.10</version>
+                <reportSets>
+                    <reportSet>
+                        <inherited>false</inherited>
+                        <reports>
+                            <report>github-report</report>
+                            <report>changes-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            -->
+
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
