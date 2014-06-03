@@ -334,10 +334,36 @@
                     <version>2.9.1</version>
                     <executions>
                         <execution>
+                            <inherited>true</inherited>
                             <id>attach-javadocs</id>
                             <goals>
                                 <goal>javadoc</goal>
                             </goals>
+                        </execution>
+
+                        <execution>
+                            <id>jar</id>
+                            <inherited>true</inherited>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <phase>package</phase>
+                        </execution>
+                        <execution>
+                            <inherited>false</inherited>
+                            <id>aggregate</id>
+                            <goals>
+                                <goal>aggregate</goal>
+                            </goals>
+                            <phase>prepare-package</phase>
+                        </execution>
+                        <execution>
+                            <inherited>false</inherited>
+                            <id>aggregate-jar</id>
+                            <goals>
+                                <goal>aggregate-jar</goal>
+                            </goals>
+                            <phase>package</phase>
                         </execution>
 
                     </executions>
