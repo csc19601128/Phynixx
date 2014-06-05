@@ -34,10 +34,9 @@ public interface IImplementor {
      * <p/>
      * Ist <code>cls==null</code>, so wird <code>false</code> geliefert.
      *
-     * @param <X>
-     * @param cls Zielklasse/Zielinterface
-     * @return true g.d.w. die vorliegende Instance einen gesicherten cast nach
-     * <code>Class<X></code> zulaesst
+     * @param <X> expected (Super)Type of the checked object
+     * @param cls target class / interface
+     * @return true if the current class can be safely casted to X
      */
     <X> boolean isImplementationOf(Class<X> cls);
 

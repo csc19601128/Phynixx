@@ -32,12 +32,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- * Originally from:
- * http://blogs.sun.com/andreas/resource/InstallCert.java
- * Use:
- * java InstallCert hostname
- * Example:
- *% java InstallCert ecc.fedora.redhat.com
+ * Created by christoph on 02.06.2014.
  */
 
 import javax.net.ssl.*;
@@ -69,12 +64,12 @@ public class InstallCert {
         }
 
         File file = new File("jssecacerts");
-        if (file.isFile() == false) {
+        if (!file.isFile()) {
             char SEP = File.separatorChar;
             File dir = new File(System.getProperty("java.home") + SEP
                     + "lib" + SEP + "security");
             file = new File(dir, "jssecacerts");
-            if (file.isFile() == false) {
+            if (!file.isFile()) {
                 file = new File(dir, "cacerts");
             }
         }

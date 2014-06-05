@@ -33,7 +33,7 @@ public class LogRecordPageWriter {
 
     private static final byte[][] EMPTY_DATA = new byte[][]{};
 
-    private List<LogRecordWriter> logWriters = new ArrayList<LogRecordWriter>();
+    private final List<LogRecordWriter> logWriters = new ArrayList<LogRecordWriter>();
 
     /**
      * @return number of lines

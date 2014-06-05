@@ -23,7 +23,7 @@ package org.csc.phynixx.common.logger;
 
 public class PrintLogManager implements IPhynixxLogManager {
 
-    private PrintLogger printLogger = new PrintLogger();
+    private final PrintLogger printLogger = new PrintLogger();
 
 
     public PrintLogManager() {

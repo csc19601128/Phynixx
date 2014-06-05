@@ -30,9 +30,9 @@ import java.util.*;
 public class GroupingAssociation<X, Y, A> {
 
 
-    Map<X, Set<Y>> mapA = new HashMap<X, Set<Y>>();
+    private final Map<X, Set<Y>> mapA = new HashMap<X, Set<Y>>();
 
-    Map<Y, Set<X>> mapB = new HashMap<Y, Set<X>>();
+    private final Map<Y, Set<X>> mapB = new HashMap<Y, Set<X>>();
 
 
     public void associate(X x, Y y) {

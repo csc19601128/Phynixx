@@ -76,12 +76,12 @@ public class TmpDirectory {
         }
 
         File[] files = dir.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            if( files[i].isDirectory()) {
-                this.clearDirectory(files[i]);
+        for (File file : files) {
+            if (file.isDirectory()) {
+                this.clearDirectory(file);
             }
-            if (!files[i].delete()) {
-                LOG.error("deleting " + files[i] + " fails");
+            if (!file.delete()) {
+                LOG.error("deleting " + file + " fails");
             }
         }
     }
@@ -98,7 +98,7 @@ public class TmpDirectory {
 
     }
 
-    public File assertExitsDirectory(String dirname) throws IOException {
+    public File assertExitsDirectory(String dirname)  {
 
         File directory = new File(this.dir.getAbsolutePath() + File.separator + dirname);
         if (directory.exists() && !directory.isDirectory()) {

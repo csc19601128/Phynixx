@@ -28,9 +28,9 @@ import java.util.*;
  */
 public class UnorderedMany2ManyAssociation<X, Y> {
 
-    Map<X, Set<Y>> mapA = new HashMap<X, Set<Y>>();
+    final Map<X, Set<Y>> mapA = new HashMap<X, Set<Y>>();
 
-    Map<Y, Set<X>> mapB = new HashMap<Y, Set<X>>();
+    final Map<Y, Set<X>> mapB = new HashMap<Y, Set<X>>();
 
 
     public void associate(X x, Y y) {

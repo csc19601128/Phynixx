@@ -22,10 +22,14 @@ package org.csc.phynixx.common.exceptions;
 
 
 /**
- * @author
+ * @author christoph Schmidt-casdorff
  */
 public interface IDelegated {
 
 
+    /**
+     *
+     * @return delegated Exception
+     */
     Throwable getRootCause();
 }

@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class LogRecordPageReader {
 
-    private List<LogRecordReader> logReaders = new ArrayList<LogRecordReader>();
+    private final List<LogRecordReader> logReaders = new ArrayList<LogRecordReader>();
 
 
     public LogRecordPageReader(byte[][] records) {
@@ -38,8 +38,8 @@ public class LogRecordPageReader {
             return;
         }
 
-        for (int i = 0; i < records.length; i++) {
-            LogRecordReader reader = new LogRecordReader(records[i]);
+        for (byte[] record : records) {
+            LogRecordReader reader = new LogRecordReader(record);
             this.logReaders.add(reader);
         }
     }
