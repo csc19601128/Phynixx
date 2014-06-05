@@ -93,6 +93,8 @@ public interface IXADataRecorder extends IDataRecordSequence {
 
     IDataRecord createDataRecord(XALogRecordType logRecordType, byte[][] recordData);
 
+    IDataRecord createDataRecord(XALogRecordType logRecordType, byte[] recordData);
+
     /**
      * closes the dataLogger, but keeps all resources, so the dataLogger can be reopened
      */

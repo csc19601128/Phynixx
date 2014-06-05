@@ -195,6 +195,11 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     }
 
     @Override
+    public IDataRecord createDataRecord(XALogRecordType logRecordType, byte[] recordData) {
+        return this.createDataRecord(logRecordType, this.toBytesBytes(recordData));
+    }
+
+    @Override
     public IDataRecord createDataRecord(XALogRecordType logRecordType, byte[][] recordData) {
         PhynixxDataRecord msg = new PhynixxDataRecord(this.getXADataRecorderId(), this.ordinalGenerator.generate(), logRecordType, recordData);
         try {

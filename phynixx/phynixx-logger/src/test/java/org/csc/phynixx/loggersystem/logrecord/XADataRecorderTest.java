@@ -72,7 +72,7 @@ public class XADataRecorderTest {
 
         try {
             xaDataRecorder.writeRollbackData(new byte[][]{});
-            throw new AssertionFailedError("No more RF Data; Sequence is committing");
+            throw new AssertionFailedError("No more RF Data allowed; Sequence is committing");
         } catch (Exception e) {
         }
 
