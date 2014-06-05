@@ -26,6 +26,28 @@
             <name>Deployment through GitHub's site deployment plugin</name>
             <url>https://github.com/csc19601128/Phynixx</url>
         </site>
+        <!--
+        <snapshotRepository>
+            <id>sonatype-nexus-snaphots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.or/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Sonatype Nexus Repository</name>
+            <url>https://oss.sonatype.or/service/local/staging/deploy/</url>
+        </repository>
+        -->
+        <snapshotRepository>
+            <id>internal.repo</id>
+            <name>MyCo Internal Repository</name>
+            <url>file://C:/tmp/repo</url>
+        </snapshotRepository>
+        <repository>
+            <id>internal.repo</id>
+            <name>MyCo Internal Repository</name>
+            <url>file://C:/tmp/repo</url>
+        </repository>
     </distributionManagement>
 
     <dependencies>

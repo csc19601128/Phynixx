@@ -37,8 +37,11 @@
             <id>phynixx</id>
             <name>Christoph Schmidt-Casdorff</name>
             <email>phynixx@freemail.de</email>
+            <roles>
+                <role>architect</role>
+                <role>lead developer</role>
+            </roles>
         </developer>
-
     </developers>
 
     <distributionManagement>
@@ -48,16 +51,27 @@
             <name>Deployment through GitHub's site deployment plugin</name>
             <url>https://github.com/csc19601128/Phynixx</url>
         </site>
+        <!--
         <snapshotRepository>
             <id>sonatype-nexus-snaphots</id>
             <name>Sonatype Nexus Snapshots</name>
             <url>https://oss.sonatype.or/content/repositories/snapshots/</url>
         </snapshotRepository>
-
         <repository>
             <id>sonatype-nexus-staging</id>
             <name>Sonatype Nexus Repository</name>
             <url>https://oss.sonatype.or/service/local/staging/deploy/</url>
+        </repository>
+        -->
+        <snapshotRepository>
+            <id>internal.repo</id>
+            <name>MyCo Internal Repository</name>
+            <url>file://C:/tmp/repo</url>
+        </snapshotRepository>
+        <repository>
+            <id>internal.repo</id>
+            <name>MyCo Internal Repository</name>
+            <url>file://C:/tmp/repo</url>
         </repository>
     </distributionManagement>
 
@@ -421,7 +435,7 @@
                 <plugin>
                     <groupId>org.kohsuke</groupId>
                     <artifactId>pgp-maven-plugin</artifactId>
-                    <version>1.0</version>
+                    <version>1.1</version>
                     <executions>
                         <execution>
                             <goals>
@@ -459,7 +473,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>2.8.1</version>
                 </plugin>
 
 
@@ -809,6 +823,7 @@
         </plugins>
     </reporting>
 
+
     <profiles>
         <profile>
             <id>tests-included</id>
@@ -877,5 +892,12 @@
                 </pluginManagement>
             </build>
         </profile>
+        <profile>
+            <id>install</id>
+            <build>
+
+            </build>
+        </profile>
     </profiles>
+
 </project>
