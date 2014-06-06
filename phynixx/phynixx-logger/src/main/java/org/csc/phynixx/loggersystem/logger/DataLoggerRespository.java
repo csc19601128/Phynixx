@@ -30,9 +30,9 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * the current class is responsible for instanciating new {@link org.csc.phynixx.loggersystem.logger.IDataLogger}.
- * <p/>
- * <p/>
+ * the current class is responsible for instanciating new {@link org.csc.phynixx.loggersystem.logger.IDataLogger} and managing their lifecycle. It use a {@link org.csc.phynixx.loggersystem.logger.IDataLoggerFactory} for creating new Logger.
+ *
+ *
  * the current class managed the lifecycle instances of IDataLoggers.
  * <p/>
  * The current implementation do not re-use closed Logger, but further implementation can implement kind pof Caching/Polling strategies

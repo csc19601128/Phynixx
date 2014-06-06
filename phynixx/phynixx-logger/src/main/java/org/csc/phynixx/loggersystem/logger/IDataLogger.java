@@ -27,7 +27,7 @@ import org.csc.phynixx.loggersystem.logrecord.ILogRecordReplayListener;
 import java.io.IOException;
 
 /**
- * A logger ist able to write data in an atomic manner. The data is entirely written or the data ist rejected.
+ * A logger is enabled to write data in an atomic manner. The data is entirely written or the data is rejected.
  *
  * This class is not thread safe . Use facades to protect instances
  */
@@ -55,10 +55,15 @@ public interface IDataLogger {
 
     /**
      * close the Log files and perform necessary cleanup tasks.
-     * The logger could be reopended
+     * The logger could be reopen
      */
     void close() throws IOException, InterruptedException;
 
+
+    /**
+     *
+     * @return true if and if the logger is closed
+     */
     boolean isClosed();
 
     /**
@@ -74,9 +79,9 @@ public interface IDataLogger {
     /**
      * reopens the datalogger. It is assumed that the logger is open.
      * <pre>
-     *    READ   - position to position 0
-     *    WRITE  - position to position 0 and resets the committed size to 0
-     *    APPEND - position to the committed size
+     *    READ   - position to 0, content cannot be changed or added
+     *    WRITE  - position to 0 and resets the committed size to 0. Content is deleted (kind of reset)
+     *    APPEND - position to the committed size. Content is not effected.
      * </pre>
      *
      * @param accessMode
@@ -87,7 +92,7 @@ public interface IDataLogger {
 
 
     /**
-     * removes the logger an all its resources
+     * destroys the logger and removes its resources. The logger cannot be reopened
      *
      * @throws IOException
      */

@@ -37,7 +37,7 @@ import java.util.Set;
 /**
  * Created by zf4iks2 on 08.01.14.
  */
-public class FileChannelLoggerFactoryTest {
+public class FileChannelDataLoggerFactoryTest {
 
     private static final String GLOBAL_FORMAT_PATTERN = "(howl_[a-z,A-Z,0-9]*[^_])_([0-9]*[^\\.])\\.[\\w]*";
     private static final String FORMAT_PATTERN = "(howl_a)_([0-9]*[^\\.])\\.[\\w]*";

@@ -34,14 +34,19 @@ import java.io.RandomAccessFile;
 
 
 /**
- * Logger uses a {@link org.csc.phynixx.loggersystem.logger.channellogger.TAEnabledRandomAccessFile} to persist the data.
- * <p/>
+ * Logger uses a {@link org.csc.phynixx.loggersystem.logger.channellogger.TAEnabledRandomAccessFile}
+ * to persist the data.
+ * If the Logger is open, it holds a lock on
+ *
  * This class is not thread safe . Use facades to protect instances
  */
 public class FileChannelDataLogger implements IDataLogger {
 
     private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(FileChannelDataLogger.class);
 
+    /**
+     *
+     */
     private static class FileAccessor {
 
         private File cachedFile = null;
@@ -193,11 +198,9 @@ public class FileChannelDataLogger implements IDataLogger {
      * @throws java.lang.IllegalStateException logger isn't open
      */
     public void reopen(AccessMode accessMode) throws IOException {
-        if(this.isClosed()) {
-            throw new IllegalStateException("FileChannelDataLogger cannot be reopen as it is already closed");
-        }
+
         if( this.randomAccess==null) {
-            throw new IllegalStateException("No RandomAccesFile associated");
+            associatedRandomAccessFile();
         }
 
         this.accessMode = accessMode;
@@ -207,7 +210,7 @@ public class FileChannelDataLogger implements IDataLogger {
             case READ:
                 maybeRead();
                 // start reading from the fiorts position
-                this.randomAccess.position(0L);
+                this.randomAccess.rewind();
                 break;
             case WRITE:
                 maybeWritten();
@@ -215,7 +218,7 @@ public class FileChannelDataLogger implements IDataLogger {
                 break;
             case APPEND:
                 maybeWritten();
-                this.randomAccess.position(this.randomAccess.getCommittedSize());
+                this.randomAccess.forwardWind();
                 break;
             default:
                 throw new IllegalArgumentException("Invalid AccessMode " + accessMode);
@@ -242,7 +245,7 @@ public class FileChannelDataLogger implements IDataLogger {
 
 
     private void reset() throws IOException {
-        this.randomAccess.position(0);
+        this.randomAccess.rewind();
         this.randomAccess.commit();
     }
 
@@ -256,8 +259,6 @@ public class FileChannelDataLogger implements IDataLogger {
 
     /**
      * <pre>
-     *    +- # records
-     *    +- type
      *    +-- length of records[0]
      *    +-- data of records[0]
      *    +-- length of records[1]
@@ -324,8 +325,8 @@ public class FileChannelDataLogger implements IDataLogger {
      */
     public void replay(ILogRecordReplayListener replay) throws IOException {
         maybeRead();
-        this.randomAccess.position(0L);
-        while (this.randomAccess.available() > TAEnabledRandomAccessFile.INT_BYTES) {
+        this.randomAccess.rewind();
+        while (this.randomAccess.available() > (Integer.SIZE / Byte.SIZE) ) {
 
             int length = this.randomAccess.readInt();
             short type = this.randomAccess.readShort();

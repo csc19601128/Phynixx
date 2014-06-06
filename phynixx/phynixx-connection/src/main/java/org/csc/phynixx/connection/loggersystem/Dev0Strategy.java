@@ -86,6 +86,11 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedCo
         }
 
         @Override
+        public IDataRecord createDataRecord(XALogRecordType logRecordType, byte[] recordData) {
+            return null;
+        }
+
+        @Override
         public void writeRollbackData(byte[] data) {
         }
 
