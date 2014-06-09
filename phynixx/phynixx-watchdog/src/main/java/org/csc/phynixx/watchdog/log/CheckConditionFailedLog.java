@@ -23,6 +23,10 @@ package org.csc.phynixx.watchdog.log;
 
 import org.csc.phynixx.watchdog.IWatchedCondition;
 
+/**
+ *
+ * Created by christoph on 09.06.2012.
+ */
 public class CheckConditionFailedLog implements IWatchdogLog {
 
     private long timestamp = 0l;
@@ -39,6 +43,9 @@ public class CheckConditionFailedLog implements IWatchdogLog {
 
     public CheckConditionFailedLog(IWatchedCondition condition, String description) {
         super();
+        if( condition==null) {
+            throw new IllegalArgumentException("Condition must be defined");
+        }
         this.timestamp = System.currentTimeMillis();
         this.condition = condition.toString();
         this.description = this.condition + " " + description;

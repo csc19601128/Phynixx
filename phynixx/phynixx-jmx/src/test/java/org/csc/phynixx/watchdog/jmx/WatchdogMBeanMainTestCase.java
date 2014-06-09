@@ -62,7 +62,7 @@ public class WatchdogMBeanMainTestCase extends WatchdogConsole {
 
             bean.registerMBeans();
 
-            //bean.renew(5);
+            bean.renew(5);
 
             bean.control();
 

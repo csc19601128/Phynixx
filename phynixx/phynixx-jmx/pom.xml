@@ -23,6 +23,13 @@
 
         <dependency>
             <groupId>org.csc</groupId>
+            <artifactId>phynixx-common</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.csc</groupId>
             <artifactId>phynixx-watchdog</artifactId>
             <version>${project.version}</version>
         </dependency>

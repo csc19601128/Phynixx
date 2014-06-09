@@ -31,11 +31,11 @@ import java.lang.ref.WeakReference;
  * @author zf4iks2
  */
 
-public class WeakObjectReference extends WeakReference implements IObjectReference {
+public class WeakObjectReference<T>  extends WeakReference<T> implements IObjectReference<T> {
 
     private String description = null;
 
-    public WeakObjectReference(Object objectRef) {
+    public WeakObjectReference(T objectRef) {
         super(objectRef);
         this.description = (objectRef == null) ? "NULL" : objectRef.toString();
     }

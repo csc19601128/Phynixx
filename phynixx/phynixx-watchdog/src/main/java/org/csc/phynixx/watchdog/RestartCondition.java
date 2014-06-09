@@ -97,7 +97,7 @@ class RestartCondition extends TimeoutCondition implements IWatchedCondition {
 
 
     public boolean isUseless() {
-        return this.watchdogReference.isStale();
+        return this.watchdogReference!=null || this.watchdogReference.isStale();
     }
 
 

@@ -23,6 +23,11 @@ package org.csc.phynixx.watchdog;
 
 import java.util.Set;
 
+/**
+ *
+ * references a Watchdog by the ID identifing the Watchdog in the watchdog's registry
+ *
+ */
 public class WatchdogReference implements IWatchdog {
 
     private Long id = null;
@@ -68,7 +73,7 @@ public class WatchdogReference implements IWatchdog {
     }
 
 
-    public Set getAliveConditions() {
+    public Set<IWatchedCondition> getAliveConditions() {
         return this.getWatchdog().getAliveConditions();
     }
 

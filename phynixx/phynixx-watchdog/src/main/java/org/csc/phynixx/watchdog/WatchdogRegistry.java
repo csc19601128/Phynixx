@@ -33,8 +33,6 @@ import java.util.*;
  * @author
  * @version $Revision: 1.6 $
  * @project phynixx
- * @copyright Deutsche Post AG, PRS
- * @modified $Date: 2007/11/29 17:27:16 $, $Author: zf4iks2 $
  * @see ThreadGroup
  */
 public class WatchdogRegistry {
@@ -42,11 +40,11 @@ public class WatchdogRegistry {
 
     private static final IDGenerator<Long> ID_GENERATOR = IDGenerators.createLongGenerator(1, true);
 
-    public static final String WATCHDOG_MANAGEMENT_INTERVAL_PROP = "org.csc.phynixx.watchdog.management_interval";
+    private static final String WATCHDOG_MANAGEMENT_INTERVAL_PROP = "org.csc.phynixx.watchdog.management_interval";
 
     public static final String OK = "ok";
 
-    public static long WATCHDOG_MANAGEMENT_INTERVAL = 1100;
+    private static long WATCHDOG_MANAGEMENT_INTERVAL = 1100;
 
 
     private static WatchdogRegistry theRegistry = null;

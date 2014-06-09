@@ -33,7 +33,7 @@ public interface IWatchdog {
 
     int getCountRegisteredConditions();
 
-    Set getAliveConditions();
+    Set<IWatchedCondition> getAliveConditions();
 
     void unregisterCondition(IWatchedCondition cond);
 

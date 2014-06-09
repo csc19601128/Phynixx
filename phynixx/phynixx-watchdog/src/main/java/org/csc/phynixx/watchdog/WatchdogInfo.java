@@ -49,8 +49,6 @@ public class WatchdogInfo implements Serializable {
     }
 
     private void setConditions(IWatchdog wd) {
-
-
         this.conditions = wd.getConditionInfos();
 
     }

@@ -28,7 +28,11 @@ import org.csc.phynixx.common.logger.PhynixxLogManager;
 
 import java.util.Set;
 
-public class WatchdogTest extends TestCase {
+/**
+ *
+ * Created by christoph on 09.06.2012.
+ */
+public class WatchdogIT extends TestCase {
 
     private final IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
@@ -68,10 +72,9 @@ public class WatchdogTest extends TestCase {
 
         testerThread.start();
         // Wait until the theard is up ...
-        sleep(10);
+        sleep(100);
 
         IWatchdog watchdog = tester.getWatchdog();
-        Set aliveConditions = watchdog.getAliveConditions();
         TestCase.assertEquals(1, watchdog.getCountRegisteredConditions());
 
         //System.out.println(watchdog);
