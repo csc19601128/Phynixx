@@ -24,25 +24,29 @@ package org.csc.phynixx.connection.jmx;
 import org.csc.phynixx.loggersystem.logrecord.IXARecorderRepository;
 import org.csc.phynixx.loggersystem.logrecord.IXARecorderResourceListener;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * to keep the management up to date register the current clas as listener to the {@link Logg} */
 public class LoggerSystemManagement implements LoggerSystemManagementMBean, IXARecorderResourceListener {
 
-    private int openLoggerCounter = 0;
+    private AtomicInteger openLoggerCounter = new AtomicInteger(0);
 
     /* (non-Javadoc)
      * @see org.csc.phynixx.connection.jmx.LoggerSystemManagementMBean#getOpenLoggers()
      */
     public int getOpenLoggers() {
-        return this.openLoggerCounter;
+        return this.openLoggerCounter.get();
     }
 
 
     @Override
     public synchronized void  recorderResourceClosed(IXARecorderRepository recorderResource) {
-        this.openLoggerCounter++;
+        this.openLoggerCounter=new AtomicInteger(this.openLoggerCounter.decrementAndGet());
     }
 
     @Override
     public synchronized  void recorderResourceOpened(IXARecorderRepository recorderResource) {
-        this.openLoggerCounter--;
+        this.openLoggerCounter=new AtomicInteger(this.openLoggerCounter.incrementAndGet());
     }
 }

@@ -149,11 +149,6 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
 
     }
 
-    @Override
-    public synchronized IXADataRecorder findXADataRecord(long dataRecordId) {
-        return this.xaDataRecorders.get(dataRecordId);
-    }
-
     public String getLoggerSystemName() {
         return dataLoggerFactory.getLoggerSystemName();
     }

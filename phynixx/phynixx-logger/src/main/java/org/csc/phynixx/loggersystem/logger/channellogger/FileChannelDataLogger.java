@@ -300,7 +300,6 @@ public class FileChannelDataLogger implements IDataLogger {
             return;
         }
         try {
-
             this.randomAccess.close();
             LOG.error(Thread.currentThread() +".release lock on "+this.logFileAccess+" succeeded");
         } catch(IOException e) {
