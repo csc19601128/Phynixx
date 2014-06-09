@@ -305,7 +305,7 @@ class TAEnabledRandomAccessFile {
 
         checkRead(length);
 
-        if (length >= new Long(Integer.MAX_VALUE).longValue()) {
+        if (length >= Integer.MAX_VALUE) {
             throw new IOException("Length of read area may not exceed " + Integer.MAX_VALUE);
         }
 

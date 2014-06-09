@@ -39,7 +39,7 @@ import java.util.List;
 
 public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxLoggerSystemStrategy<C> {
 
-    private IPhynixxLogger logger = PhynixxLogManager.getLogger(this.getClass());
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(Dev0Strategy.class);
 
 
     public static final Dev0Logger THE_DEV0_LOGGER = new Dev0Logger();
@@ -145,7 +145,7 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedCo
             return;
         }
         IXADataRecorderAware messageAwareConnection = (IXADataRecorderAware) con;
-        // Transaction is close and the logger is destroyed ...
+        // Transaction is close and the LOG is destroyed ...
         Dev0Logger logger = (Dev0Logger) messageAwareConnection.getXADataRecorder();
         if (logger == null) {
             messageAwareConnection.setXADataRecorder(THE_DEV0_LOGGER);

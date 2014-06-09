@@ -38,16 +38,18 @@ public class TmpDirectory {
     private File dir = null;
 
 
-    public TmpDirectory(String relDirectory) {
+    public TmpDirectory(String relDirectory) throws IOException {
         String tmpDir = System.getProperty("java.io.tmpdir");
         dir = new File(tmpDir + File.separator + relDirectory);
         if (!dir.exists()) {
-            dir.mkdirs();
+            if(!dir.mkdirs()) {
+                throw new IOException("Cannot mddirs for Directory "+dir);
+            }
         }
         dir.deleteOnExit();
     }
 
-    public TmpDirectory() {
+    public TmpDirectory() throws IOException {
         this(MY_TMP);
     }
 
@@ -57,7 +59,9 @@ public class TmpDirectory {
 
     public void delete() {
         this.clear();
-        this.dir.delete();
+        if(!this.dir.delete()) {
+            LOG.error("Deletion of "+this.dir+" failed");
+        }
         this.dir = null;
     }
 
@@ -92,20 +96,24 @@ public class TmpDirectory {
         String name = FilenameUtils.getName(filename);
         String fullname = FilenameUtils.normalize(parentDir.getAbsolutePath() + File.separator + name);
         File file = new File(fullname);
-        file.createNewFile();
+        if(!file.createNewFile()) {
+            throw new IOException("Creation of "+ filename+ " in Tmp-Directory failed");
+        }
 
         return file;
 
     }
 
-    public File assertExitsDirectory(String dirname)  {
+    public File assertExitsDirectory(String dirname) throws IOException {
 
         File directory = new File(this.dir.getAbsolutePath() + File.separator + dirname);
         if (directory.exists() && !directory.isDirectory()) {
             throw new IllegalStateException(dirname + " is not a directory");
         }
         if (!directory.exists()) {
-            directory.mkdirs();
+            if(!directory.mkdirs()) {
+                throw new IOException("Deletion of "+ dirname+ " in Tmp-Directory failed");
+            }
         }
         return directory;
 

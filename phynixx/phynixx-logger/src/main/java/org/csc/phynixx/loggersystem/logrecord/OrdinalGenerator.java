@@ -23,7 +23,7 @@ package org.csc.phynixx.loggersystem.logrecord;
 
 class OrdinalGenerator {
 
-    private Integer current = new Integer(1);
+    private Integer current = 1;
 
     public OrdinalGenerator() {
         this(0);
@@ -31,7 +31,7 @@ class OrdinalGenerator {
 
     public OrdinalGenerator(int start) {
         super();
-        this.current = new Integer(start);
+        this.current = Integer.valueOf(start);
     }
 
     public int getCurrent() {
@@ -44,7 +44,7 @@ class OrdinalGenerator {
      */
     public int generate() {
         int cc = current.intValue();
-        this.current = new Integer(++cc);
+        this.current =++cc;
         return this.getCurrent();
     }
 

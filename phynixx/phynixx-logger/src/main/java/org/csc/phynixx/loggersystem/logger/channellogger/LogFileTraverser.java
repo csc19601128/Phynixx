@@ -23,7 +23,10 @@ package org.csc.phynixx.loggersystem.logger.channellogger;
 
 import java.io.File;
 
-class LogFileCollector {
+/**
+ * traverses all logfile an notifies a given callback. This callback can collect any information.
+ */
+class LogFileTraverser {
 
     public interface ICollectorCallback {
         void match(File file, LogFilenameMatcher.LogFilenameParts parts);
@@ -32,7 +35,7 @@ class LogFileCollector {
     private LogFilenameMatcher logFileMatcher = null;
 
 
-    LogFileCollector(LogFilenameMatcher logFileMatcher, File startDirectory, ICollectorCallback cb) {
+    LogFileTraverser(LogFilenameMatcher logFileMatcher, File startDirectory, ICollectorCallback cb) {
         super();
         this.logFileMatcher = logFileMatcher;
         if (startDirectory.exists() && startDirectory.isDirectory()) {

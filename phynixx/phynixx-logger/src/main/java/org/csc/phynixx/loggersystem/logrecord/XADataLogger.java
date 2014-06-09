@@ -64,7 +64,7 @@ public class XADataLogger {
 
         public void onRecord(XALogRecordType recordType, byte[][] fieldData) {
         if (count == 0) {
-                dataRecorder.setMessageSequenceId(recoverMessageSequenceId(fieldData[0]));
+                dataRecorder.setMessageSequenceId(XADataLogger.this.recoverMessageSequenceId(fieldData[0]));
             } else{
                 short typeId = recordType.getType();
                 switch (typeId) {

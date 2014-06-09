@@ -42,7 +42,7 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
 
     private static final long CHECK_INTERVAL = 100; // msecs
 
-    private static IResourceIDGenerator idGenerator = new IDGenerator();
+    private static IResourceIDGenerator ID_GENERATOR = new IDGenerator();
 
 
     private final IXATransactionalBranchRepository<T> xaTransactionalBranchRepository;
@@ -122,11 +122,11 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
 
 
     protected IResourceIDGenerator getIdGenerator() {
-        return idGenerator;
+        return ID_GENERATOR;
     }
 
-    protected void setIdGenerator(IResourceIDGenerator idGenerator) {
-        this.idGenerator = idGenerator;
+    protected static void setIdGenerator(IResourceIDGenerator idGenerator) {
+        ID_GENERATOR = idGenerator;
     }
 
 
@@ -149,7 +149,7 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
      * @return
      */
     private String createXAResourceId() {
-        return this.resourceFactoryId + "_" + this.idGenerator.generate();
+        return this.resourceFactoryId + "_" + this.ID_GENERATOR.generate();
     }
 
     /**

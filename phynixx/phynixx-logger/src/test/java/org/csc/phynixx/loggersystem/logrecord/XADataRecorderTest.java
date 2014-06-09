@@ -61,14 +61,14 @@ public class XADataRecorderTest {
 
         TestCase.assertTrue(!xaDataRecorder.isCommitting());
 
-        xaDataRecorder.writeRollbackData("XYZ".getBytes());
-        xaDataRecorder.writeRollbackData(new byte[][]{"XYZ".getBytes(), "ZYX".getBytes()});
+        xaDataRecorder.writeRollbackData("XYZ".getBytes("UTF-8"));
+        xaDataRecorder.writeRollbackData(new byte[][]{"XYZ".getBytes("UTF-8"), "ZYX".getBytes("UTF-8")});
 
         TestCase.assertTrue(!xaDataRecorder.isCommitting());
-        xaDataRecorder.writeRollforwardData(new byte[][]{"XYZ".getBytes(), "ZYX".getBytes()});
+        xaDataRecorder.writeRollforwardData(new byte[][]{"XYZ".getBytes("UTF-8"), "ZYX".getBytes("UTF-8")});
         TestCase.assertTrue(xaDataRecorder.isCommitting());
 
-        xaDataRecorder.writeRollforwardData(new byte[][]{"ABCD".getBytes()});
+        xaDataRecorder.writeRollforwardData(new byte[][]{"ABCD".getBytes("UTF-8")});
 
         try {
             xaDataRecorder.writeRollbackData(new byte[][]{});

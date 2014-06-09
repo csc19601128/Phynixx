@@ -37,7 +37,6 @@ public class WatchdogInfo implements Serializable {
     private String[] conditions;
 
     public WatchdogInfo(IWatchdog wd) {
-        String id = wd.getId().toString();
         this.setConditions(wd);
         this.setInfo(wd);
     }

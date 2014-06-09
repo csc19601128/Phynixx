@@ -162,8 +162,6 @@ public class FileChannelDataLoggerTest {
 
         Assert.assertTrue(logger.getAccessMode() == AccessMode.APPEND);
 
-        byte[] data1 = "abcde".getBytes();
-        byte[] data2 = "abcdef".getBytes();
         logger.write((short) 1, new byte[][]{"abcde".getBytes("UTF-8")});
         logger.write((short) 2, new byte[][]{"abcde".getBytes("UTF-8"), "abcdef".getBytes("UTF-8")});
 

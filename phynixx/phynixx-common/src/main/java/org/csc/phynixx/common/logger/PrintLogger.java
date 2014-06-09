@@ -27,11 +27,11 @@ import java.util.Map;
 
 public class PrintLogger implements IPhynixxLogger {
 
-    public static final Integer DEBUG = new Integer(5);
-    public static final Integer INFO = new Integer(4);
-    public static final Integer WARN = new Integer(3);
-    public static final Integer ERROR = new Integer(2);
-    public static final Integer FATAL = new Integer(1);
+    public static final Integer DEBUG =Integer.valueOf(5);
+    public static final Integer INFO =Integer.valueOf(4);
+    public static final Integer WARN =Integer.valueOf(3);
+    public static final Integer ERROR =Integer.valueOf(2);
+    public static final Integer FATAL =Integer.valueOf(1);
 
     private static final Map<Integer,String> VALID_LOG_LEVELS = new HashMap<Integer,String>();
 

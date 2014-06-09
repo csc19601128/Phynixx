@@ -56,7 +56,7 @@ public class IDGenerator implements IResourceIDGenerator {
      */
     public Object generate() {
         long cc = current.longValue();
-        this.current = new Long(++cc);
+        this.current = ++cc;
         return this.getCurrent();
     }
 

@@ -80,7 +80,7 @@ class Watchdog implements Runnable, IWatchdog {
     private ThreadHandle threadHandle = new ThreadHandle();
 
 
-    private Long id = new Long(-1L);
+    private Long id =-1L;
 
 
     /**

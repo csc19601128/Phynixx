@@ -57,7 +57,7 @@ class PhynixxDataRecord implements IDataRecord, Comparable<PhynixxDataRecord> {
      */
     PhynixxDataRecord(long messageSequenceId, int ordinal, XALogRecordType logRecordType, byte[][] data) {
 
-        this.ordinal = new Integer(ordinal);
+        this.ordinal = ordinal;
         this.logRecordType = logRecordType;
         this.messageSequenceId = messageSequenceId;
         this.setRecords(data);
@@ -83,13 +83,9 @@ class PhynixxDataRecord implements IDataRecord, Comparable<PhynixxDataRecord> {
      * @param data
      */
     private void setRecords(byte[][] data) {
-        if (data == null) {
+        if (data == null || data.length==0) {
             this.records = EMPTY_DATA;
-        }
-
-        // count the not empty ones
-        if (data.length == 0) {
-            this.records = EMPTY_DATA;
+            return;
         }
 
         this.records = new byte[data.length][];

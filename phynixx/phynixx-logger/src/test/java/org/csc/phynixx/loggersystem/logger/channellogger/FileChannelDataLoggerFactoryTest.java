@@ -159,7 +159,7 @@ public class FileChannelDataLoggerFactoryTest {
 
             channelFactory = new FileChannelDataLoggerFactory("howl", tmpDirectory.getDirectory().getAbsolutePath());
 
-            IDataLogger logger1 = channelFactory.instanciateLogger("a");
+            channelFactory.instanciateLogger("a");
             try {
              IDataLogger logger2 = channelFactory.instanciateLogger("a");
                 throw new AssertionFailedError("Two locks on same logfile not allowed");

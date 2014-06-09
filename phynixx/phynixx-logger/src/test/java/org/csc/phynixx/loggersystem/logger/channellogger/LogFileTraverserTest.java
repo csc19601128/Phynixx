@@ -26,7 +26,7 @@ import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.logger.channellogger.LogFileCollector.ICollectorCallback;
+import org.csc.phynixx.loggersystem.logger.channellogger.LogFileTraverser.ICollectorCallback;
 import org.csc.phynixx.loggersystem.logger.channellogger.LogFilenameMatcher.LogFilenameParts;
 import org.junit.After;
 import org.junit.Assert;
@@ -43,7 +43,7 @@ import java.util.Set;
 
 
 @RunWith(JUnit4.class)
-public class LogFileCollectorTest {
+public class LogFileTraverserTest {
 
     private static final String FORMAT_PATTERN = "(howl)_([a-z,A-Z,0-9]*[^_])_([0-9]*[^\\.])\\.[\\w]*";
 
@@ -134,7 +134,7 @@ public class LogFileCollectorTest {
 
         // Recover the loggers ....
         LogFilenameMatcher matcher = new LogFilenameMatcher(FORMAT_PATTERN);
-        LogFileCollector collector = new LogFileCollector(matcher, tmpDirectory.getDirectory(), cb);
+        LogFileTraverser collector = new LogFileTraverser(matcher, tmpDirectory.getDirectory(), cb);
 
         for (Iterator<Map.Entry<String, LoggerInfo>> iterator = loggerInfos.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry<String, LoggerInfo> entry = iterator.next();

@@ -81,7 +81,6 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
             TransactionManager transactionManager,
             PhynixxXAResourceFactory<C> xaResourceFactory) {
         this.xaId = xaId;
-        TransactionManager transactionManager1 = transactionManager;
         this.xaResourceFactory = xaResourceFactory;
         this.xaConnectionHandle = new PhynixxManagedXAConnection(this, transactionManager, xaResourceFactory.getXATransactionalBranchRepository(), xaResourceFactory.getManagedConnectionFactory());
 
@@ -116,9 +115,9 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
         try {
             if (this.xaConnectionHandle != null) {
                 XATransactionalBranch<C> transactionalBranch = this.xaConnectionHandle.toGlobalTransactionBranch();
-                if (transactionalBranch == null) {
+                if (transactionalBranch != null) {
                     transactionalBranch.setRollbackOnly(true);
-                    }
+                }
             }
             if (LOG.isInfoEnabled()) {
                 String logString = "PhynixxXAResource.expired :: XAResource " + this.getId() + " is expired (time out occurred) and all associated TX are rollbacked ";
@@ -134,7 +133,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     private void setTimeOutActive(boolean active) {
         if(this.timeoutCondition!=null) {
-        this.setTimeOutActive(active);
+           this.timeoutCondition.setActive(false);
         }
     }
 
@@ -229,7 +228,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
         } catch (XAException xaExc) {
             LOG.error("PhynixxXAResource[" + this.getId() + "]:start xid='"
-                    + xid
+                    + xid  // maybe null, but doesn't matter for logging
                     + "' flags='"
                     + ConstantsPrinter.getXAResourceMessage(flags)
                     + "'"

@@ -154,7 +154,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
         String pattern = MessageFormat.format(LOGGER_SYSTEM_FORMAT_PATTERN, this.loggerSystemName);
         LogFilenameMatcher matcher = new LogFilenameMatcher(pattern);
 
-        LogFileCollector.ICollectorCallback cb = new LogFileCollector.ICollectorCallback() {
+        LogFileTraverser.ICollectorCallback cb = new LogFileTraverser.ICollectorCallback() {
             public void match(File file,
                               LogFilenameMatcher.LogFilenameParts parts) {
                 boolean success = file.delete();
@@ -163,7 +163,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
                 }
             }
         };
-        LogFileCollector logfileCollector = new LogFileCollector(matcher,
+        new LogFileTraverser(matcher,
                 FileChannelDataLoggerFactory.this.getLoggingDirectory(), cb);
     }
 
@@ -175,7 +175,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
         String pattern = MessageFormat.format(LOGGER_FORMAT_PATTERN, loggerName);
         LogFilenameMatcher matcher = new LogFilenameMatcher(pattern);
 
-        LogFileCollector.ICollectorCallback cb = new LogFileCollector.ICollectorCallback() {
+        LogFileTraverser.ICollectorCallback cb = new LogFileTraverser.ICollectorCallback() {
             public void match(File file,
                               LogFilenameMatcher.LogFilenameParts parts) {
                 boolean success = file.delete();
@@ -184,7 +184,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
                 }
             }
         };
-        LogFileCollector logfileCollector = new LogFileCollector(matcher,
+         new LogFileTraverser(matcher,
                 FileChannelDataLoggerFactory.this.getLoggingDirectory(), cb);
     }
 
@@ -198,19 +198,18 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
         LogFilenameMatcher matcher = new LogFilenameMatcher(pattern);
 
         final Set<String> loggerNames = new HashSet<String>();
-        LogFileCollector.ICollectorCallback cb = new LogFileCollector.ICollectorCallback() {
+        LogFileTraverser.ICollectorCallback cb = new LogFileTraverser.ICollectorCallback() {
             public void match(File file, LogFilenameMatcher.LogFilenameParts parts) {
                 loggerNames.add(parts.getLoggerName());
             }
         };
-        LogFileCollector logfileCollector = new LogFileCollector(matcher, this.getLoggingDirectory(), cb);
+        new LogFileTraverser(matcher, this.getLoggingDirectory(), cb);
 
         return loggerNames;
     }
 
     private File provideFile(String fileName, File directory) throws IOException {
 
-        String fileCompleteName = directory + File.separator + fileName + "_1.log";
 
         File file = new File(directory, fileName + ".log");
 
@@ -220,10 +219,16 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
         }
 
         if (!directory.exists()) {
-            directory.mkdirs();
+            final boolean mkdirs = directory.mkdirs();
+            if(!mkdirs) {
+                throw new IOException("Failed to create directory " + directory + " or one of its children");
+            }
         }
 
-        file.createNewFile();
+        if(!file.createNewFile()) {
+
+            throw new IOException("Failed to create file "+file);
+        }
 
         return file;
 

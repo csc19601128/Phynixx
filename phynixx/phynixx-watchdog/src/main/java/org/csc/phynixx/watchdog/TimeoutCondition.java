@@ -29,7 +29,7 @@ import org.csc.phynixx.watchdog.log.CheckConditionFailedLog;
 public abstract class TimeoutCondition extends NotificationCondition implements ITimeoutCondition {
 
 
-    private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(TimeoutCondition.class);
 
     private long timeout = -1;
 
@@ -92,11 +92,11 @@ public abstract class TimeoutCondition extends NotificationCondition implements 
         long timeElapsed = System.currentTimeMillis() - start;
         if (timeElapsed > this.timeout) {
 
-            if (log.isDebugEnabled()) {
-                //log.info("Current Thread="+Thread.currentThread()+" Condition="+this+" Checkpoint "+ System.currentTimeMillis() +" timeout="+(System.currentTimeMillis() - start));
+            if (LOG.isDebugEnabled()) {
+                //LOG.info("Current Thread="+Thread.currentThread()+" Condition="+this+" Checkpoint "+ System.currentTimeMillis() +" timeout="+(System.currentTimeMillis() - start));
                 String logString = " violated at " + System.currentTimeMillis() +
                         " (elapsed time=" + timeElapsed + ")";
-                log.debug(new CheckConditionFailedLog(this, logString).toString());
+                LOG.debug(new CheckConditionFailedLog(this, logString).toString());
             }
             return false;
         }
