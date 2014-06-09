@@ -186,7 +186,7 @@ public class XARecoveryTest extends TestCase {
 
             TransactionRecovery recovery = this.getJotm().getTransactionRecovery();
 
-            TransactionResourceManager resourceMgr = new SampleTransactionResourceManager();
+            TransactionResourceManager resourceMgr = new JOTMSampleTransactionResourceManager();
             recovery.registerResourceManager(factory1.getId(), xaCon1.getXAResource(), "test Recovery", resourceMgr);
             recovery.registerResourceManager(factory2.getId(), xaCon2.getXAResource(), "test Recovery", resourceMgr);
 

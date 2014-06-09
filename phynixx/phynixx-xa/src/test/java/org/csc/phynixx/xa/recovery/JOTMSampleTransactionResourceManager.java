@@ -26,14 +26,14 @@ import org.objectweb.jotm.TransactionResourceManager;
 import javax.transaction.xa.XAResource;
 
 /**
- * Dummy implememntation of JOTM's TransactionresourceManager
+ * Dummy implememntation of JOTM's TransactionResourceManager
  * <p/>
  * It's used by JOTM to record the Mapping of XAResourceProgressState's name to XAResource
  *
  * @author christoph
  */
 
-public class SampleTransactionResourceManager implements TransactionResourceManager {
+public class JOTMSampleTransactionResourceManager implements TransactionResourceManager {
 
     public void returnXAResource(String rmName, XAResource rmXares) {
 
