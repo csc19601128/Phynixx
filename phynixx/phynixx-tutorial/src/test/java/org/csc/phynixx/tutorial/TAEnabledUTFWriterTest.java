@@ -58,9 +58,9 @@ public class TAEnabledUTFWriterTest {
     public void testTAEnabledUTFWriter() throws Exception {
 
         File file = this.tmpDir.assertExitsFile("my_test.tmp");
+        UTFWriter utfWriter= new UTFWriterImpl(file);
 
-        TAEnabledUTFWriterImpl writer = new TAEnabledUTFWriterImpl("recover");
-        writer.open(file);
+        TAEnabledUTFWriterImpl writer = new TAEnabledUTFWriterImpl("recover", utfWriter);
         writer.resetContent();
 
         try {
@@ -69,8 +69,7 @@ public class TAEnabledUTFWriterTest {
             writer.close();
         }
 
-        TAEnabledUTFWriterImpl recoverWriter = new TAEnabledUTFWriterImpl("recover");
-        recoverWriter.open(file);
+        TAEnabledUTFWriterImpl recoverWriter = new TAEnabledUTFWriterImpl("recover", utfWriter);
         try {
             List<String> content = recoverWriter.readContent();
             Assert.assertEquals(2, content.size());

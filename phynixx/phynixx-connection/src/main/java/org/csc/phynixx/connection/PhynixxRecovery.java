@@ -73,7 +73,7 @@ public class PhynixxRecovery<C extends IPhynixxConnection> implements IPhynixxRe
 
         try {
             // get all recoverable transaction data
-            List<IXADataRecorderAware> messageLoggers = this.loggerSystemStrategy.readIncompleteTransactions();
+            List<IXADataRecorder> messageLoggers = this.loggerSystemStrategy.readIncompleteTransactions();
             IPhynixxManagedConnection<C> con = null;
             for (int i = 0; i < messageLoggers.size(); i++) {
                 try {

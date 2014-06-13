@@ -1,13 +1,19 @@
-package org.csc.phynixx.tutorial.utf_writer;
+package org.csc.phynixx.tutorial;
 
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.tutorial.UTFWriter;
 import org.csc.phynixx.tutorial.UTFWriterImpl;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +28,11 @@ import java.util.concurrent.Future;
 public class UTFWriterTest {
 
     private TmpDirectory tmpDir = null;
+    static DecimalFormat format = new DecimalFormat();
+
+    static {
+        format.applyPattern("000");
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -43,8 +54,10 @@ public class UTFWriterTest {
 
         private final UTFWriter writer;
 
-        private TestCallable(UTFWriter writer) {
-            this.writer = writer;
+        private final int id;
+
+        private TestCallable(int id, UTFWriter writer) {
+            this.writer = writer;this.id=id;
         }
 
         /**
@@ -58,8 +71,9 @@ public class UTFWriterTest {
         public String call() throws Exception {
             String lockToken=writer.lock();
             try {
-                writer.write("My message");
-                Thread.sleep(1000);
+                writer.write("My message "  + format.format(id));
+                System.out.println("My message " + format.format(id));
+                //Thread.sleep(1000);
                 return lockToken;
             }finally {
                 writer.unlock(lockToken);
@@ -68,15 +82,23 @@ public class UTFWriterTest {
     }
 
     @Test
-    public void testLocking() throws InterruptedException {
+    public void testLocking() throws Exception {
 
-        UTFWriter writer= new UTFWriterImpl();
-        final ExecutorService executorService = Executors.newFixedThreadPool(3);
+        final File file = this.tmpDir.assertExitsFile("testOut.txt");
+        UTFWriter writer= new UTFWriterImpl(file);
+        final ExecutorService executorService = Executors.newFixedThreadPool(10);
         Set<TestCallable> callables= new HashSet<TestCallable>();
-       for (int i = 0; i < 10; i++) {
-            callables.add(new TestCallable(writer));
+       for (int i = 0; i < 30; i++) {
+            callables.add(new TestCallable(i,writer));
         }
         final List<Future<String>> futures = executorService.invokeAll(callables);
+
+        final List<String> content = writer.readContent();
+        Collections.sort(content);
+        for (int i = 0; i < content.size(); i++) {
+            String line =  content.get(i);
+            Assert.assertEquals("My message " +  format.format(i), line);
+        }
     }
 
 }

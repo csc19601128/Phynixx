@@ -39,6 +39,8 @@ public interface UTFWriter{
 
     void unlock(String lockToken);
 
+    boolean isClosed();
+
     /**
      * resets the content of the file associated with die current transaction
      * @throws IOException
@@ -53,7 +55,9 @@ public interface UTFWriter{
      * @throws IOException
      */
     @RequiresTransaction
-    UTFWriter write(String value) throws IOException;
+    long write(String value) throws IOException;
+
+    void close();
 
     @RequiresTransaction
     /**
@@ -67,4 +71,10 @@ public interface UTFWriter{
      * @return
      */
     List<String> readContent() throws IOException;
+
+    long size() throws IOException;
+
+    void restoreSize(long filePosition) throws IOException;
+
+    long position() throws IOException;
 }

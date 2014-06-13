@@ -54,16 +54,11 @@ public interface TAEnabledUTFWriter extends IPhynixxConnection, IXADataRecorderA
     @RequiresTransaction
     TAEnabledUTFWriter write(String value) throws IOException;
 
-    @RequiresTransaction
-    /**
-     * opens a file and associates it with the current transaction
-     */
-    void open(File file);
-
 
     /**
      * reads the content
      * @return
      */
+    @RequiresTransaction
     List<String> readContent() throws IOException;
 }

@@ -97,7 +97,8 @@ public class TmpDirectory {
         String fullname = FilenameUtils.normalize(parentDir.getAbsolutePath() + File.separator + name);
         File file = new File(fullname);
         if(!file.createNewFile()) {
-            throw new IOException("Creation of "+ filename+ " in Tmp-Directory failed");
+           file.delete();
+            file.createNewFile();
         }
 
         return file;

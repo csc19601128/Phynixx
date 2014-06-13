@@ -26,6 +26,8 @@ import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.channels.Channel;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
@@ -33,16 +35,15 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Basisklasse zur Verwaltung von Filezugriffen.
- * <p/>
- * A RandomAccessFile provides random access to the file's content.
+ *Implements an quit simple an cooperating lock. To have acces to write to the file, you have to aquire a lock. If the lock is successful, you gain an lockToken. This token identifies the lock and this token enables you to release the token.
+ * If the file is lock all method to write/rad the file are unsynchronized to improve performance.
  */
 public class UTFWriterImpl implements UTFWriter {
 
 
-    Lock lock= new ReentrantLock();
+    Lock lock = new ReentrantLock();
 
-    private Condition unlocked= lock.newCondition();
+    private Condition unlocked = lock.newCondition();
 
     private String lockToken = null;
 
@@ -58,17 +59,19 @@ public class UTFWriterImpl implements UTFWriter {
     }
 
     /**
-     *
      * @return lockToken you need to identify the unlock
      */
-    public  String lock() throws InterruptedException {
+    public String lock() throws InterruptedException {
 
-        lock.lock() ;
+        lock.lock();
         try {
-            while(lockToken!=null) {
+            System.out.println("Locking Thread " + Thread.currentThread().getId());
+            while (lockToken != null) {
                 unlocked.await();
             }
-            lockToken=Long.toString(System.currentTimeMillis());
+            lockToken = Long.toString(System.currentTimeMillis());
+
+            System.out.println("Lock acquired  Thread " + Thread.currentThread().getId());
 
             return lockToken;
 
@@ -78,30 +81,33 @@ public class UTFWriterImpl implements UTFWriter {
 
     }
 
+    /**
+     *
+     * @param lockToken identifing the lock
+     */
     public void unlock(String lockToken) {
 
-        lock.lock() ;
+        lock.lock();
         try {
-            if( this.lockToken==null ) {
-                unlocked.signal();
-                return;
+            System.out.println("Unlocking Thread " + Thread.currentThread().getId());
+            if (this.lockToken != null) {
+                if (!this.lockToken.equals(lockToken)) {
+                    throw new IllegalStateException("The lock token " + lockToken + " isn#T equals to the cuirrent locktoken " + this.lockToken);
+                }
+                this.lockToken = null;
             }
-
-            if( this.lockToken.equals(lockToken)) {
-               throw new IllegalStateException("The locktoken "+lockToken+" isn#T equals to the cuirrent locktoken "+this.lockToken);
-            }
-            lockToken=null;
+            unlocked.signalAll();
+            System.out.println("Unlocking successful Thread " + Thread.currentThread().getId());
 
         } finally {
             lock.unlock();
         }
-
-
     }
 
     /**
      * Schliesst die Datei und den FileChannel
      */
+    @Override
     public void close() {
 
         if (raf != null) {
@@ -109,7 +115,7 @@ public class UTFWriterImpl implements UTFWriter {
             try {
                 // Schliessen der Daten-Datei
                 raf.close();
-                file=null;
+                file = null;
             } catch (Exception e) {
             } finally {
                 raf = null;
@@ -127,6 +133,7 @@ public class UTFWriterImpl implements UTFWriter {
      *
      * @return true wenn die Datei geschlossen ist
      */
+    @Override
     public boolean isClosed() {
         return (this.raf == null);
     }
@@ -142,13 +149,13 @@ public class UTFWriterImpl implements UTFWriter {
     }
 
     @Override
-    public UTFWriterImpl write(String value) throws IOException {
+    public long write(String value) throws IOException {
         if (value == null) {
             throw new IllegalArgumentException("value must not be null");
         }
         this.getRandomAccessFile().writeUTF(value);
 
-        return this;
+        return  this.getRandomAccessFile().getChannel().position();
     }
 
     @Override
@@ -168,9 +175,16 @@ public class UTFWriterImpl implements UTFWriter {
         return content;
     }
 
-    private void restoreSize(long size) throws IOException {
-        this.getRandomAccessFile().getChannel().truncate(size);
-        this.getRandomAccessFile().getChannel().position(size);
+
+    @Override
+    public long size() throws IOException {
+        return this.getRandomAccessFile().getChannel().size();
+    }
+
+    @Override
+    public void restoreSize(long filePosition) throws IOException {
+        this.getRandomAccessFile().getChannel().truncate(filePosition);
+        this.getRandomAccessFile().getChannel().position(filePosition);
     }
 
 
@@ -183,30 +197,19 @@ public class UTFWriterImpl implements UTFWriter {
     }
 
 
-    /**
-     * bereitet die Writer zur Wiederverwendung vor
-     */
-    public void reset() {
-        try {
-            this.close();
-        } catch (Exception e) {
-            throw new DelegatedRuntimeException(e);
-        }
-    }
-
 
     private void open(File file) {
         try {
             this.raf = new RandomAccessFile(file, "rw");
-            this.resetContent();
-            this.file=file;
+            this.file = file;
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
         }
     }
 
 
-    private long position() throws IOException {
+    @Override
+    public long position() throws IOException {
         return this.raf.getChannel().position();
     }
 

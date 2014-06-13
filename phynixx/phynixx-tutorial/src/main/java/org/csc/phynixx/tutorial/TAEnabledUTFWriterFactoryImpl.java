@@ -21,8 +21,12 @@ package org.csc.phynixx.tutorial;
  */
 
 
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.common.generator.IDGenerator;
 import org.csc.phynixx.common.generator.IDGenerators;
+
+import java.io.File;
+
 /**
  * Created by zf4iks2 on 04.02.14.
  */
@@ -30,9 +34,20 @@ public class TAEnabledUTFWriterFactoryImpl implements TAEnabledUTFWriterFactory 
 
     private static final IDGenerator<Long> idGenerator= IDGenerators.createLongGenerator(1,true);
 
+    private final UTFWriter sharedWriter;
+
+
+    public TAEnabledUTFWriterFactoryImpl(File sharedFile) {
+        this.sharedWriter = new UTFWriterImpl(sharedFile);
+    }
+
     @Override
     public TAEnabledUTFWriter getConnection() {
-        return new TAEnabledUTFWriterImpl(Long.toString(idGenerator.generate()));
+        try {
+            return new TAEnabledUTFWriterImpl(Long.toString(idGenerator.generate()), this.sharedWriter);
+        } catch (Exception e) {
+           throw new DelegatedRuntimeException(e);
+        }
     }
 
     @Override
@@ -42,6 +57,7 @@ public class TAEnabledUTFWriterFactoryImpl implements TAEnabledUTFWriterFactory 
 
     @Override
     public void close() {
+        this.sharedWriter.close();
 
     }
 }
