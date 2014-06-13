@@ -27,12 +27,13 @@ import java.util.concurrent.Future;
  */
 public class UTFWriterTest {
 
-    private TmpDirectory tmpDir = null;
     static DecimalFormat format = new DecimalFormat();
 
     static {
         format.applyPattern("000");
     }
+
+    private TmpDirectory tmpDir = null;
 
     @Before
     public void setUp() throws Exception {
@@ -50,6 +51,32 @@ public class UTFWriterTest {
 
     }
 
+    /**
+     * messages ' My message {0}' are written concurrently. To check, that the message are written once and haven't been disrupted , read all messages,
+     * order them and check, that each mwssage apperras once.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testLocking() throws Exception {
+
+        final File file = this.tmpDir.assertExitsFile("testOut.txt");
+        UTFWriter writer = new UTFWriterImpl(file);
+        final ExecutorService executorService = Executors.newFixedThreadPool(10);
+        Set<TestCallable> callables = new HashSet<TestCallable>();
+        for (int i = 0; i < 30; i++) {
+            callables.add(new TestCallable(i, writer));
+        }
+        final List<Future<String>> futures = executorService.invokeAll(callables);
+
+        final List<String> content = writer.readContent();
+        Collections.sort(content);
+        for (int i = 0; i < content.size(); i++) {
+            String line = content.get(i);
+            Assert.assertEquals("My message " + format.format(i), line);
+        }
+    }
+
     private static class TestCallable implements Callable<String> {
 
         private final UTFWriter writer;
@@ -57,11 +84,11 @@ public class UTFWriterTest {
         private final int id;
 
         private TestCallable(int id, UTFWriter writer) {
-            this.writer = writer;this.id=id;
+            this.writer = writer;
+            this.id = id;
         }
 
         /**
-
          * Computes a result, or throws an exception if unable to do so.
          *
          * @return computed result
@@ -69,35 +96,15 @@ public class UTFWriterTest {
          */
         @Override
         public String call() throws Exception {
-            String lockToken=writer.lock();
+            String lockToken = writer.lock();
             try {
-                writer.write("My message "  + format.format(id));
+                writer.write("My message " + format.format(id));
                 System.out.println("My message " + format.format(id));
                 //Thread.sleep(1000);
                 return lockToken;
-            }finally {
+            } finally {
                 writer.unlock(lockToken);
             }
-        }
-    }
-
-    @Test
-    public void testLocking() throws Exception {
-
-        final File file = this.tmpDir.assertExitsFile("testOut.txt");
-        UTFWriter writer= new UTFWriterImpl(file);
-        final ExecutorService executorService = Executors.newFixedThreadPool(10);
-        Set<TestCallable> callables= new HashSet<TestCallable>();
-       for (int i = 0; i < 30; i++) {
-            callables.add(new TestCallable(i,writer));
-        }
-        final List<Future<String>> futures = executorService.invokeAll(callables);
-
-        final List<String> content = writer.readContent();
-        Collections.sort(content);
-        for (int i = 0; i < content.size(); i++) {
-            String line =  content.get(i);
-            Assert.assertEquals("My message " +  format.format(i), line);
         }
     }
 
