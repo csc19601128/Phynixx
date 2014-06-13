@@ -14,9 +14,23 @@
     <artifactId>phynixx-tutorial</artifactId>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.csc</groupId>
+            <artifactId>phynixx-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.csc</groupId>
             <artifactId>phynixx-connection</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.csc</groupId>
+            <artifactId>phynixx-xa</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -24,9 +38,19 @@
             <groupId>org.csc</groupId>
             <artifactId>phynixx-common</artifactId>
             <version>${project.version}</version>
-            <classifier>tests</classifier>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+
+
+        <dependency>
+            <groupId>org.csc</groupId>
+            <artifactId>phynixx-logger</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>org.csc</groupId>

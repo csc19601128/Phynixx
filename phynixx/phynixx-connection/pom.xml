@@ -11,13 +11,11 @@
 
     <name>phynixx-connection</name>
 
-
-
     <dependencies>
         <dependency>
             <groupId>org.csc</groupId>
             <artifactId>phynixx-common</artifactId>
-            <version>${project.version}</version>
+            <version>2.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
@@ -25,7 +23,7 @@
             <groupId>org.csc</groupId>
             <artifactId>phynixx-common</artifactId>
             <version>${project.version}</version>
-            <classifier>tests</classifier>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
 

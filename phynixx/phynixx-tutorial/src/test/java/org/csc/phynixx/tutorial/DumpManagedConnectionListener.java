@@ -23,7 +23,6 @@ package org.csc.phynixx.tutorial;
 
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
-import org.csc.phynixx.connection.*;
 
 /**
  * Created by christoph on 09.03.14.

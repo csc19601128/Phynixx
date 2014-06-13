@@ -21,7 +21,6 @@
             <groupId>org.csc</groupId>
             <artifactId>phynixx-common</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
         </dependency>
 
         <dependency>
