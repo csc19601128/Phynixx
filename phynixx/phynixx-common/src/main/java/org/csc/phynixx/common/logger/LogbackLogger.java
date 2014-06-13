@@ -22,92 +22,96 @@ package org.csc.phynixx.common.logger;
  */
 
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Implements {@link IPhynixxLogger} on base of log4j
+ * Implements {@link org.csc.phynixx.common.logger.IPhynixxLogger} on base of log4j
  */
-public class Log4jLogger implements IPhynixxLogger {
+public class LogbackLogger implements IPhynixxLogger {
 
     private Logger log = null;
 
-    Log4jLogger(Class cls) {
-        this.log = LogManager.getLogger(cls);
+    LogbackLogger(Class cls) {
+        this.log = LoggerFactory.getLogger(cls);
     }
 
-    Log4jLogger(String logger) {
-        this.log = LogManager.getLogger(logger);
+    LogbackLogger(String logger) {
+        this.log = LoggerFactory.getLogger(logger);
     }
 
     /* (non-Javadoc)
      * @see de.csc.xaresource.sample.ILogger#debug(java.lang.Object)
 	 */
     public void debug(Object o) {
-        log.debug(o);
+        log.debug(toString(o));
+    }
+
+    private String toString(Object o) {
+        return (o==null)?"NULL":o.toString();
     }
 
     /* (non-Javadoc)
      * @see de.csc.xaresource.sample.ILogger#debug(java.lang.Object, java.lang.Throwable)
 	 */
     public void debug(Object o, Throwable t) {
-        log.debug(o, t);
+        log.debug(toString(o), t);
     }
 
     /* (non-Javadoc)
 	 * @see de.csc.xaresource.sample.ILogger#info(java.lang.Object)
 	 */
     public void info(Object o) {
-        log.info(o);
+        log.info(toString(o));
     }
 
     /* (non-Javadoc)
 	 * @see de.csc.xaresource.sample.ILogger#info(java.lang.Object, java.lang.Throwable)
 	 */
     public void info(Object o, Throwable t) {
-        log.info(o, t);
+        log.info(toString(o), t);
     }
 
     /* (non-Javadoc)
 	 * @see de.csc.xaresource.sample.ILogger#warn(java.lang.Object)
 	 */
     public void warn(Object o) {
-        log.warn(o);
+        log.warn(toString(o));
     }
 
     /* (non-Javadoc)
 	 * @see de.csc.xaresource.sample.ILogger#warn(java.lang.Object, java.lang.Throwable)
 	 */
     public void warn(Object o, Throwable t) {
-        log.warn(o, t);
+        log.warn(toString(o), t);
     }
 
     /* (non-Javadoc)
 	 * @see de.csc.xaresource.sample.ILogger#error(java.lang.Object)
 	 */
     public void error(Object o) {
-        log.error(o);
+        log.error(toString(o));
     }
 
     /* (non-Javadoc)
 	 * @see de.csc.xaresource.sample.ILogger#error(java.lang.Object, java.lang.Throwable)
 	 */
     public void error(Object o, Throwable t) {
-        log.error(o, t);
+        log.error(toString(o), t);
     }
 
     /* (non-Javadoc)
 	 * @see de.csc.xaresource.sample.ILogger#fatal(java.lang.Object)
 	 */
     public void fatal(Object o) {
-        log.fatal(o);
+        log.error(toString(o));
     }
 
     /* (non-Javadoc)
 	 * @see de.csc.xaresource.sample.ILogger#fatal(java.lang.Object, java.lang.Throwable)
 	 */
     public void fatal(Object o, Throwable t) {
-        log.fatal(o, t);
+        log.error(toString(o), t);
     }
 
     public boolean isDebugEnabled() {

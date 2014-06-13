@@ -71,7 +71,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     private ITimeoutCondition timeoutCondition = null;
 
-    private boolean supportsTimeOut= false;
+    private boolean supportsTimeOut= true;
 
     /**
      * TODO timeOut ueber einen Listener steuern und Konfigierbar machen
@@ -498,7 +498,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     }
 
     /**
-     * finds the transactional branch of the current XAResource associated with die XID
+     * finds the transactional branch of the current XAResource associated with die XID and closes it without commit or explicit rollback
      *
      * @param xid
      * @throws XAException

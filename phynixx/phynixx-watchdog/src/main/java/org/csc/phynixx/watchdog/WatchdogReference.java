@@ -63,7 +63,6 @@ public class WatchdogReference implements IWatchdog {
 
     public void activate() {
         this.getWatchdog().activate();
-
     }
 
 

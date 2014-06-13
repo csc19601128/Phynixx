@@ -1,8 +1,8 @@
-package org.csc.phynixx.watchdog;
+package org.csc.phynixx.common.logger;
 
 /*
  * #%L
- * phynixx-watchdog
+ * phynixx-common
  * %%
  * Copyright (C) 2014 csc
  * %%
@@ -21,34 +21,13 @@ package org.csc.phynixx.watchdog;
  */
 
 
-public interface IWatchedCondition {
+public class LogbackManager implements IPhynixxLogManager {
 
-    /**
-     *
-     * @return true if and if the condition is NOT violated
-     */
-    public boolean checkCondition();
+    public IPhynixxLogger getLogger(Class cls) {
+        return new LogbackLogger(cls);
+    }
 
-    /**
-     * callback if the condition is vioalated
-     */
-    public void conditionViolated();
-
-    /**
-     * activate/deactivate the condition
-     * @param active state to be set
-     */
-    public void setActive(boolean active);
-
-    public boolean isActive();
-
-
-    /**
-     * indicates that the condition isn't needed any longer ...
-     *
-     * @return
-     */
-    public boolean isUseless();
-
-
+    public IPhynixxLogger getLogger(String logger) {
+        return new LogbackLogger(logger);
+    }
 }

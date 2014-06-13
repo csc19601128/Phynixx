@@ -21,6 +21,7 @@ package org.csc.phynixx.common.io;
  */
 
 
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 import  org.junit.Assert;
 import org.junit.Test;
 
@@ -32,7 +33,7 @@ public class LogRecordIOTest {
 
     @Test
     public void testInt() throws Exception {
-
+        PhynixxLogManager.getLogger(this.getClass()).info("Logger found");
     }
 
     @Test

@@ -70,6 +70,7 @@ public class XADataRecorderTest {
 
         xaDataRecorder.writeRollforwardData(new byte[][]{"ABCD".getBytes("UTF-8")});
 
+        // if the transaction is commiting no rollback data may be written
         try {
             xaDataRecorder.writeRollbackData(new byte[][]{});
             throw new AssertionFailedError("No more RF Data allowed; Sequence is committing");

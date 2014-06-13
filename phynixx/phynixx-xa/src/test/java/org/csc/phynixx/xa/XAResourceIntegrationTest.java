@@ -1159,7 +1159,7 @@ public class XAResourceIntegrationTest extends TestCase {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
         ITestConnection con = xaCon.getConnection();
         XAResource xaresource = xaCon.getXAResource();
-        xaresource.setTransactionTimeout(2);
+        xaresource.setTransactionTimeout(10);
 
         try {
             this.getTransactionManager().begin();
@@ -1168,7 +1168,7 @@ public class XAResourceIntegrationTest extends TestCase {
             con.act(1);
 
             //  sleeping 7 secs to provoke timeout
-            TestUtils.sleep(3 * 1000);
+            TestUtils.sleep(10 * 1000);
 
             try {
                 this.getTransactionManager().commit();

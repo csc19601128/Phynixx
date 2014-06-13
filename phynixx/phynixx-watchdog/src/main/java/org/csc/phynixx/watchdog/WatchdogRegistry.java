@@ -111,6 +111,9 @@ public class WatchdogRegistry {
         watchesTheWatcherCond.setActive(true);
         this.watchTheWatchdogWatcher.registerCondition(watchesTheWatcherCond, false);
 
+        /**
+         * checks if the
+         */
         IWatchedCondition managementActivity = new TimeoutCondition(WATCHDOG_MANAGEMENT_INTERVAL) {
 
             public void conditionViolated() {
