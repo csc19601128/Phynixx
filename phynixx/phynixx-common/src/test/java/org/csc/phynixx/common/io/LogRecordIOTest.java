@@ -50,11 +50,15 @@ public class LogRecordIOTest {
     }
 
     /**
-     * TODO complete me
      * @throws Exception
      */
     @Test
     public void testFloat() throws Exception {
+        LogRecordWriter writer= new LogRecordWriter();
+        final byte[] bytes = writer.writeFloat(1.2f).toByteArray();
+
+        LogRecordReader reader= new LogRecordReader(bytes);
+        Assert.assertEquals(Float.valueOf(1.2f),Float.valueOf(reader.readFloat()));
 
     }
 

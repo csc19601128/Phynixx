@@ -1159,7 +1159,10 @@ public class XAResourceIntegrationTest extends TestCase {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
         ITestConnection con = xaCon.getConnection();
         XAResource xaresource = xaCon.getXAResource();
-        xaresource.setTransactionTimeout(10);
+        try {
+             xaresource.setTransactionTimeout(10);
+            throw new AssertionFailedError("Timeout not supported");
+        } catch (Exception e) {}
 
         try {
             this.getTransactionManager().begin();
@@ -1193,7 +1196,10 @@ public class XAResourceIntegrationTest extends TestCase {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
         ITestConnection con = (ITestConnection) xaCon.getConnection();
         XAResource xaresource = xaCon.getXAResource();
+        try {
         xaresource.setTransactionTimeout(2);
+        throw new AssertionFailedError("Timeout not supported");
+    } catch (Exception e) {}
 
         try {
             this.getTransactionManager().begin();

@@ -50,8 +50,11 @@ public class XADataRecorderTest {
         new TmpDirectory().clear();
     }
 
+    /**
+     * If commonForward data are written, no more Rollbackforward data may be stored
+     */
     @Test
-    public void testMessageLogger() throws Exception {
+    public void testNoMoreRFDataAllowed() throws Exception {
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", new TmpDirectory().getDirectory());
         PhynixxXARecorderRepository xaResource = new PhynixxXARecorderRepository(loggerFactory);

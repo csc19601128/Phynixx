@@ -71,7 +71,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     private ITimeoutCondition timeoutCondition = null;
 
-    private boolean supportsTimeOut= true;
+    private boolean supportsTimeOut= false;
 
     /**
      * TODO timeOut ueber einen Listener steuern und Konfigierbar machen
@@ -143,7 +143,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     }
 
     public void setSupportsTimeOut(boolean supportsTimeOut) {
-        this.supportsTimeOut = supportsTimeOut;
+        throw new IllegalStateException("Timeout isn't yet supported. Will be in version 2.1");
     }
 
 
