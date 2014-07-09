@@ -218,6 +218,11 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
 
 
     private class DataRecordReplay implements IDataRecordReplay {
+        @Override
+        public void notifyNoMoreData() {
+
+        }
+
 
         @Override
         public void replayRollback(IDataRecord record) {

@@ -39,7 +39,7 @@ public class PhynixxXAResourceEvent<C extends IPhynixxConnection> extends EventO
 
     }
 
-    public PhynixxXAResource<C> getXAResource() {
+    public IPhynixxXAResource<C> getXAResource() {
         return (PhynixxXAResource) this.getSource();
     }
 

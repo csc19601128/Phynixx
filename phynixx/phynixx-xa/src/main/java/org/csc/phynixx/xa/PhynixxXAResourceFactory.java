@@ -38,7 +38,7 @@ import java.util.Set;
 /**
  * @param <T>
  */
-public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements IPhynixxXAResourceListener {
+public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements IPhynixxXAResourceFactory<T>, IPhynixxXAResourceListener {
 
     private static final long CHECK_INTERVAL = 100; // msecs
 
@@ -130,8 +130,8 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
     }
 
 
-    private PhynixxXAResource instanciateXAResource() {
-        PhynixxXAResource xares = new PhynixxXAResource(createXAResourceId(), this.transactionManager, this);
+    private PhynixxXAResource<T> instanciateXAResource() {
+        PhynixxXAResource<T> xares = new PhynixxXAResource<T>(createXAResourceId(), this.transactionManager, this);
         xares.addXAResourceListener(this);
         this.xaresources.add(xares);
         return xares;
@@ -157,6 +157,7 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
      *
      * @return
      */
+    @Override
     public IPhynixxXAResource<T> getXAResource() {
         return instanciateXAResource();
     }
@@ -172,7 +173,10 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
      * Subclasses have to implement die recovery
      *
      * @return recovered TX
+     *
+     * TODO recover still to be implemented
      */
+    @Override
     public synchronized Xid[] recover() {
         return new Xid[]{};
     }
@@ -180,6 +184,7 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
     /**
      * Closes all pending XAResources and all reopen but unused connections
      */
+    @Override
     public synchronized void close() {
         if (this.xaresources.size() > 0) {
             // copy all resources as the close of a resource modifies the xaresources ...

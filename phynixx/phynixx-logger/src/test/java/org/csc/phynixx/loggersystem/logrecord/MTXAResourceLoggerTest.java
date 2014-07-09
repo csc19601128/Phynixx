@@ -130,6 +130,12 @@ public class MTXAResourceLoggerTest {
         private String content = null;
         private StringBuffer contentParts = new StringBuffer();
 
+        @Override
+        public void notifyNoMoreData() {
+
+        }
+
+
         public void replayRollback(IDataRecord message) {
             String value=null;
             try {

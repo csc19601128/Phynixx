@@ -87,6 +87,11 @@ public class XADataRecorderTest {
 
         // reply the logrecord
         IDataRecordReplay replay = new IDataRecordReplay() {
+            @Override
+            public void notifyNoMoreData() {
+
+            }
+
             public void replayRollback(IDataRecord message) {
                 switch ((int) message.getOrdinal().longValue()) {
                     case 1:

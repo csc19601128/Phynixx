@@ -59,8 +59,7 @@ public class XAResourceIntegrationTest extends TestCase {
         TestConnectionStatusManager.clear();
         this.jotm = new Jotm(true, false);
 
-        this.factory1 = new TestXAResourceFactory("RF1", null,
-                this.jotm.getTransactionManager());
+        this.factory1 = new TestXAResourceFactory("RF1", null,   this.jotm.getTransactionManager());
 
         this.factory2 = new TestXAResourceFactory(
                 "RF2", null,

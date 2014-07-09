@@ -47,7 +47,7 @@
             <artifactId>phynixx-connection</artifactId>
             <classifier>tests</classifier>
             <version>${project.version}</version>
-            <scope>runtime</scope>
+            <scope>test</scope>
         </dependency>
 
         <dependency>

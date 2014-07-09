@@ -94,6 +94,12 @@ public class PhynixxXADataRecorderTest {
         IDataLogger dataLogger2 = this.loggerFactory.instanciateLogger("log");
         dataRecorder = PhynixxXADataRecorder.recoverDataRecorder(new XADataLogger(dataLogger2), null);
         dataRecorder.replayRecords(new IDataRecordReplay() {
+
+            @Override
+            public void notifyNoMoreData() {
+
+            }
+
             @Override
             public void replayRollback(IDataRecord record) {
                 LogRecordReader logReader = new LogRecordReader(record.getData()[0]);

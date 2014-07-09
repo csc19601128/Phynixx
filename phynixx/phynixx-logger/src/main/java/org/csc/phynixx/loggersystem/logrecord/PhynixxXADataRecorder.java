@@ -192,6 +192,9 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
                 }
             }
         }
+
+        // acknowledge data finished
+        replay.notifyNoMoreData();
     }
 
     @Override

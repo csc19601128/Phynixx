@@ -51,7 +51,7 @@ import java.util.List;
  *
  * @author christoph
  */
-public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixxXAResource {
+public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixxXAResource<C> {
 
     private static final long DEFAULT_TIMEOUT = Long.MAX_VALUE; // msecs - no time out at all
 

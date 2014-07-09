@@ -43,4 +43,10 @@ public interface IDataRecordReplay {
     void replayRollforward(IDataRecord record);
 
 
+    /**
+     * indicates that all data is transfered
+     */
+    void notifyNoMoreData();
+
+
 }
