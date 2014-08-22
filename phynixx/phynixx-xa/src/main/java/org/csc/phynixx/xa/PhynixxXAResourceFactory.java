@@ -45,6 +45,12 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
     private static IResourceIDGenerator ID_GENERATOR = new IDGenerator();
 
 
+    /**
+     * this XAResources represents the Resources of this factory
+     */
+    PhynixxXAResource xaResource;
+
+
     private final IXATransactionalBranchRepository<T> xaTransactionalBranchRepository;
 
 
@@ -100,6 +106,9 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
 
         this.transactionManager = transactionManager;
         this.xaresourrceWatchdog = WatchdogRegistry.getTheRegistry().createWatchdog(CHECK_INTERVAL);
+
+
+        this.xaResource= instanciateXAResource();
     }
 
 
@@ -138,7 +147,7 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
     }
 
     public IPhynixxXAConnection<T> getXAConnection() {
-        return this.instanciateXAResource().getXAConnection();
+        return this.xaResource.getXAConnection();
     }
 
 
@@ -159,7 +168,7 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
      */
     @Override
     public IPhynixxXAResource<T> getXAResource() {
-        return instanciateXAResource();
+        return this.xaResource;
     }
 
 

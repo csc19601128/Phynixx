@@ -74,7 +74,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     private boolean supportsTimeOut= false;
 
     /**
-     * TODO timeOut ueber einen Listener steuern und Konfigierbar machen
+     * TODO timeOut ueber einen Listener steuern und konfigierbar machen
      */
     public PhynixxXAResource(
             String xaId,
@@ -624,10 +624,13 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
      */
     public boolean setTransactionTimeout(int seconds) throws XAException {
 
+        return false;
+        /**
         if(!this.isSupportsTimeOut()) {
             throw new IllegalStateException("TimeOut is not supported  --> call setSupportsTimeOut");
 
         }
+
         if (seconds < 0) {
             throw new XAException(XAException.XAER_INVAL);
         }
@@ -638,6 +641,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
         this.timeoutCondition.resetCondition(msecs);
 
         return true;
+         **/
 
     }
 

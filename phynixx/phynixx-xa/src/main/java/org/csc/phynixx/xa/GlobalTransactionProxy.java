@@ -30,7 +30,7 @@ import javax.transaction.xa.Xid;
 
 
 /**
- * @author zf4iks2
+ * This TransactionProxy shows, that the XAresource is enölisted in a Global Transaction. During enlisting, the transactional brnach isn't known. It is assigned during {@link javax.transaction.xa.XAResource#start(javax.transaction.xa.Xid, int)}
  */
 class GlobalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxManagedConnectionListener<C>, ITransactionBinding<C> {
 
@@ -38,15 +38,25 @@ class GlobalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManage
 
     private XATransactionalBranch<C> transactionalBranch;
 
-    GlobalTransactionProxy(XATransactionalBranch<C> transactionalBranch) {
-        this.transactionalBranch = transactionalBranch;
-        if (this.transactionalBranch == null) {
-            throw new IllegalStateException("No Transactional branch");
-        }
+    GlobalTransactionProxy() {
     }
 
     XATransactionalBranch<C> getGlobalTransactionalBranch() {
         return transactionalBranch;
+    }
+
+    /**
+     *
+     * @param transactionalBranch
+     * @return if the XATransactionalBranch has to be assigned at construction
+, return value cann be used to assign      */
+    GlobalTransactionProxy<C> assignTransactionalBranch( XATransactionalBranch<C> transactionalBranch ) {
+        if( this.transactionalBranch!=null) {
+            throw new IllegalStateException("transactionalBranch already assigned");
+        }
+        this.transactionalBranch=transactionalBranch;
+
+        return this;
     }
 
     @Override

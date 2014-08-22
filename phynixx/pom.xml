@@ -16,8 +16,10 @@
         <module>phynixx-watchdog</module>
         <module>phynixx-xa</module>
         <module>phynixx-jmx</module>
-        <module>phynixx-doc</module>
+        <module>phynixx-atomikos</module>
+        <module>phynixx-spring</module>
         <module>phynixx-tutorial</module>
+        <module>phynixx-doc</module>
         <!--
         <module>phynixx-howl</module>
         -->
@@ -126,9 +128,6 @@
         <dependencies>
 
 
-
-
-
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -168,7 +167,6 @@
                 <artifactId>log4j</artifactId>
                 <version>1.2.17</version>
             </dependency>
-
 
 
             <dependency>
@@ -216,18 +214,91 @@
             </dependency>
 
             <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>5.1.11</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>jotm</groupId>
                 <artifactId>jotm</artifactId>
                 <version>2.0.10</version>
             </dependency>
-
+            <!--
             <dependency>
                 <groupId>org.ow2.jotm</groupId>
                 <artifactId>jotm-standalone</artifactId>
                 <version>2.3.1-M1</version>
+                <scope>test</scope>
+            </dependency>
+              -->
+
+
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>2.3.2</version>
+                <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>atomikos-util</artifactId>
+                <version>3.9.3</version>
+                <scope>test</scope>
+            </dependency>
 
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-api</artifactId>
+                <version>3.9.3</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-jdbc-deprecated</artifactId>
+                <version>3.8.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-jdbc</artifactId>
+                <version>3.9.3</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-jms-deprecated</artifactId>
+                <version>3.8.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-jms</artifactId>
+                <version>3.9.3</version>
+                <scope>test</scope>
+
+            </dependency>
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-jta</artifactId>
+                <version>3.9.3</version>
+                <scope>test</scope>
+
+            </dependency>
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions</artifactId>
+                <version>3.9.3</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-hibernate3</artifactId>
+                <version>3.9.3</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>
@@ -311,7 +382,10 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.16</version>
-                    <configuration><failIfNoTests>false</failIfNoTests><testFailureIgnore>true</testFailureIgnore></configuration>
+                    <configuration>
+                        <failIfNoTests>false</failIfNoTests>
+                        <testFailureIgnore>true</testFailureIgnore>
+                    </configuration>
                 </plugin>
 
                 <plugin>
@@ -642,7 +716,7 @@
                         <xmlOutput>true</xmlOutput>
                         <xmlOutputDirectory>${project.build.directory}/findbugs</xmlOutputDirectory>
                         <!-- Intellij cannot export filter configuation -->
-                       <!-- <includeFilterFile>findbugs-include.xml</includeFilterFile> -->
+                        <!-- <includeFilterFile>findbugs-include.xml</includeFilterFile> -->
                         <failOnError>false</failOnError>
                     </configuration>
 

@@ -109,7 +109,7 @@ public interface IXARecorderRepository extends IXADataRecorderLifecycleListener 
      * The recorder are {@link IXADataRecorder#close()} and removed from the repository.
      *
      * Depending on recording closed recorder could recovered if it contains relevant information
-     * and it is not destroyed but can be re-established by {@lonk #recover}
+     * and it is not destroyed but can be re-established by {@link #recover}
      */
     void close();
 
