@@ -79,6 +79,11 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- Bitronix -->
+        <dependency>
+            <groupId>org.codehaus.btm</groupId>
+            <artifactId>btm</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>jotm</groupId>

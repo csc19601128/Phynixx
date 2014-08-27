@@ -21,6 +21,7 @@ package org.csc.phynixx.xa;
  */
 
 
+import bitronix.tm.BitronixTransactionManager;
 import com.atomikos.icatch.jta.UserTransactionManager;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -40,7 +41,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.objectweb.jotm.Jotm;
 
-import javax.naming.NamingException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
@@ -94,6 +94,36 @@ public class XAResourceIntegrationTest{
 
     }
 
+    static class  BitronixTransactionManagerProvider implements ITransactionManagerProvider {
+        BitronixTransactionManager taMgr =null;
+
+        @Override
+        public TransactionManager getTransactionManager() {
+            return this.taMgr;
+        }
+
+        @Override
+        public void start() throws Exception {
+            if(this.taMgr !=null) {
+                throw new IllegalStateException("Jotm is already started");
+            }
+            this.taMgr =  new BitronixTransactionManager();
+            this.taMgr.setTransactionTimeout(2000);
+        }
+
+        @Override
+        public void stop() throws Exception {
+            if(taMgr !=null) {
+                this.taMgr.shutdown();
+            }
+            this.taMgr =null;
+        }
+
+        BitronixTransactionManagerProvider() {
+        }
+
+    }
+
     static class  AtomikosTransactionManagerProvider implements ITransactionManagerProvider {
         UserTransactionManager userTransactionManager =null;
 
@@ -110,6 +140,11 @@ public class XAResourceIntegrationTest{
             if(userTransactionManager !=null) {
                 this.userTransactionManager.setForceShutdown(true);
                 this.userTransactionManager.close();
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+
+                }
             }
             this.userTransactionManager =null;
         }
@@ -122,8 +157,8 @@ public class XAResourceIntegrationTest{
 
             this.userTransactionManager = new UserTransactionManager();
             userTransactionManager.setForceShutdown(false);
-            userTransactionManager.setTransactionTimeout(10000);
-            userTransactionManager.setStartupTransactionService(true);
+            userTransactionManager.setTransactionTimeout(1000);
+            userTransactionManager.setStartupTransactionService(false);
         }
 
     }
@@ -132,6 +167,7 @@ public class XAResourceIntegrationTest{
     @Parameterized.Parameters
     public static Collection<ITransactionManagerProvider[]> generateTestDatas() throws Exception {
         Set<ITransactionManagerProvider[]> providers= new HashSet<ITransactionManagerProvider[]>(2);
+        providers.add(new ITransactionManagerProvider[]{new BitronixTransactionManagerProvider()});
         providers.add(new ITransactionManagerProvider[]{new JotmTransactionManagerProvider()});
         providers.add(new ITransactionManagerProvider[]{new AtomikosTransactionManagerProvider()});
 
@@ -152,8 +188,6 @@ public class XAResourceIntegrationTest{
         TestUtils.configureLogging();
 
         TestConnectionStatusManager.clear();
-        // this.transactionManagerProvider = new JotmTransactionManagerProvider();
-        // this.transactionManagerProvider = new  AtomikosTransactionManagerProvider();
 
         this.transactionManagerProvider.start();
 
@@ -771,7 +805,7 @@ public class XAResourceIntegrationTest{
             con2.act(1);
             con3.act(1);
 
-            this.getTransactionManager().rollback();
+            this.getTransactionManager().commit();
         } finally {
             if (con1 != null) {
                 con1.close();
