@@ -21,6 +21,8 @@ import java.util.Properties;
  */
 @Configuration
 @ComponentScan(basePackages = {"org.csc.phynixx.spring.integration.model"})
+
+@Deprecated
 abstract class PersistenceConfig implements TransactionConfig{
 
 
@@ -56,7 +58,7 @@ abstract class PersistenceConfig implements TransactionConfig{
         final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         // em.setJtaDataSource(this.dataSource());
         em.setPersistenceUnitName("test");
-        em.setPersistenceXmlLocation("classpath:META-INF/jta-persistence.xml");
+        em.setPersistenceXmlLocation("classpath:META-INF/bitronix-persistence.xml");
 
 
         final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();

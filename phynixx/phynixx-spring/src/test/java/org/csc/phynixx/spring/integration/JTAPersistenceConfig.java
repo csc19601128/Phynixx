@@ -13,6 +13,7 @@ import java.util.Properties;
 /**
  * Created by zf4iks2 on 26.08.14.
  */
+@Deprecated
 public class JTAPersistenceConfig extends PersistenceConfig {
 
     @Inject   Environment environment;

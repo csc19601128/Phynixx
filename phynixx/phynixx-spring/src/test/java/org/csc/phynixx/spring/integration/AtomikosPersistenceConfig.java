@@ -1,12 +1,13 @@
 package org.csc.phynixx.spring.integration;
 
-import bitronix.tm.BitronixTransactionManager;
-import bitronix.tm.TransactionManagerServices;
 import bitronix.tm.resource.jdbc.PoolingDataSource;
-import org.h2.jdbcx.JdbcDataSource;
+import com.atomikos.icatch.config.UserTransactionServiceImp;
+import com.atomikos.icatch.jta.UserTransactionImp;
+import com.atomikos.icatch.jta.UserTransactionManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -15,31 +16,67 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.inject.Inject;
-import javax.sql.DataSource;
+import javax.inject.Named;
 import java.sql.SQLException;
 import java.util.Properties;
 
 /**
  * Created by zf4iks2 on 26.08.14.
+ *
+ * @see http://www.atomikos.com/Documentation/SpringIntegration
  */
 
 @EnableTransactionManagement
 @Configuration
 @ComponentScan(basePackages = { "org.csc.phynixx.spring.integration.model" })
-public class BitronixPersistenceConfig extends PersistenceConfig implements TransactionConfig{
+public class AtomikosPersistenceConfig extends PersistenceConfig implements TransactionConfig{
 
     @Inject   Environment environment;
 
-    @Bean(destroyMethod = "shutdown")
-    public BitronixTransactionManager bitronixManager() {
-        return TransactionManagerServices.getTransactionManager();
+
+    @Named("userTransactionService")
+    @Bean(destroyMethod = "shutdownForce")
+    UserTransactionServiceImp userTransactionService() {
+        UserTransactionServiceImp srv= new UserTransactionServiceImp();
+        Properties props= new Properties();
+        props.setProperty("com.atomikos.icatch.service", "com.atomikos.icatch.standalone.UserTransactionServiceFactory");
+        props.setProperty("initialLogAdministrators","com.atomikos.icatch.admin.imp.LocalLogAdministrator");
+
+        props.put("com.atomikos.icatch.service","com.atomikos.icatch.standalone.UserTransactionServiceFactory");
+        props.put("com.atomikos.icatch.log_base_name","aaaaaa");
+        props.put("com.atomikos.icatch.output_dir","../standalone/log/");
+        props.put("com.atomikos.icatch.log_base_dir","../standalone/log/");
+
+        srv.init(props);
+
+        return srv;
+
     }
+
+    @Bean(destroyMethod = "close")
+    @DependsOn("userTransactionService")
+    public UserTransactionManager atomikosTransactionManager() {
+        UserTransactionManager mgr= new UserTransactionManager();
+        mgr.setStartupTransactionService(false);
+        mgr.setForceShutdown(false);
+        return mgr;
+    }
+
+    @DependsOn("userTransactionService")
+    public UserTransactionImp atomikosTransaction() throws Exception {
+        UserTransactionImp ta= new UserTransactionImp();
+        ta.setTransactionTimeout(5000);
+        return ta;
+    }
+
+
+
 
     @Bean
     public PlatformTransactionManager jtaTransactionManager() {
         JtaTransactionManager jta = new JtaTransactionManager();
-        jta.setTransactionManager(bitronixManager());
-        jta.setUserTransaction(bitronixManager());
+        jta.setTransactionManager(atomikosTransactionManager());
+        jta.setUserTransaction(atomikosTransactionManager());
         return jta;
     }
 
@@ -51,24 +88,6 @@ public class BitronixPersistenceConfig extends PersistenceConfig implements Tran
     @Override
     @Bean( destroyMethod = "close")
         public PoolingDataSource dataSource() throws SQLException {
-
-        /**  no XA support for hsqldb
-
-        JDBCXADataSource hsqlXaDataSource= new JDBCXADataSource();
-
-        hsqlXaDataSource.setUrl("jdbc:hsqldb:mem:" + "Test");
-        hsqlXaDataSource.setUser("sa");
-        hsqlXaDataSource.setPassword("");
-
-
-            MysqlXADataSource mysqlXaDataSource = new MysqlXADataSource();
-            mysqlXaDataSource.setUrl(this.environment.getProperty("dataSource.url"));
-            mysqlXaDataSource.setPinGlobalTxToPhysicalConnection(true);
-            mysqlXaDataSource.setPassword(this.environment.getProperty("dataSource.password"));
-            mysqlXaDataSource.setUser(this.environment.getProperty("dataSource.password"));
-**/
-        // Each JVM needs a stable unique identifier for TX recovery
-        TransactionManagerServices.getConfiguration().setServerId("myServer1234");
 
         PoolingDataSource ds = new PoolingDataSource();
 
@@ -115,7 +134,7 @@ public class BitronixPersistenceConfig extends PersistenceConfig implements Tran
         return this.tailorEntityManagerFactoryProperties(new Properties() {
             private static final long serialVersionUID = -4475596706494273349L;
             {
-                this.setProperty("hibernate.hbm2ddl.auto", BitronixPersistenceConfig.this.hibernateHbm2ddlAuto());
+                this.setProperty("hibernate.hbm2ddl.auto", AtomikosPersistenceConfig.this.hibernateHbm2ddlAuto());
             }
         });
     }
@@ -126,7 +145,7 @@ public class BitronixPersistenceConfig extends PersistenceConfig implements Tran
         final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setJtaDataSource(this.dataSource());
         em.setPersistenceUnitName("test");
-        em.setPersistenceXmlLocation("classpath:META-INF/bitronix-persistence.xml");
+        em.setPersistenceXmlLocation("classpath:META-INF/atomikos-persistence.xml");
 
 
         final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();

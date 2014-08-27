@@ -23,6 +23,7 @@ import java.util.Properties;
 /**
  * Created by christoph on 23.08.2014.
  */
+@Deprecated
 
 public class AtomikosJtaConfiguration implements TransactionConfig  {
 
