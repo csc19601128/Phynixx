@@ -29,14 +29,20 @@ XA Exposed Part I-III[ http://jroller.com/pyrasun/category/XA](http://jroller.co
 
 
 [gupta-1997]
-
 Grundlagen zu OLTP.
 Commit Processing in Distributed On-Line and Real-Time Transaction Processing Systems
 [http://dsl.serc.iisc.ernet.in/publications/thesis/rkg.ps.gz](http://dsl.serc.iisc.ernet.in/publications/thesis/rkg.ps.gz).
 Ramesh Kumar Gupta (Promotion am Indian Institute of Science , Bangalore). 1997.
 
+[Rutgers-2007]
+Distributed Transactions
+[https://www.cs.rutgers.edu/~pxk/rutgers/notes/content/transactions.html]
 
 [rich-2006]
 Java Transaction Design Strategies by Mark Richards on May 14, 2006 
 [http://www.infoq.com/minibooks/JTDS]
+
+[XADisk]
+transactional access to existing file systems
+[https://xadisk.java.net/]
 
