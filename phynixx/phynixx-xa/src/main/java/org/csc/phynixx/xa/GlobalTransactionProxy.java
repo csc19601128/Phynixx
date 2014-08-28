@@ -48,8 +48,7 @@ class GlobalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManage
     /**
      *
      * @param transactionalBranch
-     * @return if the XATransactionalBranch has to be assigned at construction
-, return value cann be used to assign      */
+     * @return if the XATransactionalBranch has to be assigned at construction , return value cann be used to assign      */
     GlobalTransactionProxy<C> assignTransactionalBranch( XATransactionalBranch<C> transactionalBranch ) {
         if( this.transactionalBranch!=null) {
             throw new IllegalStateException("transactionalBranch already assigned");

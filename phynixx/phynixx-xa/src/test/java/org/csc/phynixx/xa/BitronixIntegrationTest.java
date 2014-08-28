@@ -22,12 +22,12 @@ package org.csc.phynixx.xa;
 
 
 import bitronix.tm.BitronixTransactionManager;
-import bitronix.tm.resource.ResourceRegistrar;
 import bitronix.tm.resource.ehcache.EhCacheXAResourceProducer;
 import com.atomikos.icatch.jta.UserTransactionManager;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.csc.phynixx.common.TestUtils;
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.phynixx.testconnection.ITestConnection;
@@ -41,6 +41,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Parameterized;
 import org.objectweb.jotm.Jotm;
 
@@ -52,8 +53,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-@RunWith(Parameterized.class)
-public class XAResourceIntegrationTest{
+@RunWith(BlockJUnit4ClassRunner.class)
+public class BitronixIntegrationTest {
 
     {
         System.setProperty("log4j_level", "INFO");
@@ -68,34 +69,6 @@ public class XAResourceIntegrationTest{
     }
 
 
-    static class  JotmTransactionManagerProvider implements ITransactionManagerProvider {
-        Jotm jotm=null;
-
-        @Override
-        public TransactionManager getTransactionManager() {
-            return this.jotm.getTransactionManager();
-        }
-
-        @Override
-        public void start() throws Exception {
-            if(this.jotm!=null) {
-                throw new IllegalStateException("Jotm is already started");
-            }
-            this.jotm =  new Jotm(true, false);
-        }
-
-        @Override
-        public void stop() throws Exception {
-                if(jotm!=null) {
-                    this.jotm.stop();
-                }
-            this.jotm=null;
-        }
-
-        JotmTransactionManagerProvider() {
-        }
-
-    }
 
     static class  BitronixTransactionManagerProvider implements ITransactionManagerProvider {
         BitronixTransactionManager taMgr =null;
@@ -127,60 +100,12 @@ public class XAResourceIntegrationTest{
 
     }
 
-    static class  AtomikosTransactionManagerProvider implements ITransactionManagerProvider {
-        UserTransactionManager userTransactionManager =null;
 
-        @Override
-        public TransactionManager getTransactionManager() {
-            if(this.userTransactionManager ==null) {
-                throw new IllegalStateException("Atomikos is already stopped");
-            }
-            return this.userTransactionManager;
-        }
-
-        @Override
-        public void stop() {
-            if(userTransactionManager !=null) {
-                this.userTransactionManager.setForceShutdown(true);
-                this.userTransactionManager.close();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-
-                }
-            }
-            this.userTransactionManager =null;
-        }
-
-        AtomikosTransactionManagerProvider() { }
-
-
-        @Override
-        public void start() throws Exception {
-
-            this.userTransactionManager = new UserTransactionManager();
-            userTransactionManager.setForceShutdown(false);
-            userTransactionManager.setTransactionTimeout(1000);
-            userTransactionManager.setStartupTransactionService(false);
-        }
-
-    }
-
-
-    @Parameterized.Parameters
-    public static Collection<ITransactionManagerProvider[]> generateTestDatas() throws Exception {
-        Set<ITransactionManagerProvider[]> providers= new HashSet<ITransactionManagerProvider[]>(2);
-        providers.add(new ITransactionManagerProvider[]{new AtomikosTransactionManagerProvider()});
-        providers.add(new ITransactionManagerProvider[]{new BitronixTransactionManagerProvider()});
-        providers.add(new ITransactionManagerProvider[]{new JotmTransactionManagerProvider()});
-
-        return providers;
-    }
 
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
-    private ITransactionManagerProvider transactionManagerProvider = null;
+    private ITransactionManagerProvider transactionManagerProvider = new BitronixTransactionManagerProvider();
     private TestXAResourceFactory factory1 = null;
     private TestXAResourceFactory factory2 = null;
 
@@ -219,9 +144,6 @@ public class XAResourceIntegrationTest{
         WatchdogRegistry.getTheRegistry().shutdown();
     }
 
-    public XAResourceIntegrationTest(ITransactionManagerProvider transactionManagerProvider) {
-        this.transactionManagerProvider= transactionManagerProvider;
-    }
 
     private TransactionManager getTransactionManager() {
         return this.transactionManagerProvider.getTransactionManager();
@@ -507,28 +429,39 @@ public class XAResourceIntegrationTest{
     @Test
     public void testExplicitEnlistment1() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
+try {
 
-            this.getTransactionManager().begin();
+    EhCacheXAResourceProducer.registerXAResource("XXXX", factory1.getXAResource());
+    this.getTransactionManager().begin();
 
-        this.getTransactionManager().getTransaction().enlistResource(xaCon.getXAResource());
+    this.getTransactionManager().getTransaction().enlistResource(xaCon.getXAResource());
 
-        // u are just interfacing the proxy.
-        ITestConnection con = xaCon.getConnection();
+    // u are just interfacing the proxy.
+    ITestConnection con = xaCon.getConnection();
 
-        // ... the real core connection is hidden by the proxy
-        Object conId = con.getConnectionId();
+    // ... the real core connection is hidden by the proxy
+    Object conId = con.getConnectionId();
 
-            // act transactional and enlist the current resource
-            // conProxy.act();
+    // act transactional and enlist the current resource
+    // conProxy.act();
 
-            this.getTransactionManager().commit();
-
-        TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
-        TestCase.assertTrue(statusStack != null);
-        TestCase.assertTrue(!statusStack.isCommitted());
-        TestCase.assertTrue(!statusStack.isRolledback());
-        //TestCase.assertTrue(factory1.isFreeConnection(coreCon));
+    this.getTransactionManager().commit();
+    TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
+    TestCase.assertTrue(statusStack != null);
+    TestCase.assertTrue(!statusStack.isCommitted());
+    TestCase.assertTrue(!statusStack.isRolledback());
+    //TestCase.assertTrue(factory1.isFreeConnection(coreCon));
+} catch (Exception e) {
+    if( this.getTransactionManager().getTransaction()!=null) {
+        this.getTransactionManager().getTransaction().rollback();
     }
+
+    throw new DelegatedRuntimeException(e);
+    }
+}
+
+
+
 
     /**
      * there 's just one XAResource enlisted in a resource but the
