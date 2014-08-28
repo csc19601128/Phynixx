@@ -60,4 +60,17 @@ public class AtomikosJtaTest {
 
 
 
+    @Test
+    public void testRollback() throws Exception {
+
+        try {
+            this.testScenario.throwException();
+        } catch(Exception e) {};
+
+        final List<ItemData> items = this.testScenario.findItems();
+        Assert.assertEquals(0, items.size());
+    }
+
+
+
 }

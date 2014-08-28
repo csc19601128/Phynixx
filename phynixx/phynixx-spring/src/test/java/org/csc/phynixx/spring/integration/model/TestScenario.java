@@ -32,4 +32,16 @@ public class TestScenario {
     public List<ItemData> findItems() {
         return this.itemService.findAllItems();
     }
+
+
+    /**
+     * creates one Items an throw an Exception
+     * throw Exception to provoke rollback
+     */
+    @Transactional
+    public void  throwException() {
+
+        this.itemService.createItem("Test");
+        throw new IllegalStateException("Do Rollback");
+    }
 }
