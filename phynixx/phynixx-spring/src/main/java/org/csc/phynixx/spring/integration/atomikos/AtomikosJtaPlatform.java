@@ -13,6 +13,9 @@ import org.hibernate.engine.transaction.jta.platform.internal.AbstractJtaPlatfor
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
+/**
+ * see http://stackoverflow.com/questions/20681245/how-to-use-atomikos-transaction-essentials-with-hibernate-4-3
+ */
 public class AtomikosJtaPlatform extends AbstractJtaPlatform {
 
     private static final long serialVersionUID = 1L;

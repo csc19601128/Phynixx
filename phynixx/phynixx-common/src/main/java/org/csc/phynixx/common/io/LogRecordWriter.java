@@ -84,6 +84,11 @@ public class LogRecordWriter {
         return this;
     }
 
+    public LogRecordWriter writeByte(byte b) throws IOException {
+        io.writeByte(b);
+        return this;
+    }
+
     public LogRecordWriter writeBoolean(boolean v) throws IOException {
         io.writeBoolean(v);
         return this;

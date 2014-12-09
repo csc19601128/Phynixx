@@ -92,12 +92,12 @@
                 <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
 
-
+<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
-
+-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -577,8 +577,14 @@ public class XAResourceIntegrationTest{
 
             this.getTransactionManager().begin();
 
+
+            ITestConnection con = xaCon1.getConnection();
             ITestConnection con1 = xaCon1.getConnection();
             Object conId1 = con1.getConnectionId();
+
+            // same connection in same TX of same XAResource
+            Assert.assertEquals(conId1, con.getConnectionId());
+
             ITestConnection con2 = xaCon2.getConnection();
             Object conId2 = con2.getConnectionId();
             // act transactional and enlist the current resource

@@ -400,7 +400,7 @@ public class WatchdogRegistry {
      * killt alle Threads der Gruppe und wartet bis auch der letzte beendet ist.
      * Es wird der evtl. Exceptionhandler geschlossen.
      */
-    synchronized void shutdown() {
+    public synchronized void shutdown() {
         this.shutdownManagementWatchdogs();
 
         // deactivate all Watchdogs ....

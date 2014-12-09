@@ -48,6 +48,9 @@ public class LogRecordReader {
     public long readLong() throws IOException {
         return this.io.readLong();
     }
+    public byte readByte() throws IOException {
+        return this.io.readByte();
+    }
 
 
     public boolean readBoolean() throws IOException {

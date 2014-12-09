@@ -16,7 +16,10 @@
         <module>phynixx-watchdog</module>
         <module>phynixx-xa</module>
         <module>phynixx-jmx</module>
+        <!--
         <module>phynixx-atomikos</module>
+        <module>phynixx-bitronix</module>
+        -->
         <module>phynixx-spring</module>
         <module>phynixx-tutorial</module>
         <module>phynixx-doc</module>
@@ -266,27 +269,23 @@
                 <groupId>com.atomikos</groupId>
                 <artifactId>atomikos-util</artifactId>
                 <version>3.9.3</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.atomikos</groupId>
                 <artifactId>transactions-api</artifactId>
                 <version>3.9.3</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.atomikos</groupId>
                 <artifactId>transactions-jdbc-deprecated</artifactId>
                 <version>3.8.0</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.atomikos</groupId>
                 <artifactId>transactions-jdbc</artifactId>
                 <version>3.9.3</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.atomikos</groupId>
@@ -297,27 +296,23 @@
                 <groupId>com.atomikos</groupId>
                 <artifactId>transactions-jms</artifactId>
                 <version>3.9.3</version>
-                <scope>test</scope>
 
             </dependency>
             <dependency>
                 <groupId>com.atomikos</groupId>
                 <artifactId>transactions-jta</artifactId>
                 <version>3.9.3</version>
-                <scope>test</scope>
 
             </dependency>
             <dependency>
                 <groupId>com.atomikos</groupId>
                 <artifactId>transactions</artifactId>
                 <version>3.9.3</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.atomikos</groupId>
                 <artifactId>transactions-hibernate3</artifactId>
                 <version>3.9.3</version>
-                <scope>test</scope>
             </dependency>
         </dependencies>
 
@@ -356,7 +351,7 @@
                     <version>2.6</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
-                        <includes>
+                       <includes>
                             <include>**/*.odt</include>
                             <include>**/*.odt</include>
                             <include>**/*.pdf</include>
@@ -723,11 +718,12 @@
                     <artifactId>versions-maven-plugin</artifactId>
                     <version>2.1</version>
                 </plugin>
-<!--
+
+
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>2.5.4</version>
+                    <version>3.0.0</version>
                     <configuration>
                         <effort>Max</effort>
                         <threshold>Medium</threshold>
@@ -747,7 +743,7 @@
                         </execution>
                     </executions>
                 </plugin>
--->
+
                 <!--
                                 <plugin>
                                     <groupId>org.apache.maven.plugins</groupId>
@@ -823,11 +819,12 @@
                     </execution>
                 </executions>
             </plugin>
-
+<!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
             </plugin>
+-->
 
 
         </plugins>

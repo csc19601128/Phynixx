@@ -63,6 +63,19 @@ public class LogRecordIOTest {
     }
 
     /**
+     * @throws Exception
+     */
+    @Test
+    public void testByte() throws Exception {
+        LogRecordWriter writer= new LogRecordWriter();
+        final byte[] bytes = writer.writeByte(Byte.valueOf("1")).toByteArray();
+
+        LogRecordReader reader= new LogRecordReader(bytes);
+        Assert.assertEquals(Byte.valueOf("1"),Byte.valueOf(reader.readByte()));
+
+    }
+
+    /**
      * TODO complete me
      * @throws Exception
      */
