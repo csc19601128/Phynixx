@@ -24,7 +24,7 @@ package org.csc.phynixx.loggersystem.logrecord;
 /**
  * replays the logrecord in the correct order.
  *
- * @author zf4iks2
+ * @author Christoph Schmidt-Casdorff
  */
 public interface IDataRecordReplay {
 

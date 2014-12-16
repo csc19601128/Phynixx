@@ -22,7 +22,7 @@ package org.csc.phynixx.connection;
 
 
 /**
- * Created by zf4iks2 on 17.02.14.
+ * Created by Christoph Schmidt-Casdorff on 17.02.14.
  */
 public interface ICloseable {
 

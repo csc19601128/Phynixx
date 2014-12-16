@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by zf4iks2 on 13.01.14.
+ * Created by Christoph Schmidt-Casdorff on 13.01.14.
  */
 public class LogRecordPageWriter {
 

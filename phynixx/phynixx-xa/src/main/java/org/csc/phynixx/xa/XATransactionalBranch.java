@@ -35,7 +35,7 @@ import javax.transaction.xa.Xid;
  * <p/>
  * A transactional branch corresponds to an physical connection
  * <p/>
- * Created by zf4iks2 on 10.02.14.
+ * Created by Christoph Schmidt-Casdorff on 10.02.14.
  */
 class XATransactionalBranch<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxManagedConnectionListener<C> {
 

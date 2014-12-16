@@ -65,6 +65,8 @@ public class BitronixIntegrationTest {
 
         void start() throws Exception;
 
+        void register(XAResource xaResource);
+
         void stop() throws Exception;
     }
 
@@ -81,10 +83,16 @@ public class BitronixIntegrationTest {
         @Override
         public void start() throws Exception {
             if(this.taMgr !=null) {
-                throw new IllegalStateException("Jotm is already started");
+                throw new IllegalStateException("TXMgr is already started");
             }
             this.taMgr =  new BitronixTransactionManager();
             this.taMgr.setTransactionTimeout(1000);
+
+        }
+
+        @Override
+        public void register(XAResource xaResource) {
+            EhCacheXAResourceProducer.registerXAResource("phynixx", xaResource);
         }
 
         @Override
@@ -119,11 +127,16 @@ public class BitronixIntegrationTest {
 
         this.transactionManagerProvider.start();
 
+
+
+
         this.factory1 = new TestXAResourceFactory("RF1", null,   this.transactionManagerProvider.getTransactionManager());
+        this.transactionManagerProvider.register(factory1.getXAResource());
 
         this.factory2 = new TestXAResourceFactory(
                 "RF2", null,
                 this.transactionManagerProvider.getTransactionManager());
+        this.transactionManagerProvider.register(factory2.getXAResource());
     }
 
     @After

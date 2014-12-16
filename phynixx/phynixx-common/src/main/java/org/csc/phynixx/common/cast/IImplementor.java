@@ -25,7 +25,7 @@ package org.csc.phynixx.common.cast;
  * Instanzen, welche mehere Interface implementieren, welche nicht ale an der Instanz sichtbar sind,
  * bieten mit Hilfe dieses IF die Moeglichkeit, zu einen dieser 'versteckten' Interfaces zu wechselen
  *
- * @author zf4iks2
+ * @author Christoph Schmidt-Casdorff
  */
 public interface IImplementor {
 

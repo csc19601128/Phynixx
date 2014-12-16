@@ -28,7 +28,7 @@ import org.csc.phynixx.common.generator.IDGenerators;
 import java.io.File;
 
 /**
- * Created by zf4iks2 on 04.02.14.
+ * Created by Christoph Schmidt-Casdorff on 04.02.14.
  */
 public class TAEnabledUTFWriterFactoryImpl implements TAEnabledUTFWriterFactory {
 

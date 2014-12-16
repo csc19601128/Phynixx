@@ -26,7 +26,7 @@ import org.csc.phynixx.common.cast.ImplementorUtils;
 /**
  * checks, if the method is called in autocommit mode.
  *
- * @author zf4iks2
+ * @author Christoph Schmidt-Casdorff
  */
 class AutoCommitListener<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxManagedConnectionListener<C> {
 

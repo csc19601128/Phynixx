@@ -28,7 +28,7 @@ import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 import java.util.List;
 
 /**
- * Created by zf4iks2 on 26.02.14.
+ * Created by Christoph Schmidt-Casdorff on 26.02.14.
  */
 public class PhynixxRecovery<C extends IPhynixxConnection> implements IPhynixxRecovery<C> {
 

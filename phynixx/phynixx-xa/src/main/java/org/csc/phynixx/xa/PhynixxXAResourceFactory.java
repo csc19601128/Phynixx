@@ -22,6 +22,7 @@ package org.csc.phynixx.xa;
 
 
 import org.csc.phynixx.connection.IPhynixxConnection;
+import org.csc.phynixx.connection.IPhynixxConnectionFactory;
 import org.csc.phynixx.connection.IPhynixxManagedConnectionFactory;
 import org.csc.phynixx.watchdog.IWatchdog;
 import org.csc.phynixx.watchdog.IWatchedCondition;
@@ -29,6 +30,7 @@ import org.csc.phynixx.watchdog.WatchdogRegistry;
 
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.Xid;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -38,7 +40,7 @@ import java.util.Set;
 /**
  * @param <T>
  */
-public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements IPhynixxXAResourceFactory<T>, IPhynixxXAResourceListener {
+public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements IPhynixxXAResourceFactory<T>, IPhynixxXAResourceListener<T> {
 
     private static final long CHECK_INTERVAL = 100; // msecs
 
@@ -48,7 +50,7 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
     /**
      * this XAResources represents the Resources of this factory
      */
-    PhynixxXAResource xaResource;
+    PhynixxXAResource<T> xaResource;
 
 
     private final IXATransactionalBranchRepository<T> xaTransactionalBranchRepository;
@@ -216,6 +218,16 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
     synchronized void unregisterWatchCondition(IWatchedCondition cond) {
         this.xaresourrceWatchdog.unregisterCondition(cond);
     }
+
+	@Override
+	public T getConnection() {
+		return this.getXAResource().getXAConnection().getConnection();
+	}
+
+	@Override
+	public Class<T> getConnectionInterface() {
+		return this.managedConnectionFactory.getConnectionInterface();
+	}
 
 
 }

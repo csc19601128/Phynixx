@@ -5,8 +5,9 @@
 package org.csc.phynixx.spring.integration.model;
 
 import com.atomikos.icatch.config.UserTransactionService;
-import org.csc.phynixx.spring.integration.AtomikosJtaConfiguration;
-import org.csc.phynixx.spring.integration.JTAPersistenceConfig;
+
+import org.csc.phynixx.spring.integration.config.AtomikosJtaConfiguration;
+import org.csc.phynixx.spring.integration.config.JTAPersistenceConfig;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+
 import java.util.List;
 
 

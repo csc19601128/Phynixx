@@ -6,6 +6,7 @@
 
         <persistence-unit name="test" transaction-type="RESOURCE_LOCAL" >
             <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+            <class>org.csc.phynixx.spring.integration.model.ItemData</class>
         </persistence-unit>
 
 </persistence>

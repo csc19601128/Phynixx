@@ -6,6 +6,7 @@
 
         <persistence-unit name="test" transaction-type="JTA" >
             <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+            <class>org.csc.phynixx.spring.integration.model.ItemData</class>
             <properties>
                <property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.BitronixJtaPlatform" />
             </properties>

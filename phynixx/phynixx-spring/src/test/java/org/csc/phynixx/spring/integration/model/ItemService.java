@@ -2,6 +2,9 @@ package org.csc.phynixx.spring.integration.model;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 
@@ -17,6 +20,7 @@ public class ItemService {
      *
      * @return
      */
+    @Transactional
     public void createItem(final String value) {
 
         final ItemData data = new ItemData();
@@ -25,6 +29,8 @@ public class ItemService {
         this.itemDAO.save(data);
     }
 
+
+    @Transactional
     public List<ItemData> findAllItems() {
         return this.itemDAO.findAllInItems();
     }

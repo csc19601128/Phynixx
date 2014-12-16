@@ -4,7 +4,7 @@
  */
 package org.csc.phynixx.spring.integration;
 
-import org.csc.phynixx.spring.integration.NonJtaPersistenceConfig;
+import org.csc.phynixx.spring.integration.config.NonJtaPersistenceConfig;
 import org.csc.phynixx.spring.integration.model.ItemData;
 import org.csc.phynixx.spring.integration.model.ItemService;
 import org.junit.Assert;
@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+
 import java.util.List;
 
 

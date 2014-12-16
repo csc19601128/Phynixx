@@ -10,7 +10,7 @@ import javax.inject.Named;
 import java.util.List;
 
 /**
- * Created by zf4iks2 on 26.08.14.
+ * Created by Christoph Schmidt-Casdorff on 26.08.14.
  */
 @Named
 public class TestScenario {

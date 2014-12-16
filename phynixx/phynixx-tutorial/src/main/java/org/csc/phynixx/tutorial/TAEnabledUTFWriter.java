@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by zf4iks2 on 04.02.14.
+ * Created by Christoph Schmidt-Casdorff on 04.02.14.
  */
 public interface TAEnabledUTFWriter extends IPhynixxConnection, IXADataRecorderAware, IAutoCommitAware {
 

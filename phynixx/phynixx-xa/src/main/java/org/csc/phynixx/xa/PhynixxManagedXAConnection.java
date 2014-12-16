@@ -41,7 +41,7 @@ import javax.transaction.xa.Xid;
 /**
  * keeps the XAresource's association to the transactional branch (given via XID).
  *
- * @author zf4iks2
+ * @author Christoph Schmidt-Casdorff
  */
 class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhynixxXAConnection<C> {
 
@@ -56,6 +56,8 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
     private TransactionManager transactionManager = null;
 
     private final IXATransactionalBranchRepository<C> xaTransactionalBranchDictionary;
+
+    private boolean enlisted;
 
     PhynixxManagedXAConnection(PhynixxXAResource<C> xaResource,
                                TransactionManager transactionManager,
@@ -295,10 +297,12 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
         if (this.isInGlobalTransaction() && transactionBindingType != TransactionBindingType.GlobalTransaction) {
             try {
                 Transaction ntx = this.transactionManager.getTransaction();
-                if (ntx != null) {
 
+                // Bitronix calls start on reaction of enlist --- check if cycle
+                if (!enlisted && ntx != null) {
+                    this.enlisted=true;
                     // enlisted makes startTransaactionalBranch calling
-                    boolean enlisted = ntx.enlistResource(this.xaResource);
+                    this.enlisted = ntx.enlistResource(this.xaResource);
                     if (!enlisted) {
                         LOG.error("Enlisting " + xaResource + " failed");
                     } else {

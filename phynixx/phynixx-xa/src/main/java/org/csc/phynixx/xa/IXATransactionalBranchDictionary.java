@@ -26,7 +26,7 @@ import org.csc.phynixx.connection.IPhynixxConnection;
 import javax.transaction.xa.Xid;
 
 /**
- * Created by zf4iks2 on 10.02.14.
+ * Created by Christoph Schmidt-Casdorff on 10.02.14.
  */
 public interface IXATransactionalBranchDictionary<C extends IPhynixxConnection> {
 

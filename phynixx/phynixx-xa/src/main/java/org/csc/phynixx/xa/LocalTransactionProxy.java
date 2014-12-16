@@ -25,7 +25,7 @@ import org.csc.phynixx.connection.*;
 
 
 /**
- * @author zf4iks2
+ * @author Christoph Schmidt-Casdorff
  */
 class LocalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxManagedConnectionListener<C>, ITransactionBinding<C> {
 

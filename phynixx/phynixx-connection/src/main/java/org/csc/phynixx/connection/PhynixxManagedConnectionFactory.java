@@ -43,7 +43,7 @@ import java.util.List;
  * @param <C>
  */
 
-public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxConnectionFactory<C>, IPhynixxManagedConnectionFactory<C>, IPhynixxManagedConnectionListener<C> {
+public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxManagedConnectionFactory<C>, IPhynixxManagedConnectionListener<C> {
 
     private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PhynixxManagedConnectionFactory.class);
 

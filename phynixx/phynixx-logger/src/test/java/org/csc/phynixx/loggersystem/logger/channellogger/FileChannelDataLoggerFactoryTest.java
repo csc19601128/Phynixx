@@ -35,7 +35,7 @@ import org.junit.Test;
 import java.util.Set;
 
 /**
- * Created by zf4iks2 on 08.01.14.
+ * Created by Christoph Schmidt-Casdorff on 08.01.14.
  */
 public class FileChannelDataLoggerFactoryTest {
 

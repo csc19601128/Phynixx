@@ -22,7 +22,7 @@ package org.csc.phynixx.phynixx.testconnection;
 
 
 /**
- * Created by zf4iks2 on 15.01.14.
+ * Created by Christoph Schmidt-Casdorff on 15.01.14.
  */
 public enum TestInterruptionPoint {
 

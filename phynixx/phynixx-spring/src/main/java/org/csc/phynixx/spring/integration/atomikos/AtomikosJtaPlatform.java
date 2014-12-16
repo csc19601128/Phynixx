@@ -1,7 +1,7 @@
 package org.csc.phynixx.spring.integration.atomikos;
 
 /**
- * Created by zf4iks2 on 27.08.14.
+ * Created by Christoph Schmidt-Casdorff on 27.08.14.
  *
  * @see http://stackoverflow.com/questions/20681245/how-to-use-atomikos-transaction-essentials-with-hibernate-4-3
  */

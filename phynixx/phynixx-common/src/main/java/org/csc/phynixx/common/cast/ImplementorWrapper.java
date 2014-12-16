@@ -25,7 +25,7 @@ package org.csc.phynixx.common.cast;
  * Implementierung des von {@link IImplementor} fuer eine Delegatinon.
  *
  * @param <Y>
- * @author zf4iks2
+ * @author Christoph Schmidt-Casdorff
  */
 public class ImplementorWrapper<Y extends IImplementor> implements IImplementor {
 

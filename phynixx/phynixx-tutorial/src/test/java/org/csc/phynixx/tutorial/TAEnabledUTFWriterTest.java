@@ -32,7 +32,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Created by zf4iks2 on 03.02.14.
+ * Created by Christoph Schmidt-Casdorff on 03.02.14.
  */
 public class TAEnabledUTFWriterTest {
 

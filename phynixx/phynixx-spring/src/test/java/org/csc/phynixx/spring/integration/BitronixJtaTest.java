@@ -5,6 +5,8 @@
 package org.csc.phynixx.spring.integration;
 
 import bitronix.tm.resource.jdbc.PoolingDataSource;
+
+import org.csc.phynixx.spring.integration.config.BitronixPersistenceConfig;
 import org.csc.phynixx.spring.integration.model.ItemData;
 import org.csc.phynixx.spring.integration.model.ItemService;
 import org.csc.phynixx.spring.integration.model.TestScenario;
@@ -19,6 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.inject.Inject;
+
 import java.util.List;
 
 
