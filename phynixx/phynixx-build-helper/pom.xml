@@ -10,6 +10,61 @@
     <groupId>org.csc</groupId>
     <version>2.0.0-SNAPSHOT</version>
     <description>support for the build process of phynixx</description>
+    
+     <distributionManagement>
+        <!-- use the following if you're not using a snapshot version. -->
+        <site>
+            <id>github-pages-site</id>
+            <name>Deployment through GitHub's site deployment plugin</name>
+            <url>https://github.com/csc19601128/Phynixx</url>
+        </site>
+        <!-- 
+         <snapshotRepository>
+            <id>sonatype-nexus-snaphots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.or/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Sonatype Nexus Repository</name>
+            <url>https://oss.sonatype.or/service/local/staging/deploy/</url>
+        </repository>
+        -->
+        <snapshotRepository>
+            <id>internal.repo</id>
+            <name>MyCo Internal Repository</name>
+            <url>file://C:/tmp/repo</url>
+        </snapshotRepository>
+        <repository>
+            <id>internal.repo</id>
+            <name>MyCo Internal Repository</name>
+            <url>file://C:/tmp/repo</url>
+        </repository>
+    </distributionManagement>
+    <scm>
+        <connection>scm:git:https://github.com/csc19601128/Phynixx.git</connection>
+        <developerConnection>scm:git:https://github.com/csc19601128/Phynixx.git</developerConnection>
+        <url>https://github.com/csc19601128/Phynixx</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>phynixx</id>
+            <name>Christoph Schmidt-Casdorff</name>
+            <email>phynixx@freemail.de</email>
+            <roles>
+                <role>architect</role>
+                <role>lead developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    
+
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/csc19601128/Phynixx/issues</url>
+    </issueManagement>
 
     <build>
         <plugins>
