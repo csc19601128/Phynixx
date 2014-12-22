@@ -1,4 +1,3 @@
-#Intellij 
 **/.idea/
 .idea/
 *.iml
@@ -12,6 +11,7 @@
 **/target/**
 **/target/**/*
 **/target/**/*.*
+**/*.class
 *.html
 
 
