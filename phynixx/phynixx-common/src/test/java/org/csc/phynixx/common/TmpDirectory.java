@@ -38,18 +38,16 @@ public class TmpDirectory {
     private File dir = null;
 
 
-    public TmpDirectory(String relDirectory) throws IOException {
+    public TmpDirectory(String relDirectory) {
         String tmpDir = System.getProperty("java.io.tmpdir");
         dir = new File(tmpDir + File.separator + relDirectory);
         if (!dir.exists()) {
-            if(!dir.mkdirs()) {
-                throw new IOException("Cannot mddirs for Directory "+dir);
-            }
+            dir.mkdirs();
         }
         dir.deleteOnExit();
     }
 
-    public TmpDirectory() throws IOException {
+    public TmpDirectory() {
         this(MY_TMP);
     }
 
@@ -59,9 +57,7 @@ public class TmpDirectory {
 
     public void delete() {
         this.clear();
-        if(!this.dir.delete()) {
-            LOG.error("Deletion of "+this.dir+" failed");
-        }
+        this.dir.delete();
         this.dir = null;
     }
 
@@ -80,12 +76,12 @@ public class TmpDirectory {
         }
 
         File[] files = dir.listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                this.clearDirectory(file);
+        for (int i = 0; i < files.length; i++) {
+            if( files[i].isDirectory()) {
+                this.clearDirectory(files[i]);
             }
-            if (!file.delete()) {
-                LOG.error("deleting " + file + " fails");
+            if (!files[i].delete()) {
+                LOG.error("deleting " + files[i] + " fails");
             }
         }
     }
@@ -96,10 +92,7 @@ public class TmpDirectory {
         String name = FilenameUtils.getName(filename);
         String fullname = FilenameUtils.normalize(parentDir.getAbsolutePath() + File.separator + name);
         File file = new File(fullname);
-        if(!file.createNewFile()) {
-           file.delete();
-            file.createNewFile();
-        }
+        file.createNewFile();
 
         return file;
 
@@ -112,9 +105,7 @@ public class TmpDirectory {
             throw new IllegalStateException(dirname + " is not a directory");
         }
         if (!directory.exists()) {
-            if(!directory.mkdirs()) {
-                throw new IOException("Deletion of "+ dirname+ " in Tmp-Directory failed");
-            }
+            directory.mkdirs();
         }
         return directory;
 

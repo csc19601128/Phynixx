@@ -25,9 +25,6 @@ package org.csc.phynixx.common.logger;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-/**
- * Implements {@link IPhynixxLogger} on base of log4j
- */
 public class Log4jLogger implements IPhynixxLogger {
 
     private Logger log = null;

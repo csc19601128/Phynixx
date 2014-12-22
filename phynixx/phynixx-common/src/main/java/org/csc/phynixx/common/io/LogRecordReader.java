@@ -31,9 +31,9 @@ import java.io.*;
  */
 public class LogRecordReader {
 
-    private final ByteArrayInputStream byteInput;
+    private ByteArrayInputStream byteInput;
 
-    private final DataInputStream io;
+    private DataInputStream io;
 
     public LogRecordReader(byte[] content) {
         this.byteInput = new ByteArrayInputStream(content);
@@ -47,9 +47,6 @@ public class LogRecordReader {
 
     public long readLong() throws IOException {
         return this.io.readLong();
-    }
-    public byte readByte() throws IOException {
-        return this.io.readByte();
     }
 
 

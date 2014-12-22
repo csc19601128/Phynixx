@@ -26,11 +26,11 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by Christoph Schmidt-Casdorff on 13.01.14.
+ * Created by zf4iks2 on 13.01.14.
  */
 public class LogRecordPageReader {
 
-    private final List<LogRecordReader> logReaders = new ArrayList<LogRecordReader>();
+    private List<LogRecordReader> logReaders = new ArrayList<LogRecordReader>();
 
 
     public LogRecordPageReader(byte[][] records) {
@@ -38,8 +38,8 @@ public class LogRecordPageReader {
             return;
         }
 
-        for (byte[] record : records) {
-            LogRecordReader reader = new LogRecordReader(record);
+        for (int i = 0; i < records.length; i++) {
+            LogRecordReader reader = new LogRecordReader(records[i]);
             this.logReaders.add(reader);
         }
     }

@@ -24,7 +24,7 @@ package org.csc.phynixx.common.generator;
 class IDLongGenerator implements IDGenerator<Long>{
 
 
-    private Long current = (long) 1;
+    private Long current = new Long(1);
 
     IDLongGenerator() {
         this(0l);
@@ -37,7 +37,7 @@ class IDLongGenerator implements IDGenerator<Long>{
 
 
     public long getCurrentLong() {
-        return this.current;
+        return this.current.longValue();
     }
 
     public long generateLong() {
@@ -59,8 +59,8 @@ class IDLongGenerator implements IDGenerator<Long>{
      */
     @Override
     public Long generate() {
-        long cc = current;
-        this.current = cc + 1;
+        long cc = current.longValue();
+        this.current = new Long(cc + 1);
         return this.getCurrent();
     }
 

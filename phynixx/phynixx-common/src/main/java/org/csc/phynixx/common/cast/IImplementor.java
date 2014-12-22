@@ -25,7 +25,7 @@ package org.csc.phynixx.common.cast;
  * Instanzen, welche mehere Interface implementieren, welche nicht ale an der Instanz sichtbar sind,
  * bieten mit Hilfe dieses IF die Moeglichkeit, zu einen dieser 'versteckten' Interfaces zu wechselen
  *
- * @author Christoph Schmidt-Casdorff
+ * @author zf4iks2
  */
 public interface IImplementor {
 
@@ -34,9 +34,10 @@ public interface IImplementor {
      * <p/>
      * Ist <code>cls==null</code>, so wird <code>false</code> geliefert.
      *
-     * @param <X> expected (Super)Type of the checked object
-     * @param cls target class / interface
-     * @return true if the current class can be safely casted to X
+     * @param <X>
+     * @param cls Zielklasse/Zielinterface
+     * @return true g.d.w. die vorliegende Instance einen gesicherten cast nach
+     * <code>Class<X></code> zulaesst
      */
     <X> boolean isImplementationOf(Class<X> cls);
 

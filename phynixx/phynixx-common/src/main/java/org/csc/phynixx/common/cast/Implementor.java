@@ -25,7 +25,7 @@ package org.csc.phynixx.common.cast;
  * Als Superklasse casted diese Klasse in die Subclass gegebene durch
  * <code>this.getClass()</code>
  *
- * @author Christoph Schmidt-Casdorff
+ * @author zf4iks2
  */
 public class Implementor implements IImplementor {
 

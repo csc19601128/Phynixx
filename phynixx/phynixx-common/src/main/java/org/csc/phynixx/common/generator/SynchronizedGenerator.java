@@ -25,8 +25,7 @@ package org.csc.phynixx.common.generator;
  * Created by christoph on 23.02.14.
  */
 class SynchronizedGenerator<T> implements IDGenerator<T> {
-
-    private final IDGenerator<T> delegates;
+    private IDGenerator<T> delegates;
 
     SynchronizedGenerator(IDGenerator<T> delegates) {
         this.delegates = delegates;
