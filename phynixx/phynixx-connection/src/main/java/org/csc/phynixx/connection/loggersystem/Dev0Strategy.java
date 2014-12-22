@@ -146,7 +146,7 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedCo
         }
         IXADataRecorderAware messageAwareConnection = (IXADataRecorderAware) con;
         // Transaction is close and the LOG is destroyed ...
-        Dev0Logger logger = (Dev0Logger) messageAwareConnection.getXADataRecorder();
+        IXADataRecorder logger = messageAwareConnection.getXADataRecorder();
         if (logger == null) {
             messageAwareConnection.setXADataRecorder(THE_DEV0_LOGGER);
         }
