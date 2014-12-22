@@ -1,0 +1,112 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>phynixx</artifactId>
+        <groupId>org.csc.phynixx</groupId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>phynixx-jmx</artifactId>
+    <packaging>jar</packaging>
+
+    <name>phynixx-jmx</name>
+
+    <description>jmx extension for all phynixx components</description>
+    <url>https://phynixx.codematters.org/phynixx-jmx</url>
+
+    <scm>
+        <connection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk</connection>
+        <developerConnection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk
+        </developerConnection>
+        <url>https://svn.codematters.org/phynixx/${project.artifactId}/trunk</url>
+    </scm>
+
+    <distributionManagement>
+        <!-- use the following if you're not using a snapshot version. -->
+        <repository>
+            <id>svn.codematters.org</id>
+            <url>scp://svn.codematters.org/home/csc/maven_repository/</url>
+        </repository>
+        <site>
+            <id>svn.codematters.org</id>
+            <url>scp://svn.codematters.org/home/csc/phynixx/sites/${project.artifactId}</url>
+        </site>
+    </distributionManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.csc.phynixx</groupId>
+            <artifactId>phynixx-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.csc.phynixx</groupId>
+            <artifactId>phynixx-watchdog</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.csc.phynixx</groupId>
+            <artifactId>phynixx-watchdog</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.csc.phynixx</groupId>
+            <artifactId>phynixx-xa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

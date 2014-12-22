@@ -22,6 +22,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+<<<<<<< HEAD
         <module name="phynixx-build-helper" />
         <module name="phynixx-common" />
         <module name="phynixx-connection" />
@@ -30,11 +31,19 @@
         <module name="phynixx-logger" />
         <module name="phynixx-spring" />
         <module name="phynixx-tutorial" />
+=======
+        <module name="phynixx-common" />
+        <module name="phynixx-connection" />
+        <module name="phynixx-doc" />
+        <module name="phynixx-howl" />
+        <module name="phynixx-jmx" />
+>>>>>>> 9d8e8800fe51f0b88072b5a01447dd610d29c643
         <module name="phynixx-watchdog" />
         <module name="phynixx-xa" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+<<<<<<< HEAD
       <module name="phynixx-atomikos" target="1.6" />
       <module name="phynixx-bitronix" target="1.6" />
       <module name="phynixx-common" target="1.6" />
@@ -49,3 +58,16 @@
     </bytecodeTargetLevel>
   </component>
 </project>
+=======
+      <module name="phynixx-common" target="1.4" />
+      <module name="phynixx-connection" target="1.4" />
+      <module name="phynixx-doc" target="1.4" />
+      <module name="phynixx-howl" target="1.4" />
+      <module name="phynixx-jmx" target="1.4" />
+      <module name="phynixx-watchdog" target="1.4" />
+      <module name="phynixx-xa" target="1.4" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
+
+>>>>>>> 9d8e8800fe51f0b88072b5a01447dd610d29c643
