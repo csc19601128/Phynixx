@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>phynixx</artifactId>
-        <groupId>org.csc.phynixx</groupId>
+        <groupId>org.csc</groupId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -12,38 +12,26 @@
     <packaging>jar</packaging>
 
     <name>phynixx-logger</name>
-    <url>https://phynixx.codematters.org/phynixx-logger</url>
     <description>enabled an arbitrary persistence media to support transactions</description>
 
-    <scm>
-        <connection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk</connection>
-        <developerConnection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk
-        </developerConnection>
-        <url>https://svn.codematters.org/phynixx/${project.artifactId}/trunk</url>
-    </scm>
 
-    <distributionManagement>
-        <!-- use the following if you're not using a snapshot version. -->
-        <repository>
-            <id>svn.codematters.org</id>
-            <url>scp://svn.codematters.org/home/csc/maven_repository/</url>
-        </repository>
-        <site>
-            <id>svn.codematters.org</id>
-            <url>scp://svn.codematters.org/home/csc/phynixx/sites/${project.artifactId}</url>
-        </site>
-    </distributionManagement>
 
     <dependencies>
         <dependency>
-            <groupId>org.csc.phynixx</groupId>
+            <groupId>org.csc</groupId>
             <artifactId>phynixx-common</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
         </dependency>
 
+
         <dependency>
-            <groupId>org.csc.phynixx</groupId>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.csc</groupId>
             <artifactId>phynixx-common</artifactId>
             <version>${project.version}</version>
             <classifier>tests</classifier>
@@ -58,10 +46,9 @@
         </dependency>
 
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <scope>compile</scope>
-            <type>jar</type>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

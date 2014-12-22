@@ -27,13 +27,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by zf4iks2 on 13.01.14.
+ * Created by Christoph Schmidt-Casdorff on 13.01.14.
  */
 public class LogRecordPageWriter {
 
     private static final byte[][] EMPTY_DATA = new byte[][]{};
 
-    private List<LogRecordWriter> logWriters = new ArrayList<LogRecordWriter>();
+    private final List<LogRecordWriter> logWriters = new ArrayList<LogRecordWriter>();
 
     /**
      * @return number of lines

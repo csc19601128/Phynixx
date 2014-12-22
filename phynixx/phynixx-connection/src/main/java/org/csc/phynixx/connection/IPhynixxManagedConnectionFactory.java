@@ -21,7 +21,7 @@ package org.csc.phynixx.connection;
  */
 
 
-public interface IPhynixxManagedConnectionFactory<C extends IPhynixxConnection> {
+public interface IPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends IPhynixxConnectionFactory<C> {
 
     /**
      * the returned connection has to be explicitly closed

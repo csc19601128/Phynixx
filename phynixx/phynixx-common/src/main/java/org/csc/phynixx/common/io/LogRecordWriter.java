@@ -34,9 +34,9 @@ import java.io.ObjectOutputStream;
 public class LogRecordWriter {
 
 
-    private ByteArrayOutputStream byteInput;
+    private final ByteArrayOutputStream byteInput;
 
-    private DataOutputStream io;
+    private final DataOutputStream io;
 
     public LogRecordWriter() {
         this.byteInput = new ByteArrayOutputStream();
@@ -84,18 +84,23 @@ public class LogRecordWriter {
         return this;
     }
 
+    public LogRecordWriter writeByte(byte b) throws IOException {
+        io.writeByte(b);
+        return this;
+    }
+
     public LogRecordWriter writeBoolean(boolean v) throws IOException {
         io.writeBoolean(v);
         return this;
     }
 
     /**
-     * write the object's class name to check the consistency if the restrore fails.
+     * write the object's class name to check the consistency if the restroe fails.
      *
      * A null object is accepted
      *
-     * @param object
-     * @return
+     * @param object serializable object. it has to fullfill the requirements of {@link java.io.ObjectOutputStream#writeObject(Object)} .
+     * @return returns the fluent API
      * @throws IOException
      */
     public LogRecordWriter writeObject(Object object) throws IOException {
@@ -122,7 +127,7 @@ public class LogRecordWriter {
     /**
      * A null object is accepted
      *
-     * @return
+     *  @return returns the fluent API
      * @throws IOException
      */
     private LogRecordWriter writeNullObject() throws IOException {
@@ -136,6 +141,7 @@ public class LogRecordWriter {
             try {
                 this.io.flush();
             } catch (IOException e) {
+                // close may not fail
             }
             IOUtils.closeQuietly(this.byteInput);
         }

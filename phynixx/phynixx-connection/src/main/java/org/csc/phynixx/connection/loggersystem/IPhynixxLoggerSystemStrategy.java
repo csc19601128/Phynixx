@@ -29,6 +29,7 @@ import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 import java.util.List;
 
 /**
+ * Each connection may have a
  * this IF represents a strategy assigning loggers to connections.
  * <p/>
  * <pre>

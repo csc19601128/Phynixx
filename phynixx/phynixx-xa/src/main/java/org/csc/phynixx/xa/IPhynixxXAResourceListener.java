@@ -26,7 +26,11 @@ import org.csc.phynixx.connection.IPhynixxConnection;
 public interface IPhynixxXAResourceListener<C extends IPhynixxConnection> {
 
     interface IPhynixxXAResourceEvent<T extends IPhynixxConnection> {
+<<<<<<< HEAD
         PhynixxXAResource<T> getXAResource();
+=======
+        IPhynixxXAResource<T> getXAResource();
+>>>>>>> master
     }
 
     void closed(IPhynixxXAResourceEvent<C> event);

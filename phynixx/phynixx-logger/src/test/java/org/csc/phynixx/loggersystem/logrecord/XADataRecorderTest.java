@@ -50,8 +50,11 @@ public class XADataRecorderTest {
         new TmpDirectory().clear();
     }
 
+    /**
+     * If commonForward data are written, no more Rollbackforward data may be stored
+     */
     @Test
-    public void testMessageLogger() throws Exception {
+    public void testNoMoreRFDataAllowed() throws Exception {
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("reference", new TmpDirectory().getDirectory());
         PhynixxXARecorderRepository xaResource = new PhynixxXARecorderRepository(loggerFactory);
@@ -61,18 +64,19 @@ public class XADataRecorderTest {
 
         TestCase.assertTrue(!xaDataRecorder.isCommitting());
 
-        xaDataRecorder.writeRollbackData("XYZ".getBytes());
-        xaDataRecorder.writeRollbackData(new byte[][]{"XYZ".getBytes(), "ZYX".getBytes()});
+        xaDataRecorder.writeRollbackData("XYZ".getBytes("UTF-8"));
+        xaDataRecorder.writeRollbackData(new byte[][]{"XYZ".getBytes("UTF-8"), "ZYX".getBytes("UTF-8")});
 
         TestCase.assertTrue(!xaDataRecorder.isCommitting());
-        xaDataRecorder.writeRollforwardData(new byte[][]{"XYZ".getBytes(), "ZYX".getBytes()});
+        xaDataRecorder.writeRollforwardData(new byte[][]{"XYZ".getBytes("UTF-8"), "ZYX".getBytes("UTF-8")});
         TestCase.assertTrue(xaDataRecorder.isCommitting());
 
-        xaDataRecorder.writeRollforwardData(new byte[][]{"ABCD".getBytes()});
+        xaDataRecorder.writeRollforwardData(new byte[][]{"ABCD".getBytes("UTF-8")});
 
+        // if the transaction is commiting no rollback data may be written
         try {
             xaDataRecorder.writeRollbackData(new byte[][]{});
-            throw new AssertionFailedError("No more RF Data; Sequence is committing");
+            throw new AssertionFailedError("No more RF Data allowed; Sequence is committing");
         } catch (Exception e) {
         }
 
@@ -83,6 +87,11 @@ public class XADataRecorderTest {
 
         // reply the logrecord
         IDataRecordReplay replay = new IDataRecordReplay() {
+            @Override
+            public void notifyNoMoreData() {
+
+            }
+
             public void replayRollback(IDataRecord message) {
                 switch ((int) message.getOrdinal().longValue()) {
                     case 1:

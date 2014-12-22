@@ -21,6 +21,13 @@ package org.csc.phynixx.xa;
  */
 
 
+<<<<<<< HEAD
+=======
+import bitronix.tm.BitronixTransactionManager;
+import bitronix.tm.resource.ResourceRegistrar;
+import bitronix.tm.resource.ehcache.EhCacheXAResourceProducer;
+import com.atomikos.icatch.jta.UserTransactionManager;
+>>>>>>> master
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.csc.phynixx.common.TestUtils;
@@ -30,21 +37,43 @@ import org.csc.phynixx.phynixx.testconnection.ITestConnection;
 import org.csc.phynixx.phynixx.testconnection.TestConnectionStatus;
 import org.csc.phynixx.phynixx.testconnection.TestConnectionStatusManager;
 import org.csc.phynixx.phynixx.testconnection.TestStatusStack;
+<<<<<<< HEAD
 import org.csc.phynixx.xa.recovery.XidWrapper;
 import org.junit.Assert;
+=======
+import org.csc.phynixx.watchdog.WatchdogRegistry;
+import org.csc.phynixx.xa.recovery.XidWrapper;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+>>>>>>> master
 import org.objectweb.jotm.Jotm;
 
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
+<<<<<<< HEAD
 
 
 public class XAResourceIntegrationTest extends TestCase {
+=======
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+
+@RunWith(Parameterized.class)
+public class XAResourceIntegrationTest{
+>>>>>>> master
 
     {
         System.setProperty("log4j_level", "INFO");
     }
 
+<<<<<<< HEAD
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
     private Jotm jotm = null;
@@ -52,11 +81,141 @@ public class XAResourceIntegrationTest extends TestCase {
     private TestXAResourceFactory factory2 = null;
 
     protected void setUp() throws Exception {
+=======
+    private interface ITransactionManagerProvider {
+        TransactionManager getTransactionManager();
+
+        void start() throws Exception;
+
+        void stop() throws Exception;
+    }
+
+
+    static class  JotmTransactionManagerProvider implements ITransactionManagerProvider {
+        Jotm jotm=null;
+
+        @Override
+        public TransactionManager getTransactionManager() {
+            return this.jotm.getTransactionManager();
+        }
+
+        @Override
+        public void start() throws Exception {
+            if(this.jotm!=null) {
+                throw new IllegalStateException("Jotm is already started");
+            }
+            this.jotm =  new Jotm(true, false);
+        }
+
+        @Override
+        public void stop() throws Exception {
+                if(jotm!=null) {
+                    this.jotm.stop();
+                }
+            this.jotm=null;
+        }
+
+        JotmTransactionManagerProvider() {
+        }
+
+    }
+
+    static class  BitronixTransactionManagerProvider implements ITransactionManagerProvider {
+        BitronixTransactionManager taMgr =null;
+
+        @Override
+        public TransactionManager getTransactionManager() {
+            return this.taMgr;
+        }
+
+        @Override
+        public void start() throws Exception {
+            if(this.taMgr !=null) {
+                throw new IllegalStateException("Jotm is already started");
+            }
+            this.taMgr =  new BitronixTransactionManager();
+            this.taMgr.setTransactionTimeout(1000);
+        }
+
+        @Override
+        public void stop() throws Exception {
+            if(taMgr !=null) {
+                this.taMgr.shutdown();
+            }
+            this.taMgr =null;
+        }
+
+        BitronixTransactionManagerProvider() {
+        }
+
+    }
+
+    static class  AtomikosTransactionManagerProvider implements ITransactionManagerProvider {
+        UserTransactionManager userTransactionManager =null;
+
+        @Override
+        public TransactionManager getTransactionManager() {
+            if(this.userTransactionManager ==null) {
+                throw new IllegalStateException("Atomikos is already stopped");
+            }
+            return this.userTransactionManager;
+        }
+
+        @Override
+        public void stop() {
+            if(userTransactionManager !=null) {
+                this.userTransactionManager.setForceShutdown(true);
+                this.userTransactionManager.close();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+
+                }
+            }
+            this.userTransactionManager =null;
+        }
+
+        AtomikosTransactionManagerProvider() { }
+
+
+        @Override
+        public void start() throws Exception {
+
+            this.userTransactionManager = new UserTransactionManager();
+            userTransactionManager.setForceShutdown(false);
+            userTransactionManager.setTransactionTimeout(1000);
+            userTransactionManager.setStartupTransactionService(false);
+        }
+
+    }
+
+
+    @Parameterized.Parameters
+    public static Collection<ITransactionManagerProvider[]> generateTestDatas() throws Exception {
+        Set<ITransactionManagerProvider[]> providers= new HashSet<ITransactionManagerProvider[]>(2);
+        providers.add(new ITransactionManagerProvider[]{new AtomikosTransactionManagerProvider()});
+        providers.add(new ITransactionManagerProvider[]{new BitronixTransactionManagerProvider()});
+        providers.add(new ITransactionManagerProvider[]{new JotmTransactionManagerProvider()});
+
+        return providers;
+    }
+
+
+    private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
+
+    private ITransactionManagerProvider transactionManagerProvider = null;
+    private TestXAResourceFactory factory1 = null;
+    private TestXAResourceFactory factory2 = null;
+
+    @Before
+    public void setUp() throws Exception {
+>>>>>>> master
 
         // configuring the log-system (e.g. log4j)
         TestUtils.configureLogging();
 
         TestConnectionStatusManager.clear();
+<<<<<<< HEAD
         this.jotm = new Jotm(true, false);
 
         this.factory1 = new TestXAResourceFactory("RF1", null,
@@ -71,6 +230,22 @@ public class XAResourceIntegrationTest extends TestCase {
         if (this.jotm != null) {
             this.jotm.stop();
             this.jotm = null;
+=======
+
+        this.transactionManagerProvider.start();
+
+        this.factory1 = new TestXAResourceFactory("RF1", null,   this.transactionManagerProvider.getTransactionManager());
+
+        this.factory2 = new TestXAResourceFactory(
+                "RF2", null,
+                this.transactionManagerProvider.getTransactionManager());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        if (this.transactionManagerProvider != null) {
+            this.transactionManagerProvider.stop();
+>>>>>>> master
         }
         if (this.factory1 != null) {
             this.factory1.close();
@@ -81,10 +256,23 @@ public class XAResourceIntegrationTest extends TestCase {
             this.factory2 = null;
         }
         TestConnectionStatusManager.clear();
+<<<<<<< HEAD
     }
 
     private TransactionManager getTransactionManager() {
         return this.jotm.getTransactionManager();
+=======
+
+        WatchdogRegistry.getTheRegistry().shutdown();
+    }
+
+    public XAResourceIntegrationTest(ITransactionManagerProvider transactionManagerProvider) {
+        this.transactionManagerProvider= transactionManagerProvider;
+    }
+
+    private TransactionManager getTransactionManager() {
+        return this.transactionManagerProvider.getTransactionManager();
+>>>>>>> master
     }
 
     /**
@@ -93,6 +281,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testOnePhaseReadOnly() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
 
@@ -128,6 +320,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testOnePhaseCommit1() throws Exception {
 
         // get a XAResource
@@ -163,6 +359,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testTransactionMigration() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
 
@@ -203,6 +403,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testTwoPhaseReadOnly() throws Exception {
 
 
@@ -260,11 +464,20 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testJoinedRollback() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
 
         IPhynixxXAConnection<ITestConnection> xaCon2 = factory1.getXAConnection();
 
+<<<<<<< HEAD
+=======
+        // ResourceRegistrar.register(factory1.getXAResource());
+
+>>>>>>> master
         // u are just interfacing the proxy.
         ITestConnection con1 = null;
         ITestConnection con2 = null;
@@ -305,6 +518,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testJoinedCommit() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
 
@@ -356,6 +573,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testExplicitEnlistment1() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
 
@@ -388,6 +609,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testExplicitEnlistment2() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
 
@@ -419,6 +644,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testTwoPhaseCommit() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
 
@@ -426,8 +655,19 @@ public class XAResourceIntegrationTest extends TestCase {
 
             this.getTransactionManager().begin();
 
+<<<<<<< HEAD
             ITestConnection con1 = xaCon1.getConnection();
             Object conId1 = con1.getConnectionId();
+=======
+
+            ITestConnection con = xaCon1.getConnection();
+            ITestConnection con1 = xaCon1.getConnection();
+            Object conId1 = con1.getConnectionId();
+
+            // same connection in same TX of same XAResource
+            Assert.assertEquals(conId1, con.getConnectionId());
+
+>>>>>>> master
             ITestConnection con2 = xaCon2.getConnection();
             Object conId2 = con2.getConnectionId();
             // act transactional and enlist the current resource
@@ -459,6 +699,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testOnePhaseCommitOneRM_1() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
 
@@ -497,6 +741,10 @@ public class XAResourceIntegrationTest extends TestCase {
     /**
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testExplicitEnlistmentTwoPhaseCommitTwoRM() throws Exception {
         IPhynixxXAResource<ITestConnection> xares1 =  factory1.getXAResource();
         IPhynixxXAResource<ITestConnection> xares2 =  factory2.getXAResource();
@@ -552,6 +800,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testTwoPhaseCommitOneRM_3() throws Exception {
 
         IPhynixxXAResource<ITestConnection> xares1 = factory1.getXAResource();
@@ -597,6 +849,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testCommit3Connections1RM() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
 
@@ -638,6 +894,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testTwoPhaseCommitTwoRM_2() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
         ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
@@ -656,7 +916,11 @@ public class XAResourceIntegrationTest extends TestCase {
             con2.act(1);
             con3.act(1);
 
+<<<<<<< HEAD
             this.getTransactionManager().rollback();
+=======
+            this.getTransactionManager().commit();
+>>>>>>> master
         } finally {
             if (con1 != null) {
                 con1.close();
@@ -670,6 +934,10 @@ public class XAResourceIntegrationTest extends TestCase {
         }
     }
 
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testSuspend() throws Exception {
 
         IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
@@ -677,6 +945,11 @@ public class XAResourceIntegrationTest extends TestCase {
         IPhynixxXAConnection<ITestConnection> xaCon2 = factory1.getXAConnection();
 
         IPhynixxXAConnection<ITestConnection> xaCon3 = factory1.getXAConnection();
+<<<<<<< HEAD
+=======
+        EhCacheXAResourceProducer.registerXAResource("XXXX", factory1.getXAResource());
+
+>>>>>>> master
             this.getTransactionManager().begin();
 
             ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
@@ -717,6 +990,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testSuspendOneXAConnection() throws Exception {
 
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
@@ -767,6 +1044,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testSuspendInvalidTransactionalContext() throws Exception {
 
         IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
@@ -815,6 +1096,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testMixedLocalGlobalTransaction() throws Exception {
 
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
@@ -858,6 +1143,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testMixedLocalGlobalTransactionNested1() throws Exception {
 
         IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
@@ -884,23 +1173,42 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testMixedLocalGlobalTransactionNested3() throws Exception {
 
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
 
         // con 1in lo´cal transaction. Transactional context has transactional data
+<<<<<<< HEAD
         ITestConnection con1 = xaCon.getConnection();
         Object conId1= con1.getConnectionId();
+=======
+
+        ITestConnection con1 = xaCon.getConnection();
+        Object conId1= con1.getConnectionId();
+
+>>>>>>> master
         con1.act(1);
         con1.act(2);
 
         con1.commit();
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
         // con1 on global transaction
         this.getTransactionManager().begin();
 
         // con2 shared con1 on global transaction
+<<<<<<< HEAD
             ITestConnection con2 = xaCon.getConnection();
+=======
+        ITestConnection con2 = xaCon.getConnection();
+>>>>>>> master
         Object conId2= con2.getConnectionId();
         con2.act(2);
 
@@ -931,6 +1239,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testMixedLocalGlobalTransactionAndSuspend() throws Exception {
 
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
@@ -987,6 +1299,10 @@ public class XAResourceIntegrationTest extends TestCase {
      * A XAConnection is bound to different transactions having different XIDs.
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testDifferentTransactionBranches() throws Exception {
 
         IPhynixxXAResource<ITestConnection> xares = factory1.getXAResource();
@@ -1032,6 +1348,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testDifferentTransactionBranches2() throws Exception {
 
         IPhynixxXAResource<ITestConnection> xares = factory1.getXAResource();
@@ -1132,6 +1452,10 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testTimeoutNotSupported() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
         ITestConnection con = xaCon.getConnection();
@@ -1155,11 +1479,22 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testTimeout1() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
         ITestConnection con = xaCon.getConnection();
         XAResource xaresource = xaCon.getXAResource();
+<<<<<<< HEAD
         xaresource.setTransactionTimeout(2);
+=======
+        try {
+             xaresource.setTransactionTimeout(10);
+            throw new AssertionFailedError("Timeout not supported");
+        } catch (Exception e) {}
+>>>>>>> master
 
         try {
             this.getTransactionManager().begin();
@@ -1168,7 +1503,11 @@ public class XAResourceIntegrationTest extends TestCase {
             con.act(1);
 
             //  sleeping 7 secs to provoke timeout
+<<<<<<< HEAD
             TestUtils.sleep(3 * 1000);
+=======
+            TestUtils.sleep(10 * 1000);
+>>>>>>> master
 
             try {
                 this.getTransactionManager().commit();
@@ -1189,11 +1528,22 @@ public class XAResourceIntegrationTest extends TestCase {
      *
      * @throws Exception
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> master
     public void testTimeout2() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
         ITestConnection con = (ITestConnection) xaCon.getConnection();
         XAResource xaresource = xaCon.getXAResource();
+<<<<<<< HEAD
         xaresource.setTransactionTimeout(2);
+=======
+        try {
+        xaresource.setTransactionTimeout(2);
+        throw new AssertionFailedError("Timeout not supported");
+    } catch (Exception e) {}
+>>>>>>> master
 
         try {
             this.getTransactionManager().begin();

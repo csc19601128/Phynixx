@@ -22,8 +22,7 @@
      
      <links/>
      <menu name="Phynixx">
-         <item name="Phynixx Project" href="../index.html"/>
-      	 <item name="current Module" href="./project-info.html" />
+         <item name="Phynixx Project" href="../project-info.html"/>
     </menu>
      
      

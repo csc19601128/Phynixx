@@ -6,10 +6,13 @@
     <body>
 
         <menu name="Documentation">
-            <item name="Phynixx" href="index.html"/>
+            <item name="Getting Started" href="getting-started.html"/>
+            <item name="Tutorial" href="tutorial.html"/>
         </menu>
 
-        <menu ref="modules"/>
+        ${modules}
+
+        ${reports}
 
 
 

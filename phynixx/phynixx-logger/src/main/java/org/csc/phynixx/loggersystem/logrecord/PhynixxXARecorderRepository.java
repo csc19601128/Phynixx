@@ -92,7 +92,7 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
 
     private final static byte[][] EMPTY_DATA = new byte[][]{};
 
-    private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PhynixxXARecorderRepository.class);
 
     private static int HEADER_SIZE = 8 + 4;
 
@@ -104,6 +104,9 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
      */
     private List<IXARecorderResourceListener> listeners = new ArrayList<IXARecorderResourceListener>();
 
+    /**
+     * management of the registered XADataRecorder. This structure has to stand heavy multithreaded rad and write
+     */
     private SortedMap<Long, PhynixxXADataRecorder> xaDataRecorders = new TreeMap<Long, PhynixxXADataRecorder>();
 
     private IDGenerator<Long> messageSeqGenerator = IDGenerators.synchronizeGenerator(IDGenerators.createLongGenerator(1l));
@@ -122,7 +125,7 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
      * opens a new Recorder for writing. The recorder gets a new ID.
      * @return created dataRecorder
      */
-    public IXADataRecorder createXADataRecorder() {
+    public  IXADataRecorder createXADataRecorder() {
 
         try {
             long xaDataRecorderId = this.messageSeqGenerator.generate();
@@ -135,18 +138,15 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
 
 
             PhynixxXADataRecorder xaDataRecorder = PhynixxXADataRecorder.openRecorderForWrite(xaDataRecorderId, xaDataLogger, this);
-            addXADataRecorder(xaDataRecorder);
+            synchronized (this) {
+                addXADataRecorder(xaDataRecorder);
+            }
             return xaDataRecorder;
 
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
         }
 
-    }
-
-    @Override
-    public IXADataRecorder findXADataRecord(long dataRecordId) {
-        return this.xaDataRecorders.get(dataRecordId);
     }
 
     public String getLoggerSystemName() {
@@ -190,7 +190,7 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
      * logs user data into the message sequence
      */
     public void logUserData(IXADataRecorder xaDataRecorder, byte[][] data) {
-        IDataRecord message = xaDataRecorder.createDataRecord(XALogRecordType.USER, data);
+       xaDataRecorder.createDataRecord(XALogRecordType.USER, data);
     }
 
     public void logUserData(IXADataRecorder sequence, byte[] data) throws InterruptedException, IOException {
@@ -211,7 +211,7 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
      * @throws InterruptedException
      */
     public void preparedXA(IXADataRecorder dataRecorder) throws IOException {
-        IDataRecord message = dataRecorder.createDataRecord(XALogRecordType.XA_PREPARED, EMPTY_DATA);
+        dataRecorder.createDataRecord(XALogRecordType.XA_PREPARED, EMPTY_DATA);
     }
 
 
@@ -227,7 +227,7 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
      * @throws InterruptedException
      */
     public void committingXA(IXADataRecorder dataRecorder, byte[][] data) throws IOException {
-        IDataRecord message = dataRecorder.createDataRecord(XALogRecordType.ROLLFORWARD_DATA, data);
+        dataRecorder.createDataRecord(XALogRecordType.ROLLFORWARD_DATA, data);
     }
 
 
@@ -244,27 +244,7 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
      * @throws InterruptedException
      */
     public void startXA(IXADataRecorder dataRecorder, String resourceId, byte[] xid) throws IOException {
-        DataOutputStream outputIO = null;
-        try {
-
-            byte[] data = null;
-            ByteArrayOutputStream byteIO = new ByteArrayOutputStream();
-            outputIO = new DataOutputStream(byteIO);
-
-            outputIO.writeUTF(resourceId);
-            outputIO.writeInt(xid.length);
-            outputIO.write(xid);
-
-            outputIO.flush();
-
-            data = byteIO.toByteArray();
-
-            IDataRecord message = dataRecorder.createDataRecord(XALogRecordType.XA_START, new byte[][]{xid});
-
-
-        } finally {
-            if (outputIO != null) outputIO.close();
-        }
+           dataRecorder.createDataRecord(XALogRecordType.XA_START, new byte[][]{xid});
 
     }
 
@@ -278,7 +258,7 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
      */
     public void doneXA(IXADataRecorder dataRecorder) throws IOException {
 
-        IDataRecord message = dataRecorder.createDataRecord(XALogRecordType.XA_DONE, new byte[][]{});
+        dataRecorder.createDataRecord(XALogRecordType.XA_DONE, new byte[][]{});
     }
 
 
@@ -317,7 +297,7 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
      * @see #getXADataRecorders()
      */
     @Override
-    public void recover() {
+    public synchronized void recover() {
 
         try {
 
@@ -351,7 +331,7 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
     }
 
     @Override
-    public Set<IXADataRecorder> getXADataRecorders() {
+    public synchronized Set<IXADataRecorder> getXADataRecorders() {
         Set<IXADataRecorder> seqs = new HashSet<IXADataRecorder>(this.xaDataRecorders.size());
         for (Iterator<PhynixxXADataRecorder> iterator = xaDataRecorders.values().iterator(); iterator.hasNext(); ) {
             seqs.add(iterator.next());
@@ -361,7 +341,7 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
 
 
     @Override
-    public void recorderDataRecorderClosed(IXADataRecorder xaDataRecorder) {
+    public synchronized void recorderDataRecorderClosed(IXADataRecorder xaDataRecorder) {
         this.removeXADataRecoder(xaDataRecorder);
     }
 

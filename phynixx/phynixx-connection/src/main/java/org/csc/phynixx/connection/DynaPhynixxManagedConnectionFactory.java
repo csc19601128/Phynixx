@@ -120,7 +120,7 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
 
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            Object target = null;
+
 
             /**
              * methods of the IConnectionProxy are redirected to the current object
@@ -129,8 +129,6 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
             // execute
             try {
                 if (DynaPhynixxManagedConnectionFactory.this.declaredBySystemInterface(method)) {
-                    target = this;
-
                     // System.out.println("Thread " + Thread.currentThread()+" Connection IF expected to " + this+" on "+method);
                     Object obj = null;
                     if (this.isSynchronized()) {
@@ -143,7 +141,7 @@ class DynaPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends 
                     return obj;
                 } else if (DynaPhynixxManagedConnectionFactory.this.declaredBySupportedInterface(method)) {
 
-                    target = this.getCoreConnection();
+                    Object target = this.getCoreConnection();
 
                     // System.out.println("Thread " + Thread.currentThread()+" Delegated to Connection " + target+" on "+method);
 

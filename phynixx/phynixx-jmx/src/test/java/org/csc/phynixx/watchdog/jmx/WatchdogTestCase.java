@@ -28,7 +28,7 @@ import junit.framework.TestCase;
 
 
 /**
- * @author zf4iks2
+ * @author Christoph Schmidt-Casdorff
  */
 public class WatchdogTestCase extends TestCase {
 

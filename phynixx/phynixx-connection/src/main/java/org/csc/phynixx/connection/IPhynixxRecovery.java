@@ -22,7 +22,7 @@ package org.csc.phynixx.connection;
 
 
 /**
- * Created by zf4iks2 on 26.02.14.
+ * Created by Christoph Schmidt-Casdorff on 26.02.14.
  */
 public interface IPhynixxRecovery<C extends IPhynixxConnection> {
 

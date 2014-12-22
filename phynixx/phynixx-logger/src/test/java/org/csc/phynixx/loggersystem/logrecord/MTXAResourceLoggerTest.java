@@ -21,19 +21,39 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 
 
-import junit.framework.TestCase;
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
+import org.csc.phynixx.common.io.LogRecordPageReader;
+import org.csc.phynixx.common.io.LogRecordPageWriter;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
+import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
+import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFactory;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class MTXAResourceLoggerTest extends TestCase {
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
+/**
+ * test the mult threading capabilities of phynixx logger
+ *
+ * phynixx logger aren't multi thread safe. The calling environment has to separet the different logger or has to take that they are synchronized.
+ */
+public class MTXAResourceLoggerTest {
+
+    public static final int NUM_THREADS = 10;
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
     private TmpDirectory tmpDir = null;
+    private final String  MT_MESSAGE = "1234567890qwertzui";
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // configuring the log-system (e.g. log4j)
         TestUtils.configureLogging();
 
@@ -47,23 +67,86 @@ public class MTXAResourceLoggerTest extends TestCase {
 
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         // delete all tmp files ...
         this.tmpDir.clear();
     }
 
-    private String mtMessage = "1234567890qwertzui";
+    @Test
+    public void testMTLogging() throws Exception {
 
-    private static class MessageReply implements IDataRecordReplay {
+        // Start XALogger ....
+
+        IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
+        PhynixxXARecorderRepository repository= new PhynixxXARecorderRepository(loggerFactory);
+        try {
+            // Start Threads to fill the Logs.
+            List workers = new ArrayList();
+            for (int i = 0; i < NUM_THREADS; i++) {
+                MessageSampler sampler = new MessageSampler(i, repository, MT_MESSAGE, (10 % (i + 1) + 2));
+                Thread worker = new Thread(sampler);
+                worker.start();
+                workers.add(worker);
+            }
+
+            // wait until all threads are ready ..
+            for (int i = 0; i < workers.size(); i++) {
+                Thread worker = (Thread) workers.get(i);
+                worker.join();
+            }
+
+        } finally {
+        }
+
+
+
+        try {
+
+            repository.recover();
+
+            Set<IXADataRecorder> dataRecorders = repository.getXADataRecorders();
+            Assert.assertEquals(NUM_THREADS, dataRecorders.size());
+
+            log.info(dataRecorders);
+
+            for (IXADataRecorder dataRecorder : dataRecorders) {
+                final List<IDataRecord> records = dataRecorder.getDataRecords();
+                MessageReplay replay = new MessageReplay();
+                for (int i = 0; i < records.size(); i++) {
+                    replay.replayRollback(records.get(i));
+                }
+                replay.check();
+
+            }
+
+        } finally {
+            repository.close();
+        }
+    }
+
+    private static class MessageReplay implements IDataRecordReplay {
 
         private String content = null;
         private StringBuffer contentParts = new StringBuffer();
 
+        @Override
+        public void notifyNoMoreData() {
+
+        }
+
+
         public void replayRollback(IDataRecord message) {
+            String value=null;
+            try {
+                value = new LogRecordPageReader(message.getData()).getLogReaders().get(0).readUTF();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             if (message.getOrdinal().intValue() == 1) {
-                content = new String(message.getData()[0]);
+                this.content= value;
             } else {
-                String part = new String(message.getData()[0]);
+                String part =value;
                 contentParts.append(part);
             }
         }
@@ -72,131 +155,59 @@ public class MTXAResourceLoggerTest extends TestCase {
         }
 
         public void check() {
+
             if (!content.equals(contentParts.toString())) {
-                throw new IllegalStateException("content=" + content
-                        + " parts=" + contentParts.toString());
+                throw new IllegalStateException("content=" + content + " parts=" + contentParts.toString());
             }
         }
 
     }
-    /**
 
-     private class MessageSampler implements Runnable {
-     private String message = null;
-     private int chunkSize;
-     private PhynixxXADataRecorder messageSequence;
+    private class MessageSampler implements Runnable {
+        private String message = null;
+        private int chunkSize;
+        private IXADataRecorder dataRecorder;
 
-     private MessageSampler(String xaDataRecorderId, PhynixxXARecorderRepository logger,
-     String message, int chunkSize) throws IOException, InterruptedException {
-     this.message = message;
-     this.chunkSize = chunkSize;
-     this.messageSequence = logger.logUserData(XALogRecordType.USER, message.getBytes(Charsets.UTF_8);
-     // this.messageSequence.addLogRecordListener(logger);
+        private MessageSampler(int index,PhynixxXARecorderRepository repository,
+                               String message, int chunkSize) throws IOException, InterruptedException {
+            this.dataRecorder = repository.createXADataRecorder();
+            this.message = message;
+            this.chunkSize = chunkSize;
+            this.dataRecorder.createDataRecord(XALogRecordType.USER,
+                    new LogRecordPageWriter().newLine().writeUTF(message).toByteArray());
 
-     }
+        }
 
-     public String getMessage() {
-     return message;
-     }
+        public String getMessage() {
+            return message;
+        }
 
-     public int getChunkSize() {
-     return chunkSize;
-     }
+        public int getChunkSize() {
+            return chunkSize;
+        }
 
-     public void run() {
-     // sample the Message
-     int countChunks = (message.length() / chunkSize);
-     if (message.length() % chunkSize != 0) {
-     countChunks++;
-     }
+        public void run() {
+            // sample the Message
+            int countChunks = (message.length() / chunkSize);
+            if (message.length() % chunkSize != 0) {
+                countChunks++;
+            }
 
-     // log.info("ChunkSize="+this.chunkSize+" ChunkCount="+
-     // countChunks+" MessageLength="+message.length());
+            log.info("ChunkSize="+this.chunkSize+" ChunkCount="+countChunks+" MessageLength="+message.length());
 
-     try {
-     // write the header record ....
-     this.messageSequence.createDataRecord(XALogRecordType.USER, message.getBytes());
+            try {
+                for (int i = 0; i < countChunks; i++) {
+                    if(i*chunkSize < message.length()) {
+                        String messageChunk = message.substring(i * chunkSize, Math.min((i + 1) * chunkSize, message.length()));
+                        this.dataRecorder.createDataRecord(XALogRecordType.USER, new LogRecordPageWriter().newLine().writeUTF(messageChunk).toByteArray());
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                throw new RuntimeException(ex);
+            }
+        }
 
-     for (int i = 0; i < countChunks; i++) {
-     String messageChunk = message.substring(i * chunkSize, Math
-     .min((i + 1) * chunkSize, message.length()));
-     this.messageSequence.createDataRecord(XALogRecordType.USER, messageChunk.getBytes());
+    }
 
-     // finish the message ...
-     // xaLogger.
-     }
-     } catch (Exception ex) {
-     ex.printStackTrace();
-     throw new RuntimeException(ex);
-     }
-     }
-
-     }
-
-     public void testMTLogging() throws Exception {
-
-     // Start XALogger ....
-
-     IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt",this.tmpDir.getDirectory());
-     PhynixxXADataRecorder logger=PhynixxXADataRecorder.openRecorderForWrite("1", new XADataLogger(loggerFactory.instanciateLogger("1")), null);
-
-     try {
-     // Start Threads to fill the Logs.
-     List workers = new ArrayList();
-     for (int i = 0; i < 10; i++) {
-     MessageSampler sampler = new MessageSampler(i, logger, mtMessage, (10 % (i + 1) + 2));
-     Thread worker = new Thread(sampler);
-     worker.start();
-     workers.add(worker);
-     }
-
-     // wait until all threads are ready ..
-     for (int i = 0; i < workers.size(); i++) {
-     Thread worker = (Thread) workers.get(i);
-     worker.join();
-     }
-
-     } finally {
-     logger.destroy();
-     }
-
-     try {
-
-     logger.reopen();
-
-     // recover the message sequences
-     logger.readMessageSequences();
-
-     List openMessages = logger.getXADataRecorders();
-
-     log.info(openMessages);
-
-     for (int i = 0; i < openMessages.size(); i++) {
-
-     MessageReply replay = new MessageReply();
-     //((IDataRecordSequence) openMessages.get(i)).replayRecords(replay);
-     replay.check();
-     }
-
-     } finally {
-     logger.close();
-     }
-
-     }
-
-     private Properties loadHowlConfig() throws Exception {
-     Properties howlprop = new Properties();
-     howlprop.associate("listConfig", "false");
-     howlprop.associate("bufferSize", "32");
-     howlprop.associate("minBuffers", "16");
-     howlprop.associate("maxBuffers", "16");
-     howlprop.associate("maxBlocksPerFile", "100");
-     howlprop
-     .associate("logFileDir", this.tmpDir.getDirectory().getAbsolutePath());
-     howlprop.associate("logFileName", "test1");
-     howlprop.associate("maxLogFiles", "6");
-
-     return howlprop;
-     }
-     **/
 }

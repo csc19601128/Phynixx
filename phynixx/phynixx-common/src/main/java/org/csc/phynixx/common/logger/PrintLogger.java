@@ -27,13 +27,13 @@ import java.util.Map;
 
 public class PrintLogger implements IPhynixxLogger {
 
-    public static final Integer DEBUG = new Integer(5);
-    public static final Integer INFO = new Integer(4);
-    public static final Integer WARN = new Integer(3);
-    public static final Integer ERROR = new Integer(2);
-    public static final Integer FATAL = new Integer(1);
+    public static final Integer DEBUG =Integer.valueOf(5);
+    public static final Integer INFO =Integer.valueOf(4);
+    public static final Integer WARN =Integer.valueOf(3);
+    public static final Integer ERROR =Integer.valueOf(2);
+    public static final Integer FATAL =Integer.valueOf(1);
 
-    private static Map VALID_LOG_LEVELS = new HashMap();
+    private static final Map<Integer,String> VALID_LOG_LEVELS = new HashMap<Integer,String>();
 
     static {
         VALID_LOG_LEVELS.put(DEBUG, "DEBUG");
@@ -54,7 +54,7 @@ public class PrintLogger implements IPhynixxLogger {
 
     public void setLogLevel(Integer logLevel) {
         if (!VALID_LOG_LEVELS.containsKey(logLevel)) {
-            throw new IllegalArgumentException("Invalid Loglevel " + logLevel);
+            throw new IllegalArgumentException("Invalid log level " + logLevel);
         }
         this.logLevel = logLevel;
     }

@@ -1,3 +1,16 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+phynixx/phynixx-tutorial/target/
+phynixx/phynixx-logger/target
+phynixx/phynixx-connection/target/
+phynixx/phynixx-common/target/
+=======
+/phynixx/*/target
+/phynixx/target
+.idea/*
+>>>>>>> 9d8e8800fe51f0b88072b5a01447dd610d29c643
+=======
+#Intellij 
 **/.idea/
 .idea/
 *.iml
@@ -32,3 +45,4 @@ images.bak/
 
 #backups
 *#
+>>>>>>> master

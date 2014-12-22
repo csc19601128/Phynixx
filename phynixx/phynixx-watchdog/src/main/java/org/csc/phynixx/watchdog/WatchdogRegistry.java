@@ -33,8 +33,6 @@ import java.util.*;
  * @author
  * @version $Revision: 1.6 $
  * @project phynixx
- * @copyright Deutsche Post AG, PRS
- * @modified $Date: 2007/11/29 17:27:16 $, $Author: zf4iks2 $
  * @see ThreadGroup
  */
 public class WatchdogRegistry {
@@ -42,11 +40,11 @@ public class WatchdogRegistry {
 
     private static final IDGenerator<Long> ID_GENERATOR = IDGenerators.createLongGenerator(1, true);
 
-    public static final String WATCHDOG_MANAGEMENT_INTERVAL_PROP = "org.csc.phynixx.watchdog.management_interval";
+    private static final String WATCHDOG_MANAGEMENT_INTERVAL_PROP = "org.csc.phynixx.watchdog.management_interval";
 
     public static final String OK = "ok";
 
-    public static long WATCHDOG_MANAGEMENT_INTERVAL = 1100;
+    private static long WATCHDOG_MANAGEMENT_INTERVAL = 1100;
 
 
     private static WatchdogRegistry theRegistry = null;
@@ -113,6 +111,9 @@ public class WatchdogRegistry {
         watchesTheWatcherCond.setActive(true);
         this.watchTheWatchdogWatcher.registerCondition(watchesTheWatcherCond, false);
 
+        /**
+         * checks if the
+         */
         IWatchedCondition managementActivity = new TimeoutCondition(WATCHDOG_MANAGEMENT_INTERVAL) {
 
             public void conditionViolated() {
@@ -399,7 +400,7 @@ public class WatchdogRegistry {
      * killt alle Threads der Gruppe und wartet bis auch der letzte beendet ist.
      * Es wird der evtl. Exceptionhandler geschlossen.
      */
-    synchronized void shutdown() {
+    public synchronized void shutdown() {
         this.shutdownManagementWatchdogs();
 
         // deactivate all Watchdogs ....

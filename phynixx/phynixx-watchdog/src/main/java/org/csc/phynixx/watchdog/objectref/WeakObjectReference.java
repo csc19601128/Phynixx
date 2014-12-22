@@ -28,14 +28,14 @@ import java.lang.ref.WeakReference;
  * the watchdog references the conditions weakly. If any condition is not referenced
  * by anybody but the watchdog it shut be handed to gc.
  *
- * @author zf4iks2
+ * @author Christoph Schmidt-Casdorff
  */
 
-public class WeakObjectReference extends WeakReference implements IObjectReference {
+public class WeakObjectReference<T>  extends WeakReference<T> implements IObjectReference<T> {
 
     private String description = null;
 
-    public WeakObjectReference(Object objectRef) {
+    public WeakObjectReference(T objectRef) {
         super(objectRef);
         this.description = (objectRef == null) ? "NULL" : objectRef.toString();
     }

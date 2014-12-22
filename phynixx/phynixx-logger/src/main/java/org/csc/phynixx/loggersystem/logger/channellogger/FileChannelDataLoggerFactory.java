@@ -33,9 +33,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- *
- * A logger is qualified by its name and a subsequent integer qualifier. It is possible to have more than one loggfile for a given logger. The logfile differ in the qualifier.
- *
+ * create DataLogger using Files to store data.
+ * A logger is qualified by its name and a subsequent integer qualifier.
+ * It is possible to have more than one log file for a given logger.
+ * The logfile differ in the qualifier.
+ * <p/>
  * <pre>
  *  A log file is named according to the follwing pattern
  *  'loggerSystemName'_'loggerName'_'qualifier'.log
@@ -45,7 +47,7 @@ import java.util.Set;
  * 2.) loggername
  * 3.) qualifier pof the logfile for the logger
  * </pre>
- *
+ * <p/>
  * A logical logger name has to unique for all logfile of the current loggerfactory.
  * Diese Factory erzeugt FileChannelDataLogger .
  * Es wird ein logischer Name mitgegeben und es wird im Verzeichnis eine datei mit diesem namen angelegt und auf dieser Datei eine TAEnabledRandomAccessFile instanziert.
@@ -54,7 +56,7 @@ import java.util.Set;
  */
 public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
 
-    private static final String LOGGERSYSTEM_FORMAT_PATTERN = "({0})_([a-z,A-Z,0-9]*[^_])_([0-9]*[^\\.])\\.[\\w]*";
+    private static final String LOGGER_SYSTEM_FORMAT_PATTERN = "({0})_([a-z,A-Z,0-9]*[^_])_([0-9]*[^\\.])\\.[\\w]*";
 
     private static final String LOGGER_FORMAT_PATTERN = "({0})_([0-9]*[^\\.])\\.[\\w]*";
 
@@ -65,9 +67,8 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
 
 
     /**
-     *
      * @param loggerSystemName
-     * @param directoryName logfile are created in this directory
+     * @param directoryName    logfile are created in this directory
      */
     public FileChannelDataLoggerFactory(String loggerSystemName, String directoryName) {
         super();
@@ -82,21 +83,20 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
     }
 
     /**
-     *
-      * @param loggerSystemName
-     *  @param directory logfile are created in this directory
+     * @param loggerSystemName
+     * @param directory        logfile are created in this directory
      */
     public FileChannelDataLoggerFactory(String loggerSystemName, File directory) {
         super();
         this.loggerSystemName = loggerSystemName;
         this.directory = directory;
 
-        if(directory==null) {
+        if (directory == null) {
             throw new IllegalArgumentException("Log directory must be specified");
         }
 
 
-        if(!directory.exists()) {
+        if (!directory.exists()) {
             throw new IllegalArgumentException("Log directory must exists");
         }
 
@@ -106,7 +106,6 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
     }
 
     /**
-     *
      * @return Name of the loggerSystem
      */
     public String getLoggerSystemName() {
@@ -115,7 +114,6 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
 
 
     /**
-     *
      * @return directory containing the logfiles
      */
     public File getLoggingDirectory() {
@@ -134,7 +132,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
      * @throws IOException
      */
     public synchronized IDataLogger instanciateLogger(String loggerName) throws IOException {
-       return this.instanciateLogger(loggerName,AccessMode.APPEND);
+        return this.instanciateLogger(loggerName, AccessMode.APPEND);
     }
 
     /**
@@ -153,10 +151,10 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
      */
     @Override
     public synchronized void cleanup() {
-        String pattern = MessageFormat.format(LOGGERSYSTEM_FORMAT_PATTERN, this.loggerSystemName);
+        String pattern = MessageFormat.format(LOGGER_SYSTEM_FORMAT_PATTERN, this.loggerSystemName);
         LogFilenameMatcher matcher = new LogFilenameMatcher(pattern);
 
-        LogFileCollector.ICollectorCallback cb = new LogFileCollector.ICollectorCallback() {
+        LogFileTraverser.ICollectorCallback cb = new LogFileTraverser.ICollectorCallback() {
             public void match(File file,
                               LogFilenameMatcher.LogFilenameParts parts) {
                 boolean success = file.delete();
@@ -165,7 +163,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
                 }
             }
         };
-        LogFileCollector logfileCollector = new LogFileCollector(matcher,
+        new LogFileTraverser(matcher,
                 FileChannelDataLoggerFactory.this.getLoggingDirectory(), cb);
     }
 
@@ -177,7 +175,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
         String pattern = MessageFormat.format(LOGGER_FORMAT_PATTERN, loggerName);
         LogFilenameMatcher matcher = new LogFilenameMatcher(pattern);
 
-        LogFileCollector.ICollectorCallback cb = new LogFileCollector.ICollectorCallback() {
+        LogFileTraverser.ICollectorCallback cb = new LogFileTraverser.ICollectorCallback() {
             public void match(File file,
                               LogFilenameMatcher.LogFilenameParts parts) {
                 boolean success = file.delete();
@@ -186,7 +184,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
                 }
             }
         };
-        LogFileCollector logfileCollector = new LogFileCollector(matcher,
+         new LogFileTraverser(matcher,
                 FileChannelDataLoggerFactory.this.getLoggingDirectory(), cb);
     }
 
@@ -194,25 +192,24 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
     /**
      * @return logger having at least one logfile accociated
      */
-    public synchronized  Set<String> findLoggerNames() throws IOException {
+    public synchronized Set<String> findLoggerNames() throws IOException {
 
-        String pattern = MessageFormat.format(LOGGERSYSTEM_FORMAT_PATTERN, this.loggerSystemName);
+        String pattern = MessageFormat.format(LOGGER_SYSTEM_FORMAT_PATTERN, this.loggerSystemName);
         LogFilenameMatcher matcher = new LogFilenameMatcher(pattern);
 
         final Set<String> loggerNames = new HashSet<String>();
-        LogFileCollector.ICollectorCallback cb = new LogFileCollector.ICollectorCallback() {
+        LogFileTraverser.ICollectorCallback cb = new LogFileTraverser.ICollectorCallback() {
             public void match(File file, LogFilenameMatcher.LogFilenameParts parts) {
                 loggerNames.add(parts.getLoggerName());
             }
         };
-        LogFileCollector logfileCollector = new LogFileCollector(matcher, this.getLoggingDirectory(), cb);
+        new LogFileTraverser(matcher, this.getLoggingDirectory(), cb);
 
         return loggerNames;
     }
 
     private File provideFile(String fileName, File directory) throws IOException {
 
-        String fileCompleteName = directory + File.separator + fileName + "_1.log";
 
         File file = new File(directory, fileName + ".log");
 
@@ -222,10 +219,16 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
         }
 
         if (!directory.exists()) {
-            directory.mkdirs();
+            final boolean mkdirs = directory.mkdirs();
+            if(!mkdirs) {
+                throw new IOException("Failed to create directory " + directory + " or one of its children");
+            }
         }
 
-        file.createNewFile();
+        if(!file.createNewFile()) {
+
+            throw new IOException("Failed to create file "+file);
+        }
 
         return file;
 

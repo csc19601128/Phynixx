@@ -101,8 +101,6 @@ public interface IXARecorderRepository extends IXADataRecorderLifecycleListener 
      * cerets a brand new recorder. This recorder is managed by the repository
      * @return
      * @throws IOException
-     *
-     * @see #findXADataRecord(long) find
      */
     IXADataRecorder createXADataRecorder() throws IOException;
 
@@ -111,7 +109,7 @@ public interface IXARecorderRepository extends IXADataRecorderLifecycleListener 
      * The recorder are {@link IXADataRecorder#close()} and removed from the repository.
      *
      * Depending on recording closed recorder could recovered if it contains relevant information
-     * and it is not destroyed but can be re-established by {@lonk #recover}
+     * and it is not destroyed but can be re-established by {@link #recover}
      */
     void close();
 
@@ -122,17 +120,12 @@ public interface IXARecorderRepository extends IXADataRecorderLifecycleListener 
     void destroy() throws IOException, InterruptedException;
 
     /**
-     * tries to reestablish all recorders. The logger system is closed.
-     * All remaining (already closed) recorder are reopen and coneved to the current repository
-     */
+     * tries to re-establish all recorders. The logger system is closed.
+     * All remaining (already closed) recorder are reopen for read
+     * @see #getXADataRecorders()
+     * */
     void recover();
 
-    /**
-     * looks for a dataRecorder with the given ID
-     * @param dataRecordId
-     * @return the found recorder or null if no recorder is found
-     */
-    IXADataRecorder findXADataRecord(long dataRecordId);
 
     /**
      *

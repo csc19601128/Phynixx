@@ -43,22 +43,35 @@ import java.util.List;
 public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
 
 
-
+    private transient String lockToken;
     /**
      * Das RandomAccessFile, dass zum Schreiben u. Lesen geoeffnet wird.
      */
-    private RandomAccessFile raf = null;
+    private UTFWriter utfWriter = null;
 
     private IXADataRecorder xaDataRecorder;
 
     private boolean autoCommit=false;
 
-    private long rollbackPosition;
+    private transient long rollbackPosition;
 
     private final String connectionId;
 
-    public TAEnabledUTFWriterImpl(String connectionId) {
+    public TAEnabledUTFWriterImpl(String connectionId, UTFWriter writer) throws Exception {
+
         this.connectionId = connectionId;
+        this.utfWriter= writer;
+        init();
+    }
+
+    /**
+     * locks the sharedFile and inits the rollback  pointer
+     */
+    private void init() throws Exception{
+        // try to lock the writer
+        this.lockToken= this.getUTFWriter().lock();
+
+        this.rollbackPosition= this.getUTFWriter().size();
     }
 
     public String getConnectionId() {
@@ -77,16 +90,9 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
      * Schliesst die Datei und den FileChannel
      */
     public void close() {
-
-        if (raf != null) {
-            // close Quietly
-            try {
-                // Schliessen der Daten-Datei
-                raf.close();
-            } catch (Exception e) {
-            } finally {
-                raf = null;
-            }
+        if(lockToken!=null) {
+            this.getUTFWriter().unlock(this.lockToken);
+            this.lockToken=null;
         }
     }
 
@@ -96,7 +102,7 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
      * @return true wenn die Datei geschlossen ist
      */
     public boolean isClosed() {
-        return (this.raf == null);
+        return (this.utfWriter == null);
     }
 
 
@@ -107,7 +113,7 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
         if (this.isClosed()) {
             throw new IllegalStateException("Writer is closed");
         }
-        this.getRandomAccessFile().getChannel().truncate(0);
+        this.getUTFWriter().resetContent();
 
         this.rollbackPosition = 0;
 
@@ -123,7 +129,7 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
         if (value == null) {
             throw new IllegalArgumentException("value must not be null");
         }
-        this.getRandomAccessFile().writeUTF(value);
+        this.getUTFWriter().write(value);
 
         return this;
     }
@@ -131,34 +137,16 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
     @Override
     public List<String> readContent() throws IOException {
 
-        List<String> content = new ArrayList<String>();
-
-        // start from beginning
-        this.getRandomAccessFile().getChannel().position(0l);
-
-        long size = this.getRandomAccessFile().getChannel().size();
-
-        while (position() < size) {
-            String value = this.getRandomAccessFile().readUTF();
-            content.add(value);
-        }
-        this.rollbackPosition = position();
-
-        return content;
-    }
-
-    private void restoreSize(long size) throws IOException {
-        this.getRandomAccessFile().getChannel().truncate(size);
-        this.getRandomAccessFile().getChannel().position(size);
+      return this.getUTFWriter().readContent();
     }
 
 
-    RandomAccessFile getRandomAccessFile() {
+    UTFWriter getUTFWriter() {
         if (this.isClosed()) {
             throw new IllegalStateException("RandomAccessFile is close");
         }
 
-        return raf;
+        return utfWriter;
     }
 
 
@@ -169,26 +157,13 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
     public void reset() {
         try {
             this.close();
+            this.init();
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
         }
+
     }
 
-
-    @Override
-    @RequiresTransaction
-    public void open(File file) {
-        try {
-            this.raf = new RandomAccessFile(file, "rw");
-            this.readContent();
-            if (this.getXADataRecorder() != null) {
-                LogRecordWriter logRecordWriter = new LogRecordWriter().writeUTF(file.getAbsolutePath()).writeLong(position());
-                this.getXADataRecorder().writeRollbackData(logRecordWriter.toByteArray());
-            }
-        } catch (Exception e) {
-            throw new DelegatedRuntimeException(e);
-        }
-    }
 
     @Override
     public void commit() {
@@ -201,13 +176,13 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
     }
 
     private long position() throws IOException {
-        return this.raf.getChannel().position();
+        return this.utfWriter.position();
     }
 
     @Override
     public void rollback() {
         try {
-            this.restoreSize(this.rollbackPosition);
+            this.getUTFWriter().restoreSize(this.rollbackPosition);
         } catch (IOException e) {
             throw new DelegatedRuntimeException(e);
         }
@@ -243,6 +218,11 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
 
 
     private class DataRecordReplay implements IDataRecordReplay {
+        @Override
+        public void notifyNoMoreData() {
+
+        }
+
 
         @Override
         public void replayRollback(IDataRecord record) {
@@ -250,10 +230,8 @@ public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {
             try {
                 String fileName= logRecordReader.readUTF();
                 long filePosition=logRecordReader.readLong();
-
-                File file= new File(fileName);
-                TAEnabledUTFWriterImpl.this.raf = new RandomAccessFile(file, "rw");
-                TAEnabledUTFWriterImpl.this.restoreSize(filePosition);
+                TAEnabledUTFWriterImpl.this.getUTFWriter().restoreSize(filePosition);
+                TAEnabledUTFWriterImpl.this.rollbackPosition= filePosition;
             } catch (IOException e) {
                 throw new DelegatedRuntimeException(e);
             }

@@ -7,6 +7,7 @@ Das Projekt <i>Phynixx</i> bietet eine einfache Möglichkeit für Ressourcen an 
 Stellen Sie sich z.B. jede Form von Ressource vor, deren Zustand sich an dem Ausgang einer Datenbanktransaktion orientiert.
 + Dateioperationen
 + Operationen an Filesysteme
++ NoSQL-Datenbanken ohne transaktionale Unterestützung
 + Operationen an Archivsystemen ( welche keine eigenes Transaktionshandling anbieten; z.B. Centera von EMC).
 + Implementierung des Command-Pattern nach GoF. Dies enthält eine Form von _rollback_ durch _undo_.
 
@@ -24,14 +25,14 @@ Im Tutorial (siehe [Tutorial](tutorial.html)) wird gezeigt, wie das sequentielle
  
 Jede transaktionalen Ressource, welche Informationen ausserhalb der JVM persistiert (Datenbank, Archivsysteme, Dateien, Dateisysteme, ...),  muss sicherstellen, dass sie schlussendlich konsistent ist. Konsistenz muss auch erreicht werden, wenn während der Transaktion das Filesystem, das Netzwerk oder die JVM wegbricht.  
 Dazu unterstützt Phynixx transaktionale Ressource,  während der Transaktion zu Informationen sichern, die ihreren konsistenz Zustand beschreiben.
-Falls die Transaktion nicht korrekt abgeschlossen wird, so kann die transaktionale Ressource auf Basis dieser Wiederherstellungsinformationen auf einen konsistenten Stand gebracht werden (Recovery Prozess).
+Falls die Transaktion nicht korrekt abgeschlossen wird, so kann die transaktionale Ressource auf Basis dieser Wiederherstellungsinformationen auf einen konsistenten Stand gebracht werden (_Recovery Prozess_).
 
 Das Verfahren, Wiederherstellungsinformationen zu sichern, muss selbst einige Vorrausetzungen erfüllen. In erster Linie müssen Wiederherstellungsinformationen dauerhaft und atomar gesichert werden. Entweder werden sie verlässlich und vollständig gesichert oder gar nicht. Es muss zu jedem Zeitpunkt offensichtlich sein, welche Wiederherstellungsinormationen gesichert sind.
 
 ## lokale Transaktionen
-Um an lokalen Transaktionen teilzunehmen, muss nur eine `commit-` und `rollback-`Methode bereitgestellt werden. 
+Um an Transaktionen teilzunehmen, muss nur eine `commit-` und `rollback-`Methode bereitgestellt werden. 
 
-Darüberhinaus steuert Phynixx Aspekte bei, welche ihrer transaktionalen Ressource _out of the box_ zu Gute kommen:
+Darüberhinaus steuert Phynixx Aspekte bei, welche Ihrer transaktionalen Ressource _out of the box_ zu Gute kommen:
 
 - Bereitstellung eines Persistenzmechanismus für Wiederherstellungsinformtionen
 - Teilnahme am Recoveryverfahren

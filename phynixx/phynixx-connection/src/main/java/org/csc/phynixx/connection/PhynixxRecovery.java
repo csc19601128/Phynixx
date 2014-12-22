@@ -28,7 +28,7 @@ import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 import java.util.List;
 
 /**
- * Created by zf4iks2 on 26.02.14.
+ * Created by Christoph Schmidt-Casdorff on 26.02.14.
  */
 public class PhynixxRecovery<C extends IPhynixxConnection> implements IPhynixxRecovery<C> {
 
@@ -68,9 +68,8 @@ public class PhynixxRecovery<C extends IPhynixxConnection> implements IPhynixxRe
         if (this.loggerSystemStrategy == null) {
             throw new IllegalStateException("LoggerSystem must be reset to recover from this System");
         }
-        if (this.loggerSystemStrategy != null) {
             this.loggerSystemStrategy.close();
-        }
+
 
         try {
             // get all recoverable transaction data

@@ -21,12 +21,19 @@ package org.csc.phynixx.watchdog.objectref;
  */
 
 
-public interface IObjectReference {
+/**
+ *
+ * Created by christoph on 09.06.2012.
+ *
+ * @param T managed type
+ *
+ */
+public interface IObjectReference<T> {
 
     /**
      * @return the referenced Object
      */
-    Object get();
+    T get();
 
 
     boolean isWeakReference();

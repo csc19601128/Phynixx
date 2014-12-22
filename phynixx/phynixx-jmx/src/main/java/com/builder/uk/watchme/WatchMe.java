@@ -37,7 +37,7 @@ public class WatchMe {
 
     public static void main(String[] args) {
 
-        WatchMe watchMe = new WatchMe();
+       new WatchMe();
     }
 
     WatchMeBean smb;

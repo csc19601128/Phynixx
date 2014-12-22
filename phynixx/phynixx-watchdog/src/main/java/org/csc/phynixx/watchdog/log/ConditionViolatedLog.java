@@ -23,6 +23,10 @@ package org.csc.phynixx.watchdog.log;
 
 import org.csc.phynixx.watchdog.IWatchedCondition;
 
+/**
+ * Created by christoph on 09.06.2012.
+ *
+ */
 public class ConditionViolatedLog implements IWatchdogLog {
 
     private long timestamp = 0l;

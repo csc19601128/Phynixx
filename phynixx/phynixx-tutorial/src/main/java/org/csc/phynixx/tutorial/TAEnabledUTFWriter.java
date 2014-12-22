@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by zf4iks2 on 04.02.14.
+ * Created by Christoph Schmidt-Casdorff on 04.02.14.
  */
 public interface TAEnabledUTFWriter extends IPhynixxConnection, IXADataRecorderAware, IAutoCommitAware {
 
@@ -54,16 +54,11 @@ public interface TAEnabledUTFWriter extends IPhynixxConnection, IXADataRecorderA
     @RequiresTransaction
     TAEnabledUTFWriter write(String value) throws IOException;
 
-    @RequiresTransaction
-    /**
-     * opens a file and associates it with the current transaction
-     */
-    void open(File file);
-
 
     /**
      * reads the content
      * @return
      */
+    @RequiresTransaction
     List<String> readContent() throws IOException;
 }

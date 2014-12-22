@@ -55,7 +55,7 @@ class RestartCondition extends TimeoutCondition implements IWatchedCondition {
         }
 
         if (this.watchdogReference.isStale()) {
-            return true;
+            return false;
         }
 
         Watchdog wd = this.watchdogReference.getWatchdog();
@@ -83,7 +83,7 @@ class RestartCondition extends TimeoutCondition implements IWatchedCondition {
      */
     public void conditionViolated() {
         if (this.watchdogReference.isStale()) {
-            return;
+            throw new IllegalStateException("Watchdog is stale and does not exist any longer");
         }
 
         Watchdog wd = this.watchdogReference.getWatchdog();
@@ -97,7 +97,7 @@ class RestartCondition extends TimeoutCondition implements IWatchedCondition {
 
 
     public boolean isUseless() {
-        return this.watchdogReference.isStale();
+        return this.watchdogReference!=null || this.watchdogReference.isStale();
     }
 
 

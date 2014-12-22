@@ -24,7 +24,7 @@ package org.csc.phynixx.loggersystem.logrecord;
 /**
  * replays the logrecord in the correct order.
  *
- * @author zf4iks2
+ * @author Christoph Schmidt-Casdorff
  */
 public interface IDataRecordReplay {
 
@@ -41,6 +41,12 @@ public interface IDataRecordReplay {
      * @param record to be rollforwared
      */
     void replayRollforward(IDataRecord record);
+
+
+    /**
+     * indicates that all data is transfered
+     */
+    void notifyNoMoreData();
 
 
 }

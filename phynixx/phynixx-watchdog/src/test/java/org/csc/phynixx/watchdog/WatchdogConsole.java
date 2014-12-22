@@ -32,7 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author zf4iks2
+ *
+ * Created by christoph on 09.06.2012.
  */
 public class WatchdogConsole {
 

@@ -157,7 +157,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
      * create a new Message with the given data
      */
     public  void writeRollbackData(byte[][] data) {
-        IDataRecord msg = this.createDataRecord(XALogRecordType.ROLLBACK_DATA, data);
+       this.createDataRecord(XALogRecordType.ROLLBACK_DATA, data);
     }
 
 
@@ -166,7 +166,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     }
 
     public void writeRollforwardData(byte[][] data) {
-        IDataRecord msg = this.createDataRecord(XALogRecordType.ROLLFORWARD_DATA, data);
+       this.createDataRecord(XALogRecordType.ROLLFORWARD_DATA, data);
     }
 
     public void addMessage(IDataRecord message) {
@@ -192,6 +192,14 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
                 }
             }
         }
+
+        // acknowledge data finished
+        replay.notifyNoMoreData();
+    }
+
+    @Override
+    public IDataRecord createDataRecord(XALogRecordType logRecordType, byte[] recordData) {
+        return this.createDataRecord(logRecordType, this.toBytesBytes(recordData));
     }
 
     @Override

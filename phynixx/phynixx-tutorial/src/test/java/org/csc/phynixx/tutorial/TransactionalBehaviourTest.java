@@ -39,7 +39,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Created by zf4iks2 on 03.02.14.
+ * Created by Christoph Schmidt-Casdorff on 03.02.14.
  */
 public class TransactionalBehaviourTest {
 
@@ -48,6 +48,8 @@ public class TransactionalBehaviourTest {
     private PhynixxManagedConnectionFactory<TAEnabledUTFWriter> connectionFactory = null;
 
     private IPhynixxLoggerSystemStrategy strategy = null;
+
+    private File sharedFile = null;
 
     @Before
     public void setUp() throws Exception {
@@ -58,11 +60,14 @@ public class TransactionalBehaviourTest {
 
         this.tmpDir = new TmpDirectory("test");
 
+        this.sharedFile = this.tmpDir.assertExitsFile("sharedWriter.text");
+
+
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("ta_enabled", this.tmpDir.getDirectory());
         IPhynixxLoggerSystemStrategy<TAEnabledUTFWriter> strategy = new LoggerPerTransactionStrategy<TAEnabledUTFWriter>(loggerFactory);
 
         this.connectionFactory =
-                new PhynixxManagedConnectionFactory<TAEnabledUTFWriter>(new TAEnabledUTFWriterFactoryImpl());
+                new PhynixxManagedConnectionFactory<TAEnabledUTFWriter>(new TAEnabledUTFWriterFactoryImpl(sharedFile));
         connectionFactory.setLoggerSystemStrategy(strategy);
         connectionFactory.addManagedConnectionDecorator(new DumpManagedConnectionListener<TAEnabledUTFWriter>());
 
@@ -85,7 +90,6 @@ public class TransactionalBehaviourTest {
 
         TAEnabledUTFWriter connection = this.connectionFactory.getConnection();
         try {
-            connection.open(file);
             connection.resetContent();
             connection.write("AA").write("BB");
             connection.commit();
@@ -93,9 +97,8 @@ public class TransactionalBehaviourTest {
             connection.close();
         }
 
-        TAEnabledUTFWriterImpl recoverWriter = new TAEnabledUTFWriterImpl("recover");
+        TAEnabledUTFWriterImpl recoverWriter = new TAEnabledUTFWriterImpl("recover", new UTFWriterImpl(this.sharedFile));
         try {
-            recoverWriter.open(file);
             List<String> content = recoverWriter.readContent();
             Assert.assertEquals(2, content.size());
             Assert.assertEquals("AA", content.get(0));
@@ -116,7 +119,6 @@ public class TransactionalBehaviourTest {
 
         TAEnabledUTFWriter connection = this.connectionFactory.getConnection();
         try {
-            connection.open(file);
             connection.resetContent();
             connection.write("AA").write("BB");
             connection.commit();
@@ -126,7 +128,6 @@ public class TransactionalBehaviourTest {
 
         TAEnabledUTFWriter connection2 = this.connectionFactory.getConnection();
         try {
-            connection2.open(file);
             connection2.write("CC").write("DD");
             connection2.rollback();
         } finally {
@@ -134,7 +135,6 @@ public class TransactionalBehaviourTest {
         }
 
         TAEnabledUTFWriter recoverWriter = this.connectionFactory.getConnection();
-        recoverWriter.open(file);
         try {
             List<String> content = recoverWriter.readContent();
             Assert.assertEquals(2, content.size());
@@ -149,33 +149,30 @@ public class TransactionalBehaviourTest {
     }
 
 
-
     @Test
     public void testRecovery() throws Exception {
 
         File file = this.tmpDir.assertExitsFile("my_test.tmp1");
 
         TAEnabledUTFWriter connection1 = this.connectionFactory.getConnection();
-        connection1.open(file);
         connection1.write("AA").write("BB");
         connection1.commit();
         connection1.close();
 
 
         TAEnabledUTFWriter connection2 = this.connectionFactory.getConnection();
-        connection2.open(file);
         connection2.write("XX").write("YY");
 
 
         // connection1 keeps uncommitted
         this.connectionFactory.close();
 
-        IPhynixxLoggerSystemStrategy<TAEnabledUTFWriter> recoveredRecorderSystem=
+        IPhynixxLoggerSystemStrategy<TAEnabledUTFWriter> recoveredRecorderSystem =
                 this.connectionFactory.getLoggerSystemStrategy();
 
         // close the LoggerStrategy
-        PhynixxRecovery<TAEnabledUTFWriter> recovery= new PhynixxRecovery<TAEnabledUTFWriter>(new TAEnabledUTFWriterFactoryImpl());
-         recovery.setLoggerSystemStrategy(recoveredRecorderSystem);
+        PhynixxRecovery<TAEnabledUTFWriter> recovery = new PhynixxRecovery<TAEnabledUTFWriter>(new TAEnabledUTFWriterFactoryImpl(this.sharedFile));
+        recovery.setLoggerSystemStrategy(recoveredRecorderSystem);
 
         recovery.recover(new IPhynixxRecovery.IRecoveredManagedConnection<TAEnabledUTFWriter>() {
 
@@ -184,7 +181,8 @@ public class TransactionalBehaviourTest {
 
                 try {
                     System.out.println(con.readContent());
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
             }
         });
 

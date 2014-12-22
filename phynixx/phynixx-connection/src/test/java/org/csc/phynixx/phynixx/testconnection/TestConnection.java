@@ -255,6 +255,11 @@ public class TestConnection implements ITestConnection {
             this.con = con;
         }
 
+        @Override
+        public void notifyNoMoreData() {
+
+        }
+
         public void replayRollback(IDataRecord message) {
             int initialValue = Integer.parseInt(new String(message.getData()[0]));
             this.con.increment = initialValue;

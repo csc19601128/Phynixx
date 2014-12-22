@@ -36,10 +36,13 @@ class Watchdog implements Runnable, IWatchdog {
 
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
+    /**
+     * condition checks if the current Watchdog's thread is running
+     */
     private RestartCondition restartCondition = null;
 
     /**
-     * to be able to restart the watchdog thread it is kept as a handle
+     * to be able to restart the watchdog thread it is kept as a handle. The basic thread can be restarted
      */
     private class ThreadHandle {
         private Thread thread = null;
@@ -71,7 +74,7 @@ class Watchdog implements Runnable, IWatchdog {
     }
 
 
-    private Set conditions = new HashSet();
+    private Set<IObjectReference<IWatchedCondition>> conditions = new HashSet<IObjectReference<IWatchedCondition>>();
 
     private String description = "";
 
@@ -80,7 +83,7 @@ class Watchdog implements Runnable, IWatchdog {
     private ThreadHandle threadHandle = new ThreadHandle();
 
 
-    private Long id = new Long(-1L);
+    private Long id =-1L;
 
 
     /**
@@ -152,8 +155,8 @@ class Watchdog implements Runnable, IWatchdog {
      */
     void registerCondition(IWatchedCondition cond, boolean weakReferenced) {
         synchronized (conditions) {
-            if (!this.conditions.contains(cond)) {
-                IObjectReference objRef = null;
+            if(!isConditionRegistered(cond)) {
+                IObjectReference<IWatchedCondition> objRef = null;
                 if (weakReferenced) {
                     objRef = new WeakObjectReference(cond);
                 } else {
@@ -165,6 +168,12 @@ class Watchdog implements Runnable, IWatchdog {
         }
     }
 
+    private boolean isConditionRegistered(IWatchedCondition cond) {
+        Set<IWatchedCondition> conds=copyConditions();
+        return conds.contains(cond);
+    }
+
+
     /* (non-Javadoc)
      * @see org.csc.phynixx.watchdog.IWatchog#getCountRegisteredConditions()
      */
@@ -175,7 +184,7 @@ class Watchdog implements Runnable, IWatchdog {
     /* (non-Javadoc)
      * @see org.csc.phynixx.watchdog.IWatchog#getAliveConditions()
      */
-    public Set getAliveConditions() {
+    public Set<IWatchedCondition> getAliveConditions() {
         return this.copyConditions();
     }
 
@@ -183,43 +192,47 @@ class Watchdog implements Runnable, IWatchdog {
     /* (non-Javadoc)
      * @see org.csc.phynixx.watchdog.IWatchog#unregisterCondition(org.csc.phynixx.watchdog.IWatchedCondition)
      */
-    public void unregisterCondition(IWatchedCondition cond) {
+    public void unregisterCondition(IWatchedCondition condition) {
         synchronized (conditions) {
-            // cond and Objectrefrence can be used interchngeably
-            if (!this.conditions.contains(cond)) {
-                this.conditions.remove(cond);
+            Set<IObjectReference<IWatchedCondition>> copiedRefs=new HashSet<IObjectReference<IWatchedCondition>>(this.conditions);
+
+            for (Iterator<IObjectReference<IWatchedCondition>> iterator = copiedRefs.iterator(); iterator.hasNext(); ) {
+                IObjectReference<IWatchedCondition> objRef =  iterator.next();
+                IWatchedCondition cond = objRef.get();
+                if (cond == null || cond.equals(condition)) {
+                    this.conditions.remove(objRef);
+                }
             }
         }
     }
 
     void copyConditions(IWatchdog wd) {
-        Set copiedConditions = this.copyConditions();
-
+        Set<IWatchedCondition> copiedConditions = this.copyConditions();
         synchronized (wd) {
-            for (Iterator iterator = copiedConditions.iterator(); iterator.hasNext(); ) {
-                wd.registerCondition((IWatchedCondition) iterator.next());
+            for (Iterator<IWatchedCondition> iterator = copiedConditions.iterator(); iterator.hasNext(); ) {
+                wd.registerCondition( iterator.next());
             }
         }
     }
 
     /**
-     * copies the current set of conditions
+     * copies the current set of conditions and cleans up the current set of conditions
      *
      * @return
      */
-    private Set copyConditions() {
-        Set copiedConditions = null;
+    private Set<IWatchedCondition> copyConditions() {
+        Set<IWatchedCondition> copiedConditions = null;
         // Copy the current Conditions ...
         synchronized (conditions) {
 
-            Set copiedObjref = new HashSet(this.conditions);
-            copiedConditions = new HashSet(this.conditions.size());
+            Set<IObjectReference<IWatchedCondition>> copiedObjref = new HashSet<IObjectReference<IWatchedCondition>>(this.conditions);
+            copiedConditions = new HashSet<IWatchedCondition>(this.conditions.size());
 
             this.conditions.clear();
             IWatchedCondition cond = null;
-            for (Iterator iterator = copiedObjref.iterator(); iterator.hasNext(); ) {
-                IObjectReference objRef = (IObjectReference) iterator.next();
-                cond = (IWatchedCondition) objRef.get();
+            for (Iterator<IObjectReference<IWatchedCondition>> iterator = copiedObjref.iterator(); iterator.hasNext(); ) {
+                IObjectReference<IWatchedCondition> objRef =  iterator.next();
+                cond = objRef.get();
                 if (!objRef.isStale() && cond != null && !cond.isUseless()) {
                     copiedConditions.add(cond);
                     this.conditions.add(objRef);
@@ -416,11 +429,11 @@ class Watchdog implements Runnable, IWatchdog {
      */
     private synchronized void evaluateConditions() {
         // Copy the current Conditions ...
-        Set copiedConditions = this.copyConditions();
+        Set<IWatchedCondition> copiedConditions = this.copyConditions();
 
         // check the conditions ....
-        for (Iterator iterator = copiedConditions.iterator(); iterator.hasNext(); ) {
-            IWatchedCondition cond = (IWatchedCondition) iterator.next();
+        for (Iterator<IWatchedCondition> iterator = copiedConditions.iterator(); iterator.hasNext(); ) {
+            IWatchedCondition cond = iterator.next();
 
             synchronized (cond) {
                 // the conditions are not accessed in a synchronized way. This has to be  make sure by the Implementations
@@ -434,6 +447,7 @@ class Watchdog implements Runnable, IWatchdog {
 
     private void acknowledgeKilled() {
         synchronized (this) {
+            this.killed=true;
             this.notifyAll();
         }
 

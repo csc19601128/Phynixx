@@ -3,33 +3,48 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>phynixx</artifactId>
+<<<<<<< HEAD
         <groupId>org.csc.phynixx</groupId>
         <version>2.0.0-SNAPSHOT</version>
+=======
+        <groupId>org.csc</groupId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+>>>>>>> master
     </parent>
     <artifactId>phynixx-xa</artifactId>
     <packaging>jar</packaging>
 
     <name>phynixx-xa</name>
     <description>enabled the connection of phynixx-connection take part in a XA protocol</description>
-    <url>https://phynixx.codematters.org/phynixx-xa</url>
 
+<<<<<<< HEAD
     <scm>
         <connection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk</connection>
         <developerConnection>scm:svn:https://svn.codematters.org/phynixx/${project.artifactId}/trunk
         </developerConnection>
         <url>https://svn.codematters.org/phynixx/${project.artifactId}/trunk</url>
     </scm>
+=======
+>>>>>>> master
 
     <dependencies>
 
+
         <dependency>
-            <groupId>org.csc.phynixx</groupId>
+            <groupId>org.csc</groupId>
             <artifactId>phynixx-common</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>org.csc.phynixx</groupId>
+            <groupId>org.csc</groupId>
             <artifactId>phynixx-common</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
@@ -37,21 +52,21 @@
         </dependency>
 
         <dependency>
-            <groupId>org.csc.phynixx</groupId>
+            <groupId>org.csc</groupId>
             <artifactId>phynixx-connection</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.csc.phynixx</groupId>
+            <groupId>org.csc</groupId>
             <artifactId>phynixx-connection</artifactId>
             <classifier>tests</classifier>
             <version>${project.version}</version>
-            <scope>runtime</scope>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.csc.phynixx</groupId>
+            <groupId>org.csc</groupId>
             <artifactId>phynixx-watchdog</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -78,10 +93,59 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- Bitronix -->
+        <dependency>
+            <groupId>org.codehaus.btm</groupId>
+            <artifactId>btm</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>jotm</groupId>
             <artifactId>jotm</artifactId>
-            <scope>test</scope>
+            <version>2.0.10</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>atomikos-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jdbc-deprecated</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jms-deprecated</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jta</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-hibernate3</artifactId>
         </dependency>
 
         <dependency>
@@ -91,11 +155,25 @@
         </dependency>
 
         <dependency>
+<<<<<<< HEAD
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
         </dependency>
 
 
+=======
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+        </dependency>
+
+
+>>>>>>> master
     </dependencies>
 
 
@@ -111,13 +189,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
-
-
+<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
-
+-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -127,6 +204,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
+
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -3,13 +3,22 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>phynixx</artifactId>
+<<<<<<< HEAD
         <groupId>org.csc.phynixx</groupId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
+=======
+        <groupId>org.csc</groupId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.csc</groupId>
+>>>>>>> master
     <artifactId>phynixx-connection</artifactId>
     <packaging>jar</packaging>
 
     <name>phynixx-connection</name>
+<<<<<<< HEAD
     <url>https://phynixx.codematters.org/phynixx-connection</url>
     <description>enabled an arbitrary peristence media to support transactions</description>
 
@@ -37,19 +46,38 @@
             <groupId>org.csc.phynixx</groupId>
             <artifactId>phynixx-common</artifactId>
             <version>${project.version}</version>
+=======
+
+    <dependencies>
+        <dependency>
+            <groupId>org.csc</groupId>
+            <artifactId>phynixx-common</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+>>>>>>> master
             <scope>compile</scope>
         </dependency>
 
         <dependency>
+<<<<<<< HEAD
             <groupId>org.csc.phynixx</groupId>
             <artifactId>phynixx-common</artifactId>
             <version>${project.version}</version>
             <classifier>tests</classifier>
+=======
+            <groupId>org.csc</groupId>
+            <artifactId>phynixx-common</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+>>>>>>> master
             <scope>test</scope>
         </dependency>
 
         <dependency>
+<<<<<<< HEAD
             <groupId>org.csc.phynixx</groupId>
+=======
+            <groupId>org.csc</groupId>
+>>>>>>> master
             <artifactId>phynixx-logger</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -106,6 +134,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
             </plugin>
 
+<<<<<<< HEAD
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -114,6 +143,22 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+=======
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
+
+<!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+>>>>>>> master
                 <artifactId>maven-project-info-reports-plugin</artifactId>
             </plugin>
 

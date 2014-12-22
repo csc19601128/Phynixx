@@ -21,12 +21,16 @@ package org.csc.phynixx.watchdog.objectref;
  */
 
 
-public class ObjectReference implements IObjectReference {
+/**
+ *
+ * Created by christoph on 09.06.2012.
+ */
+public class ObjectReference<T> implements IObjectReference<T> {
 
-    private Object objectRef = null;
+    private T objectRef = null;
 
 
-    public ObjectReference(Object objectRef) {
+    public ObjectReference(T objectRef) {
         super();
         this.objectRef = objectRef;
     }
@@ -43,12 +47,12 @@ public class ObjectReference implements IObjectReference {
     }
 
 
-    public Object get() {
+    public T get() {
         return objectRef;
     }
 
     public boolean equals(Object obj) {
-        Object objRef = this.get();
+        T objRef = this.get();
         if (objRef == null) {
             return obj == null;
         }

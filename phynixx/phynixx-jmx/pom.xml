@@ -3,7 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>phynixx</artifactId>
+<<<<<<< HEAD
         <groupId>org.csc.phynixx</groupId>
+=======
+        <groupId>org.csc</groupId>
+>>>>>>> master
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>phynixx-jmx</artifactId>
@@ -12,6 +16,7 @@
     <name>phynixx-jmx</name>
 
     <description>jmx extension for all phynixx components</description>
+<<<<<<< HEAD
     <url>https://phynixx.codematters.org/phynixx-jmx</url>
 
     <scm>
@@ -42,12 +47,36 @@
 
         <dependency>
             <groupId>org.csc.phynixx</groupId>
+=======
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.csc</groupId>
+            <artifactId>phynixx-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.csc</groupId>
+            <artifactId>phynixx-common</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.csc</groupId>
+>>>>>>> master
             <artifactId>phynixx-watchdog</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
+<<<<<<< HEAD
             <groupId>org.csc.phynixx</groupId>
+=======
+            <groupId>org.csc</groupId>
+>>>>>>> master
             <artifactId>phynixx-watchdog</artifactId>
             <version>${project.version}</version>
             <classifier>tests</classifier>
@@ -55,7 +84,11 @@
         </dependency>
 
         <dependency>
+<<<<<<< HEAD
             <groupId>org.csc.phynixx</groupId>
+=======
+            <groupId>org.csc</groupId>
+>>>>>>> master
             <artifactId>phynixx-xa</artifactId>
             <version>${project.version}</version>
         </dependency>

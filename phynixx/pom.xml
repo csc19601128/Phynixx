@@ -1,6 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+<<<<<<< HEAD
     <groupId>org.csc.phynixx</groupId>
     <artifactId>phynixx</artifactId>
     <version>2.0.0-SNAPSHOT</version>
@@ -9,14 +10,35 @@
     <description>Phynixx enables arbitrary resources to join a XA transaction</description>
     <url>https://github.com/csc19601128/Phynixx.git</url>
     <modules>
+=======
+    <groupId>org.csc</groupId>
+    <artifactId>phynixx</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Phynixx's Parent Project</name>
+    <description>Phynixx enables arbitrary resources to join a XA transaction</description>
+    <url>https://github.com/csc19601128/Phynixx</url>
+    <modules>
+        <module>phynixx-build-helper</module>
+>>>>>>> master
         <module>phynixx-common</module>
         <module>phynixx-logger</module>
         <module>phynixx-connection</module>
         <module>phynixx-watchdog</module>
         <module>phynixx-xa</module>
         <module>phynixx-jmx</module>
+<<<<<<< HEAD
         <module>phynixx-doc</module>
         <module>phynixx-tutorial</module>
+=======
+        <!--
+        <module>phynixx-atomikos</module>
+        <module>phynixx-bitronix</module>
+        -->
+        <module>phynixx-spring</module>
+        <module>phynixx-tutorial</module>
+        <module>phynixx-doc</module>
+>>>>>>> master
         <!--
         <module>phynixx-howl</module>
         -->
@@ -29,7 +51,11 @@
     <scm>
         <connection>scm:git:https://github.com/csc19601128/Phynixx.git</connection>
         <developerConnection>scm:git:https://github.com/csc19601128/Phynixx.git</developerConnection>
+<<<<<<< HEAD
         <url>https://github.com/csc19601128/Phynixx.git</url>
+=======
+        <url>https://github.com/csc19601128/Phynixx</url>
+>>>>>>> master
     </scm>
 
     <developers>
@@ -37,8 +63,16 @@
             <id>phynixx</id>
             <name>Christoph Schmidt-Casdorff</name>
             <email>phynixx@freemail.de</email>
+<<<<<<< HEAD
         </developer>
 
+=======
+            <roles>
+                <role>architect</role>
+                <role>lead developer</role>
+            </roles>
+        </developer>
+>>>>>>> master
     </developers>
 
     <distributionManagement>
@@ -46,19 +80,29 @@
         <site>
             <id>github-pages-site</id>
             <name>Deployment through GitHub's site deployment plugin</name>
+<<<<<<< HEAD
             <url>${project.build.directory}/site</url>
         </site>
+=======
+            <url>https://github.com/csc19601128/Phynixx</url>
+        </site>
+        <!--
+>>>>>>> master
         <snapshotRepository>
             <id>sonatype-nexus-snaphots</id>
             <name>Sonatype Nexus Snapshots</name>
             <url>https://oss.sonatype.or/content/repositories/snapshots/</url>
         </snapshotRepository>
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
         <repository>
             <id>sonatype-nexus-staging</id>
             <name>Sonatype Nexus Repository</name>
             <url>https://oss.sonatype.or/service/local/staging/deploy/</url>
         </repository>
+<<<<<<< HEAD
     </distributionManagement>
 
     <issueManagement>
@@ -74,6 +118,33 @@
         </license>
     </licenses>
 
+=======
+        -->
+        <snapshotRepository>
+            <id>internal.repo</id>
+            <name>MyCo Internal Repository</name>
+            <url>file://C:/tmp/repo</url>
+        </snapshotRepository>
+        <repository>
+            <id>internal.repo</id>
+            <name>MyCo Internal Repository</name>
+            <url>file://C:/tmp/repo</url>
+        </repository>
+    </distributionManagement>
+
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/csc19601128/Phynixx/issues</url>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>src/license/LICENSE.TXT</url>
+        </license>
+    </licenses>
+
+>>>>>>> master
 
     <!--
     <repositories>
@@ -108,6 +179,7 @@
 -->
 
     <dependencyManagement>
+<<<<<<< HEAD
 
         <dependencies>
 
@@ -209,6 +281,195 @@
             </dependency>
 
 
+=======
+
+        <dependencies>
+
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.11</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>1.9.5</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.objectweb.howl</groupId>
+                <artifactId>howl</artifactId>
+                <version>1.0.1-1</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>2.2</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.17</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>log4j-over-slf4j</artifactId>
+                <version>1.7.7</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.7</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.1.2</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>javax.transaction</groupId>
+                <artifactId>jta</artifactId>
+                <version>1.0.1B</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.resource</groupId>
+                <artifactId>connector</artifactId>
+                <version>1.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.resource</groupId>
+                <artifactId>connector-api</artifactId>
+                <version>1.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>geronimo-spec</groupId>
+                <artifactId>geronimo-spec-jta</artifactId>
+                <version>1.0.1B-rc4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>5.1.11</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>jotm</groupId>
+                <artifactId>jotm</artifactId>
+                <version>2.0.10</version>
+            </dependency>
+            <!--
+            <dependency>
+                <groupId>org.ow2.jotm</groupId>
+                <artifactId>jotm-standalone</artifactId>
+                <version>2.3.1-M1</version>
+                <scope>test</scope>
+            </dependency>
+              -->
+
+
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>2.3.2</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <!-- <version>1.4.181</version> -->
+                  <version>1.3.165</version>
+                <scope>test</scope>
+           </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.btm</groupId>
+                <artifactId>btm</artifactId>
+                <version>2.1.4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.jbossts</groupId>
+                <artifactId>jbossjta</artifactId>
+                <version>4.16.6.Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>atomikos-util</artifactId>
+                <version>3.9.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-api</artifactId>
+                <version>3.9.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-jdbc-deprecated</artifactId>
+                <version>3.8.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-jdbc</artifactId>
+                <version>3.9.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-jms-deprecated</artifactId>
+                <version>3.8.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-jms</artifactId>
+                <version>3.9.3</version>
+
+            </dependency>
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-jta</artifactId>
+                <version>3.9.3</version>
+
+            </dependency>
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions</artifactId>
+                <version>3.9.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-hibernate3</artifactId>
+                <version>3.9.3</version>
+            </dependency>
+>>>>>>> master
         </dependencies>
 
     </dependencyManagement>
@@ -240,6 +501,88 @@
                     <version>2.5</version>
                 </plugin>
 
+<<<<<<< HEAD
+=======
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.6</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                       <includes>
+                            <include>**/*.odt</include>
+                            <include>**/*.odt</include>
+                            <include>**/*.pdf</include>
+                        </includes>
+                    </configuration>
+                </plugin>
+
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>1.3.1</version>
+                    <configuration>
+                        <rules>
+                            <requirePluginVersions>
+                                <message>Set plugin versions in pluginManagement section.</message>
+                                <banLatest>true</banLatest>
+                                <banRelease>true</banRelease>
+                                <banSnapshots>true</banSnapshots>
+                                <!-- <unCheckedPluginList>org.nuxeo.build:nuxeo-distribution-tools</unCheckedPluginList> -->
+                            </requirePluginVersions>
+                            <requireReleaseDeps>
+                                <message>No Snapshots Allowed!</message>
+                                <onlyWhenRelease>true</onlyWhenRelease>
+                            </requireReleaseDeps>
+                            <requireMavenVersion>
+                                <version>[3.0,)</version>
+                            </requireMavenVersion>
+                            <requireJavaVersion>
+                                <version>[1.6,)</version>
+                            </requireJavaVersion>
+                        </rules>
+                        <skip>false</skip>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-report-plugin</artifactId>
+                    <version>2.17</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.16</version>
+                    <configuration>
+                        <failIfNoTests>false</failIfNoTests>
+                        <testFailureIgnore>true</testFailureIgnore>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.github.github</groupId>
+                    <artifactId>site-maven-plugin</artifactId>
+                    <version>0.9</version>
+                    <configuration>
+                        <message>Creating site for ${project.version}</message>
+                        <server>github</server>
+                        <path>${project.distributionManagement.site.url}</path>
+                        <merge>true</merge>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>site</goal>
+                            </goals>
+                            <phase>site</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+
+
+>>>>>>> master
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
@@ -258,35 +601,53 @@
                         <outputEncoding>UTF-8</outputEncoding>
                         <stagingDirectory>Y:\tmp/target/stage</stagingDirectory>
                     </configuration>
+<<<<<<< HEAD
 
                     <executions>
                         <execution>
                             <id>inherit_sitexml</id>
+=======
+                    <executions>
+                        <execution>
+                            <id>site attach descriptor</id>
+>>>>>>> master
                             <goals>
                                 <goal>attach-descriptor</goal>
                             </goals>
-                            <phase>package</phase>
                         </execution>
                         <execution>
-                            <id>generate site</id>
+                            <id>site</id>
                             <goals>
                                 <goal>site</goal>
                             </goals>
-                            <phase>site</phase>
                         </execution>
                         <execution>
-                            <id>generate stage</id>
+                            <id>site stage</id>
+                            <inherited>false</inherited>
                             <goals>
                                 <goal>stage</goal>
                             </goals>
-                            <phase>site</phase>
+                            <phase>post-site</phase>
+                        </execution>
+                        <execution>
+                            <id>site jar</id>
+                            <inherited>false</inherited>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <phase>site-deploy</phase>
                         </execution>
                     </executions>
+<<<<<<< HEAD
 
                 </plugin>
+=======
+>>>>>>> master
 
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+<<<<<<< HEAD
                     <artifactId>maven-project-info-reports-plugin</artifactId>
                     <version>2.7</version>
                 </plugin>
@@ -294,11 +655,20 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.9.1</version>
+=======
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.17</version>
+>>>>>>> master
                     <executions>
                         <execution>
                             <id>attach-javadocs</id>
                             <goals>
+<<<<<<< HEAD
                                 <goal>javadoc</goal>
+=======
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+>>>>>>> master
                             </goals>
                         </execution>
 
@@ -306,17 +676,47 @@
                 </plugin>
 
                 <plugin>
-                    <artifactId>maven-resource-plugin</artifactId>
-                    <version>2.5</version>
-                    <configuration>
-                        <encoding>UTF-8</encoding>
-                        <includes>
-                            <include>**/*.odt</include>
-                            <include>**/*.odt</include>
-                            <include>**/*.pdf</include>
-                        </includes>
-                    </configuration>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.9.1</version>
+                    <executions>
+                        <execution>
+                            <inherited>true</inherited>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>javadoc</goal>
+                            </goals>
+                        </execution>
+
+                        <execution>
+                            <id>jar</id>
+                            <inherited>true</inherited>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <phase>package</phase>
+                        </execution>
+                        <execution>
+                            <inherited>false</inherited>
+                            <id>aggregate</id>
+                            <goals>
+                                <goal>aggregate</goal>
+                            </goals>
+                            <phase>prepare-package</phase>
+                        </execution>
+                        <execution>
+                            <inherited>false</inherited>
+                            <id>aggregate-jar</id>
+                            <goals>
+                                <goal>aggregate-jar</goal>
+                            </goals>
+                            <phase>package</phase>
+                        </execution>
+
+                    </executions>
                 </plugin>
+
+
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.0-beta-8</version>
@@ -330,7 +730,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.0.2</version>
+                    <version>3.1</version>
                     <configuration>
                         <source>1.6</source>
                         <target>1.6</target>
@@ -350,6 +750,16 @@
                                 <goal>jar-no-fork</goal>
                             </goals>
                         </execution>
+<<<<<<< HEAD
+=======
+                         <execution>
+                            <id>attach-test-sources</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>test-jar-no-fork</goal>
+                            </goals>
+                        </execution>
+>>>>>>> master
                     </executions>
                 </plugin>
 
@@ -357,7 +767,11 @@
                 <plugin>
                     <groupId>org.kohsuke</groupId>
                     <artifactId>pgp-maven-plugin</artifactId>
+<<<<<<< HEAD
                     <version>1.0</version>
+=======
+                    <version>1.1</version>
+>>>>>>> master
                     <executions>
                         <execution>
                             <goals>
@@ -395,6 +809,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.1</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
                     <version>2.4</version>
                 </plugin>
 
@@ -487,11 +907,80 @@
                         </execution>
                     </executions>
                 </plugin>
+<<<<<<< HEAD
+=======
+
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>2.1</version>
+                </plugin>
+
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <configuration>
+                        <effort>Max</effort>
+                        <threshold>Medium</threshold>
+                        <outputDirectory>${project.build.directory}/findbugs</outputDirectory>
+                        <xmlOutput>true</xmlOutput>
+                        <xmlOutputDirectory>${project.build.directory}/findbugs</xmlOutputDirectory>
+                        <failOnError>false</failOnError>
+                    </configuration>
+
+                    <executions>
+                        <execution>
+                            <id>analyze-compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!--
+                                <plugin>
+                                    <groupId>org.apache.maven.plugins</groupId>
+                                    <artifactId>maven-clean-plugin</artifactId>
+                                    <version>2.5</version> <executions>
+                                    <execution>
+                                        <goals>
+                                            <goal>clean</goal>
+                                        </goals>
+                                        <phase>validate</phase>
+                                    </execution>
+                                </executions>
+                                </plugin>
+                                -->
+>>>>>>> master
             </plugins>
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>display-info</id>
+                        <goals>
+                            <goal>display-info</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>enforce</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
+<<<<<<< HEAD
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -504,16 +993,63 @@
                     </execution>
                 </executions>
             </plugin>
+=======
+>>>>>>> master
 
             <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+<<<<<<< HEAD
                 <artifactId>maven-site-plugin</artifactId>
                 <configuration>
                     <templateFile>${basedir}/src/site/phynixx-project-site.vm</templateFile>
                 </configuration>
             </plugin>
             -->
+=======
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+            <!--
+                        <plugin>
+                            <groupId>org.kohsuke</groupId>
+                            <artifactId>pgp-maven-plugin</artifactId>
+                        </plugin>
+                        -->
+
+            <!--call it manually via mvn javadoc:aggregate-jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <detectJavaApiLink>true</detectJavaApiLink>
+                    <detectLinks>true</detectLinks>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>aggregate-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+<!--
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+            </plugin>
+-->
+
+>>>>>>> master
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -530,6 +1066,7 @@
             </plugin>
 
 
+<<<<<<< HEAD
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -569,34 +1106,196 @@
 
     </build>
 
+=======
+>>>>>>> master
     <reporting>
         <plugins>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
+<<<<<<< HEAD
 
                 <reportSets>
                     <reportSet>
                         <reports>
 
+=======
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+>>>>>>> master
                             <report>dependencies</report>
+                            <report>dependency-convergence</report>
+                            <report>dependency-info</report>
+                            <report>dependency-management</report>
+                            <report>distribution-management</report>
+                            <report>plugin-management</report>
                             <report>project-team</report>
                             <report>mailing-list</report>
+<<<<<<< HEAD
 
                             <!-- <report>cim</report> -->
 
                             <report>issue-tracking</report>
                             <report>license</report>
                             <report>scm</report>
-
-
+=======
+                            <report>cim</report>
+                            <report>issue-tracking</report>
+                            <report>license</report>
+                            <report>scm</report>
                         </reports>
-                        <!-- children should use the reporting config -->
-                        <inherited>true</inherited>
                     </reportSet>
                 </reportSets>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>javancss-maven-plugin</artifactId>
+                <version>2.0</version>
+            </plugin>
+
+            <!--
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-changes-plugin</artifactId>
+                            <version>2.10</version>
+                            <reportSets>
+                                <reportSet>
+                                    <inherited>false</inherited>
+                                    <reports>
+                                        <report>github-report</report>
+                                        <report>changes-report</report>
+                                    </reports>
+                                </reportSet>
+                            </reportSets>
+                        </plugin>
+                        -->
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.17</version>
+                <reportSets>
+                    <reportSet>
+                        <!-- defines unit test reports in the modules -->
+                        <id>unit-tests</id>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                        <configuration>
+                            <alwaysGenerateSurefireReport>false</alwaysGenerateSurefireReport>
+                        </configuration>
+                    </reportSet>
+
+                    <reportSet>
+                        <!-- defines aggregate unit test report -->
+                        <id>unit-tests-aggregate</id>
+                        <inherited>false</inherited>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                        <configuration>
+                            <aggregate>true</aggregate>
+                        </configuration>
+                    </reportSet>
+
+                    <reportSet>
+                        <!-- defines integration test reports in the modules -->
+                        <id>integration-tests</id>
+                        <reports>
+                            <report>failsafe-report-only</report>
+                        </reports>
+                        <configuration>
+                            <alwaysGenerateSurefireReport>false</alwaysGenerateSurefireReport>
+                        </configuration>
+                    </reportSet>
+
+                    <reportSet>
+                        <!-- defines aggregate integration test report -->
+                        <id>integration-tests-aggregate</id>
+                        <inherited>false</inherited>
+                        <reports>
+                            <report>failsafe-report-only</report>
+                        </reports>
+                        <configuration>
+                            <aggregate>true</aggregate>
+                        </configuration>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.5.4</version>
+                <configuration> <!--
+                   Enables analysis which takes more memory but finds more bugs.
+                   If you run out of memory, changes the value of the effort element
+                   to 'low'.
+               -->
+                    <effort>Max</effort>
+                    <!-- Reports all bugs (other values are medium and max) -->
+                    <threshold>Low</threshold>
+                    <outputDirectory>${project.build.directory}/findbugs</outputDirectory>
+                    <xmlOutput>true</xmlOutput>
+                    <xmlOutputDirectory>target/findbugs</xmlOutputDirectory>
+                    <!-- <includeFilterFile>src/main/resources/findbugs-include.xml</includeFilterFile> -->
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>findbugs</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+>>>>>>> master
+
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>2.3</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <inherited>false</inherited>
+                        <id>b</id>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                    <reportSet>
+                        <inherited>true</inherited>
+                        <id>x</id>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependency-updates-report</report>
+                            <report>plugin-updates-report</report>
+                            <report>property-updates-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
             <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -673,16 +1372,26 @@
         </plugins>
     </reporting>
 
+
     <profiles>
         <profile>
             <id>tests-included</id>
+<<<<<<< HEAD
+=======
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+>>>>>>> master
             <build>
                 <pluginManagement>
                     <plugins>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-surefire-plugin</artifactId>
+<<<<<<< HEAD
                             <version>2.16</version>
+=======
+>>>>>>> master
                             <configuration>
                                 <includes>
                                     <include implementation="java.lang.String">**/*Test.java</include>
@@ -692,20 +1401,58 @@
                     </plugins>
                 </pluginManagement>
             </build>
+<<<<<<< HEAD
+=======
+
+        </profile>
+
+        <profile>
+
+            <id>gh-pages</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.github</groupId>
+                        <artifactId>site-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate stage</id>
+                                <inherited>false</inherited>
+                                <goals>
+                                    <goal>stage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+
+                    </plugin>
+
+                </plugins>
+            </build>
+>>>>>>> master
         </profile>
 
         <profile>
             <id>tests-excluded</id>
+<<<<<<< HEAD
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+=======
+>>>>>>> master
             <build>
                 <pluginManagement>
                     <plugins>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-surefire-plugin</artifactId>
+<<<<<<< HEAD
                             <version>2.16</version>
+=======
+>>>>>>> master
                             <configuration>
                                 <skipTests>true</skipTests>
                             </configuration>
@@ -714,5 +1461,17 @@
                 </pluginManagement>
             </build>
         </profile>
+<<<<<<< HEAD
     </profiles>
+=======
+
+        <profile>
+            <id>install</id>
+            <build>
+
+            </build>
+        </profile>
+    </profiles>
+
+>>>>>>> master
 </project>

@@ -240,23 +240,19 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 
         IXADataRecorderAware messageAwareConnection = (IXADataRecorderAware) con;
 
-        IXADataRecorder former=null;
 
         // Transaction is close and the logger is destroyed ...
         IXADataRecorder xaDataRecorder = messageAwareConnection.getXADataRecorder();
-        former=xaDataRecorder;
-        boolean formerClosed= false;
-        if (xaDataRecorder == null) {
-        }
         // it's my logger ....
 
         // Transaction is closed and the logger is destroyed ...
-        else if (xaDataRecorder.isClosed()) {
-            xaDataRecorder = null;
+        if (xaDataRecorder != null && xaDataRecorder.isClosed()) {
+            xaDataRecorder = null;  // gonna be refreshed
             xaDataRecorder.close();
-            formerClosed=true;
         }
 
+
+        // refresh the datarecorder , if
         if (xaDataRecorder == null) {
             try {
                 IXADataRecorder xaLogger = this.xaRecorderResource.createXADataRecorder();

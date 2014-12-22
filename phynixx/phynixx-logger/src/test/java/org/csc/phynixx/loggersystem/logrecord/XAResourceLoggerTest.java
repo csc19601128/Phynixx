@@ -97,7 +97,7 @@ public class XAResourceLoggerTest {
             // start the sequence to be tested
             PhynixxXADataRecorder xaDataRecorder1 = (PhynixxXADataRecorder) xaRecorderResource.createXADataRecorder();
 
-            xaRecorderResource.startXA(xaDataRecorder1, "test1", "XID".getBytes());
+            xaRecorderResource.startXA(xaDataRecorder1, "test1", "XID".getBytes("UTF-8"));
             LogRecordWriter logWriter1 = new LogRecordWriter();
             logWriter1.writeUTF("Log1").close();
             xaRecorderResource.logUserData(xaDataRecorder1, logWriter1.toByteArray());

@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
 /**
- * @author zf4iks2
+ * @author Christoph Schmidt-Casdorff
  */
 public class WatchdogMBeanMainTestCase extends WatchdogConsole {
 
@@ -62,7 +62,7 @@ public class WatchdogMBeanMainTestCase extends WatchdogConsole {
 
             bean.registerMBeans();
 
-            //bean.renew(5);
+            bean.renew(5);
 
             bean.control();
 

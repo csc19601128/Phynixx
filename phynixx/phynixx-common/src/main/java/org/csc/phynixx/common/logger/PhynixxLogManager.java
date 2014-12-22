@@ -26,7 +26,7 @@ public class PhynixxLogManager {
     private static IPhynixxLogManager logManager = null;
 
     static {
-        logManager = new Log4jLogManager();
+        logManager = new LogbackManager();
     }
 
 

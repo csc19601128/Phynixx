@@ -51,7 +51,11 @@ import java.util.List;
  *
  * @author christoph
  */
+<<<<<<< HEAD
 public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixxXAResource {
+=======
+public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixxXAResource<C> {
+>>>>>>> master
 
     private static final long DEFAULT_TIMEOUT = Long.MAX_VALUE; // msecs - no time out at all
 
@@ -74,14 +78,21 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     private boolean supportsTimeOut= false;
 
     /**
+<<<<<<< HEAD
      * TODO timeOut ueber einen Listener steuern und Konfigierbar machen
+=======
+     * TODO timeOut ueber einen Listener steuern und konfigierbar machen
+>>>>>>> master
      */
     public PhynixxXAResource(
             String xaId,
             TransactionManager transactionManager,
             PhynixxXAResourceFactory<C> xaResourceFactory) {
         this.xaId = xaId;
+<<<<<<< HEAD
         TransactionManager transactionManager1 = transactionManager;
+=======
+>>>>>>> master
         this.xaResourceFactory = xaResourceFactory;
         this.xaConnectionHandle = new PhynixxManagedXAConnection(this, transactionManager, xaResourceFactory.getXATransactionalBranchRepository(), xaResourceFactory.getManagedConnectionFactory());
 
@@ -116,9 +127,15 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
         try {
             if (this.xaConnectionHandle != null) {
                 XATransactionalBranch<C> transactionalBranch = this.xaConnectionHandle.toGlobalTransactionBranch();
+<<<<<<< HEAD
                 if (transactionalBranch == null) {
                     transactionalBranch.setRollbackOnly(true);
                     }
+=======
+                if (transactionalBranch != null) {
+                    transactionalBranch.setRollbackOnly(true);
+                }
+>>>>>>> master
             }
             if (LOG.isInfoEnabled()) {
                 String logString = "PhynixxXAResource.expired :: XAResource " + this.getId() + " is expired (time out occurred) and all associated TX are rollbacked ";
@@ -134,7 +151,11 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     private void setTimeOutActive(boolean active) {
         if(this.timeoutCondition!=null) {
+<<<<<<< HEAD
         this.setTimeOutActive(active);
+=======
+           this.timeoutCondition.setActive(false);
+>>>>>>> master
         }
     }
 
@@ -144,7 +165,11 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     }
 
     public void setSupportsTimeOut(boolean supportsTimeOut) {
+<<<<<<< HEAD
         this.supportsTimeOut = supportsTimeOut;
+=======
+        throw new IllegalStateException("Timeout isn't yet supported. Will be in version 2.1");
+>>>>>>> master
     }
 
 
@@ -229,7 +254,11 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
         } catch (XAException xaExc) {
             LOG.error("PhynixxXAResource[" + this.getId() + "]:start xid='"
+<<<<<<< HEAD
                     + xid
+=======
+                    + xid  // maybe null, but doesn't matter for logging
+>>>>>>> master
                     + "' flags='"
                     + ConstantsPrinter.getXAResourceMessage(flags)
                     + "'"
@@ -475,11 +504,19 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                 this.xaConnectionHandle.suspendTransactionalBranch(xid);
             } else if (flags == TMSUCCESS) {
 
+<<<<<<< HEAD
                 // XAProtocol is finsihed an the branch isnt needed any longer
                 if (transactionalBranch.isXAProtocolFinished()) {
                     transactionalBranch.close();
                 }
                 LOG.error("XAResource " + this + " closed gracefully ");
+=======
+                // XAProtocol is finsihed an the branch isn't needed any longer
+                if (transactionalBranch.isXAProtocolFinished()) {
+                    transactionalBranch.close();
+                    LOG.debug("XAResource " + this + " closed gracefully ");
+                }
+>>>>>>> master
             } else if (flags == TMFAIL) {
                 transactionalBranch.setRollbackOnly(true);
             }
@@ -499,7 +536,11 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     }
 
     /**
+<<<<<<< HEAD
      * finds the transactional branch of the current XAResource associated with die XID
+=======
+     * finds the transactional branch of the current XAResource associated with die XID and closes it without commit or explicit rollback
+>>>>>>> master
      *
      * @param xid
      * @throws XAException
@@ -625,10 +666,19 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
      */
     public boolean setTransactionTimeout(int seconds) throws XAException {
 
+<<<<<<< HEAD
+=======
+        return false;
+        /**
+>>>>>>> master
         if(!this.isSupportsTimeOut()) {
             throw new IllegalStateException("TimeOut is not supported  --> call setSupportsTimeOut");
 
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
         if (seconds < 0) {
             throw new XAException(XAException.XAER_INVAL);
         }
@@ -639,6 +689,10 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
         this.timeoutCondition.resetCondition(msecs);
 
         return true;
+<<<<<<< HEAD
+=======
+         **/
+>>>>>>> master
 
     }
 

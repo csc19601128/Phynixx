@@ -23,10 +23,21 @@ package org.csc.phynixx.watchdog;
 
 public interface IWatchedCondition {
 
+    /**
+     *
+     * @return true if and if the condition is NOT violated
+     */
     public boolean checkCondition();
 
+    /**
+     * callback if the condition is vioalated
+     */
     public void conditionViolated();
 
+    /**
+     * activate/deactivate the condition
+     * @param active state to be set
+     */
     public void setActive(boolean active);
 
     public boolean isActive();

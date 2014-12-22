@@ -21,6 +21,10 @@ package org.csc.phynixx.watchdog.log;
  */
 
 
+/**
+ *
+ * Created by christoph on 09.06.2012.
+ */
 public interface IWatchdogLog {
 
     String getDescription();
