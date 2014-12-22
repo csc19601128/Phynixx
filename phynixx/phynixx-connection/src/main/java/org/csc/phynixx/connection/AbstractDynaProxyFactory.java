@@ -28,7 +28,7 @@ class AbstractDynaProxyFactory {
     private Class[] supportedInterfaces = null;
     private Class[] requiredInterfaces = null;
     private Class[] optionalInterfaces = null;
-    private Class[] implementedInterfaces = null;
+    private Class[] implementedInterfaces = null;   
 
 
     /**
