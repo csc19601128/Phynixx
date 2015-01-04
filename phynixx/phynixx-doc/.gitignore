@@ -12,8 +12,6 @@
 */target/**
 target/*
 target/*.*
-*.html
-
 
 pom.xml.tag
 pom.xml.releaseBackup
