@@ -30,21 +30,26 @@
 			<name>Deployment through GitHub's site deployment plugin</name>
 			<url>https://github.com/csc19601128/Phynixx</url>
 		</site>
-		<!-- <snapshotRepository> <id>sonatype-nexus-snaphots</id> <name>Sonatype 
-			Nexus Snapshots</name> <url>https://oss.sonatype.or/content/repositories/snapshots/</url> 
-			</snapshotRepository> <repository> <id>sonatype-nexus-staging</id> <name>Sonatype 
-			Nexus Repository</name> <url>https://oss.sonatype.or/service/local/staging/deploy/</url> 
-			</repository> -->
 		<snapshotRepository>
-			<id>internal.repo</id>
-			<name>MyCo Internal Repository</name>
-			<url>file://C:/tmp/repo</url>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>https://oss.sonatype.or/content/repositories/snapshots/</url>
 		</snapshotRepository>
 		<repository>
-			<id>internal.repo</id>
-			<name>MyCo Internal Repository</name>
-			<url>file://C:/tmp/repo</url>
+			<id>sonatype-nexus-staging</id>
+			<name>Sonatype Nexus Staging</name>
+			<url>https://oss.sonatype.or/service/local/staging/deploy/maven2</url>
 		</repository>
+		<!-- <snapshotRepository> -->
+		<!-- <id>internal.repo</id> -->
+		<!-- <name>MyCo Internal Repository</name> -->
+		<!-- <url>file://C:/tmp/repo</url> -->
+		<!-- </snapshotRepository> -->
+		<!-- <repository> -->
+		<!-- <id>internal.repo</id> -->
+		<!-- <name>MyCo Internal Repository</name> -->
+		<!-- <url>file://C:/tmp/repo</url> -->
+		<!-- </repository> -->
 	</distributionManagement>
 
 	<properties>
@@ -606,7 +611,8 @@
 								<licenseMerges>
 									<licenseMerge>The Apache Software License, Version 2.0|Apache
 										License, Version
-										2.0|Apache Public License 2.0|Apache 2|Apache License 2.0
+										2.0|Apache Public License 2.0|Apache 2|Apache
+										License 2.0
 									</licenseMerge>
 									<licenseMerge>GNU General Public License, Version 2 with the
 										Classpath
@@ -956,7 +962,15 @@
 	</reporting>
 
 
+
+
 	<profiles>
+	
+	<profile>
+	    <id>deploy</id>
+	    
+	
+	</profile>
 		<profile>
 			<id>tests-included</id>
 			<activation>
