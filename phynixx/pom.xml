@@ -686,6 +686,8 @@
 					<executions>
 						<execution>
 							<id>add-resource</id>
+							
+							<!-- add the resources before the resource-plugin works (see license-plugin)-->
 							<phase>generate-resources</phase>
 							<goals>
 								<goal>add-resource</goal>
