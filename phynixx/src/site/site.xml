@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="${project.artifactId}">
 
-    <version position="right"/>
-    <publishDate position="right"/>
     <body>
 
+        <menu name="Phynixx">
+            <item name="Project Information"  href="/project-info.html"/>
+        </menu>
+
         <menu name="Documentation">
+            <!--
+            <item name="Dokumentation" href="index.html"/>
+            <item name="Phynixx" href="phynixx.html"/>
+            <item name="Referenzen" href="references.html"/>
+            -->
             <item name="Getting Started" href="getting-started.html"/>
             <item name="Tutorial" href="tutorial.html"/>
+            <item name="Background" href="background.html"/>
+            <item name="Referenzen" href="references.html"/>
         </menu>
 
         ${modules}
-
-        ${reports}
-
 
 
     </body>
