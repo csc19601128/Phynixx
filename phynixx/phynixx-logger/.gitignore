@@ -9,10 +9,8 @@
 .settings
 
 # maven
-*/target/**
-target/*
-target/*.*
-*.html
+/**/target/**/**
+
 
 
 pom.xml.tag
