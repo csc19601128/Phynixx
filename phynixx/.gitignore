@@ -9,7 +9,7 @@
 .settings
 
 # maven
-*/target/**
+/**/target/**/**
 target/*
 target/*.*
 *.html
