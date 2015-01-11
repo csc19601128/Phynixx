@@ -42,6 +42,15 @@
             <artifactId>phynixx-connection</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+          <dependency>
+            <groupId>org.csc</groupId>
+            <artifactId>phynixx-connection</artifactId>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+            <version>${project.version}</version>
+        </dependency>
+        
 
         <dependency>
             <groupId>org.csc</groupId>
