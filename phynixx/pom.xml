@@ -842,13 +842,22 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>javancss-maven-plugin</artifactId>
-				<version>2.0</version>
+				<version>2.1</version>
 			</plugin>
 
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-changes-plugin</artifactId> 
-				<version>2.10</version> <reportSets> <reportSet> <inherited>false</inherited> 
-				<reports> <report>github-report</report> <report>changes-report</report> 
-				</reports> </reportSet> </reportSets> </plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changes-plugin</artifactId>
+				<version>2.10</version>
+				<reportSets>
+					<reportSet>
+						<inherited>false</inherited>
+						<reports>
+							<report>github-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
 
 
 			<plugin>
@@ -968,17 +977,54 @@
 				</reportSets>
 			</plugin>
 
-			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>taglist-maven-plugin</artifactId> 
-				<version>2.4</version> <reportSets> <reportSet> <id>aggregate</id> <inherited>false</inherited> 
-				<reports> <report>aggregate</report> </reports> </reportSet> </reportSets> 
-				<configuration> <tagListOptions> <tagClasses> <tagClass> <displayName>Todo 
-				Work</displayName> <tags> <tag> <matchString>todo</matchString> <matchType>ignoreCase</matchType> 
-				</tag> <tag> <matchString>FIXME</matchString> <matchType>exact</matchType> 
-				</tag> </tags> </tagClass> </tagClasses> </tagListOptions> </configuration> 
-				</plugin> <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jxr-plugin</artifactId> 
-				<version>2.3</version> <reportSets> <reportSet> <id>aggregate</id> <inherited>false</inherited> 
-				<reports> <report>aggregate</report> </reports> </reportSet> </reportSets> 
-				</plugin> -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+				<version>2.4</version>
+				<reportSets>
+					<reportSet>
+						<id>aggregate</id>
+						<inherited>false</inherited>
+						<reports>
+							<report>taglist</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+				<configuration>
+					<tagListOptions>
+						<tagClasses>
+							<tagClass>
+								<displayName>Todo
+									Work</displayName>
+								<tags>
+									<tag>
+										<matchString>todo</matchString>
+										<matchType>ignoreCase</matchType>
+									</tag>
+									<tag>
+										<matchString>FIXME</matchString>
+										<matchType>exact</matchType>
+									</tag>
+								</tags>
+							</tagClass>
+						</tagClasses>
+					</tagListOptions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.3</version>
+				<reportSets>
+					<reportSet>
+						<id>aggregate</id>
+						<inherited>false</inherited>
+						<reports>
+							<report>aggregate</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
 		</plugins>
 	</reporting>
 
