@@ -12,7 +12,6 @@
 **/target/**/*
 **/target/**/*.*
 **/*.class
-*.html
 
 
 **/pom.xml.tag
@@ -33,3 +32,4 @@ images.bak/
 
 #backups
 *#
+phynixx/phynixx-build-helper/src/main/InstallCert.java
