@@ -20,49 +20,37 @@ package org.csc.phynixx.xa;
  * #L%
  */
 
-
-import org.csc.phynixx.connection.IPhynixxConnection;
-import org.csc.phynixx.connection.IPhynixxConnectionFactory;
-import org.csc.phynixx.connection.IPhynixxManagedConnectionFactory;
-import org.csc.phynixx.watchdog.IWatchdog;
-import org.csc.phynixx.watchdog.IWatchedCondition;
-import org.csc.phynixx.watchdog.WatchdogRegistry;
-
-import javax.transaction.TransactionManager;
-import javax.transaction.xa.Xid;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.transaction.TransactionManager;
+import javax.transaction.xa.Xid;
+
+import org.csc.phynixx.connection.IPhynixxConnection;
+import org.csc.phynixx.connection.IPhynixxManagedConnectionFactory;
+import org.csc.phynixx.watchdog.IWatchdog;
+import org.csc.phynixx.watchdog.IWatchedCondition;
 
 /**
  * @param <T>
  */
-public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements IPhynixxXAResourceFactory<T>, IPhynixxXAResourceListener<T> {
+public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements IPhynixxXAResourceFactory<T>,
+        IPhynixxXAResourceListener<T> {
 
     private static final long CHECK_INTERVAL = 100; // msecs
 
     private static IResourceIDGenerator ID_GENERATOR = new IDGenerator();
 
-
-    /**
-     * this XAResources represents the Resources of this factory
-     */
-    PhynixxXAResource<T> xaResource;
-
-
     private final IXATransactionalBranchRepository<T> xaTransactionalBranchRepository;
 
-
-    //  private PhynixxConnectionTray<T> connectionTray = null;
-
+    // private PhynixxConnectionTray<T> connectionTray = null;
 
     /**
      * set of active xaresources
      */
-    private Set<PhynixxXAResource<T>> xaresources = Collections.synchronizedSet(new HashSet());
+    private Set<PhynixxXAResource<T>> xaresources = Collections.synchronizedSet(new HashSet<PhynixxXAResource<T>>());
 
     private Object resourceFactoryId = null;
 
@@ -73,7 +61,7 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
 
     private TransactionManager transactionManager = null;
 
-    private boolean supportsTimeOut= false;
+    private boolean supportsTimeOut = false;
 
     public boolean isSupportsTimeOut() {
         return supportsTimeOut;
@@ -88,31 +76,26 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
      */
     private IWatchdog xaresourrceWatchdog = null;
 
-    public PhynixxXAResourceFactory(
-            IPhynixxManagedConnectionFactory<T> connectionFactory,
+    public PhynixxXAResourceFactory(IPhynixxManagedConnectionFactory<T> connectionFactory,
             TransactionManager transactionManager) {
         this("RF", connectionFactory, transactionManager);
     }
 
-    public PhynixxXAResourceFactory(
-            Object id,
-            IPhynixxManagedConnectionFactory<T> connectionFactory,
+    public PhynixxXAResourceFactory(Object id, IPhynixxManagedConnectionFactory<T> connectionFactory,
             TransactionManager transactionManager) {
         this.resourceFactoryId = id;
 
-        //  this.connectionTray = new PhynixxConnectionTray(connectionFactory);
+        // this.connectionTray = new PhynixxConnectionTray(connectionFactory);
 
         this.managedConnectionFactory = connectionFactory;
 
-        xaTransactionalBranchRepository = new XATransactionalBranchRepository();
+        this.xaTransactionalBranchRepository = new XATransactionalBranchRepository<T>();
 
         this.transactionManager = transactionManager;
-        //this.xaresourrceWatchdog = WatchdogRegistry.getTheRegistry().createWatchdog(CHECK_INTERVAL);
+        // this.xaresourrceWatchdog =
+        // WatchdogRegistry.getTheRegistry().createWatchdog(CHECK_INTERVAL);
 
-
-        this.xaResource= instanciateXAResource();
     }
-
 
     public String getId() {
         return resourceFactoryId.toString();
@@ -131,7 +114,6 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
         return transactionManager;
     }
 
-
     protected IResourceIDGenerator getIdGenerator() {
         return ID_GENERATOR;
     }
@@ -140,22 +122,22 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
         ID_GENERATOR = idGenerator;
     }
 
-
     private PhynixxXAResource<T> instanciateXAResource() {
         PhynixxXAResource<T> xares = new PhynixxXAResource<T>(createXAResourceId(), this.transactionManager, this);
         xares.addXAResourceListener(this);
-        this.xaresources.add(xares);
+        addXAResource(xares);
         return xares;
     }
 
     public IPhynixxXAConnection<T> getXAConnection() {
-        return this.xaResource.getXAConnection();
+
+        PhynixxXAResource<T> xaResource = instanciateXAResource();
+        return xaResource.getXAConnection();
     }
 
-
     /**
-     * XAResourceProgressState id helps debugging a xa resource.
-     * It's unique for all xa resources of a resource factory
+     * XAResourceProgressState id helps debugging a xa resource. It's unique for
+     * all xa resources of a resource factory
      *
      * @return
      */
@@ -170,26 +152,35 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
      */
     @Override
     public IPhynixxXAResource<T> getXAResource() {
-        return this.xaResource;
+        PhynixxXAResource<T> xaResource = instanciateXAResource();
+        return xaResource;
     }
 
+    private void addXAResource(PhynixxXAResource<T> xaResource) {
+        synchronized (xaresources) {
+            xaresources.add(xaResource);
+        }
+    }
 
-    public void closed(IPhynixxXAResourceEvent event) {
-        this.xaresources.remove(event.getXAResource());
+    @Override
+    public void closed(IPhynixxXAResourceEvent<T> event) {
+        synchronized (xaresources) {
+            this.xaresources.remove(event.getXAResource());
+        }
     }
 
     /**
-     * resource factory represents the persistence management system and is responsible
-     * to implements system recovery
-     * Subclasses have to implement die recovery
+     * resource factory represents the persistence management system and is
+     * responsible to implements system recovery Subclasses have to implement
+     * die recovery
      *
      * @return recovered TX
      *
-     * TODO recover still to be implemented
+     *         TODO recover still to be implemented
      */
     @Override
     public synchronized Xid[] recover() {
-        return new Xid[]{};
+        return new Xid[] {};
     }
 
     /**
@@ -197,11 +188,16 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
      */
     @Override
     public synchronized void close() {
+       
         if (this.xaresources.size() > 0) {
-            // copy all resources as the close of a resource modifies the xaresources ...
-            Set<PhynixxXAResource<T>> tmpXAResources = new HashSet(this.xaresources);
+            // copy all resources as the close of a resource modifies the
+            // xaresources ...
+            Set<PhynixxXAResource<T>> tmpXAResources = new HashSet();
+            synchronized (xaresources) {
+                tmpXAResources.addAll(xaresources);
+            }
             // close all reopen XAResources ....
-            for (Iterator<PhynixxXAResource<T>> iterator = tmpXAResources.iterator(); iterator.hasNext(); ) {
+            for (Iterator<PhynixxXAResource<T>> iterator = tmpXAResources.iterator(); iterator.hasNext();) {
                 PhynixxXAResource<T> xaresource = iterator.next();
                 xaresource.close();
             }
@@ -209,7 +205,6 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
 
         this.getXATransactionalBranchRepository().close();
     }
-
 
     synchronized void registerWatchCondition(IWatchedCondition cond) {
         this.xaresourrceWatchdog.registerCondition(cond);
@@ -219,15 +214,19 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements I
         this.xaresourrceWatchdog.unregisterCondition(cond);
     }
 
-	@Override
-	public T getConnection() {
-		return this.getXAResource().getXAConnection().getConnection();
-	}
+    @Override
+    public T getConnection() {
+        return this.getXAResource().getXAConnection().getConnection();
+    }
 
-	@Override
-	public Class<T> getConnectionInterface() {
-		return this.managedConnectionFactory.getConnectionInterface();
-	}
+    @Override
+    public Class<T> getConnectionInterface() {
+        return this.managedConnectionFactory.getConnectionInterface();
+    }
 
-
+    protected Set<PhynixxXAResource<T>> getUnreleasedXAResources() {
+        synchronized (xaresources) {
+            return new HashSet<PhynixxXAResource<T>>(xaresources);
+        }
+    }
 }

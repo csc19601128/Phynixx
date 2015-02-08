@@ -1,10 +1,8 @@
-package org.csc.phynixx.common.logger;
-
 /*
  * #%L
- * phynixx-common
+ * phynixx-optionals
  * %%
- * Copyright (C) 2014 csc
+ * Copyright (C) 2014 - 2015 Christoph Schmidt-Casdorff
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +18,6 @@ package org.csc.phynixx.common.logger;
  * #L%
  */
 
+public class App {
 
-public class LogbackManager implements IPhynixxLogManager {
-
-    public IPhynixxLogger getLogger(Class cls) {
-        return new LogbackLogger(cls);
-    }
-
-    public IPhynixxLogger getLogger(String logger) {
-        return new LogbackLogger(logger);
-    }
 }

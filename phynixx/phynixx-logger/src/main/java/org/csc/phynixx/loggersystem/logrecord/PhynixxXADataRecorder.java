@@ -29,7 +29,14 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * thisclas is backwards bound to the PhynixxXARecorderRepository. The current class manages LogEntries but not know the persistence logger.
+ * A PhynixxXADataRecorder is meant to log state information of an transactional resource. 
+ * 
+ * A LogRecord is an byte-Array qualified by a {@link XALogRecordType} 	qualifier. This qualifier is interpreted by the caller.
+ * 
+ *  A messageSequence is a logical sequence of log records. They describes all log records of a transaction.  
+ *  
+ * 
+ * this class is backwards bound to the PhynixxXARecorderRepository. The current class manages LogEntries but not know the persistence logger.
  */
 public class PhynixxXADataRecorder implements IXADataRecorder {
 
@@ -39,6 +46,10 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
 
     private List<IDataRecord> messages = new ArrayList<IDataRecord>();
 
+    
+    /**
+     * the physical logger of this xadataRecorder
+     */
     private XADataLogger dataLogger;
 
 

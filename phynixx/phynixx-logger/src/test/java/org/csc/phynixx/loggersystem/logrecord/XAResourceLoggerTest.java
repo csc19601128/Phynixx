@@ -135,7 +135,7 @@ public class XAResourceLoggerTest {
             // recover the message sequences
             Set<IXADataRecorder> xaDataRecorders = xaRecorderResource.getXADataRecorders();
 
-            log.info(xaDataRecorders);
+            log.info(xaDataRecorders.toString());
 
             TestCase.assertEquals(1, xaDataRecorders.size());
 

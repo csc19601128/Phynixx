@@ -1,100 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>phynixx</artifactId>
-        <groupId>org.csc</groupId>
-        <version>2.0.0</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <name>Tutorial (how to use Phynixx)</name>
-    <description>Tutorial (how to use Phynixx)</description>
-    <artifactId>phynixx-tutorial</artifactId>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>phynixx</artifactId>
+		<groupId>org.csc</groupId>
+		<version>2.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<name>Tutorial (how to use Phynixx)</name>
+	<description>Tutorial (how to use Phynixx)</description>
+	<artifactId>phynixx-tutorial</artifactId>
 
-    <dependencies>
-
-        <dependency>
-            <groupId>org.csc</groupId>
-            <artifactId>phynixx-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.csc</groupId>
-            <artifactId>phynixx-connection</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+	<dependencies>
 
 
-        <dependency>
-            <groupId>org.csc</groupId>
-            <artifactId>phynixx-xa</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.csc</groupId>
+			<artifactId>phynixx-optionals</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
 
-        <dependency>
-            <groupId>org.csc</groupId>
-            <artifactId>phynixx-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.csc</groupId>
-            <artifactId>phynixx-logger</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.csc</groupId>
+			<artifactId>phynixx-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 
-        <dependency>
-            <groupId>org.csc</groupId>
-            <artifactId>phynixx-logger</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
+		<dependency>
+			<groupId>org.csc</groupId>
+			<artifactId>phynixx-common</artifactId>
+			<version>${project.version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
 
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.csc</groupId>
+			<artifactId>phynixx-connection</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <scope>compile</scope>
-        </dependency>
 
-    </dependencies>
+		<dependency>
+			<groupId>org.csc</groupId>
+			<artifactId>phynixx-xa</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-    <!--
-    -->
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-site-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-site</id>
-                        <phase>site</phase>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <configuration>
-                            <generateProjectInfo>false</generateProjectInfo>
-                            <generateReports>false</generateReports>
-                            <generatedSiteDirectory>true</generatedSiteDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+		<dependency>
+			<groupId>org.csc</groupId>
+			<artifactId>phynixx-common</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.csc</groupId>
+			<artifactId>phynixx-logger</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.csc</groupId>
+			<artifactId>phynixx-logger</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+
+	</dependencies>
+
+	<!-- -->
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-site</id>
+						<phase>site</phase>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<configuration>
+							<generateProjectInfo>false</generateProjectInfo>
+							<generateReports>false</generateReports>
+							<generatedSiteDirectory>true</generatedSiteDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

@@ -24,15 +24,19 @@ package org.csc.phynixx.common.cast;
 public class ImplementorUtils {
 
     /**
-     * versucht, eine Objekt in den Zieltyp <code>targetClass</code> zu casten.
-     * <p/>
-     * Wird <code>null</code> uebergeben, so wird <code>null</code> geliefert.
+     * 
+     * Casts an object to the class or interface represented
+     * by this <tt>Class</tt> object.
      *
-     * @param obj
+     * @param obj the object to be cast
      * @param targetClass
-     * @return
+     * @return the object after casting, or null if obj is null
+     *
      * @throws IllegalArgumentException object oder Zielklasse sind undefiniert
      * @throws ClassCastException       cast konnte nicht durch gefuehrt werden
+     * 
+     * 
+     * 
      */
     public static <T> T cast(final Object obj, final Class<T> targetClass) {
         if (targetClass == null) {

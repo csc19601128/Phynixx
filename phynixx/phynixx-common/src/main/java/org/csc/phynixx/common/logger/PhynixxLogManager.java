@@ -26,7 +26,7 @@ public class PhynixxLogManager {
     private static IPhynixxLogManager logManager = null;
 
     static {
-        logManager = new LogbackManager();
+        logManager = new SLF4JManager();
     }
 
 
@@ -41,7 +41,7 @@ public class PhynixxLogManager {
         PhynixxLogManager.logManager = logManager;
     }
 
-    public static IPhynixxLogger getLogger(Class cls) {
+    public static IPhynixxLogger getLogger(Class<?> cls) {
         return PhynixxLogManager.getLogManager().getLogger(cls);
     }
 

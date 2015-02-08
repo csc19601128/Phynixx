@@ -49,7 +49,7 @@ import java.util.List;
  *
  *     connection reference
  *     connection dereferenced
- *
+ * 
  *     connection closed
  *
  *
@@ -80,7 +80,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
 
     private volatile boolean closed = false;
 
-    private CloseStrategy closeStrategy;
+    private CloseStrategy<C> closeStrategy;
 
     private List<IPhynixxManagedConnectionListener<C>> listeners = new ArrayList<IPhynixxManagedConnectionListener<C>>();
 
@@ -108,7 +108,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
     private void checkThreadBinding() {
         long currentThreadBinding = Thread.currentThread().getId();
         if( this.boundThreadId!=null && currentThreadBinding!=this.boundThreadId) {
-            throw new IllegalStateException("Connection is bound to Thread "+this.boundThreadId+" but called by Thread "+ currentThreadBinding);
+        	 LOG.warn("Connection is bound to Thread "+this.boundThreadId+" but called by Thread "+ currentThreadBinding);
         }
     }
 
@@ -117,7 +117,8 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
         if (this == o) return true;
         if (o == null || !(o instanceof IPhynixxManagedConnection)) return false;
 
-        IPhynixxManagedConnection that = (IPhynixxManagedConnection) o;
+        @SuppressWarnings("rawtypes")
+		IPhynixxManagedConnection that = (IPhynixxManagedConnection) o;
         return that.getManagedConnectionId() == this.getManagedConnectionId();
     }
 
@@ -170,7 +171,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
             throw new IllegalStateException("Connection is already set free");
         }
         if(this.hasTransactionalData()) {
-            LOG.warn("Connection " + this + " has tranactional data and has to be closed safely");
+            LOG.warn("Connection " + this + " has transactional data and has to be closed safely");
         }
         this.setClosed(false);
         this.reset();

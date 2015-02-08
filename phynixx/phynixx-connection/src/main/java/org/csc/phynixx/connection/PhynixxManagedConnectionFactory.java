@@ -21,16 +21,16 @@ package org.csc.phynixx.connection;
  */
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.csc.phynixx.common.cast.ImplementorUtils;
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.connection.loggersystem.Dev0Strategy;
 import org.csc.phynixx.connection.loggersystem.IPhynixxLoggerSystemStrategy;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * managedConnection are proxies for connections created by a {@link IPhynixxConnectionFactory}. The proxy adds serveral capabilities to the (core-)connection
@@ -50,7 +50,7 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
     private IPhynixxConnectionFactory<C> connectionFactory = null;
 
     private DynaPhynixxManagedConnectionFactory<C> managedConnectionFactory = null;
-    private IPhynixxLoggerSystemStrategy<C> loggerSystemStrategy = new Dev0Strategy();
+    private IPhynixxLoggerSystemStrategy<C> loggerSystemStrategy = new Dev0Strategy<C>();
 
     private List<IPhynixxConnectionProxyDecorator<C>> managedConnectionDecorators = new ArrayList<IPhynixxConnectionProxyDecorator<C>>();
 
@@ -71,18 +71,22 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
         this.setCloseStrategy(new UnpooledConnectionCloseStrategy<C>());
     }
 
+    @Override
     public boolean isAutocommitAware() {
         return autocommitAware;
     }
 
+    @Override
     public void setAutocommitAware(boolean autocommitAware) {
         this.autocommitAware = autocommitAware;
     }
 
+    @Override
     public boolean isSynchronizeConnection() {
         return synchronizeConnection;
     }
 
+    @Override
     public void setSynchronizeConnection(boolean synchronizeConnection) {
         this.synchronizeConnection = synchronizeConnection;
     }
@@ -206,6 +210,7 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
     }
 
 
+    @Override
     public Class<C> getConnectionInterface() {
         return this.getConnectionFactory().getConnectionInterface();
     }
@@ -226,6 +231,7 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
     /**
      * the connection is released to the pool
      */
+    @Override
     public void connectionReleased(IManagedConnectionEvent<C> event) {
         IPhynixxManagedConnection<C> proxy = event.getManagedConnection();
         if (LOG.isDebugEnabled()) {

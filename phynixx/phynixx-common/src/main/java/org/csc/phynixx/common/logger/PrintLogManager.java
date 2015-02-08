@@ -35,7 +35,7 @@ public class PrintLogManager implements IPhynixxLogManager {
         printLogger.setLogLevel(logLevel);
     }
 
-    public IPhynixxLogger getLogger(Class cls) {
+    public IPhynixxLogger getLogger(Class<?> cls) {
         return printLogger;
     }
 

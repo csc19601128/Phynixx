@@ -29,18 +29,34 @@ import org.csc.phynixx.connection.IPhynixxConnectionFactory;
 public class TestConnectionFactory implements IPhynixxConnectionFactory<ITestConnection> {
 
     private static final IDGenerator<Long> idGenerator = IDGenerators.createLongGenerator(1, true);
+    
+    private String decorator; 
+    
+    
 
-    public ITestConnection getConnection() {
-        Object connectionId = null;
-            connectionId = idGenerator.generate();
-        return new TestConnection(connectionId);
+    public TestConnectionFactory() {
+        this.decorator="test_";
     }
 
-    public Class getConnectionInterface() {
+    public TestConnectionFactory(String decorator) {
+        super();
+        this.decorator = decorator;
+    }
+
+    @Override
+    public ITestConnection getConnection() {
+        Long connectionId = null;
+        connectionId = idGenerator.generate();
+        return new TestConnection(decorator+Long.toString(connectionId));
+    }
+
+    @Override
+    public Class<ITestConnection> getConnectionInterface() {
         return ITestConnection.class;
     }
 
 
+    @Override
     public void close() {
 
     }

@@ -1,10 +1,10 @@
-package org.csc.phynixx.common.logger;
+package org.csc.phynixx.xa.transactionmanagers;
 
 /*
  * #%L
- * phynixx-common
+ * phynixx-xa
  * %%
- * Copyright (C) 2014 csc
+ * Copyright (C) 2014 - 2015 Christoph Schmidt-Casdorff
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,20 @@ package org.csc.phynixx.common.logger;
  */
 
 
-public class Log4jLogManager implements IPhynixxLogManager {
+import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAResource;
 
-    public IPhynixxLogger getLogger(Class cls) {
-        return new Log4jLogger(cls);
-    }
+public interface ITransactionManagerProvider {
+    
+    TransactionManager getTransactionManager();
 
-    public IPhynixxLogger getLogger(String logger) {
-        return new Log4jLogger(logger);
-    }
+    void start() throws Exception;
+
+    /**
+     * only used by bitronix ...
+     * @param xaResource
+     */
+    void register(XAResource xaResource);
+
+    void stop() throws Exception;
 }

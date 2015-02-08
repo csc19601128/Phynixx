@@ -21,25 +21,32 @@ package org.csc.phynixx.xa;
  */
 
 
-import org.csc.phynixx.connection.*;
+import org.csc.phynixx.connection.IManagedConnectionEvent;
+import org.csc.phynixx.connection.IPhynixxConnection;
+import org.csc.phynixx.connection.IPhynixxManagedConnection;
+import org.csc.phynixx.connection.IPhynixxManagedConnectionListener;
+import org.csc.phynixx.connection.PhynixxManagedConnectionListenerAdapter;
 
 
 /**
  * @author Christoph Schmidt-Casdorff
  */
-class LocalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxManagedConnectionListener<C>, ITransactionBinding<C> {
+class LocalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxManagedConnectionListener<C> {
 
     // private TransactionManager tmMgr = null;
 
     private IPhynixxManagedConnection<C> connection;
+    
 
-
+    @Override
+    public String toString() {
+        return "LocalTransactionProxy [connection=" + this.connection + "]";
+    }
     LocalTransactionProxy(IPhynixxManagedConnection<C> connection) {
         this.connection = connection;
         this.connection.addConnectionListener(this);
     }
-
-    /**
+	/**
      * @return indicates if the transaction has uncomnmitted transactional data
      */
     boolean hasTransactionalData() {
@@ -51,39 +58,32 @@ class LocalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManaged
     }
 
 
-    @Override
-    public TransactionBindingType getTransactionBindingType() {
-        return TransactionBindingType.LocalTransaction;
-    }
-
     /**
-     * releases and closes the associated TransactionalBranch
+     * releases the accociated connection. It can be reuse.
+     * It ist not closed
      */
-    @Override
-    public void release() {
+    public void release() 
+    {
+    	IPhynixxManagedConnection<C> con= this.connection;
         if (connection != null) {
             this.connection.removeConnectionListener(this);
         }
         this.connection = null;
+        
+        // return con; 
     }
 
-    @Override
     public void close() {
         if (connection != null) {
-            IPhynixxManagedConnection<C> connection=this.connection;
-        this.release();
-        connection.close();
+            IPhynixxManagedConnection<C> con=this.connection;
+            this.release();
+            con.close();
+        }
     }
 
-    }
-
-    @Override
     public IPhynixxManagedConnection<C> getConnection() {
         return connection;
     }
-
-
-
 
     @Override
     public void connectionReleased(IManagedConnectionEvent<C> event) {

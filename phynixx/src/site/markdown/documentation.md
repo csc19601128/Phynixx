@@ -3,11 +3,13 @@ Dokumentation Phynixx
 
 
 ## Logging ##
-Phynixx setzt bei Logging auf _logback_ (siehe [http://logback.qos.ch/index.html] (http://logback.qos.ch/index.html) )
-Um Phynixx kann mittels des Projekts SLF4J ( [http://www.slf4j.org/manual.html](http://www.slf4j.org/manual.html) ) an Ihr Logging angepasst werden . 
-Dazu müssen die Aufrufe an das logback-Loggingsystem mittels der Bridge _logback-classic.jar_ nach SLF4J umgeleitet werden.
+Phynixx setzt bei Logging auf _logback_ (siehe [http://logback.qos.ch/index.html] (http://logback.qos.ch/index.html) ) mit dem Adapter _logback-classic.jar*  (siehe [http://www.eclipse.org/jetty/documentation/current/example-slf4j-multiple-loggers.html](http://www.eclipse.org/jetty/documentation/current/example-slf4j-multiple-loggers.html)
 
-Wird diese Bridge eingesetzt, so muss 
+Dieser Adapter wird von Phynixx-Projekten als optionale Dependency angezogen. 
+Um Phynixx kann mittels des Projekts SLF4J ( [http://www.slf4j.org/manual.html](http://www.slf4j.org/manual.html) ) an Ihr Logging angepasst werden . 
+Ihre Anpassung an SLF4J umfasst zum einen den SLF4J-Adapter und die vin Ihnen benötigten Bridges. Da Phynixx _logback-core_ als LoggingAPI nutzt ist kein zusätzliche Bridge anzugeben.  
+
+
 
 <pre>
 &lt;dependency&gt;

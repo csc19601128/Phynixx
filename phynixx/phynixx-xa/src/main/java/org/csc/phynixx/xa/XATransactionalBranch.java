@@ -297,7 +297,7 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends
 	void rollback() throws XAException {
 		if (!checkTXRequirements()) {
 			LOG.error("State not transactional " + this);
-			new XAException(XAException.XAER_PROTO);
+			throw new XAException(XAException.XAER_PROTO);
 		}
 
 		LOG.debug("XATransactionalBranch:rollback for xid=" + xid

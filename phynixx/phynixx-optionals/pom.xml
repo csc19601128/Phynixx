@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.csc</groupId>
+		<artifactId>phynixx</artifactId>
+		<version>2.0.1-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>phynixx-optionals</artifactId>
+	<name>phynixx-optionals</name>
+	<packaging>jar</packaging>
+	
+	<description>see http://maven.apache.org/guides/introduction/introduction-to-optional-and-excludes-dependencies.html</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	
+	<dependencies>
+		<!-- slf4j-binding is optional and can be substituted by other projects -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+
+</project>

@@ -21,24 +21,27 @@ package org.csc.phynixx.xa;
  */
 
 
+import javax.transaction.xa.Xid;
+
+import org.csc.phynixx.connection.IManagedConnectionEvent;
 import org.csc.phynixx.connection.IPhynixxConnection;
 import org.csc.phynixx.connection.IPhynixxManagedConnection;
 import org.csc.phynixx.connection.IPhynixxManagedConnectionListener;
 import org.csc.phynixx.connection.PhynixxManagedConnectionListenerAdapter;
 
-import javax.transaction.xa.Xid;
-
 
 /**
- * This TransactionProxy shows, that the XAresource is enölisted in a Global Transaction. During enlisting, the transactional brnach isn't known. It is assigned during {@link javax.transaction.xa.XAResource#start(javax.transaction.xa.Xid, int)}
+ * This TransactionProxy shows, that the XAresource is enlisted in a Global Transaction. 
+ * During enlisting, the transactional brnach isn't known. It is assigned during {@link javax.transaction.xa.XAResource#start(javax.transaction.xa.Xid, int)}
  */
-class GlobalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxManagedConnectionListener<C>, ITransactionBinding<C> {
+class GlobalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManagedConnectionListenerAdapter<C> implements IPhynixxManagedConnectionListener<C> {
 
     // private TransactionManager tmMgr = null;
 
     private XATransactionalBranch<C> transactionalBranch;
 
-    GlobalTransactionProxy() {
+    GlobalTransactionProxy(XATransactionalBranch<C> transactionalBranch) {
+        setTransactionalBranch(transactionalBranch);
     }
 
     XATransactionalBranch<C> getGlobalTransactionalBranch() {
@@ -48,17 +51,16 @@ class GlobalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManage
     /**
      *
      * @param transactionalBranch
-     * @return if the XATransactionalBranch has to be assigned at construction , return value cann be used to assign      */
-    GlobalTransactionProxy<C> assignTransactionalBranch( XATransactionalBranch<C> transactionalBranch ) {
+     * @return if the XATransactionalBranch has to be assigned at construction , return value can be used to assign      */
+    private void setTransactionalBranch( XATransactionalBranch<C> transactionalBranch ) {
         if( this.transactionalBranch!=null) {
             throw new IllegalStateException("transactionalBranch already assigned");
         }
         this.transactionalBranch=transactionalBranch;
+        this.transactionalBranch.getManagedConnection().addConnectionListener(this);
 
-        return this;
     }
 
-    @Override
     public TransactionBindingType getTransactionBindingType() {
         return TransactionBindingType.GlobalTransaction;
     }
@@ -66,23 +68,16 @@ class GlobalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManage
     /**
      * releases and closes the associated TransactionalBranch, but do not close the associated resources
      */
-    @Override
     public void release() {
         if (transactionalBranch != null) {
             transactionalBranch.getManagedConnection().removeConnectionListener(this);
-            /**
-             transactionalBranch.getManagedConnection().close();
-             transactionalBranchRepository.releaseTransactionalBranch(this.getXid());
-             **/
         }
         this.transactionalBranch = null;
-
     }
 
     /**
      * releases and closes the associated TransactionalBranch, and releases the associated resources
      */
-    @Override
     public void close() {
         if (transactionalBranch != null) {
             XATransactionalBranch<C> branch= this.transactionalBranch;
@@ -93,18 +88,31 @@ class GlobalTransactionProxy<C extends IPhynixxConnection> extends PhynixxManage
     }
 
 
+    @Override
+    public String toString() {
+        return "GlobalTransactionProxy [transactionalBranch=" + this.transactionalBranch + "]";
+    }
+
     Xid getXid() {
         if (transactionalBranch != null) {
             return this.transactionalBranch.getXid();
         }
         return null;
-
     }
 
 
-    @Override
     public IPhynixxManagedConnection<C> getConnection() {
         return this.transactionalBranch.getManagedConnection();
+    }
+    
+    @Override
+    public void connectionReleased(IManagedConnectionEvent<C> event) {
+        event.getManagedConnection().removeConnectionListener(this);
+    }
+
+    @Override
+    public void connectionFreed(IManagedConnectionEvent<C> event) {
+        event.getManagedConnection().removeConnectionListener(this);
     }
 
 }

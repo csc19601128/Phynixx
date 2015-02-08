@@ -4,9 +4,7 @@
 *.iml
 
 #Eclipse
-.classpath
-.project
-.settings
+/**/.metadata/**
 
 # maven
 /**/target/**/**

@@ -22,7 +22,9 @@ package org.csc.phynixx.loggersystem.logrecord;
 
 
 /**
- * replays the logrecord in the correct order.
+ * replays the log record in the right order.
+ * 
+ * This class is a callback when reading the content of a {@link IDataRecordSequence}
  *
  * @author Christoph Schmidt-Casdorff
  */

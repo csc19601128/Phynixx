@@ -51,11 +51,7 @@ class DataLoggerRespository {
 
     private long idGenerator = System.currentTimeMillis();
 
-    /**
-     * ILoggereListeners watching the lifecycle of this logger
-     */
-    private List listeners = new ArrayList();
-
+  
     private static final IPhynixxLogger LOGGER = PhynixxLogManager.getLogger(DataLoggerRespository.class);
 
     private String loggerSystemName = null;
@@ -153,8 +149,7 @@ class DataLoggerRespository {
         for (IDataLogger dataLogger : copiedLoggers.values()) {
             try {
                 dataLogger.close();
-            } catch (Exception e) {
-            }
+            } catch (Exception e) { }
         }
         this.openLoggers.clear();
 

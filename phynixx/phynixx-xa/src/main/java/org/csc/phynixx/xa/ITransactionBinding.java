@@ -20,7 +20,6 @@ package org.csc.phynixx.xa;
  * #L%
  */
 
-
 import org.csc.phynixx.connection.IPhynixxConnection;
 import org.csc.phynixx.connection.IPhynixxManagedConnection;
 
@@ -29,13 +28,70 @@ import org.csc.phynixx.connection.IPhynixxManagedConnection;
  */
 public interface ITransactionBinding<C extends IPhynixxConnection> {
 
-    TransactionBindingType getTransactionBindingType();
+    /**
+     * 
+     * @return <code>null</code> if no transaction is associated
+     */
+	IPhynixxManagedConnection<C> getManagedConnection(); 
 
-    void release();
+    /**
+	 * current state
+	 * 
+	 * @return
+	 */
+	TransactionBindingType getTransactionBindingType();
 
-    void close();
+	/**
+	 * 
+	 * @return true if an if getTransactionBindingType()==LocalTransaction
+	 */
+	boolean isLocalTransaction();
 
-    IPhynixxManagedConnection<C> getConnection();
+	/**
+	 * 
+	 * @return true if an if getTransactionBindingType()==GlobalTransaction
+	 */
+	boolean isGlobalTransaction();
 
+	/**
+	 * @return my be null if no TX has been starte
+	 * @throws IllegalStateException
+	 *             isGlobalTransaction()==false
+	 */
+	GlobalTransactionProxy<C> getEnlistedGlobalTransaction();
+
+	/**
+	 * 
+	 * Lid reference an Entry in the {@link LocalTransactionRepository}
+	 * 
+	 * @return
+	 * @throws IllegalStateException
+	 *             isLocalTransaction()==false
+	 */
+	LocalTransactionProxy<C> getEnlistedLocalTransaction();
+
+	/**
+	 * Xid is added to the list of accociated XA and becomes the active XA the
+	 * former active XID is deactivated.
+	 * 
+	 * If the transaction
+	 * 
+	 */
+	void activateGlobalTransaction(GlobalTransactionProxy<C> proxy);
+
+	/**
+	 * 
+	 */
+	void activateLocalTransaction(LocalTransactionProxy<C> proxy);
+
+	/**
+	 * gibt die Bindung an die Transaction frei. TransactionBindingType gibt uebewr in {@link TransactionBindingType#NoTransaction}
+	 * 
+	 **/
+	void release();
+
+   void close();
+
+	
 
 }

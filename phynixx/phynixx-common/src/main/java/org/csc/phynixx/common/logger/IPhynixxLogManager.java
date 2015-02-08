@@ -23,7 +23,7 @@ package org.csc.phynixx.common.logger;
 
 public interface IPhynixxLogManager {
 
-    public IPhynixxLogger getLogger(Class cls);
+    public IPhynixxLogger getLogger(Class<?> cls);
 
     public IPhynixxLogger getLogger(String logger);
 

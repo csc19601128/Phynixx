@@ -23,28 +23,34 @@ package org.csc.phynixx.common.logger;
 
 public interface IPhynixxLogger {
 
-    public void debug(Object o);
+    public boolean isTraceEnabled();
 
-    public void debug(Object o, Throwable t);
+	public boolean isInfoEnabled();
 
-    public void info(Object o);
+	public boolean isDebugEnabled();
 
-    public void info(Object o, Throwable t);
+	public void trace(String o, Throwable t);
 
-    public void warn(Object o);
+	public void trace(String o);
 
-    public void warn(Object o, Throwable t);
+	public void debug(String o);
 
-    public void error(Object o);
+	public void debug(String o, Throwable t);
 
-    public void error(Object o, Throwable t);
+    public void info(String o);
 
-    public void fatal(Object o);
+    public void info(String o, Throwable t);
 
-    public void fatal(Object o, Throwable t);
+    public void warn(String o);
 
-    public boolean isInfoEnabled();
+    public void warn(String o, Throwable t);
 
-    public boolean isDebugEnabled();
+    public void error(String o);
+
+    public void error(String o, Throwable t);
+
+    public void fatal(String o);
+
+    public void fatal(String o, Throwable t);
 
 }

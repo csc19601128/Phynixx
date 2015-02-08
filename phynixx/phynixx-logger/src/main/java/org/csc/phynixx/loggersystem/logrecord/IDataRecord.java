@@ -22,15 +22,17 @@ package org.csc.phynixx.loggersystem.logrecord;
 
 
 /**
- * a single record is consistent set logged data. this data is stored as byte[][]
- * <p/>
- * The write order ist kept.
+ * a single record is consistent set logged data. this data is stored as byte[][].
+ * 
+ * A data record gets an ordinla in the context of its owning message sequence
+ * 
+ * The write order is kept.
  */
 public interface IDataRecord {
 
 
     /**
-     * ordinal number of the message in the space of a message Sequence
+     * ordinal number of the message in the context of a message Sequence
      *
      * @return
      */
@@ -52,7 +54,7 @@ public interface IDataRecord {
     /**
      * Data of the message ....
      *
-     * @return
+     * @return data
      */
     byte[][] getData();
 

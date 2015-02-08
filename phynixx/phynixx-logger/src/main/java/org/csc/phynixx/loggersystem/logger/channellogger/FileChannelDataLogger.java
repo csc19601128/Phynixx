@@ -24,7 +24,7 @@ package org.csc.phynixx.loggersystem.logger.channellogger;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logger.IDataLogger;
-import org.csc.phynixx.loggersystem.logrecord.ILogRecordReplayListener;
+import org.csc.phynixx.loggersystem.logger.IDataLoggerReplay;
 import org.csc.phynixx.loggersystem.logrecord.XALogRecordType;
 
 import java.io.File;
@@ -47,17 +47,17 @@ public class FileChannelDataLogger implements IDataLogger {
     /**
      *
      */
-    private static class FileAccessor {
+    static class FileAccessor {
 
         private File cachedFile = null;
         private String absolutePathName = null;
 
-        private FileAccessor(File cachedFile) {
+        FileAccessor(File cachedFile) {
             this.cachedFile = cachedFile;
             this.absolutePathName = this.cachedFile.getAbsolutePath();
         }
 
-        private FileAccessor(String absolutePathName) {
+        FileAccessor(String absolutePathName) {
             this.absolutePathName = absolutePathName;
             instanciateFile();
         }
@@ -87,7 +87,7 @@ public class FileChannelDataLogger implements IDataLogger {
 
         @Override
         public String toString() {
-            return "FileAccessor{" +
+            return "FileAccessor {" +
                     "cachedFile=" + cachedFile +
                     ", absolutePathName='" + absolutePathName + '\'' +
                     '}';
@@ -322,7 +322,7 @@ public class FileChannelDataLogger implements IDataLogger {
      * @param replay replayListener
      * @throws IOException
      */
-    public void replay(ILogRecordReplayListener replay) throws IOException {
+    public void replay(IDataLoggerReplay replay) throws IOException {
         maybeRead();
         this.randomAccess.rewind();
         while (this.randomAccess.available() > (Integer.SIZE / Byte.SIZE) ) {
@@ -355,10 +355,12 @@ public class FileChannelDataLogger implements IDataLogger {
         } finally {
             if (this.logFileAccess != null) {
                 try {
-                    this.logFileAccess.getFile().delete();
+                    if(!this.logFileAccess.getFile().delete()) {
+                    	 LOGGER.fatal("Failed deleting "+this.logFileAccess.getFile());
+                    }
                 } catch (Exception e) {
                     // just log the error -- if cleanup fails, no failure of the system
-                    LOGGER.fatal(this, e);
+                    LOGGER.fatal(this.toString(), e);
                 }
             }
         }

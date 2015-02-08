@@ -22,9 +22,10 @@ package org.csc.phynixx.loggersystem.logger.channellogger;
 
 
 import junit.framework.TestCase;
+
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
-import org.csc.phynixx.loggersystem.logrecord.ILogRecordReplayListener;
+import org.csc.phynixx.loggersystem.logger.IDataLoggerReplay;
 import org.csc.phynixx.loggersystem.logrecord.XALogRecordType;
 import org.junit.After;
 import org.junit.Assert;
@@ -91,7 +92,7 @@ public class FileChannelDataLoggerTest {
 
             logger.reopen(AccessMode.READ);
 
-            ILogRecordReplayListener replayListener = Mockito.mock(ILogRecordReplayListener.class);
+            IDataLoggerReplay replayListener = Mockito.mock(IDataLoggerReplay.class);
             logger.replay(replayListener);
 
             Mockito.verify(replayListener, Mockito.times(1)).onRecord(Mockito.<XALogRecordType>any(), Mockito.<byte[][]>any());
@@ -117,7 +118,7 @@ public class FileChannelDataLoggerTest {
 
             logger.reopen(AccessMode.WRITE);
 
-            ILogRecordReplayListener replayListener = Mockito.mock(ILogRecordReplayListener.class);
+            IDataLoggerReplay replayListener = Mockito.mock(IDataLoggerReplay.class);
             logger.replay(replayListener);
 
             Mockito.verify(replayListener, Mockito.times(0)).onRecord(Mockito.<XALogRecordType>any(), Mockito.<byte[][]>any());
@@ -141,7 +142,7 @@ public class FileChannelDataLoggerTest {
 
             logger.reopen(AccessMode.APPEND);
 
-            ILogRecordReplayListener replayListener = Mockito.mock(ILogRecordReplayListener.class);
+            IDataLoggerReplay replayListener = Mockito.mock(IDataLoggerReplay.class);
             logger.replay(replayListener);
 
             Mockito.verify(replayListener, Mockito.times(1)).onRecord(Mockito.<XALogRecordType>any(), Mockito.<byte[][]>any());
@@ -165,7 +166,7 @@ public class FileChannelDataLoggerTest {
         logger.write((short) 1, new byte[][]{"abcde".getBytes("UTF-8")});
         logger.write((short) 2, new byte[][]{"abcde".getBytes("UTF-8"), "abcdef".getBytes("UTF-8")});
 
-        ILogRecordReplayListener replay = new ILogRecordReplayListener() {
+        IDataLoggerReplay replay = new IDataLoggerReplay() {
 
             private int counter = 0;
 

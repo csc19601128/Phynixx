@@ -108,7 +108,7 @@ public class MTXAResourceLoggerTest {
             Set<IXADataRecorder> dataRecorders = repository.getXADataRecorders();
             Assert.assertEquals(NUM_THREADS, dataRecorders.size());
 
-            log.info(dataRecorders);
+            log.info(dataRecorders.toString());
 
             for (IXADataRecorder dataRecorder : dataRecorders) {
                 final List<IDataRecord> records = dataRecorder.getDataRecords();

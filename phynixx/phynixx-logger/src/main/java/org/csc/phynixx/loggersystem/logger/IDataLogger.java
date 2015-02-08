@@ -22,14 +22,15 @@ package org.csc.phynixx.loggersystem.logger;
 
 
 import org.csc.phynixx.loggersystem.logger.channellogger.AccessMode;
-import org.csc.phynixx.loggersystem.logrecord.ILogRecordReplayListener;
 
 import java.io.IOException;
 
 /**
  * A logger is enabled to write data in an atomic manner. The data is entirely written or the data is rejected.
  *
- * This class is not thread safe . Use facades to protect instances
+ * This class is not thread safe . Use facades to protect instances.
+ * 
+ * 
  */
 public interface IDataLogger {
 
@@ -51,7 +52,7 @@ public interface IDataLogger {
      * @param replayListener
      * @throws IOException
      */
-    void replay(ILogRecordReplayListener replayListener) throws IOException;
+    void replay(IDataLoggerReplay replayListener) throws IOException;
 
     /**
      * close the Log files and perform necessary cleanup tasks.

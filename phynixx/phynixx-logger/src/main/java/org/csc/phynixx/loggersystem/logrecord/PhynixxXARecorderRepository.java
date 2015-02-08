@@ -38,48 +38,11 @@ import java.util.*;
 /**
  * XAResource logger is specialized to support the logging of a xaresource to rollback/recover the
  * resource in the context of an transaction manager.
- * <p/>
- * <table>
- * <tr>
- * <td><i>prepare</i></td>
- * <td>XAResource muss sich an der wiederhergestellten
- * globalen TX beteiligen , um den Transactionsmanager ueber den
- * korrekten Abschluss der TX entscheiden zu lassen.
- * </td>
- * </tr>
- * <p/>
- * <tr>
- * <td><i>committing</i></td>
- * <p/>
- * <td>XAResource fuehrt abschliessende Arbeiten aus, um das
- * <i>commit</i> abzuschliessen. Es ist keine
- * globale TX notwendig, innerhalb derer die XAResource
- * <i>committed</i> werden muss. (<i>roll
- * forward</i>)</td>
- * </tr>
- * <p/>
- * <tr>
- * <td><i>executing/aborting</i></td>
- * <p/>
- * <td>XAResource fuehrt abschliessende Arbeiten aus, um dass
- * <i>rollback/abort</i> abzuschliessen. Es ist
- * keine globale TX notwendig, innerhalb derer die XAResource
- * <i>rollbacked</i> werden muss.</td>
- * </tr>
- * <p/>
- * <tr>
- * <td>keiner der obigen Zustaende</td>
- * <p/>
- * <td>Da nicht klar ist, ob die XAResource waehrend
- * <i>executing phase</i> oder des
- * <i>prepares</i> abgebrochen ist, wird die
- * XAResource zuerst der untersucht, ob zur XAResource eine
- * wiederhergestellte, globale TX existiert. Wenn ja, so wird die
- * XAResource dieser uebergeben, allerdings im Zustand
- * MARK_ROLLBACK. Wenn nein, so wird ein
- * <i>abort</i> durchgefuehrt.</td>
- * </tr>
- * </table>
+ * 
+ * This repository watches and manages the lifycycle of {@link PhynixxXADataRecorder}
+ * 
+ * 
+ * 
  *
  * @author christoph
  */
@@ -286,7 +249,7 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
     public synchronized void destroy() throws IOException, InterruptedException {
         this.close();
         this.dataLoggerFactory.cleanup();
-        this.listeners = new ArrayList();
+        this.listeners = new ArrayList<IXARecorderResourceListener>();
         this.messageSeqGenerator = null;
     }
 

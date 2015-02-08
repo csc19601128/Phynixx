@@ -21,11 +21,6 @@ package org.csc.phynixx.common;
  */
 
 
-import org.apache.log4j.PropertyConfigurator;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
 
 public class TestUtils {
 

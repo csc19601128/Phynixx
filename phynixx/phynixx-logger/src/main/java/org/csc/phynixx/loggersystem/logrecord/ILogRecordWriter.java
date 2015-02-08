@@ -24,6 +24,7 @@ package org.csc.phynixx.loggersystem.logrecord;
 import java.io.IOException;
 
 
+
 public interface ILogRecordWriter {
 
     void writeData(IDataRecord message) throws IOException;

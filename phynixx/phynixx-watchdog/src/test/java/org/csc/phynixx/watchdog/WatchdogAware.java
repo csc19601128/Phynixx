@@ -146,7 +146,7 @@ public class WatchdogAware extends TimeoutCondition implements Runnable, IWatche
     public void conditionViolated() {
         this.resetCondition();
         this.conditionFailedCounter++;
-        log.info(new ConditionViolatedLog(this, this.id));
+        log.info(new ConditionViolatedLog(this, this.id).toString());
     }
 
 

@@ -21,6 +21,11 @@ package org.csc.phynixx.xa;
  */
 
 
+import java.io.File;
+import java.util.Set;
+
+import javax.transaction.TransactionManager;
+
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.csc.phynixx.connection.PhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory;
@@ -31,33 +36,40 @@ import org.csc.phynixx.phynixx.testconnection.ITestConnection;
 import org.csc.phynixx.phynixx.testconnection.TestConnectionFactory;
 import org.csc.phynixx.phynixx.testconnection.TestConnectionStatusListener;
 
-import javax.transaction.TransactionManager;
-import java.io.File;
-
 
 public class TestXAResourceFactory extends PhynixxXAResourceFactory<ITestConnection> {
 
-    public static final int POOL_SIZE = 10;
+    public static final int  POOL_SIZE= 10;
 
     public TestXAResourceFactory(TransactionManager transactionManager) {
         this("TestXAResourceFactory", null, transactionManager);
+    }
+    
+    public TestXAResourceFactory(
+            int poolSize,
+            String id, 
+            File dataLoggerDirectory,
+            TransactionManager transactionManager) {
+        super(id, createManagedConnectionFactory(poolSize,id,dataLoggerDirectory), transactionManager);
+
+        
     }
 
     public TestXAResourceFactory(String id,
                                  File dataLoggerDirectory,
                                  TransactionManager transactionManager) {
-        super(id, createManagedConnectionFactory(id,dataLoggerDirectory), transactionManager);
+        this(POOL_SIZE,id,dataLoggerDirectory, transactionManager);
     }
 
-    private static PhynixxManagedConnectionFactory<ITestConnection> createManagedConnectionFactory(String id, File dataLoggerDirectory) {
+    private static PhynixxManagedConnectionFactory<ITestConnection> createManagedConnectionFactory(int poolSize,String id, File dataLoggerDirectory) {
         GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
-        cfg.setMaxTotal(POOL_SIZE);
+        cfg.setMaxTotal(poolSize);
         PooledPhynixxManagedConnectionFactory<ITestConnection> factory =
-                new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
+                new PooledPhynixxManagedConnectionFactory<ITestConnection>(new TestConnectionFactory(id+"-"), cfg);
 
         if (dataLoggerDirectory != null) {
             IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory(id, dataLoggerDirectory);
-            LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
+            LoggerPerTransactionStrategy<ITestConnection> strategy = new LoggerPerTransactionStrategy<ITestConnection>(loggerFactory);
             factory.setLoggerSystemStrategy(strategy);
         }
 
@@ -65,5 +77,13 @@ public class TestXAResourceFactory extends PhynixxXAResourceFactory<ITestConnect
 
         return factory;
     }
+
+    @Override
+    public Set<PhynixxXAResource<ITestConnection>> getUnreleasedXAResources() {
+        return super.getUnreleasedXAResources();
+    }
+    
+    
+    
 
 }

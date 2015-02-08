@@ -27,7 +27,12 @@ import java.io.PrintWriter;
 public class DelegatedRuntimeException extends RuntimeException implements IDelegated {
 
 
-    public DelegatedRuntimeException() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6810821866775772493L;
+
+	public DelegatedRuntimeException() {
         super();
     }
 

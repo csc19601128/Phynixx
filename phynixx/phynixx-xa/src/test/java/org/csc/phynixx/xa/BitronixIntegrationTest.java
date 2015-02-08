@@ -21,11 +21,13 @@ package org.csc.phynixx.xa;
  */
 
 
-import bitronix.tm.BitronixTransactionManager;
-import bitronix.tm.resource.ehcache.EhCacheXAResourceProducer;
-import com.atomikos.icatch.jta.UserTransactionManager;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAResource;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
@@ -36,21 +38,16 @@ import org.csc.phynixx.phynixx.testconnection.TestConnectionStatusManager;
 import org.csc.phynixx.phynixx.testconnection.TestStatusStack;
 import org.csc.phynixx.watchdog.WatchdogRegistry;
 import org.csc.phynixx.xa.recovery.XidWrapper;
+import org.csc.phynixx.xa.transactionmanagers.BitronixTransactionManagerProvider;
+import org.csc.phynixx.xa.transactionmanagers.ITransactionManagerProvider;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.Parameterized;
-import org.objectweb.jotm.Jotm;
 
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAResource;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import bitronix.tm.resource.ehcache.EhCacheXAResourceProducer;
 
 
 @RunWith(BlockJUnit4ClassRunner.class)
@@ -60,57 +57,6 @@ public class BitronixIntegrationTest {
         System.setProperty("log4j_level", "INFO");
     }
 
-    private interface ITransactionManagerProvider {
-        TransactionManager getTransactionManager();
-
-        void start() throws Exception;
-
-        void register(XAResource xaResource);
-
-        void stop() throws Exception;
-    }
-
-
-
-    static class  BitronixTransactionManagerProvider implements ITransactionManagerProvider {
-        BitronixTransactionManager taMgr =null;
-
-        @Override
-        public TransactionManager getTransactionManager() {
-            return this.taMgr;
-        }
-
-        @Override
-        public void start() throws Exception {
-            if(this.taMgr !=null) {
-                throw new IllegalStateException("TXMgr is already started");
-            }
-            this.taMgr =  new BitronixTransactionManager();
-            this.taMgr.setTransactionTimeout(1000);
-
-        }
-
-        @Override
-        public void register(XAResource xaResource) {
-            EhCacheXAResourceProducer.registerXAResource("phynixx", xaResource);
-        }
-
-        @Override
-        public void stop() throws Exception {
-            if(taMgr !=null) {
-                this.taMgr.shutdown();
-            }
-            this.taMgr =null;
-        }
-
-        BitronixTransactionManagerProvider() {
-        }
-
-    }
-
-
-
-
     private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
     private ITransactionManagerProvider transactionManagerProvider = new BitronixTransactionManagerProvider();
@@ -118,7 +64,7 @@ public class BitronixIntegrationTest {
     private TestXAResourceFactory factory2 = null;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws Exception { 
 
         // configuring the log-system (e.g. log4j)
         TestUtils.configureLogging();
@@ -742,13 +688,13 @@ try {
     @Test
     public void testTwoPhaseCommitTwoRM_2() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon1 = factory1.getXAConnection();
-        ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
+        ITestConnection con1 = xaCon1.getConnection();
 
         IPhynixxXAConnection<ITestConnection> xaCon2 = factory1.getXAConnection();
-        ITestConnection con2 = (ITestConnection) xaCon2.getConnection();
+        ITestConnection con2 = xaCon2.getConnection();
 
         IPhynixxXAConnection<ITestConnection> xaCon3 = factory1.getXAConnection();
-        ITestConnection con3 = (ITestConnection) xaCon3.getConnection();
+        ITestConnection con3 = xaCon3.getConnection();
 
         try {
             this.getTransactionManager().begin();
@@ -766,7 +712,7 @@ try {
             if (con2 != null) {
                 con2.close();
             }
-            if (con3 == null) {
+            if (con3 != null) {
                 con3.close();
             }
         }
@@ -784,14 +730,14 @@ try {
 
             this.getTransactionManager().begin();
 
-            ITestConnection con1 = (ITestConnection) xaCon1.getConnection();
+            ITestConnection con1 = xaCon1.getConnection();
             con1.act(1);
 
             Transaction tx = this.getTransactionManager().suspend();
 
 
             this.getTransactionManager().begin();
-            ITestConnection con2 = (ITestConnection) xaCon3.getConnection();
+            ITestConnection con2 = xaCon3.getConnection();
             con2.act(1);
             this.getTransactionManager().commit();
 
@@ -1161,7 +1107,7 @@ try {
 
         try {
             xares.start(xid2,XAResource.TMNOFLAGS );
-            new AssertionFailedError("A XAResource may no be associated to 2 active Transactions");
+           throw  new AssertionFailedError("A XAResource may no be associated to 2 active Transactions");
         } catch(Exception e) {}
 
     }
@@ -1313,7 +1259,7 @@ try {
     @Test
     public void testTimeout2() throws Exception {
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
-        ITestConnection con = (ITestConnection) xaCon.getConnection();
+        ITestConnection con = xaCon.getConnection();
         XAResource xaresource = xaCon.getXAResource();
         try {
         xaresource.setTransactionTimeout(2);

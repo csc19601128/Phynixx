@@ -161,7 +161,7 @@ public class FileChannelDataLoggerFactoryTest {
 
             channelFactory.instanciateLogger("a");
             try {
-             IDataLogger logger2 = channelFactory.instanciateLogger("a");
+                IDataLogger logger2 = channelFactory.instanciateLogger("a");
                 throw new AssertionFailedError("Two locks on same logfile not allowed");
             } catch (Exception e) {}
 

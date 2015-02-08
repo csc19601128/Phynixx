@@ -21,13 +21,13 @@ package org.csc.phynixx.xa;
  */
 
 
+import java.util.EventObject;
+
 import org.csc.phynixx.connection.IPhynixxConnection;
 import org.csc.phynixx.xa.IPhynixxXAResourceListener.IPhynixxXAResourceEvent;
 
-import java.util.EventObject;
 
-
-public class PhynixxXAResourceEvent<C extends IPhynixxConnection> extends EventObject implements IPhynixxXAResourceEvent {
+public class PhynixxXAResourceEvent<C extends IPhynixxConnection> extends EventObject implements IPhynixxXAResourceEvent<C> {
 
     /**
      *
@@ -39,6 +39,7 @@ public class PhynixxXAResourceEvent<C extends IPhynixxConnection> extends EventO
 
     }
 
+    @Override
     public IPhynixxXAResource<C> getXAResource() {
         return (PhynixxXAResource) this.getSource();
     }

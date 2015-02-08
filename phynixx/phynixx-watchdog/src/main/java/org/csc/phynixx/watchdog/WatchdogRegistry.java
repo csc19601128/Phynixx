@@ -21,10 +21,10 @@ package org.csc.phynixx.watchdog;
  */
 
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.csc.phynixx.common.generator.IDGenerator;
 import org.csc.phynixx.common.generator.IDGenerators;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 
 import java.util.*;
 
@@ -133,7 +133,7 @@ public class WatchdogRegistry {
     /**
      * Logger
      */
-    protected Logger log = LogManager.getLogger(this.getClass());
+    protected IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
 
     /**
      * @associates WorkerThread
@@ -208,7 +208,7 @@ public class WatchdogRegistry {
 
         if (log.isDebugEnabled()) {
             log.debug("Watchdog created \n" + wd);
-            log.debug(watchTheWatchdogs);
+            log.debug(watchTheWatchdogs.toString());
         }
 
         checkManagementWatchdogs();

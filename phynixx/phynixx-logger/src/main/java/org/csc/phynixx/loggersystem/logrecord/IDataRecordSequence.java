@@ -23,6 +23,11 @@ package org.csc.phynixx.loggersystem.logrecord;
 
 import java.util.List;
 
+/**
+ * read only access to a sequence of data records
+ * @author christoph
+ *
+ */
 
 public interface IDataRecordSequence {
 
