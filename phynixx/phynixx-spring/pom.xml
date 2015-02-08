@@ -122,21 +122,15 @@
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
-
-
-
-		<!-- slf4j-binding is optional and can be substituted by other projects -->
+		
+		
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<optional>true</optional>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.csc</groupId>
+			<artifactId>phynixx-optionals</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
+
 
 		<!-- Spring 3 dependencies -->
 		<dependency>

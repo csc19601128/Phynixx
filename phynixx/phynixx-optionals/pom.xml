@@ -8,22 +8,23 @@
 		<artifactId>phynixx</artifactId>
 		<version>2.0.1</version>
 	</parent>
-	
+
 	<artifactId>phynixx-optionals</artifactId>
 	<name>phynixx-optionals</name>
 	<packaging>jar</packaging>
-	
+
 	<description>see http://maven.apache.org/guides/introduction/introduction-to-optional-and-excludes-dependencies.html</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
+
 	<dependencies>
 		<!-- slf4j-binding is optional and can be substituted by other projects -->
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+			<groupId>ch.qos.logback</groupId>
+			<version>1.1.2</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -31,6 +32,40 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<groupId>org.slf4j</groupId>
+			<version>1.7.10</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<groupId>org.slf4j</groupId>
+			<version>1.7.10</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<artifactId>jul-to-slf4j</artifactId>
+			<groupId>org.slf4j</groupId>
+			<version>1.7.10</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
 	</dependencies>
 
 </project>
