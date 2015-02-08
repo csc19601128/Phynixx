@@ -20,8 +20,11 @@ package org.csc.phynixx.xa.concurrent;
  * #L%
  */
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -46,6 +49,7 @@ import org.csc.phynixx.phynixx.testconnection.TestStatusStack;
 import org.csc.phynixx.watchdog.WatchdogRegistry;
 import org.csc.phynixx.xa.IPhynixxXAConnection;
 import org.csc.phynixx.xa.IPhynixxXAResource;
+import org.csc.phynixx.xa.PhynixxXAResource;
 import org.csc.phynixx.xa.TestXAResourceFactory;
 import org.csc.phynixx.xa.recovery.XidWrapper;
 import org.csc.phynixx.xa.transactionmanagers.ITransactionManagerProvider;
@@ -68,7 +72,7 @@ public class JotmConcurrentIntegrationTest {
     
     
 
-    private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
+    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(JotmConcurrentIntegrationTest.class);
 
     private ITransactionManagerProvider transactionManagerProvider = //new BitronixTransactionManagerProvider(); //
                                                     new JotmTransactionManagerProvider();
@@ -118,23 +122,34 @@ public class JotmConcurrentIntegrationTest {
 
     private class SmallTask implements Callable<Void> {
         
-        int rd=new Random().nextInt(17);
+    	int id; 
+    	
+    	
+        public SmallTask(int id) {
+			super();
+			this.id = id;
+		}
+
+		int rd=new Random().nextInt(27);
 
         @Override
         public Void call() throws Exception {
             try {
+            	LOG.info("Tasks "+id+" starts executing in Thread "+Thread.currentThread().getName());
                 JotmConcurrentIntegrationTest.this.testOnePhaseReadOnly();
-                sleep(rd*37);
+                sleep(rd*370);
                 
                 testTransactionMigration();
-                sleep(rd*19);
+                sleep(rd*190);
                 
                 testTwoPhaseReadOnly();
                 return null;
             } catch (Exception e) {
                 JotmConcurrentIntegrationTest.this.exceptions.put(Thread.currentThread().getName(), e);
                 throw new DelegatedRuntimeException(e);
-            } 
+            } finally {
+            	LOG.info("Tasks "+id+" executed in Thread "+Thread.currentThread().getName());
+            }
         }
 
         private void sleep(long msecs) {
@@ -150,14 +165,25 @@ public class JotmConcurrentIntegrationTest {
 
         ExecutorService executorService = Executors.newCachedThreadPool();
         
+        List<Callable<Void>> tasks= new ArrayList<Callable<Void>>();
+        
 
-        int limit = 2;
+        int limit = 1;
         for (int i = 0; i < limit; i++) {
-            executorService.submit(new SmallTask());
+            tasks.add(new SmallTask(i));
         }
+        
+        executorService.invokeAll(tasks);
 
         executorService.shutdown();
-        executorService.awaitTermination(10, TimeUnit.SECONDS);
+        executorService.awaitTermination(100, TimeUnit.SECONDS);
+
+        Set<PhynixxXAResource<ITestConnection>> unreleasedXAResources = factory1.getUnreleasedXAResources();
+        for (PhynixxXAResource<ITestConnection> phynixxXAResource : unreleasedXAResources) {
+			LOG.warn("UInreleased XAResource "+phynixxXAResource);
+		}
+        Assert.assertEquals("Factory 1 has Unreleased XAResources ", 0,factory1.getUnreleasedXAResources().size());
+        Assert.assertEquals("Factory 2 has Unreleased XAResources ", 0,factory2.getUnreleasedXAResources().size());
         
         if(!exceptions.isEmpty()) {
             for (Map.Entry<String,Exception> entry : exceptions.entrySet()) {
@@ -165,7 +191,7 @@ public class JotmConcurrentIntegrationTest {
             }
             throw exceptions.values().iterator().next();
         }
-
+;
     }
 
     /**
@@ -184,7 +210,9 @@ public class JotmConcurrentIntegrationTest {
         // ... the real core connection is hidden by the proxy
         final Object conId;
      
+        // for bitronix
         this.transactionManagerProvider.register(xaCon.getXAResource());
+        
         this.getTransactionManager().begin();
         
         this.getTransactionManager().getTransaction();
@@ -221,7 +249,7 @@ public class JotmConcurrentIntegrationTest {
 
         this.getTransactionManager().commit();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(statusStack.isCommitted());
@@ -265,7 +293,7 @@ public class JotmConcurrentIntegrationTest {
             }
         }
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(statusStack.isCommitted());
@@ -305,7 +333,7 @@ public class JotmConcurrentIntegrationTest {
 
         this.getTransactionManager().commit();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         // conj1 has been changed an the XA protocol is performed
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId1);
@@ -368,7 +396,7 @@ public class JotmConcurrentIntegrationTest {
 
         this.getTransactionManager().rollback();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         // @RequiredTransaction was requested twice
         Assert.assertEquals(
@@ -420,7 +448,7 @@ public class JotmConcurrentIntegrationTest {
 
         this.getTransactionManager().commit();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         // @RequiredTransaction was requested twice
         Assert.assertEquals(
@@ -670,7 +698,7 @@ public class JotmConcurrentIntegrationTest {
 
         this.getTransactionManager().commit();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId1);
         TestCase.assertTrue(statusStack != null);
@@ -712,7 +740,7 @@ public class JotmConcurrentIntegrationTest {
 
         this.getTransactionManager().commit();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         Assert.assertTrue(con1.getConnectionId() == con2.getConnectionId());
 
@@ -842,7 +870,7 @@ public class JotmConcurrentIntegrationTest {
         // different transactional branches
         Assert.assertTrue(outCon.getConnectionId() != innerCon.getConnectionId());
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(outCon.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);
@@ -897,7 +925,7 @@ public class JotmConcurrentIntegrationTest {
         // rollback on TX1 effects con1
         this.getTransactionManager().rollback();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);
@@ -938,7 +966,7 @@ public class JotmConcurrentIntegrationTest {
 
         this.getTransactionManager().rollback();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);
@@ -1016,7 +1044,7 @@ public class JotmConcurrentIntegrationTest {
 
         this.getTransactionManager().rollback();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(conId1);
         TestCase.assertTrue(statusStack1 != null);
@@ -1078,7 +1106,7 @@ public class JotmConcurrentIntegrationTest {
         Assert.assertTrue(con0.getConnectionId() != con2.getConnectionId());
         Assert.assertTrue(con1.getConnectionId() == con2.getConnectionId());
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);
@@ -1120,7 +1148,7 @@ public class JotmConcurrentIntegrationTest {
         xares.end(xid2, XAResource.TMSUCCESS);
         xares.rollback(xid2);
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);

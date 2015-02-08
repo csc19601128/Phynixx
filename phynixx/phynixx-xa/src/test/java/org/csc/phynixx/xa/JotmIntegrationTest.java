@@ -372,6 +372,11 @@ public class JotmIntegrationTest {
                 TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.COMMITTED));
         Assert.assertEquals(1,
                 TestConnectionStatusManager.getStatusStack(conId2).countStatus(TestConnectionStatus.RELEASED));
+        
+
+
+        Assert.assertEquals("Factory 1 has Unreleased XAResources ", 0,factory1.getUnreleasedXAResources().size());
+        Assert.assertEquals("Factory 2 has Unreleased XAResources ", 0,factory2.getUnreleasedXAResources().size());
     }
 
     /**
@@ -575,6 +580,10 @@ public class JotmIntegrationTest {
         TestCase.assertTrue(statusStack.isCommitted());
         TestCase.assertTrue(statusStack.isPrepared());
         // TestCase.assertTrue(factory2.isFreeConnection(coreCon2));
+        
+
+        Assert.assertEquals("Factory 1 has Unreleased XAResources ", 0,factory1.getUnreleasedXAResources().size());
+        Assert.assertEquals("Factory 2 has Unreleased XAResources ", 0,factory2.getUnreleasedXAResources().size());
     }
 
     /**
@@ -620,6 +629,10 @@ public class JotmIntegrationTest {
         TestCase.assertTrue(!statusStack.isCommitted());
         TestCase.assertTrue(!statusStack.isPrepared());
         TestCase.assertTrue(statusStack.isReleased());
+        
+
+        Assert.assertEquals("Factory 1 has Unreleased XAResources ", 0,factory1.getUnreleasedXAResources().size());
+        Assert.assertEquals("Factory 2 has Unreleased XAResources ", 0,factory2.getUnreleasedXAResources().size());
     }
 
     /**
