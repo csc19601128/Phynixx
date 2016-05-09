@@ -21,6 +21,7 @@ package org.csc.phynixx.loggersystem.logger.channellogger;
  */
 
 
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logger.IDataLogger;
@@ -178,14 +179,17 @@ public class FileChannelDataLogger implements IDataLogger {
         }
         RandomAccessFile raf = openRandomAccessFile(this.logFileAccess.getFile(), FILE_MODE);
         try {
-            this.randomAccess = new TAEnabledRandomAccessFile(raf);
+            this.randomAccess = new TAEnabledRandomAccessFile(this.logFileAccess.getFile(), raf);
             LOG.error(Thread.currentThread() +" lock on "+this.logFileAccess +" succeeded");
-        } catch(IOException e) {
+        } catch(DelegatedRuntimeException e) {
             LOG.error(Thread.currentThread() +".lock on "+this.logFileAccess,e);
             throw e;
         } catch(IllegalStateException e) {
             LOG.error(Thread.currentThread()+ ".lock on "+this.logFileAccess,e);
             throw e;
+        } catch (Exception e) {
+        	 LOG.error(Thread.currentThread()+ ".lock on "+this.logFileAccess,e);
+        	 throw new DelegatedRuntimeException(e);
         }
     }
 
@@ -231,14 +235,14 @@ public class FileChannelDataLogger implements IDataLogger {
         try {
             RandomAccessFile raf= new RandomAccessFile(logFile, fileMode);
             if( LOG.isInfoEnabled()) {
-                LOG.info(Thread.currentThread()+" lock on "+logFile +" succeeded");
+                LOG.info(Thread.currentThread()+" Create RandomAccessFile on "+logFile +" succeeded");
             }
             return raf;
         } catch(IOException e) {
-            LOG.error(Thread.currentThread() +".release lock on "+logFile,e);
+            LOG.error(Thread.currentThread() +" Create RandomAccessFile lock on "+logFile,e);
             throw e;
         } catch(IllegalStateException e) {
-            LOG.error(Thread.currentThread()+ " release lock on "+logFile,e);
+            LOG.error(Thread.currentThread()+ " Create RandomAccessFile lock on "+logFile,e);
             throw e;
         }
     }

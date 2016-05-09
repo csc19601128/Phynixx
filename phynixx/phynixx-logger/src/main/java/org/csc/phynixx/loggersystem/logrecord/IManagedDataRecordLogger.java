@@ -26,7 +26,7 @@ package org.csc.phynixx.loggersystem.logrecord;
 
 public interface IManagedDataRecordLogger extends IXADataRecorder {
 
-    public void close();
+    public void disqualify();
 
     public void destroy();
 }

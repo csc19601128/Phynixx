@@ -30,6 +30,7 @@ import org.csc.phynixx.common.logger.PhynixxLogManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 
 public class TmpDirectory {
@@ -84,9 +85,11 @@ public class TmpDirectory {
             if (file.isDirectory()) {
                 this.clearDirectory(file);
             }
-            if (!file.delete()) {
-                LOG.error("deleting " + file + " fails");
-            }
+            try {
+				java.nio.file.Files.delete(file.toPath());
+			} catch (IOException e) {
+				LOG.error("deleting " + file + " fails with ",e);
+			}
         }
     }
 

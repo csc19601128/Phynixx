@@ -67,7 +67,7 @@ public class ManagedConnectionIT {
 
     private PhynixxManagedConnectionFactory<ITestConnection> createConnectionFactory() {
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        IPhynixxLoggerSystemStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
+        IPhynixxLoggerSystemStrategy<ITestConnection> strategy = new LoggerPerTransactionStrategy<ITestConnection>(loggerFactory);
 
         PhynixxManagedConnectionFactory<ITestConnection> connectionFactory =
                 new PhynixxManagedConnectionFactory<ITestConnection>(new TestConnectionFactory());

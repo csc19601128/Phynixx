@@ -21,8 +21,12 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 
 
+import java.util.List;
+import java.util.Set;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.common.io.LogRecordPageReader;
@@ -35,10 +39,6 @@ import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerFa
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
 
 public class XAResourceLoggerTest {
 
@@ -66,42 +66,31 @@ public class XAResourceLoggerTest {
         this.tmpDir.clear();
     }
 
-    private Properties loadHowlConfig() throws Exception {
-        Properties howlprop = new Properties();
-        howlprop.put("listConfig", "true");
-        howlprop.put("bufferSize", "32");
-        howlprop.put("minBuffers", "16");
-        howlprop.put("maxBuffers", "16");
-        howlprop.put("maxBlocksPerFile", "10");
-        howlprop.put("logFileDir", this.tmpDir.getDirectory().getAbsolutePath());
-        howlprop.put("logFileName", "test1");
-        howlprop.put("maxLogFiles", "6");
-
-        return howlprop;
-    }
-
+   
 
     @Test
     public void testXAResourceLogger() throws Exception {
 
         // Start XALogger ....
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        PhynixxXARecorderRepository xaRecorderResource = new PhynixxXARecorderRepository(loggerFactory);
+        PhynixxXARecorderRepository xaRecorderRepository = new PhynixxXARecorderRepository(loggerFactory);
+        IXARecorderRecovery recorderRecovery=null;
 
         int countMessages = 0;
 
         try {
 
-            xaRecorderResource.open();
+        	xaRecorderRepository.open();
 
             // start the sequence to be tested
-            PhynixxXADataRecorder xaDataRecorder1 = (PhynixxXADataRecorder) xaRecorderResource.createXADataRecorder();
+            PhynixxXADataRecorder xaDataRecorder1 = (PhynixxXADataRecorder) xaRecorderRepository.createXADataRecorder();
+            
 
-            xaRecorderResource.startXA(xaDataRecorder1, "test1", "XID".getBytes("UTF-8"));
+            XADataLoggerFacade.startXA(xaDataRecorder1,"test1", "XID".getBytes("UTF-8"));
             LogRecordWriter logWriter1 = new LogRecordWriter();
             logWriter1.writeUTF("Log1").close();
-            xaRecorderResource.logUserData(xaDataRecorder1, logWriter1.toByteArray());
-            xaRecorderResource.preparedXA(xaDataRecorder1);
+            XADataLoggerFacade.logUserData(xaDataRecorder1, logWriter1.toByteArray());
+            XADataLoggerFacade.preparedXA(xaDataRecorder1);
             TestCase.assertTrue(xaDataRecorder1.isPrepared());
 
             LogRecordPageWriter page = new LogRecordPageWriter();
@@ -109,31 +98,44 @@ public class XAResourceLoggerTest {
             page.newLine().writeUTF("B").close();
 
 
-            xaRecorderResource.committingXA(xaDataRecorder1, page.toByteByte());
+            XADataLoggerFacade.committingXA(xaDataRecorder1, page.toByteByte());
             TestCase.assertTrue(xaDataRecorder1.isCommitting());
             try {
                 LogRecordPageWriter page1 = new LogRecordPageWriter();
                 page1.newLine().writeUTF("A").close();
                 page1.newLine().writeUTF(".").close();
-                xaRecorderResource.logUserData(xaDataRecorder1, page1.toByteByte());
+                XADataLoggerFacade.logUserData(xaDataRecorder1, page1.toByteByte());
                 throw new AssertionFailedError("No more RB Data; Sequence is committing");
             } catch (Exception e) {
             }
 
             // more commiting data are accepted
-            xaRecorderResource.committingXA(xaDataRecorder1, new LogRecordPageWriter().toByteByte());
+            XADataLoggerFacade.committingXA(xaDataRecorder1, new LogRecordPageWriter().toByteByte());
 
-            xaRecorderResource.doneXA(xaDataRecorder1);
+            XADataLoggerFacade.doneXA(xaDataRecorder1);
             TestCase.assertTrue(xaDataRecorder1.isCompleted());
 
 
             countMessages = xaDataRecorder1.getDataRecords().size();
+            
+            System.out.println(xaDataRecorder1.getDataRecords());
 
 
-            xaRecorderResource.open();
+            // xaRecorderRepository.close();
+            
+            xaRecorderRepository.open();
 
             // recover the message sequences
-            Set<IXADataRecorder> xaDataRecorders = xaRecorderResource.getXADataRecorders();
+            xaRecorderRepository.close();
+            
+                     
+            
+			recorderRecovery = new XARecorderRecovery(loggerFactory);
+            
+            
+            Set<IXADataRecorder> xaDataRecorders = recorderRecovery.getRecoveredXADataRecorders();            
+            
+            
 
             log.info(xaDataRecorders.toString());
 
@@ -168,9 +170,11 @@ public class XAResourceLoggerTest {
             msg = (IDataRecord) messages.get(5);
             TestCase.assertTrue(msg.getLogRecordType() == XALogRecordType.XA_DONE);
 
-
+        } catch (Exception e) {
+        	e.printStackTrace();
         } finally {
-            xaRecorderResource.close();
+        	recorderRecovery.destroy();
+        	
         }
 
 

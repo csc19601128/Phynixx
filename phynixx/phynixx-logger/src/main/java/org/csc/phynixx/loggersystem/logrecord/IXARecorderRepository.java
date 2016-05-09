@@ -20,116 +20,63 @@ package org.csc.phynixx.loggersystem.logrecord;
  * #L%
  */
 
-
 import java.io.IOException;
-import java.util.Set;
 
 /**
- * XAResource logger is specialized to support the logging of a xaresource to rollback/recover the
- * resource in the context of an transaction manager.
- * <p/>
- * <table>
- * <tr>
- * <td><i>prepare</i></td>
- * <td>XAResource muss sich an der wiederhergestellten
- * globalen TX beteiligen , um den Transactionsmanager ueber den
- * korrekten Abschluss der TX entscheiden zu lassen.
- * </td>
- * </tr>
- * <p/>
- * <tr>
- * <td><i>committing</i></td>
- * <p/>
- * <td>XAResource fuehrt abschliessende Arbeiten aus, um das
- * <i>commit</i> abzuschliessen. Es ist keine
- * globale TX notwendig, innerhalb derer die XAResource
- * <i>committed</i> werden muss. (<i>roll
- * forward</i>)</td>
- * </tr>
- * <p/>
- * <tr>
- * <td><i>executing/aborting</i></td>
- * <p/>
- * <td>XAResource fuehrt abschliessende Arbeiten aus, um dass
- * <i>rollback/abort</i> abzuschliessen. Es ist
- * keine globale TX notwendig, innerhalb derer die XAResource
- * <i>rollbacked</i> werden muss.</td>
- * </tr>
- * <p/>
- * <tr>
- * <td>keiner der obigen Zustaende</td>
- * <p/>
- * <td>Da nicht klar ist, ob die XAResource waehrend
- * <i>executing phase</i> oder des
- * <i>prepares</i> abgebrochen ist, wird die
- * XAResource zuerst der untersucht, ob zur XAResource eine
- * wiederhergestellte, globale TX existiert. Wenn ja, so wird die
- * XAResource dieser uebergeben, allerdings im Zustand
- * MARK_ROLLBACK. Wenn nein, so wird ein
- * <i>abort</i> durchgefuehrt.</td>
- * </tr>
- * </table>
+ * XAResource logger is specialized to support the logging of a xaresource to
+ * rollback/recover the resource in the context of an transaction manager.
+ * 
+ * 
  *
  * @author christoph
  */
-public interface IXARecorderRepository extends IXADataRecorderLifecycleListener {
+public interface IXARecorderRepository  {
 
+	/**
+	 * creates a recorder ready for logging. This recorder is managed by the
+	 * repository.
+	 * 
+	 * 
+	 * {@link IXADataRecorder#disqualify()} closes the logger (but keeps the
+	 * content) and the repository forgets this logger.
+	 * 
+	 * {@link IXADataRecorder#disqualify()} indicates that the content of the
+	 * logger can be discarded. The repository decides, what to do with the
+	 * logger.
+	 * 
+	 * 
+	 * {@link IXADataRecorder#destroy()} destroys the logger (incl.the content)
+	 * and repository forgets this logger.
+	 * 
+	 * @return
+	 * @throws IOException
+	 * @throws Exception 
+	 */
+	IXADataRecorder createXADataRecorder() throws Exception;
 
-    /**
+	boolean isClosed();
 
-     void open() throws IOException, InterruptedException;
+	/**
+	 * closes all open recorder. The recorder are
+	 * {@link IXADataRecorder#disqualify()} and removed from the repository.
+	 *
+	 * Depending on recording, closed recorder could recovered if it contains
+	 * relevant information and it is not destroyed but can be re-established by
+	 * {@link #recover}
+	 * 
+	 * 
+	 * They can not be recovered.
+	 */
+	void close();
 
-     String getLoggerSystemName();
+	/**
+	 * destroys all recovered recorder. The recorder are
+	 * {@link org.csc.phynixx.loggersystem.logrecord.IXADataRecorder#destroy()}
+	 * and removed from the repository.
+	 * 
+	 * They can not be recovered.
+	 */
+	void destroy() throws IOException, InterruptedException;
 
-     void logUserData(IXADataRecorder dataRecorder, byte[][] data) throws InterruptedException, IOException;
-
-     void logUserData(IXADataRecorder dataRecorder, byte[] data) throws InterruptedException, IOException;
-
-     void preparedXA(IXADataRecorder dataRecorder) throws IOException;
-
-     void committingXA(IXADataRecorder dataRecorder, byte[][] data) throws InterruptedException, IOException;
-
-     void startXA(IXADataRecorder dataRecorder, String resourceId, byte[] xid) throws IOException, InterruptedException;
-
-     void doneXA(IXADataRecorder dataRecorder) throws IOException;
-
-     */
-
-    boolean isClosed();
-
-    /**
-     * cerets a brand new recorder. This recorder is managed by the repository
-     * @return
-     * @throws IOException
-     */
-    IXADataRecorder createXADataRecorder() throws IOException;
-
-    /**
-     * closes all open recorder.
-     * The recorder are {@link IXADataRecorder#close()} and removed from the repository.
-     *
-     * Depending on recording closed recorder could recovered if it contains relevant information
-     * and it is not destroyed but can be re-established by {@link #recover}
-     */
-    void close();
-
-    /**
-     * destroys all open recorder.
-     * The recorder are {@link org.csc.phynixx.loggersystem.logrecord.IXADataRecorder#destroy()} and removed from the repository.
-     */
-    void destroy() throws IOException, InterruptedException;
-
-    /**
-     * tries to re-establish all recorders. The logger system is closed.
-     * All remaining (already closed) recorder are reopen for read
-     * @see #getXADataRecorders()
-     * */
-    void recover();
-
-
-    /**
-     *
-     * @return all currently open loggers.
-     */
-    Set<IXADataRecorder> getXADataRecorders();
+	
 }

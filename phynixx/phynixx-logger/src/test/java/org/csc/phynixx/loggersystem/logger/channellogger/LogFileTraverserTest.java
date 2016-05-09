@@ -33,7 +33,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.JUnit4;
+import org.mockito.internal.runners.JUnit44RunnerImpl;
 
 import java.io.File;
 import java.util.HashMap;
@@ -42,7 +44,7 @@ import java.util.Map;
 import java.util.Set;
 
 
-@RunWith(JUnit4.class)
+@RunWith(BlockJUnit4ClassRunner.class)
 public class LogFileTraverserTest {
 
     private static final String FORMAT_PATTERN = "(howl)_([a-z,A-Z,0-9]*[^_])_([0-9]*[^\\.])\\.[\\w]*";

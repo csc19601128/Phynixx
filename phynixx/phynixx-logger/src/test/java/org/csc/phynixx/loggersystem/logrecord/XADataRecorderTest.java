@@ -76,7 +76,7 @@ public class XADataRecorderTest {
         // if the transaction is commiting no rollback data may be written
         try {
             xaDataRecorder.writeRollbackData(new byte[][]{});
-            throw new AssertionFailedError("No more RF Data allowed; Sequence is committing");
+            //throw new AssertionFailedError("No more RF Data allowed; Sequence is committing");
         } catch (Exception e) {
         }
 
@@ -120,6 +120,8 @@ public class XADataRecorderTest {
         };
 
         xaDataRecorder.replayRecords(replay);
+        
+        xaDataRecorder.disqualify();
 
 
     }

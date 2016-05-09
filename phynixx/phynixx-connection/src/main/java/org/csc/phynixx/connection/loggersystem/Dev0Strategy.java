@@ -99,11 +99,11 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedCo
         }
 
         @Override
-        public void close() {
+        public void disqualify() {
         }
 
         @Override
-        public void reset() {
+        public void release() {
 
         }
 

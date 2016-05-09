@@ -82,7 +82,7 @@ public class MTXAResourceLoggerTest {
         PhynixxXARecorderRepository repository= new PhynixxXARecorderRepository(loggerFactory);
         try {
             // Start Threads to fill the Logs.
-            List workers = new ArrayList();
+            List<Thread> workers = new ArrayList<Thread>();
             for (int i = 0; i < NUM_THREADS; i++) {
                 MessageSampler sampler = new MessageSampler(i, repository, MT_MESSAGE, (10 % (i + 1) + 2));
                 Thread worker = new Thread(sampler);
@@ -100,12 +100,14 @@ public class MTXAResourceLoggerTest {
         }
 
 
+        
+        repository.close();
+        IXARecorderRecovery recorderRecovery=null;
 
         try {
+			recorderRecovery = new XARecorderRecovery(loggerFactory);
 
-            repository.recover();
-
-            Set<IXADataRecorder> dataRecorders = repository.getXADataRecorders();
+            Set<IXADataRecorder> dataRecorders = recorderRecovery.getRecoveredXADataRecorders();
             Assert.assertEquals(NUM_THREADS, dataRecorders.size());
 
             log.info(dataRecorders.toString());
@@ -121,7 +123,7 @@ public class MTXAResourceLoggerTest {
             }
 
         } finally {
-            repository.close();
+        	recorderRecovery.close();
         }
     }
 
@@ -168,8 +170,8 @@ public class MTXAResourceLoggerTest {
         private int chunkSize;
         private IXADataRecorder dataRecorder;
 
-        private MessageSampler(int index,PhynixxXARecorderRepository repository,
-                               String message, int chunkSize) throws IOException, InterruptedException {
+        private MessageSampler(int index,IXARecorderRepository repository,
+                               String message, int chunkSize) throws Exception {
             this.dataRecorder = repository.createXADataRecorder();
             this.message = message;
             this.chunkSize = chunkSize;

@@ -32,11 +32,12 @@ import java.util.List;
  */
 public class PhynixxRecovery<C extends IPhynixxConnection> implements IPhynixxRecovery<C> {
 
-    private final PhynixxManagedConnectionFactory managedConnectionFactory;
-    IPhynixxLoggerSystemStrategy<C> loggerSystemStrategy = null;
+    private final PhynixxManagedConnectionFactory<C> managedConnectionFactory;
+    
+    private IPhynixxLoggerSystemStrategy<C> loggerSystemStrategy = null;
 
     public PhynixxRecovery(IPhynixxConnectionFactory<C> connectionFactory) {
-        managedConnectionFactory = new PhynixxManagedConnectionFactory(connectionFactory);
+        managedConnectionFactory = new PhynixxManagedConnectionFactory<C>(connectionFactory);
     }
 
     public IPhynixxLoggerSystemStrategy<C> getLoggerSystemStrategy() {
@@ -46,6 +47,9 @@ public class PhynixxRecovery<C extends IPhynixxConnection> implements IPhynixxRe
     public void setLoggerSystemStrategy(IPhynixxLoggerSystemStrategy<C> loggerSystemStrategy) {
 
         this.loggerSystemStrategy = loggerSystemStrategy;
+        
+        // Es werden alle Logger geschlossen
+        this.loggerSystemStrategy.close();
     }
 
     private IPhynixxManagedConnection<C> getManagedConnection() {

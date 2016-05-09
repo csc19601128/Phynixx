@@ -22,7 +22,7 @@ package org.csc.phynixx.connection;
 
 
 /**
- * lifecycle listener of an Connection
+ * lifecycle listener of an Connection. The different states of a connections are propagate to this listeners
  *
  * @param <C> Typ of the connection
  */
@@ -30,7 +30,7 @@ package org.csc.phynixx.connection;
 public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection> {
 
     /**
-     * called before the connection is opended
+     * called before the connection is opened
      *
      * @param event current connection
      */
@@ -54,7 +54,7 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
 
     /**
      * connectionErrorOccurred is triggered when a fatal error,
-     * such as the server crashing, causes the connection to be lost
+     * such as the server is crashing, causes the connection to be lost
      *
      * @param event current connection
      */
@@ -79,19 +79,27 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
 
 
     /**
-     * connectionRolledback
+	 * starts rolling back the connection
+	 *
+	 * @param event
+	 */
+	void connectionRollingBack(IManagedConnectionEvent<C> event);
+
+	/**
+     * connectionRolledback - the underlying connection was rolledback
+     * @param event
      */
     void connectionRolledback(IManagedConnectionEvent<C> event);
 
     /**
-     * connection enters state 'committing'
+     * connection enters state 'committing' (connection is to be committed)
      *
-     * @param event
+     * @param event describes the context of the event e.g. the underlying connection 
      */
     void connectionCommitting(IManagedConnectionCommitEvent<C> event);
 
     /**
-     * connectionCommitted
+     * connectionCommitted - connection is committed
      * @param event
      */
     void connectionCommitted(IManagedConnectionCommitEvent<C> event);
@@ -120,16 +128,9 @@ public interface IPhynixxManagedConnectionListener<C extends IPhynixxConnection>
     void connectionRecovering(IManagedConnectionEvent<C> event);
 
     /**
-     * connection recovered
+     * connection is recovered
      */
     void connectionRecovered(IManagedConnectionEvent<C> event);
-
-    /**
-     * starts rolling back the connection
-     *
-     * @param event
-     */
-    void connectionRollingBack(IManagedConnectionEvent<C> event);
 
 
 }
