@@ -171,7 +171,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
     /**
      * destroyes all logfile of the logger
      */
-    public synchronized void destroyLogger(String loggerName) {
+    public synchronized void cleanupLoggers(String loggerName) {
         String pattern = MessageFormat.format(LOGGER_FORMAT_PATTERN, loggerName);
         LogFilenameMatcher matcher = new LogFilenameMatcher(pattern);
 

@@ -48,8 +48,7 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements
 	// private PhynixxConnectionTray<T> connectionTray = null;
 
 	/**
-	 * set of active xaresources
-	 * has to be synchronized explicitly
+	 * set of active xaresources has to be synchronized explicitly
 	 */
 	private Set<PhynixxXAResource<T>> xaresources = new HashSet<PhynixxXAResource<T>>();
 
@@ -126,7 +125,8 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements
 	}
 
 	private PhynixxXAResource<T> instanciateXAResource() {
-		PhynixxXAResource<T> xares = new PhynixxXAResource<T>(createXAResourceId(), this.transactionManager, this);
+		PhynixxXAResource<T> xares = new PhynixxXAResource<T>(
+				createXAResourceId(), this.transactionManager, this);
 		xares.addXAResourceListener(this);
 		addXAResource(xares);
 		return xares;
@@ -192,21 +192,27 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements
 	@Override
 	public void close() {
 
-		// copy all resources as the close of a resource modifies the
-		// xaresources ...
-		Set<PhynixxXAResource<T>> tmpXAResources = new HashSet<PhynixxXAResource<T>>();
-		synchronized (xaresources) {
-			if (this.xaresources.size() > 0) {
-				tmpXAResources.addAll(xaresources);
+		try {
+			// copy all resources as the close of a resource modifies the
+			// xaresources ...
+			Set<PhynixxXAResource<T>> tmpXAResources = new HashSet<PhynixxXAResource<T>>();
+			synchronized (xaresources) {
+				if (this.xaresources.size() > 0) {
+					tmpXAResources.addAll(xaresources);
+				}
 			}
-		}
-		// close all reopen XAResources ....
-		for (Iterator<PhynixxXAResource<T>> iterator = tmpXAResources.iterator(); iterator.hasNext();) {
-			PhynixxXAResource<T> xaresource = iterator.next();
-			xaresource.close();
-		}
+			// close all reopen XAResources ....
+			for (Iterator<PhynixxXAResource<T>> iterator = tmpXAResources
+					.iterator(); iterator.hasNext();) {
+				PhynixxXAResource<T> xaresource = iterator.next();
+				xaresource.close();
+			}
 
-		this.getXATransactionalBranchRepository().close();
+			this.getXATransactionalBranchRepository().close();
+		} finally {
+
+			managedConnectionFactory.close();
+		}
 	}
 
 	synchronized void registerWatchCondition(IWatchedCondition cond) {
@@ -229,7 +235,7 @@ public class PhynixxXAResourceFactory<T extends IPhynixxConnection> implements
 
 	protected Set<PhynixxXAResource<T>> getUnreleasedXAResources() {
 		synchronized (xaresources) {
-			return new HashSet<PhynixxXAResource<T>>(xaresources);
+			return Collections.unmodifiableSet(new HashSet<PhynixxXAResource<T>>(xaresources));
 		}
 	}
 }

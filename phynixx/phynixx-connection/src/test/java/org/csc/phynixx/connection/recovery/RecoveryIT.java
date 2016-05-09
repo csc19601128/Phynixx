@@ -74,10 +74,10 @@ public class RecoveryIT {
 
         GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
         cfg.setMaxTotal(POOL_SIZE);
-        PooledPhynixxManagedConnectionFactory<ITestConnection> fac = new PooledPhynixxManagedConnectionFactory(new TestConnectionFactory(), cfg);
+        PooledPhynixxManagedConnectionFactory<ITestConnection> fac = new PooledPhynixxManagedConnectionFactory<ITestConnection>(new TestConnectionFactory(), cfg);
 
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        LoggerPerTransactionStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
+        LoggerPerTransactionStrategy<ITestConnection> strategy = new LoggerPerTransactionStrategy<ITestConnection>(loggerFactory);
 
         fac.setLoggerSystemStrategy(strategy);
         fac.addManagedConnectionDecorator(new TestConnectionStatusListener());

@@ -55,7 +55,7 @@ public interface IDataLogger {
     void replay(IDataLoggerReplay replayListener) throws IOException;
 
     /**
-     * close the Log files and perform necessary cleanup tasks.
+     * close the Log files and perform necessary cleanup tasks. The content isn't discarded
      * The logger could be reopen
      */
     void close() throws IOException, InterruptedException;

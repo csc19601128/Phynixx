@@ -20,26 +20,21 @@ package org.csc.phynixx.loggersystem.logrecord;
  * #L%
  */
 
+import java.io.IOException;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.common.generator.IDGenerator;
-import org.csc.phynixx.common.generator.IDGenerators;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.logger.IDataLogger;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.*;
-
+import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerStatistics;
 
 /**
- * XAResource logger is specialized to support the logging of a xaresource to rollback/recover the
- * resource in the context of an transaction manager.
+ * XAResource logger is specialized to support the logging of a xaresource to
+ * rollback/recover the resource in the context of an transaction manager.
  * 
- * This repository watches and manages the lifycycle of {@link PhynixxXADataRecorder}
+ * This repository watches and manages the lifycycle of
+ * {@link PhynixxXADataRecorder}
  * 
  * 
  * 
@@ -49,306 +44,63 @@ import java.util.*;
 public class PhynixxXARecorderRepository implements IXARecorderRepository {
 
 
-    public interface IEventDeliver {
-        void fireEvent(IXARecorderResourceListener listener);
-    }
-
-    private final static byte[][] EMPTY_DATA = new byte[][]{};
-
-    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PhynixxXARecorderRepository.class);
-
-    private static int HEADER_SIZE = 8 + 4;
-
-    private IDataLoggerFactory dataLoggerFactory = null;
-
-
-    /**
-     * ILoggerListeners watching the lifecycle of this logger
-     */
-    private List<IXARecorderResourceListener> listeners = new ArrayList<IXARecorderResourceListener>();
-
-    /**
-     * management of the registered XADataRecorder. This structure has to stand heavy multithreaded rad and write
-     */
-    private SortedMap<Long, PhynixxXADataRecorder> xaDataRecorders = new TreeMap<Long, PhynixxXADataRecorder>();
-
-    private IDGenerator<Long> messageSeqGenerator = IDGenerators.synchronizeGenerator(IDGenerators.createLongGenerator(1l));
-
-
-    public PhynixxXARecorderRepository(IDataLoggerFactory dataLoggerFactory) {
-        this.dataLoggerFactory = dataLoggerFactory;
-        if (this.dataLoggerFactory == null) {
-            throw new IllegalArgumentException("No dataLoggerFactory set");
-        }
-    }
-
-    @Override
-
-    /**
-     * opens a new Recorder for writing. The recorder gets a new ID.
-     * @return created dataRecorder
-     */
-    public  IXADataRecorder createXADataRecorder() {
-
-        try {
-            long xaDataRecorderId = this.messageSeqGenerator.generate();
-
-            // create a new Logger
-            IDataLogger dataLogger = this.dataLoggerFactory.instanciateLogger(Long.toString(xaDataRecorderId));
-
-            // create a new XADataLogger
-            XADataLogger xaDataLogger = new XADataLogger(dataLogger);
-
-
-            PhynixxXADataRecorder xaDataRecorder = PhynixxXADataRecorder.openRecorderForWrite(xaDataRecorderId, xaDataLogger, this);
-            synchronized (this) {
-                addXADataRecorder(xaDataRecorder);
-            }
-            return xaDataRecorder;
-
-        } catch (Exception e) {
-            throw new DelegatedRuntimeException(e);
-        }
-
-    }
-
-    public String getLoggerSystemName() {
-        return dataLoggerFactory.getLoggerSystemName();
-    }
-
-    @Override
-    public boolean isClosed() {
-        return false;
-    }
-
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getLoggerSystemName() == null) ? 0 : getLoggerSystemName().hashCode());
-        return result;
-    }
-
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final PhynixxXARecorderRepository other = (PhynixxXARecorderRepository) obj;
-        if (getLoggerSystemName() == null) {
-            if (other.getLoggerSystemName() != null)
-                return false;
-        } else if (!this.getLoggerSystemName().equals(other.getLoggerSystemName()))
-            return false;
-        return true;
-    }
-
-    public String toString() {
-        return (this.dataLoggerFactory == null) ? "Closed Logger" : this.dataLoggerFactory.toString();
-    }
-
-
-    /**
-     * logs user data into the message sequence
-     */
-    public void logUserData(IXADataRecorder xaDataRecorder, byte[][] data) {
-       xaDataRecorder.createDataRecord(XALogRecordType.USER, data);
-    }
-
-    public void logUserData(IXADataRecorder sequence, byte[] data) throws InterruptedException, IOException {
-        this.logUserData(sequence, new byte[][]{data});
-    }
-
-
-    /**
-     * Indicates that the XAResource has been prepared
-     * <p/>
-     * All information to perform a complete roll forward during commit are logged
-     * <p/>
-     * all previous rollback information are
-     *
-     * @param dataRecorder
-     * @return
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public void preparedXA(IXADataRecorder dataRecorder) throws IOException {
-        dataRecorder.createDataRecord(XALogRecordType.XA_PREPARED, EMPTY_DATA);
-    }
-
-
-    /**
-     * Indicates that the XAResource has been prepared and enters the 'committing' state
-     * <p/>
-     * All information to perform a complete roll forward during commit are logged
-     *
-     * @param dataRecorder
-     * @param data
-     * @return
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public void committingXA(IXADataRecorder dataRecorder, byte[][] data) throws IOException {
-        dataRecorder.createDataRecord(XALogRecordType.ROLLFORWARD_DATA, data);
-    }
-
-
-    /**
-     * indicates the start of a TX,
-     * <p/>
-     * To recover this resource in the context of its XID, both the XID and the id of the resource have to be logged
-     *
-     * @param dataRecorder
-     * @param resourceId
-     * @param xid
-     * @return
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public void startXA(IXADataRecorder dataRecorder, String resourceId, byte[] xid) throws IOException {
-           dataRecorder.createDataRecord(XALogRecordType.XA_START, new byte[][]{xid});
-
-    }
-
-    /**
-     * indicated the end of the TX
-     *
-     * @param dataRecorder
-     * @return
-     * @throws InterruptedException
-     * @throws IOException
-     */
-    public void doneXA(IXADataRecorder dataRecorder) throws IOException {
-
-        dataRecorder.createDataRecord(XALogRecordType.XA_DONE, new byte[][]{});
-    }
-
-
-    public synchronized void open() throws IOException, InterruptedException {
-        if (this.dataLoggerFactory == null) {
-            throw new IllegalStateException("No logger set");
-        }
-        // xaDataRecorders.clear();
-        fireXARecorderResourceOpened();
-    }
-
-    @Override
-    public synchronized void close() {
-        if (!isClosed()) {
-            SortedMap<Long, PhynixxXADataRecorder> tmp= new TreeMap<Long, PhynixxXADataRecorder>(xaDataRecorders);
-            for (PhynixxXADataRecorder dataRecorder : tmp.values()) {
-                dataRecorder.close();
-            }
-            xaDataRecorders.clear();
-            fireXARecorderResourceClosed();
-        }
-    }
-
-    @Override
-    public synchronized void destroy() throws IOException, InterruptedException {
-        this.close();
-        this.dataLoggerFactory.cleanup();
-        this.listeners = new ArrayList<IXARecorderResourceListener>();
-        this.messageSeqGenerator = null;
-    }
-
-    /**
-     * recovers all dataRecorder of the loggerSystem. All reopen dataRecorders
-     * are closed and all dataRecorder that can be recovered are opened for reading
-     *
-     * @see #getXADataRecorders()
-     */
-    @Override
-    public synchronized void recover() {
-
-        try {
-
-            // close all reopen dataRecorders
-            this.close();
-
-            Set<String> loggerNames = this.dataLoggerFactory.findLoggerNames();
-
-            // recover all logs
-            for (String loggerName : loggerNames) {
-
-                IDataLogger dataLogger = this.dataLoggerFactory.instanciateLogger(loggerName);
-                XADataLogger xaLogger = new XADataLogger(dataLogger);
-
-                PhynixxXADataRecorder phynixxXADataRecorder = PhynixxXADataRecorder.recoverDataRecorder(xaLogger, this);
-                this.addXADataRecorder(phynixxXADataRecorder);
-
-            }
-        } catch (Exception e) {
-            throw new DelegatedRuntimeException(e);
-        }
-
-
-    }
-
-
-    private void addXADataRecorder(PhynixxXADataRecorder xaDataRecorder) {
-        if (!this.xaDataRecorders.containsKey(xaDataRecorder.getXADataRecorderId())) {
-            this.xaDataRecorders.put(xaDataRecorder.getXADataRecorderId(), xaDataRecorder);
-        }
-    }
-
-    @Override
-    public synchronized Set<IXADataRecorder> getXADataRecorders() {
-        Set<IXADataRecorder> seqs = new HashSet<IXADataRecorder>(this.xaDataRecorders.size());
-        for (Iterator<PhynixxXADataRecorder> iterator = xaDataRecorders.values().iterator(); iterator.hasNext(); ) {
-            seqs.add(iterator.next());
-        }
-        return seqs;
-    }
-
-
-    @Override
-    public synchronized void recorderDataRecorderClosed(IXADataRecorder xaDataRecorder) {
-        this.removeXADataRecoder(xaDataRecorder);
-    }
-
-    @Override
-    public void recorderDataRecorderOpened(IXADataRecorder xaDataRecorder) {
-
-    }
-
-    private void removeXADataRecoder(IXADataRecorder xaDataRecorder) {
-        this.xaDataRecorders.remove(xaDataRecorder.getXADataRecorderId());
-    }
-
-    private void fireEvents(IEventDeliver deliver) {
-
-        if (this.listeners == null || this.listeners.size() == 0) {
-            return;
-        }
-
-        // copy all listeners as the callback may change the list of listeners ...
-        List<IXARecorderResourceListener> tmp = new ArrayList<IXARecorderResourceListener>(this.listeners);
-        for (int i = 0; i < tmp.size(); i++) {
-            IXARecorderResourceListener listener = tmp.get(i);
-            deliver.fireEvent(listener);
-        }
-    }
-
-
-    protected void fireXARecorderResourceClosed() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IXARecorderResourceListener listener) {
-                listener.recorderResourceClosed(PhynixxXARecorderRepository.this);
-            }
-        };
-        fireEvents(deliver);
-    }
-
-    protected void fireXARecorderResourceOpened() {
-        IEventDeliver deliver = new IEventDeliver() {
-            public void fireEvent(IXARecorderResourceListener listener) {
-                listener.recorderResourceOpened(PhynixxXARecorderRepository.this);
-            }
-        };
-        fireEvents(deliver);
-    }
-
-
+	private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PhynixxXARecorderRepository.class);
+
+	
+	final IXARecorderPool dataRecorderPool; 
+
+
+	public PhynixxXARecorderRepository(IXARecorderPool dataRecorderPool) {
+		this.dataRecorderPool = dataRecorderPool;
+		if (this.dataRecorderPool == null) {
+			throw new IllegalArgumentException("No dataLoggerFactory set");
+		}
+	}
+
+	/**
+	 * the dataRecorder are not re-used. If they are reset they are destroyed
+	 * 
+	 * @param dataLoggerFactory
+	 */
+	public PhynixxXARecorderRepository(IDataLoggerFactory dataLoggerFactory) {
+		this(new SimpleXADataRecorderPool(dataLoggerFactory));
+	}
+
+
+	@Override
+	public IXADataRecorder createXADataRecorder() throws Exception {
+		return this.dataRecorderPool.borrowObject();
+	}
+
+	@Override
+	public boolean isClosed() {
+		return this.dataRecorderPool.isClosed();
+	}
+
+	
+
+	
+
+	public synchronized void open() throws IOException, InterruptedException {
+		if (this.dataRecorderPool == null) {
+			throw new IllegalStateException("No pool set");
+		}
+	}
+
+	@Override
+	public synchronized void close() {
+		this.dataRecorderPool.close();
+		
+		LOG.warn(FileChannelDataLoggerStatistics.printStatistics());
+	}
+
+	@Override
+	public synchronized void destroy() throws IOException, InterruptedException {
+		this.dataRecorderPool.destroy();
+		LOG.warn(FileChannelDataLoggerStatistics.printStatistics());
+	}
+
+	
+
+	
 }

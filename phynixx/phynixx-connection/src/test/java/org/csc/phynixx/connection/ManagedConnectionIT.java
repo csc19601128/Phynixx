@@ -47,9 +47,9 @@ public class ManagedConnectionIT {
     public static final String LOGGER = "logger";
     private IPhynixxLogger LOG = PhynixxLogManager.getLogger(this.getClass());
 
-    private PhynixxManagedConnectionFactory<ITestConnection> connectionFactory = null;
+    private IPhynixxManagedConnectionFactory<ITestConnection> connectionFactory = null;
 
-    private IPhynixxLoggerSystemStrategy strategy = null;
+    private IPhynixxLoggerSystemStrategy<ITestConnection> strategy = null;
 
     private TmpDirectory tmpDir = null;
 
@@ -65,9 +65,9 @@ public class ManagedConnectionIT {
         this.connectionFactory =createConnectionFactory();
     }
 
-    private PhynixxManagedConnectionFactory<ITestConnection> createConnectionFactory() {
+    private IPhynixxManagedConnectionFactory<ITestConnection> createConnectionFactory() {
         IDataLoggerFactory loggerFactory = new FileChannelDataLoggerFactory("mt", this.tmpDir.getDirectory());
-        IPhynixxLoggerSystemStrategy strategy = new LoggerPerTransactionStrategy(loggerFactory);
+        IPhynixxLoggerSystemStrategy<ITestConnection> strategy = new LoggerPerTransactionStrategy<ITestConnection>(loggerFactory);
 
         PhynixxManagedConnectionFactory<ITestConnection> connectionFactory =
                 new PhynixxManagedConnectionFactory<ITestConnection>(new TestConnectionFactory());

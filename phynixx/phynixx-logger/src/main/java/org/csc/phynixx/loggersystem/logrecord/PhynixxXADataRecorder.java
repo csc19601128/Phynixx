@@ -90,7 +90,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     public void recover() {
         try {
             this.messages.clear();
-            this.dataLogger.prepareForRead(this);
+            this.dataLogger.prepareForRead();
             this.dataLogger.recover(this);
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
@@ -109,7 +109,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     static PhynixxXADataRecorder openRecorderForWrite(long messageSequenceId, XADataLogger xaDataLogger, IXADataRecorderLifecycleListener dataRecorderLifycycleListner) {
         PhynixxXADataRecorder dataRecorder = new PhynixxXADataRecorder(messageSequenceId, xaDataLogger, dataRecorderLifycycleListner);
         try {
-            dataRecorder.dataLogger.prepareForWrite(dataRecorder);
+            dataRecorder.dataLogger.prepareForWrite(dataRecorder.getXADataRecorderId());
             return dataRecorder;
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
@@ -168,7 +168,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
      * create a new Message with the given data
      */
     public  void writeRollbackData(byte[][] data) {
-       this.createDataRecord(XALogRecordType.ROLLBACK_DATA, data);
+       this.writeData(XALogRecordType.ROLLBACK_DATA, data);
     }
 
 
@@ -177,14 +177,20 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     }
 
     public void writeRollforwardData(byte[][] data) {
-       this.createDataRecord(XALogRecordType.ROLLFORWARD_DATA, data);
+       this.writeData(XALogRecordType.ROLLFORWARD_DATA, data);
     }
 
     public void addMessage(IDataRecord message) {
-        this.establishState(message);
+    	checkState(message.getLogRecordType());
+    	this.establishState(message.getLogRecordType());
         this.messages.add(message);
     }
-
+    
+    public void recoverMessage(IDataRecord message) {
+    	 this.establishState(message.getLogRecordType());
+        this.messages.add(message);
+    }
+    
     public void replayRecords(IDataRecordReplay replay) {
 
         if (this.messages == null || this.messages.size() == 0) {
@@ -209,18 +215,24 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     }
 
     @Override
-    public IDataRecord createDataRecord(XALogRecordType logRecordType, byte[] recordData) {
-        return this.createDataRecord(logRecordType, this.toBytesBytes(recordData));
+    public void writeData(XALogRecordType logRecordType, byte[] recordData) {
+        this.writeData(logRecordType, this.toBytesBytes(recordData));
     }
 
     @Override
-    public IDataRecord createDataRecord(XALogRecordType logRecordType, byte[][] recordData) {
+    public void writeData(XALogRecordType logRecordType, byte[][] recordData) {
         PhynixxDataRecord msg = new PhynixxDataRecord(this.getXADataRecorderId(), this.ordinalGenerator.generate(), logRecordType, recordData);
         try {
-            this.dataLogger.writeData(this, msg);
-            this.addMessage(msg);
-
-            return msg;
+        	this.addMessage(msg);
+        	try {
+           		this.dataLogger.writeData(this, msg);
+        	} catch (Exception e) {
+        		int lastIndex = this.messages.size()-1;
+        		if( lastIndex>=0) {
+        			this.messages.remove(lastIndex);
+        		}
+        		throw new DelegatedRuntimeException(e);
+        	}
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
         }
@@ -240,18 +252,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         this.messageSequenceId = messageSequenceId;
     }
 
-    private void establishState(IDataRecord msg) {
-        XALogRecordType logRecordType = msg.getLogRecordType();
-
-        if (this.isCommitting() && !logRecordType.equals(XALogRecordType.XA_DONE)) {
-            if (logRecordType == XALogRecordType.USER) {
-                throw new IllegalStateException("Sequence in State COMMITTING, only XA_DONE/ROLLFORWARD_DATA are accepted");
-            }
-        }
-
-        if (this.isCompleted()) {
-            throw new IllegalStateException("Sequence in State COMPLETED, no more data is accepted");
-        }
+    private void establishState(XALogRecordType logRecordType) {
 
         if (logRecordType.equals(XALogRecordType.XA_PREPARED)) {
             this.committing = false;
@@ -270,6 +271,19 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
             this.prepared = false;
         }
     }
+
+
+	private void checkState(XALogRecordType logRecordType) {
+		if (this.isCommitting() && !logRecordType.equals(XALogRecordType.XA_DONE)) {
+            if (logRecordType == XALogRecordType.USER) {
+                throw new IllegalStateException("Sequence in State COMMITTING, only XA_DONE/ROLLFORWARD_DATA are accepted");
+            }
+        }
+
+        if (this.isCompleted()) {
+            throw new IllegalStateException("Sequence in State COMPLETED, no more data is accepted");
+        }
+	}
 
     public int compareTo(Object obj) {
 
@@ -315,7 +329,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
 
     public String toString() {
         StringBuffer buffer = new StringBuffer(" { \n");
-        for (Iterator iterator = messages.iterator(); iterator.hasNext(); ) {
+        for (Iterator<IDataRecord> iterator = messages.iterator(); iterator.hasNext(); ) {
             buffer.append('\t').append(iterator.next()).append('\n');
         }
         buffer.append(" }");
@@ -325,7 +339,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
 
 
     /**
-     * rewinds the dataLoger to start without removing the persistent content of the rdataLogger
+     * rewinds the dataLoger to start without removing the persistent content of the dataLogger
      * the cached messages are removed but can re re-build by analysing the content of the dataLogger.
      */
     void rewind() {
@@ -336,31 +350,32 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     }
 
 
-    /**rewinds the recorder and resets the dataLogger. Information of the dataLogger is removed
+    /**
+     * rewinds the recorder and resets the dataLogger. Information of the dataLogger is removed
      *
      */
-    public void reset() {
-        this.committing = false;
-        this.completed = false;
-        this.prepared = false;
-        this.messages.clear();
+    public void release() {
+    	rewind();
         try {
-            this.dataLogger.prepareForWrite(this);
+            this.dataLogger.prepareForWrite(this.getXADataRecorderId());
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
+        }
+
+   	 if (dataRecorderLifycycleListner != null) {
+            this.dataRecorderLifycycleListner.recorderDataRecorderReleased(this);
         }
 
     }
 
     /**
-     * closes the current datalogger and rewinds
+     * closes the current datalogger, but keeps content
      */
-    public void close() {
+    public void disqualify() {
         if (dataRecorderLifycycleListner != null) {
             this.dataRecorderLifycycleListner.recorderDataRecorderClosed(this);
         }
         this.dataLogger.close();
-        this.rewind();
     }
 
     @Override
@@ -373,6 +388,9 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
      */
     @Override
     public void destroy() {
+    	 if (dataRecorderLifycycleListner != null) {
+             this.dataRecorderLifycycleListner.recorderDataRecorderDestroyed(this);
+         }
         try {
             this.dataLogger.destroy();
         } catch (IOException e) {

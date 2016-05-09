@@ -21,12 +21,17 @@ package org.csc.phynixx.loggersystem.logger.channellogger;
  */
 
 
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
+import org.csc.phynixx.loggersystem.logger.channellogger.lock.FileChannelLockManager;
+import org.csc.phynixx.loggersystem.logger.channellogger.lock.IAccessGuard;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
+import java.util.concurrent.TimeoutException;
 
 /**
  *
@@ -54,7 +59,7 @@ import java.nio.channels.FileLock;
  * @see java.nio.channels.FileLock
  *
  */
-class TAEnabledRandomAccessFile {
+public class TAEnabledRandomAccessFile {
 
 
     /**
@@ -77,9 +82,11 @@ class TAEnabledRandomAccessFile {
      * Das RandomAccessFile, dass zum Schreiben u. Lesen geoeffnet wird.
      */
     private RandomAccessFile raf = null;
+    
+    private File file; 
 
 
-    private FileLock fileLock = null;
+    private IAccessGuard fileLock = null;
 
 
     /**
@@ -90,19 +97,34 @@ class TAEnabledRandomAccessFile {
 
     /**
      * Initialisierungs-Methode
-     *
+     * @param file TODO
      * @param raf - RandomAccessFile
+     *
      * @throws IOException
      */
-    TAEnabledRandomAccessFile(RandomAccessFile raf) throws IOException {
+    TAEnabledRandomAccessFile(File file, RandomAccessFile raf)  {
+    	this.file=file;
         this.raf = raf;
-        fileLock = acquireFileLock(raf);
-        this.restoreCommittedSize();
-        check();
+        try {
+			fileLock = acquireFileLock(file,raf);
+			this.restoreCommittedSize();
+			check();
+		} catch (Exception e) {
+			closeQuitely();
+			throw new DelegatedRuntimeException(e);
+		} 
     }
 
-    private FileLock acquireFileLock(RandomAccessFile raf) throws IOException {
-        return raf.getChannel().lock(0,HEADER_LENGTH, false);
+	private void closeQuitely() {
+		try {
+			this.close();
+		} catch (Exception e) {}
+	}
+
+    private IAccessGuard acquireFileLock(File file, RandomAccessFile raf) throws IOException, InterruptedException, TimeoutException {
+         IAccessGuard lock = FileChannelLockManager.lock(file, raf);
+         lock.acquire();
+         return lock;
     }
 
     /**
@@ -195,10 +217,8 @@ class TAEnabledRandomAccessFile {
             // gibt Lock auf datei frei
             try {
                 if (this.fileLock != null) {
-                    if( fileLock.isValid()) {
-                     this.fileLock.release();
-                    } else {
-                        LOG.error("Filelock not valid");
+                    if( !fileLock.release()) {
+                        LOG.error("Filelock not releaase properly");
                     }
                 } else {
                     LOG.error("Kein Filelock gesetzt");

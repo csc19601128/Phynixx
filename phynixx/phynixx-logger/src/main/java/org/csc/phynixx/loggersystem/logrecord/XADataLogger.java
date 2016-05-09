@@ -36,7 +36,7 @@ import org.csc.phynixx.loggersystem.logger.IDataLoggerReplay;
 import org.csc.phynixx.loggersystem.logger.channellogger.AccessMode;
 
 /**
- * brings IXADataRecorder and dataLoger together.
+ * brings IXADataRecorder and IDataLogger together.
  * 
  * An instance keeps an {@link IDataLogger} representing the physical logging
  * strategy.
@@ -49,7 +49,7 @@ import org.csc.phynixx.loggersystem.logger.channellogger.AccessMode;
  * 
  * Created by christoph on 10.01.14.
  */
-public class XADataLogger {
+class XADataLogger {
 
 	public boolean isClosed() {
 		return this.dataLogger.isClosed();
@@ -68,7 +68,6 @@ public class XADataLogger {
 	private class RecoverReplayListener implements IDataLoggerReplay {
 
 		private int count = 0;
-		private String loggerName;
 
 		private PhynixxXADataRecorder dataRecorder;
 
@@ -83,8 +82,7 @@ public class XADataLogger {
 		public void onRecord(XALogRecordType recordType, byte[][] fieldData) {
 			if (count == 0) {
 				// recovers the message sequence id
-				dataRecorder.setMessageSequenceId(XADataLogger.this
-						.recoverMessageSequenceId(fieldData[0]));
+				dataRecorder.setMessageSequenceId(XADataLogger.this.recoverMessageSequenceId(fieldData[0]));
 			} else {
 				short typeId = recordType.getType();
 				switch (typeId) {
@@ -125,22 +123,18 @@ public class XADataLogger {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	void prepareForWrite(PhynixxXADataRecorder dataRecorder)
-			throws IOException, InterruptedException {
+	void prepareForWrite(long xaDataRecorderId) throws IOException, InterruptedException {
 		this.dataLogger.reopen(AccessMode.WRITE);
-		this.writeStartSequence(dataRecorder);
+		this.writeStartSequence(xaDataRecorderId);
 	}
 
 	/**
 	 * prepares the Logger for writing.
 	 * 
-	 * @param dataRecorder
-	 *            DataRecorder that uses /operates on the current physical
-	 *            logger
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	void prepareForAppend(PhynixxXADataRecorder dataRecorder)
+	void prepareForAppend()
 			throws IOException, InterruptedException {
 		this.dataLogger.reopen(AccessMode.APPEND);
 	}
@@ -148,14 +142,10 @@ public class XADataLogger {
 	/**
 	 * prepares the Logger for writing.
 	 *
-	 * @param dataRecorder
-	 *            DataRecorder that uses /operates on the current physical
-	 *            logger
-	 *
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	void prepareForRead(PhynixxXADataRecorder dataRecorder) throws IOException,
+	void prepareForRead() throws IOException,
 			InterruptedException {
 		this.dataLogger.reopen(AccessMode.READ);
 	}
@@ -231,7 +221,7 @@ public class XADataLogger {
 
 	/**
 	 *
-	 * a new data record is created an added to dataRecorder
+	 * a new data record is created an added to dataRecorder. It's not checked if the record is permissable
 	 *
 	 * @param dataRecorder
 	 *            DataRecorder that uses /operates on the current physical
@@ -240,8 +230,7 @@ public class XADataLogger {
 	 * @param logRecordType
 	 * @param fieldData
 	 */
-	private void recoverData(PhynixxXADataRecorder dataRecorder,
-			XALogRecordType logRecordType, byte[][] fieldData) {
+	private void recoverData(PhynixxXADataRecorder dataRecorder,XALogRecordType logRecordType, byte[][] fieldData) {
 		if (LOGGER.isDebugEnabled()) {
 			if (fieldData == null || fieldData.length == 0) {
 				throw new IllegalArgumentException("Record fields are empty");
@@ -268,7 +257,7 @@ public class XADataLogger {
 
 			PhynixxDataRecord msg = new PhynixxDataRecord(
 					dataRecorder.getXADataRecorderId(), ordinal, logRecordType,	content);
-			dataRecorder.addMessage(msg);
+			dataRecorder.recoverMessage(msg);
 
 		} catch (Exception e) {
 			throw new DelegatedRuntimeException(e);
@@ -300,12 +289,11 @@ public class XADataLogger {
 	 *            deprecated
 	 */
 
-	private void writeStartSequence(IXADataRecorder dataRecorder)
-			throws IOException, InterruptedException {
+	private void writeStartSequence(long xaDataRecorderId)	throws IOException, InterruptedException {
 		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 		try {
 			DataOutputStream dos = new DataOutputStream(byteOut);
-			dos.writeLong(dataRecorder.getXADataRecorderId());
+			dos.writeLong(xaDataRecorderId);
 			dos.flush();
 		} finally {
 			if (byteOut != null) {
@@ -321,8 +309,7 @@ public class XADataLogger {
 
 	private long recoverMessageSequenceId(byte[] bytes) {
 		byte[] headerData = bytes;
-		DataInputStream io = new DataInputStream(new ByteArrayInputStream(
-				headerData));
+		DataInputStream io = new DataInputStream(new ByteArrayInputStream(headerData));
 		try {
 			long messageSequenceId = io.readLong();
 			return messageSequenceId;

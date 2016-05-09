@@ -26,6 +26,7 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
@@ -89,7 +90,11 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
     public IPhynixxManagedConnection<C> getManagedConnection() {
 
         // Connection wid in TX eingetragen ....
-        this.checkTransactionBinding();
+        try {
+			this.checkTransactionBinding();
+		} catch (XAException e) {
+			throw new DelegatedRuntimeException(e);
+		}
 
         return transactionBinding.getManagedConnection();
     }
@@ -137,7 +142,7 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
      *
      * @param xid
      */
-    void startTransactionalBranch(Xid xid) {
+    void startTransactionalBranch(Xid xid) throws Exception{
 
         cleanupTransactionBinding();
 
@@ -161,7 +166,7 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
                 if( connection==null || connection.isClosed()) {
                     connection= this.createPhysicalConnection();
                 }
-                xaTransactionalBranch = this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid, connection);
+                xaTransactionalBranch = this.instanciateTransactionalBranch(xid, connection);
             } else {
                 localTransactionProxy.close();
             }
@@ -183,9 +188,8 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
             // branch
             if (transactionalBranch == null) {
                 IPhynixxManagedConnection<C> physicalConnection = this.createPhysicalConnection();
-                transactionalBranch = this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid,
-                        physicalConnection);
-                this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid, physicalConnection);
+                transactionalBranch = this.instanciateTransactionalBranch(xid,physicalConnection);
+                // this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid, physicalConnection,transactionManager.getTransaction());
             }
             this.transactionBinding.activateGlobalTransaction(new GlobalTransactionProxy<C>(transactionalBranch));
 
@@ -199,9 +203,8 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
             // branch
             if (transactionalBranch == null) {
                 IPhynixxManagedConnection<C> physicalConnection = this.createPhysicalConnection();
-                transactionalBranch = this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid,
-                        physicalConnection);
-                this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid, physicalConnection);
+                transactionalBranch = instanciateTransactionalBranch(xid, physicalConnection);
+                //this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid, physicalConnection,transactionManager.getTransaction());
             }
 
             // Check if previous XID are compatible to the current
@@ -221,6 +224,12 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
         }
 
     }
+
+	private XATransactionalBranch<C> instanciateTransactionalBranch(Xid xid,
+			IPhynixxManagedConnection<C> physicalConnection)
+			throws SystemException {
+		return this.xaTransactionalBranchDictionary.instanciateTransactionalBranch(xid,physicalConnection,this.getXAResource(),transactionManager.getTransaction());
+	}
 
     private void cleanupTransactionBinding() {
         // cleanup
@@ -354,8 +363,9 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
      * The enlistment calls the
      * {@link javax.transaction.xa.XAResource#start(javax.transaction.xa.Xid, int)}
      * . This call associates the Xid with the current instance
+     * @throws XAException 
      */
-    private void enlistTransaction() {
+    private void enlistTransaction() throws XAException {
 
         this.cleanupTransactionBinding();
 
@@ -367,8 +377,12 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
             try {
                 Transaction ntx = this.transactionManager.getTransaction();
                 
-                // Bitronix calls start on reaction of enlist --- check if cycle
-                if (!enlisted && ntx != null) {
+                XATransactionalBranch<C> xaResourceEnlistment = findXAResourceEnlistment();
+                if( xaResourceEnlistment!=null ) {
+                	this.transactionBinding.activateGlobalTransaction(new GlobalTransactionProxy<C>(xaResourceEnlistment));
+                	this.enlisted = true;
+                } else 	if ( !enlisted && ntx != null) {
+                	// Bitronix calls start on reaction of enlist --- check if cycle
                     this.enlisted = true;
                     // enlisted makes startTransaactionalBranch calling
                     this.enlisted = ntx.enlistResource(this.xaResource);
@@ -402,7 +416,17 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
 
     }
 
-    @Override
+    private XATransactionalBranch<C> findXAResourceEnlistment() throws XAException, SystemException 
+    {
+		Transaction tx= this.transactionManager.getTransaction();
+		XAResource xaResource = this.getXAResource();
+		
+		
+		// check, if this resource is already enlisted 		
+		return this.xaTransactionalBranchDictionary.findTransactionalBranch(tx,xaResource);
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
@@ -426,7 +450,7 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
                 + this.transactionBinding + '}';
     }
 
-    void checkTransactionBinding() {
+    void checkTransactionBinding() throws XAException {
 
         if (this.isInGlobalTransaction()) {
             this.enlistTransaction();

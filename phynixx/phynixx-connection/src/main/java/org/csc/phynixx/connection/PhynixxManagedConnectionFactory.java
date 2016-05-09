@@ -214,6 +214,12 @@ public class PhynixxManagedConnectionFactory<C extends IPhynixxConnection> exten
     public Class<C> getConnectionInterface() {
         return this.getConnectionFactory().getConnectionInterface();
     }
+    
+    @Override
+	public void recover (IPhynixxRecovery.IRecoveredManagedConnection<C> recoveredManagedConnectionCallback) {
+    	IPhynixxRecovery<C> recovery= new PhynixxRecovery<C>(this.getConnectionFactory());
+    	recovery.recover(recoveredManagedConnectionCallback);
+    }
 
 
     @Override

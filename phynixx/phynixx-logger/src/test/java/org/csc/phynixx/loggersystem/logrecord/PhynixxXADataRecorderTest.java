@@ -89,7 +89,7 @@ public class PhynixxXADataRecorderTest {
         content1[0] = logRecordWriter1.toByteArray();
         dataRecorder.writeRollforwardData(content1);
 
-        dataRecorder.close();
+        dataRecorder.disqualify();
 
         IDataLogger dataLogger2 = this.loggerFactory.instanciateLogger("log");
         dataRecorder = PhynixxXADataRecorder.recoverDataRecorder(new XADataLogger(dataLogger2), null);
@@ -127,6 +127,7 @@ public class PhynixxXADataRecorderTest {
             }
         });
 
+        dataRecorder.disqualify();
 
     }
 

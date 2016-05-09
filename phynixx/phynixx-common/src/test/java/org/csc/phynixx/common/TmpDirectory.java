@@ -23,102 +23,108 @@ package org.csc.phynixx.common;
  * #L%
  */
 
+import java.io.File;
+import java.io.IOException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 
-import java.io.File;
-import java.io.IOException;
-
-
 public class TmpDirectory {
-    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(TmpDirectory.class);
-    private static final String MY_TMP = "de_csc_xaresource";
-    private File dir = null;
+	private static final IPhynixxLogger LOG = PhynixxLogManager
+			.getLogger(TmpDirectory.class);
+	private static final String MY_TMP = "de_csc_xaresource";
+	private File dir = null;
 
+	public TmpDirectory(String relDirectory) throws IOException {
+		String tmpDir = System.getProperty("java.io.tmpdir");
+		dir = new File(tmpDir + File.separator + relDirectory);
+		if (!dir.exists()) {
+			if (!dir.mkdirs()) {
+				throw new IOException("Cannot mddirs for Directory " + dir);
+			}
+		}
+		dir.deleteOnExit();
+	}
 
-    public TmpDirectory(String relDirectory) throws IOException {
-        String tmpDir = System.getProperty("java.io.tmpdir");
-        dir = new File(tmpDir + File.separator + relDirectory);
-        if (!dir.exists()) {
-            if(!dir.mkdirs()) {
-                throw new IOException("Cannot mddirs for Directory "+dir);
-            }
-        }
-        dir.deleteOnExit();
-    }
+	public TmpDirectory() throws IOException {
+		this(MY_TMP);
+	}
 
-    public TmpDirectory() throws IOException {
-        this(MY_TMP);
-    }
+	public File getDirectory() {
+		return this.dir;
+	}
 
-    public File getDirectory() {
-        return this.dir;
-    }
+	public void delete() {
+		this.clear();
+		if (!this.dir.delete()) {
+			LOG.error("Deletion of " + this.dir + " failed");
+		}
+		this.dir = null;
+	}
 
-    public void delete() {
-        this.clear();
-        if(!this.dir.delete()) {
-            LOG.error("Deletion of "+this.dir+" failed");
-        }
-        this.dir = null;
-    }
+	public void clear() {
+		this.clearDirectory(dir);
+	}
 
-    public void clear() {
-        this.clearDirectory(dir);
-    }
+	private void clearDirectory(File dir) {
 
-    private void clearDirectory(File dir) {
+		if (dir == null) {
+			return;
+		}
 
-        if (dir == null) {
-            return;
-        }
+		if (!dir.isDirectory()) {
+			return;
+		}
 
-        if (!dir.isDirectory()) {
-            return;
-        }
+		File[] files = dir.listFiles();
+		for (File file : files) {
+			if (file.isDirectory()) {
+				this.clearDirectory(file);
+			}
+			// try {
+			// java.nio.file.Files.delete(file.toPath());
+			// } catch (IOException e) {
+			// LOG.error("deleting " + file + " fails with ",e);
+			// }
+			if (!file.delete()) {
+				LOG.error("deleting " + file + " fails");
+			}
+		}
+	}
 
-        File[] files = dir.listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                this.clearDirectory(file);
-            }
-            if (!file.delete()) {
-                LOG.error("deleting " + file + " fails");
-            }
-        }
-    }
+	public File assertExitsFile(String filename) throws IOException {
+		File parentDir = this.assertExitsDirectory(FilenameUtils
+				.getPath(filename));
 
-    public File assertExitsFile(String filename) throws IOException {
-        File parentDir = this.assertExitsDirectory(FilenameUtils.getPath(filename));
+		String name = FilenameUtils.getName(filename);
+		String fullname = FilenameUtils.normalize(parentDir.getAbsolutePath()
+				+ File.separator + name);
+		File file = new File(fullname);
+		if (!file.createNewFile()) {
+			file.delete();
+			file.createNewFile();
+		}
 
-        String name = FilenameUtils.getName(filename);
-        String fullname = FilenameUtils.normalize(parentDir.getAbsolutePath() + File.separator + name);
-        File file = new File(fullname);
-        if(!file.createNewFile()) {
-           file.delete();
-            file.createNewFile();
-        }
+		return file;
 
-        return file;
+	}
 
-    }
+	public File assertExitsDirectory(String dirname) throws IOException {
 
-    public File assertExitsDirectory(String dirname) throws IOException {
+		File directory = new File(this.dir.getAbsolutePath() + File.separator
+				+ dirname);
+		if (directory.exists() && !directory.isDirectory()) {
+			throw new IllegalStateException(dirname + " is not a directory");
+		}
+		if (!directory.exists()) {
+			if (!directory.mkdirs()) {
+				throw new IOException("Deletion of " + dirname
+						+ " in Tmp-Directory failed");
+			}
+		}
+		return directory;
 
-        File directory = new File(this.dir.getAbsolutePath() + File.separator + dirname);
-        if (directory.exists() && !directory.isDirectory()) {
-            throw new IllegalStateException(dirname + " is not a directory");
-        }
-        if (!directory.exists()) {
-            if(!directory.mkdirs()) {
-                throw new IOException("Deletion of "+ dirname+ " in Tmp-Directory failed");
-            }
-        }
-        return directory;
-
-    }
-
+	}
 
 }

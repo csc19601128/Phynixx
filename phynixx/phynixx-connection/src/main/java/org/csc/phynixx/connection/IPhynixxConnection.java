@@ -20,39 +20,30 @@ package org.csc.phynixx.connection;
  * #L%
  */
 
-
-import org.csc.phynixx.common.exceptions.SampleTransactionalException;
-
-
 public interface IPhynixxConnection {
 
+	/**
+	 * resets a connection and prepares it for reuse.
+	 */
+	void reset();
 
-    /**
-     * resets a connection  and prepares it for reuse.
+	/**
      */
-    void reset();
+	void commit();
 
-    /**
+	/**
      */
-    void commit();
+	void rollback();
 
+	/**
+	 * Closes the connection and releases all resources. The connection can not
+	 * be reused
+	 *
+	 */
+	void close();
 
-    /**
+	/**
      */
-    void rollback();
-
-
-    /**
-     * Closes the connection and releases all resources. The connection can not be reused
-     *
-     */
-    void close();
-
-
-
-    /**
-     */
-    void prepare();
-
+	void prepare();
 
 }

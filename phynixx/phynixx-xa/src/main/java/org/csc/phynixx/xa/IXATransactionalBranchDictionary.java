@@ -23,6 +23,9 @@ package org.csc.phynixx.xa;
 
 import org.csc.phynixx.connection.IPhynixxConnection;
 
+import javax.transaction.Transaction;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 /**
@@ -31,4 +34,7 @@ import javax.transaction.xa.Xid;
 public interface IXATransactionalBranchDictionary<C extends IPhynixxConnection> {
 
     XATransactionalBranch<C> findTransactionalBranch(Xid xid);
+    
+
+	XATransactionalBranch<C> findTransactionalBranch(Transaction tx,XAResource xaResource) throws XAException;
 }

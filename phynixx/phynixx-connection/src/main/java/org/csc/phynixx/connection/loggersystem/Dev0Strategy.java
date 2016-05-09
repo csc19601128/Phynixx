@@ -81,13 +81,11 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedCo
         }
 
         @Override
-        public IDataRecord createDataRecord(XALogRecordType logRecordType, byte[][] recordData) {
-            return null;
+        public void writeData(XALogRecordType logRecordType, byte[][] recordData) {
         }
 
         @Override
-        public IDataRecord createDataRecord(XALogRecordType logRecordType, byte[] recordData) {
-            return null;
+        public void writeData(XALogRecordType logRecordType, byte[] recordData) {
         }
 
         @Override
@@ -99,11 +97,11 @@ public class Dev0Strategy<C extends IPhynixxConnection> extends PhynixxManagedCo
         }
 
         @Override
-        public void close() {
+        public void disqualify() {
         }
 
         @Override
-        public void reset() {
+        public void release() {
 
         }
 

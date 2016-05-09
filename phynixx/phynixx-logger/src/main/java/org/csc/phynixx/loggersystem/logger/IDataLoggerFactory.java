@@ -58,7 +58,7 @@ public interface IDataLoggerFactory {
     /**
      * destroys the logger an all is associated resources an information
      */
-    void destroyLogger(String loggerName);
+    void cleanupLoggers(String loggerName);
 
     /**
      * @return the loggernames of all loggers of the logger system

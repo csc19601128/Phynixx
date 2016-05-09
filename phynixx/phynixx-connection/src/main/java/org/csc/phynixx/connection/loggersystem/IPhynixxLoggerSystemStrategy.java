@@ -24,13 +24,17 @@ package org.csc.phynixx.connection.loggersystem;
 import org.csc.phynixx.connection.IPhynixxConnection;
 import org.csc.phynixx.connection.IPhynixxConnectionProxyDecorator;
 import org.csc.phynixx.connection.IPhynixxManagedConnectionListener;
+import org.csc.phynixx.connection.IPhynixxRecovery;
 import org.csc.phynixx.loggersystem.logrecord.IXADataRecorder;
 
 import java.util.List;
 
 /**
- * Each connection may have a
- * this IF represents a strategy assigning loggers to connections.
+ * Each connection may have a {@link IXADataLoigger} to persiet ist current state.
+ * 
+ * 
+ * Impl. of IF represents a strategy assigning loggers to connections. The strategy hooks in the lifecycle notifications of a connection  
+ * ( {@link  IPhynixxManagedConnectionListener} ).
  * <p/>
  * <pre>
  * Different strategies could be :
@@ -50,9 +54,12 @@ public interface IPhynixxLoggerSystemStrategy<C extends IPhynixxConnection> exte
     /**
      * recovers all Loggers of the system and returns a list of all reopen message sequences
      * Each message sequence represents an incomplete transaction.
-     * To be able to recover the connection the message sequence is converted to a IMessageLogger
+     * 
+     * To recover pending message sequences all current message sequences are closed.
      *
-     * @return list of Objects of type IMessageLogger
+     * @return list of IXADataRecorder representing the state of incomplete transaction
+     * 
+     * @see IPhynixxRecovery
      */
     List<IXADataRecorder> readIncompleteTransactions();
 

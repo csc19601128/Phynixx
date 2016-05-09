@@ -488,7 +488,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
                 this.xaConnection.suspendTransactionalBranch(xid);
             } else if (flags == TMSUCCESS) {
 
-                // XAProtocol is finsihed an the branch isn't needed any longer
+                // XAProtocol is finished and the branch isn't needed any longer
                 if (transactionalBranch.isXAProtocolFinished()) {
                     transactionalBranch.close();
                     LOG.debug("XAResource " + this + " closed gracefully ");

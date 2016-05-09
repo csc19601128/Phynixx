@@ -28,6 +28,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
@@ -48,8 +49,9 @@ public class TAEnabledRandomAccessFileTest {
         this.tmpDir = new TmpDirectory("channel");
         this.tmpDir.clear();
 
-        randomAccessFile = new RandomAccessFile(this.tmpDir.assertExitsFile(RANDOM_ACCESS_FILE_NAME), "rw");
-        this.taEnabledRandomAccessFile= new TAEnabledRandomAccessFile(randomAccessFile);
+        File file = this.tmpDir.assertExitsFile(RANDOM_ACCESS_FILE_NAME);
+		randomAccessFile = new RandomAccessFile(file, "rw");
+        this.taEnabledRandomAccessFile= new TAEnabledRandomAccessFile(file, randomAccessFile);
     }
 
     @After

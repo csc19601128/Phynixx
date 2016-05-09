@@ -22,12 +22,32 @@ package org.csc.phynixx.loggersystem.logrecord;
 
 
 /**
- *
+ * Notification concering the sates of an XARecorder
  */
 public interface IXADataRecorderLifecycleListener {
 
+	/**
+	 * indicates a closed XADataRecorder 
+	 * @see IXADataRecorder#disqualify()
+	 */
     void recorderDataRecorderClosed(IXADataRecorder xaDataRecorder);
 
+    /**
+	 * indicates a opended XADataRecorder 
+	 * @see IXADataRecorder#opened()
+	 */
     void recorderDataRecorderOpened(IXADataRecorder xaDataRecorder);
+
+    /**
+	 * indicates a reset XADataRecorder 
+	 * @see IXADataRecorder#release()
+	 */
+	void recorderDataRecorderReleased(IXADataRecorder phynixxXADataRecorder);
+
+	/**
+	 * indicates a destroyed XADataRecorder. The content of the logger is already destroyed. 
+	 * @see IXADataRecorder#destroyed()
+	 */
+	void recorderDataRecorderDestroyed(IXADataRecorder phynixxXADataRecorder);
 
 }
