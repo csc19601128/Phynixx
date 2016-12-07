@@ -21,36 +21,38 @@ package org.csc.phynixx.loggersystem.logger.channellogger;
  */
 
 
-import org.csc.phynixx.common.logger.IPhynixxLogger;
-import org.csc.phynixx.common.logger.PhynixxLogManager;
-import org.csc.phynixx.loggersystem.logger.IDataLogger;
-import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
+import org.csc.phynixx.loggersystem.logger.IDataLogger;
+import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
+
 /**
- * create DataLogger using Files to store data.
- * A logger is qualified by its name and a subsequent integer qualifier.
- * It is possible to have more than one log file for a given logger.
- * The logfile differ in the qualifier.
+ * create DataLogger using Files to store data. A logger is qualified by its
+ * name and a subsequent integer qualifier. It is possible to have more than one
+ * log file for a given logger. The log files differ in the qualifier.
  * <p/>
+ * 
  * <pre>
  *  A log file is named according to the follwing pattern
  *  'loggerSystemName'_'loggerName'_'qualifier'.log
- *
+ * 
  * The different parts of the name make i possible to deduce the following information from the logfile name
  * 1.) loggerSystem
  * 2.) loggername
  * 3.) qualifier pof the logfile for the logger
  * </pre>
  * <p/>
- * A logical logger name has to unique for all logfile of the current loggerfactory.
- * Diese Factory erzeugt FileChannelDataLogger .
- * Es wird ein logischer Name mitgegeben und es wird im Verzeichnis eine datei mit diesem namen angelegt und auf dieser Datei eine TAEnabledRandomAccessFile instanziert.
+ * A logical logger name has to unique for all logfile of the current
+ * loggerfactory. Diese Factory erzeugt FileChannelDataLogger . Es wird ein
+ * logischer Name mitgegeben und es wird im Verzeichnis eine datei mit diesem
+ * namen angelegt und auf dieser Datei eine TAEnabledRandomAccessFile
+ * instanziert.
  * <p/>
  * The logic Name is unique concerning the loggerssytem
  */
@@ -108,7 +110,8 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
     /**
      * @return Name of the loggerSystem
      */
-    public String getLoggerSystemName() {
+    @Override
+   public String getLoggerSystemName() {
         return loggerSystemName;
     }
 
@@ -131,7 +134,8 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
      * @return dataLogger encapsulating the logfile
      * @throws IOException
      */
-    public synchronized IDataLogger instanciateLogger(String loggerName) throws IOException {
+    @Override
+   public synchronized IDataLogger instanciateLogger(String loggerName) throws IOException {
         return this.instanciateLogger(loggerName, AccessMode.APPEND);
     }
 
@@ -140,7 +144,8 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
      * @return dataLogger encapsulating the logfile
      * @throws IOException
      */
-    public synchronized IDataLogger instanciateLogger(String loggerName, AccessMode accessMode) throws IOException {
+    @Override
+   public synchronized IDataLogger instanciateLogger(String loggerName, AccessMode accessMode) throws IOException {
 
         File logFile = this.provideFile(createQualifiedLoggerName(loggerName, 1), this.directory);
         return new FileChannelDataLogger(logFile, accessMode);
@@ -155,6 +160,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
         LogFilenameMatcher matcher = new LogFilenameMatcher(pattern);
 
         LogFileTraverser.ICollectorCallback cb = new LogFileTraverser.ICollectorCallback() {
+            @Override
             public void match(File file,
                               LogFilenameMatcher.LogFilenameParts parts) {
                 boolean success = file.delete();
@@ -176,6 +182,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
         LogFilenameMatcher matcher = new LogFilenameMatcher(pattern);
 
         LogFileTraverser.ICollectorCallback cb = new LogFileTraverser.ICollectorCallback() {
+            @Override
             public void match(File file,
                               LogFilenameMatcher.LogFilenameParts parts) {
                 boolean success = file.delete();
@@ -199,6 +206,7 @@ public class FileChannelDataLoggerFactory implements IDataLoggerFactory {
 
         final Set<String> loggerNames = new HashSet<String>();
         LogFileTraverser.ICollectorCallback cb = new LogFileTraverser.ICollectorCallback() {
+            @Override
             public void match(File file, LogFilenameMatcher.LogFilenameParts parts) {
                 loggerNames.add(parts.getLoggerName());
             }

@@ -21,12 +21,12 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 
 
-import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 
 /**
  * A PhynixxXADataRecorder is meant to log state information of an transactional resource. 
@@ -53,11 +53,11 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     private XADataLogger dataLogger;
 
 
-    private transient boolean committing = false;
+   private boolean committing = false;
 
-    private transient boolean completed = false;
+   private boolean completed = false;
 
-    private transient boolean prepared = false;
+   private boolean prepared = false;
 
     private IXADataRecorderLifecycleListener dataRecorderLifycycleListner;
 
@@ -134,12 +134,14 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     /* (non-Javadoc)
      * @see de.csc.xaresource.sample.loggersystem.ILogMessageSequence#getMessages()
      */
-    public List<IDataRecord> getDataRecords() {
+    @Override
+   public List<IDataRecord> getDataRecords() {
         return messages;
     }
 
 
-    public boolean isCommitting() {
+    @Override
+   public boolean isCommitting() {
         return committing;
     }
 
@@ -159,7 +161,8 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     /**
      * create a new Message with the given data
      */
-    public void writeRollbackData(byte[] data) {
+    @Override
+   public void writeRollbackData(byte[] data) {
         this.writeRollbackData(toBytesBytes(data));
     }
 
@@ -167,16 +170,19 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     /**
      * create a new Message with the given data
      */
-    public  void writeRollbackData(byte[][] data) {
+    @Override
+   public  void writeRollbackData(byte[][] data) {
        this.createDataRecord(XALogRecordType.ROLLBACK_DATA, data);
     }
 
 
-    public void writeRollforwardData(byte[] data) {
+    @Override
+   public void writeRollforwardData(byte[] data) {
         this.writeRollforwardData(toBytesBytes(data));
     }
 
-    public void writeRollforwardData(byte[][] data) {
+    @Override
+   public void writeRollforwardData(byte[][] data) {
        this.createDataRecord(XALogRecordType.ROLLFORWARD_DATA, data);
     }
 
@@ -191,7 +197,8 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         this.messages.add(message);
     }
     
-    public void replayRecords(IDataRecordReplay replay) {
+    @Override
+   public void replayRecords(IDataRecordReplay replay) {
 
         if (this.messages == null || this.messages.size() == 0) {
             return;
@@ -225,7 +232,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         try {
         	this.addMessage(msg);
         	try {
-           		this.dataLogger.writeData(this, msg);
+           		this.dataLogger.writeData(msg);
         	} catch (Exception e) {
         		int lastIndex = this.messages.size()-1;
         		if( lastIndex>=0) {
@@ -302,7 +309,8 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         return Long.valueOf(this.getXADataRecorderId() - otherMsg.getXADataRecorderId()).intValue();
     }
 
-    public boolean equals(Object obj) {
+    @Override
+   public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
@@ -317,11 +325,13 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     /* (non-Javadoc)
      * @see de.csc.xaresource.sample.loggersystem.ILogMessageSequence#getMessageId()
      */
-    public long getXADataRecorderId() {
+    @Override
+   public long getXADataRecorderId() {
         return this.messageSequenceId;
     }
 
-    public int hashCode() {
+    @Override
+   public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + Long.valueOf(messageSequenceId).intValue();
@@ -329,7 +339,8 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     }
 
 
-    public String toString() {
+    @Override
+   public String toString() {
         StringBuffer buffer = new StringBuffer(" { \n");
         for (Iterator<IDataRecord> iterator = messages.iterator(); iterator.hasNext(); ) {
             buffer.append('\t').append(iterator.next()).append('\n');
@@ -356,7 +367,8 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
      * rewinds the recorder and resets the dataLogger. Information of the dataLogger is removed
      *
      */
-    public void release() {
+    @Override
+   public void release() {
     	rewind();
         try {
             this.dataLogger.prepareForWrite(this.getXADataRecorderId());
@@ -373,7 +385,8 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     /**
      * closes the current datalogger, but keeps content
      */
-    public void disqualify() {
+    @Override
+   public void disqualify() {
         if (dataRecorderLifycycleListner != null) {
             this.dataRecorderLifycycleListner.recorderDataRecorderClosed(this);
         }
@@ -386,8 +399,8 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     }
 
     /**
-     * destroyes the current dataLogger
-     */
+    * destroys the current dataLogger
+    */
     @Override
     public void destroy() {
     	 if (dataRecorderLifycycleListner != null) {

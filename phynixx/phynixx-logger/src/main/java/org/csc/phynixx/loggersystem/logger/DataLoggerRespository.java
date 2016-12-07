@@ -21,13 +21,16 @@ package org.csc.phynixx.loggersystem.logger;
  */
 
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logger.channellogger.AccessMode;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * the current class is responsible for instanciating new {@link org.csc.phynixx.loggersystem.logger.IDataLogger} and managing their lifecycle. It use a {@link org.csc.phynixx.loggersystem.logger.IDataLoggerFactory} for creating new Logger.
@@ -144,7 +147,7 @@ class DataLoggerRespository {
      * closes all reopen loggers
      */
     public synchronized void close() {
-        Map<String, IDataLogger> copiedLoggers = new HashMap(this.openLoggers);
+      Map<String, IDataLogger> copiedLoggers = new HashMap<String, IDataLogger>(this.openLoggers);
 
         for (IDataLogger dataLogger : copiedLoggers.values()) {
             try {
