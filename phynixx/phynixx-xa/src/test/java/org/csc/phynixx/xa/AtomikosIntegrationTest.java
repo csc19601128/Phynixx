@@ -55,7 +55,7 @@ public class AtomikosIntegrationTest {
     }
 
 
-    private IPhynixxLogger log = PhynixxLogManager.getLogger(this.getClass());
+    private IPhynixxLogger LOG = PhynixxLogManager.getLogger(this.getClass());
 
     private ITransactionManagerProvider transactionManagerProvider = new AtomikosTransactionManagerProvider();
     private TestXAResourceFactory factory1 = null;
@@ -64,7 +64,7 @@ public class AtomikosIntegrationTest {
     @Before
     public void setUp() throws Exception {
 
-        // configuring the log-system (e.g. log4j) 
+        // configuring the LOG-system (e.g. log4j) 
         TestUtils.configureLogging();
 
         TestConnectionStatusManager.clear();
@@ -120,8 +120,8 @@ public class AtomikosIntegrationTest {
 
         this.getTransactionManager().commit();
 
-        log.info(TestConnectionStatusManager.toDebugString());
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(!statusStack.isRequiresTransaction());
@@ -160,7 +160,7 @@ public class AtomikosIntegrationTest {
 
         this.getTransactionManager().commit();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(statusStack.isCommitted());
@@ -201,7 +201,7 @@ public class AtomikosIntegrationTest {
             }
         }
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId);
         TestCase.assertTrue(statusStack != null);
         TestCase.assertTrue(statusStack.isCommitted());
@@ -241,7 +241,7 @@ public class AtomikosIntegrationTest {
 
         this.getTransactionManager().commit();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         // conj1 has been changed an the XA protocol is performed
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId1);
@@ -304,7 +304,7 @@ public class AtomikosIntegrationTest {
 
         this.getTransactionManager().rollback();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         // @RequiredTransaction was requested twice
         Assert.assertEquals(
@@ -356,7 +356,7 @@ public class AtomikosIntegrationTest {
 
         this.getTransactionManager().commit();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         // @RequiredTransaction was requested twice
         Assert.assertEquals(
@@ -606,7 +606,7 @@ public class AtomikosIntegrationTest {
 
         this.getTransactionManager().commit();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack = TestConnectionStatusManager.getStatusStack(conId1);
         TestCase.assertTrue(statusStack != null);
@@ -648,7 +648,7 @@ public class AtomikosIntegrationTest {
 
         this.getTransactionManager().commit();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         Assert.assertTrue(con1.getConnectionId() == con2.getConnectionId());
 
@@ -778,7 +778,7 @@ public class AtomikosIntegrationTest {
         // different transactional branches
         Assert.assertTrue(outCon.getConnectionId() != innerCon.getConnectionId());
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(outCon.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);
@@ -833,7 +833,7 @@ public class AtomikosIntegrationTest {
         // rollback on TX1 effects con1
         this.getTransactionManager().rollback();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);
@@ -874,7 +874,7 @@ public class AtomikosIntegrationTest {
 
         this.getTransactionManager().rollback();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);
@@ -952,7 +952,7 @@ public class AtomikosIntegrationTest {
 
         this.getTransactionManager().rollback();
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(conId1);
         TestCase.assertTrue(statusStack1 != null);
@@ -1014,7 +1014,7 @@ public class AtomikosIntegrationTest {
         Assert.assertTrue(con0.getConnectionId() != con2.getConnectionId());
         Assert.assertTrue(con1.getConnectionId() == con2.getConnectionId());
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);
@@ -1056,7 +1056,7 @@ public class AtomikosIntegrationTest {
         xares.end(xid2, XAResource.TMSUCCESS);
         xares.rollback(xid2);
 
-        log.info(TestConnectionStatusManager.toDebugString());
+        LOG.info(TestConnectionStatusManager.toDebugString());
 
         TestStatusStack statusStack1 = TestConnectionStatusManager.getStatusStack(con1.getConnectionId());
         TestCase.assertTrue(statusStack1 != null);
@@ -1123,7 +1123,7 @@ public class AtomikosIntegrationTest {
      * factory2.getXAConnection(); ITestConnection con2 = (ITestConnection)
      * xaCon2.getConnection(); Object conId2 = con2.getConnectionId();
      * 
-     * log.debug("Con1 with ID=" + conId1); log.debug("Con2 with ID=" + conId2);
+     * LOG.debug("Con1 with ID=" + conId1); LOG.debug("Con2 with ID=" + conId2);
      * 
      * TestCase.assertEquals(freeConnection1 - 1,
      * factory1.freeConnectionSize()); TestCase.assertEquals(freeConnection2 -

@@ -120,6 +120,8 @@ public class XAResourceLoggerTest {
             
             System.out.println(xaDataRecorder1.getDataRecords());
 
+         xaDataRecorder1.disqualify();
+
 
             // xaRecorderRepository.close();
             
@@ -157,17 +159,17 @@ public class XAResourceLoggerTest {
             TestCase.assertEquals("Log1", pageReader1.getLogReaders().get(0).readUTF());
 
 
-            msg = (IDataRecord) messages.get(2);
+            msg = messages.get(2);
             TestCase.assertTrue(msg.getLogRecordType() == XALogRecordType.XA_PREPARED);
 
-            msg = (IDataRecord) messages.get(3);
+            msg = messages.get(3);
             TestCase.assertTrue(msg.getLogRecordType() == XALogRecordType.ROLLFORWARD_DATA);
             TestCase.assertEquals(2, msg.getData().length);
             //TestCase.assertTrue(Arrays.equals("A".getBytes(), msg.getData()[0]));
             //TestCase.assertTrue(Arrays.equals("B".getBytes(), msg.getData()[1]));
 
 
-            msg = (IDataRecord) messages.get(5);
+            msg = messages.get(5);
             TestCase.assertTrue(msg.getLogRecordType() == XALogRecordType.XA_DONE);
 
         } catch (Exception e) {

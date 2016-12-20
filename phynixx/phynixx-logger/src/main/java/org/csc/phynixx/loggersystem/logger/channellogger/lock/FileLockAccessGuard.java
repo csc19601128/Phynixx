@@ -50,10 +50,10 @@ public class FileLockAccessGuard implements IAccessGuard {
              if( fileLock.isValid()) {
               this.fileLock.release();
              } else if(verbose) {
-                 LOG.error("Filelock not valid");
+            LOG.error("Filelock not valid");
              }
          } else if(verbose) {
-             LOG.error("Kein Filelock gesetzt");
+         LOG.error("No Filelock set");
          }
 		return true;
 	}

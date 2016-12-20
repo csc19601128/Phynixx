@@ -21,6 +21,11 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.csc.phynixx.common.TestUtils;
 import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.common.io.LogRecordPageReader;
@@ -33,11 +38,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 /**
  * test the mult threading capabilities of phynixx logger
@@ -92,7 +92,7 @@ public class MTXAResourceLoggerTest {
 
             // wait until all threads are ready ..
             for (int i = 0; i < workers.size(); i++) {
-                Thread worker = (Thread) workers.get(i);
+                Thread worker = workers.get(i);
                 worker.join();
             }
 
@@ -138,7 +138,8 @@ public class MTXAResourceLoggerTest {
         }
 
 
-        public void replayRollback(IDataRecord message) {
+        @Override
+      public void replayRollback(IDataRecord message) {
             String value=null;
             try {
                 value = new LogRecordPageReader(message.getData()).getLogReaders().get(0).readUTF();
@@ -153,7 +154,8 @@ public class MTXAResourceLoggerTest {
             }
         }
 
-        public void replayRollforward(IDataRecord message) {
+        @Override
+      public void replayRollforward(IDataRecord message) {
         }
 
         public void check() {
@@ -188,7 +190,8 @@ public class MTXAResourceLoggerTest {
             return chunkSize;
         }
 
-        public void run() {
+        @Override
+      public void run() {
             // sample the Message
             int countChunks = (message.length() / chunkSize);
             if (message.length() % chunkSize != 0) {
@@ -208,6 +211,7 @@ public class MTXAResourceLoggerTest {
                 ex.printStackTrace();
                 throw new RuntimeException(ex);
             }
+
         }
 
     }

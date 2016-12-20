@@ -1,12 +1,16 @@
 package org.csc.phynixx.loggersystem.logrecord;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Map;
 
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.exceptions.ExceptionUtils;
 import org.csc.phynixx.common.generator.IDGenerator;
 import org.csc.phynixx.common.generator.IDGenerators;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logger.IDataLogger;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 
@@ -18,11 +22,64 @@ import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
  */
 public class SimpleXADataRecorderPool implements IXARecorderProvider,
          IXADataRecorderLifecycleListener {
+   private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(SimpleXADataRecorderPool.class);
 
    private IDataLoggerFactory dataLoggerFactory = null;
 
    private IDGenerator<Long> messageSeqGenerator = IDGenerators.synchronizeGenerator(IDGenerators
             .createLongGenerator(1l));
+
+   static class DataRecordMemetor {
+      private final IXADataRecorder dataRecord;
+      private final Exception creationLocation;
+
+      public DataRecordMemetor(IXADataRecorder dataRecord) {
+         super();
+         this.dataRecord = dataRecord;
+         this.creationLocation = new Exception("" + Thread.currentThread() + ":  DataRecord "
+                  + dataRecord.getXADataRecorderId() + " created at " + new Date() + " :: ");
+      }
+
+      public final IXADataRecorder getDataRecord() {
+         return dataRecord;
+      }
+
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((dataRecord == null) ? 0 : dataRecord.hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj) {
+            return true;
+         }
+         if (obj == null) {
+            return false;
+         }
+         if (!(obj instanceof DataRecordMemetor)) {
+            return false;
+         }
+         DataRecordMemetor other = (DataRecordMemetor) obj;
+         if (dataRecord == null) {
+            if (other.dataRecord != null) {
+               return false;
+            }
+         } else if (!dataRecord.equals(other.dataRecord)) {
+            return false;
+         }
+         return true;
+      }
+
+      @Override
+      public String toString() {
+         return "DataRecord [dataRecord=" + dataRecord + ExceptionUtils.getStackTrace(this.creationLocation) + "]";
+      }
+
+   }
 
    /**
     * management of the registered XADataRecorder. This structure has to stand
@@ -31,7 +88,7 @@ public class SimpleXADataRecorderPool implements IXARecorderProvider,
     * This management is important as all not closed/destroyed logger are
     * tracked
     */
-   private SortedMap<Long, IXADataRecorder> xaDataRecorders = new TreeMap<Long, IXADataRecorder>();
+   private Map<Long, DataRecordMemetor> xaDataRecorders = new HashMap<Long, DataRecordMemetor>();
 
    private boolean closed = false;
 
@@ -69,6 +126,7 @@ public class SimpleXADataRecorderPool implements IXARecorderProvider,
          synchronized (this) {
             addXADataRecorder(xaDataRecorder);
          }
+         LOG.info("IXADataRecord " + xaDataRecorderId + " created in [" + Thread.currentThread() + "]");
          return xaDataRecorder;
 
       } catch (Exception e) {
@@ -79,7 +137,7 @@ public class SimpleXADataRecorderPool implements IXARecorderProvider,
 
    private void addXADataRecorder(IXADataRecorder xaDataRecorder) {
       if (!this.xaDataRecorders.containsKey(xaDataRecorder.getXADataRecorderId())) {
-         this.xaDataRecorders.put(xaDataRecorder.getXADataRecorderId(), xaDataRecorder);
+         this.xaDataRecorders.put(xaDataRecorder.getXADataRecorderId(), new DataRecordMemetor(xaDataRecorder));
       }
    }
 
@@ -111,9 +169,10 @@ public class SimpleXADataRecorderPool implements IXARecorderProvider,
          return;
       }
 
-      HashSet<IXADataRecorder> copy = new HashSet<IXADataRecorder>(this.xaDataRecorders.values());
-      for (IXADataRecorder dataRecorder : copy) {
-         dataRecorder.disqualify();
+      HashSet<DataRecordMemetor> copy = new HashSet<DataRecordMemetor>(this.xaDataRecorders.values());
+      for (DataRecordMemetor dataRecorderMemento : copy) {
+         LOG.info("IXADataRecord destroyed during Shutdwon " + copy);
+         dataRecorderMemento.getDataRecord().disqualify();
       }
       xaDataRecorders.clear();
    }

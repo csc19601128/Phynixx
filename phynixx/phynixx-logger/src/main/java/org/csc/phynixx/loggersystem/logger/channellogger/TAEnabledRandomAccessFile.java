@@ -21,17 +21,16 @@ package org.csc.phynixx.loggersystem.logger.channellogger;
  */
 
 
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.concurrent.TimeoutException;
+
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logger.channellogger.lock.FileChannelLockManager;
 import org.csc.phynixx.loggersystem.logger.channellogger.lock.IAccessGuard;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileLock;
-import java.util.concurrent.TimeoutException;
 
 /**
  *
@@ -75,7 +74,7 @@ public class TAEnabledRandomAccessFile {
     /**
      * max. Inhalt eines Byte als int *
      */
-    public static final int MAX_BYTE_VALUE = (int) Byte.MAX_VALUE;
+    public static final int MAX_BYTE_VALUE = Byte.MAX_VALUE;
 
     private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(TAEnabledRandomAccessFile.class);
     /**
@@ -218,10 +217,10 @@ public class TAEnabledRandomAccessFile {
             try {
                 if (this.fileLock != null) {
                     if( !fileLock.release()) {
-                        LOG.error("Filelock not releaase properly");
+                  LOG.error("Filelock not release properly");
                     }
                 } else {
-                    LOG.error("Kein Filelock gesetzt");
+               LOG.error("No Filelock set");
                 }
             } finally {
                 // Schliessen der Daten-Datei
