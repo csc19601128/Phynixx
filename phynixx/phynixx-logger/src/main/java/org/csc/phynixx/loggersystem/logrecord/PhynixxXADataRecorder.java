@@ -168,7 +168,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
      * create a new Message with the given data
      */
     public  void writeRollbackData(byte[][] data) {
-       this.writeData(XALogRecordType.ROLLBACK_DATA, data);
+       this.createDataRecord(XALogRecordType.ROLLBACK_DATA, data);
     }
 
 
@@ -177,7 +177,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     }
 
     public void writeRollforwardData(byte[][] data) {
-       this.writeData(XALogRecordType.ROLLFORWARD_DATA, data);
+       this.createDataRecord(XALogRecordType.ROLLFORWARD_DATA, data);
     }
 
     public void addMessage(IDataRecord message) {
@@ -215,12 +215,12 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     }
 
     @Override
-    public void writeData(XALogRecordType logRecordType, byte[] recordData) {
-        this.writeData(logRecordType, this.toBytesBytes(recordData));
+    public IDataRecord createDataRecord(XALogRecordType logRecordType, byte[] recordData) {
+        return this.createDataRecord(logRecordType, this.toBytesBytes(recordData));
     }
 
     @Override
-    public void writeData(XALogRecordType logRecordType, byte[][] recordData) {
+    public IDataRecord createDataRecord(XALogRecordType logRecordType, byte[][] recordData) {
         PhynixxDataRecord msg = new PhynixxDataRecord(this.getXADataRecorderId(), this.ordinalGenerator.generate(), logRecordType, recordData);
         try {
         	this.addMessage(msg);
@@ -233,6 +233,8 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
         		}
         		throw new DelegatedRuntimeException(e);
         	}
+
+            return msg;
         } catch (Exception e) {
             throw new DelegatedRuntimeException(e);
         }

@@ -2,8 +2,6 @@ package org.csc.phynixx.loggersystem.logger.channellogger.lock;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.channels.Channel;
-import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.concurrent.TimeoutException;
 
@@ -11,14 +9,6 @@ import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logger.channellogger.TAEnabledRandomAccessFile;
 
-
-/**
- * locks a FileChannelLogger by aquiring a FileLock on the channel 
- * @author te_zf4iks2
- * 
- * @see FileChannel#tryLock()
- *
- */
 public class FileLockAccessGuard implements IAccessGuard {
 	
 	 private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(FileLockAccessGuard.class);

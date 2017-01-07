@@ -20,55 +20,53 @@ package org.csc.phynixx.connection;
  * #L%
  */
 
-public interface IPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
-		extends IPhynixxConnectionFactory<C> {
 
-	/**
-	 * the returned connection has to be explicitly closed
-	 * 
-	 * @return a ready for use managed connection
-	 */
-	IPhynixxManagedConnection<C> getManagedConnection();
+public interface IPhynixxManagedConnectionFactory<C extends IPhynixxConnection> extends IPhynixxConnectionFactory<C> {
 
-	/**
-	 *
-	 * @return
-	 */
-	C getConnection();
+    /**
+     * the returned connection has to be explicitly closed
+     * @return a ready for use managed connection
+     */
+    IPhynixxManagedConnection<C> getManagedConnection();
 
-	/**
-	 *
-	 *
-	 * Default ist true
-	 */
-	void setAutocommitAware(boolean state);
 
-	/**
+    /**
+     *
+     * @return
+     */
+    C getConnection();
+
+
+    /**
+     *
+     *
+     * Default ist true
+     */
+    void setAutocommitAware(boolean state);
+
+
+    /**
      *
      */
-	boolean isAutocommitAware();
+    boolean isAutocommitAware();
 
-	/**
+
+    /**
      *
      */
-	void setSynchronizeConnection(boolean state);
+    void setSynchronizeConnection(boolean state);
 
-	/**
+
+    /**
      *
      */
-	boolean isSynchronizeConnection();
+    boolean isSynchronizeConnection();
 
-	/**
-	 * closes all currently opened connections
-	 */
-	void close();
 
-	/**
-	 * finds all incomplete transactions and recovers their state. Details see
-	 * {@link IPhynixxRecovery#recover(org.csc.phynixx.connection.IPhynixxRecovery.IRecoveredManagedConnection)}
-	 * 
-	 * @param recoveredManagedConnectionCallback callback for recovered transactions
-	 */
-	void recover(
-			IPhynixxRecovery.IRecoveredManagedConnection<C> recoveredManagedConnectionCallback);
+
+
+    /**
+     * closes all currently opened connections
+     */
+    void close();
 }

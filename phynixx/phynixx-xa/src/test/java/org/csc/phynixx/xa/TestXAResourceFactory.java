@@ -27,7 +27,7 @@ import java.util.Set;
 import javax.transaction.TransactionManager;
 
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.csc.phynixx.connection.IPhynixxManagedConnectionFactory;
+import org.csc.phynixx.connection.PhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.PooledPhynixxManagedConnectionFactory;
 import org.csc.phynixx.connection.loggersystem.LoggerPerTransactionStrategy;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
@@ -61,7 +61,7 @@ public class TestXAResourceFactory extends PhynixxXAResourceFactory<ITestConnect
         this(POOL_SIZE,id,dataLoggerDirectory, transactionManager);
     }
 
-    private static IPhynixxManagedConnectionFactory<ITestConnection> createManagedConnectionFactory(int poolSize,String id, File dataLoggerDirectory) {
+    private static PhynixxManagedConnectionFactory<ITestConnection> createManagedConnectionFactory(int poolSize,String id, File dataLoggerDirectory) {
         GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
         cfg.setMaxTotal(poolSize);
         PooledPhynixxManagedConnectionFactory<ITestConnection> factory =

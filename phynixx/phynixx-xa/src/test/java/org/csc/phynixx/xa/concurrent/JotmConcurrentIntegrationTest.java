@@ -39,7 +39,6 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.csc.phynixx.common.TestUtils;
-import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
@@ -90,9 +89,9 @@ public class JotmConcurrentIntegrationTest {
 
         this.transactionManagerProvider.start();
 
-        this.factory1 = new TestXAResourceFactory(1, "RF1",  new TmpDirectory("xa_mt_test").assertExitsDirectory("rf1"), this.transactionManagerProvider.getTransactionManager());
+        this.factory1 = new TestXAResourceFactory(1, "RF1", null, this.transactionManagerProvider.getTransactionManager());
 
-        this.factory2 = new TestXAResourceFactory(1, "RF2",  new TmpDirectory("xa_mt_test").assertExitsDirectory("rf2"), this.transactionManagerProvider.getTransactionManager());
+        this.factory2 = new TestXAResourceFactory(1, "RF2", null, this.transactionManagerProvider.getTransactionManager());
 
        
     }
@@ -169,7 +168,7 @@ public class JotmConcurrentIntegrationTest {
         List<Callable<Void>> tasks= new ArrayList<Callable<Void>>();
         
 
-        int limit = 17;
+        int limit = 1;
         for (int i = 0; i < limit; i++) {
             tasks.add(new SmallTask(i));
         }

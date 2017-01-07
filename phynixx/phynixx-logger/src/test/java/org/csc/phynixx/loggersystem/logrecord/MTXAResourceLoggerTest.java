@@ -175,7 +175,7 @@ public class MTXAResourceLoggerTest {
             this.dataRecorder = repository.createXADataRecorder();
             this.message = message;
             this.chunkSize = chunkSize;
-            this.dataRecorder.writeData(XALogRecordType.USER,
+            this.dataRecorder.createDataRecord(XALogRecordType.USER,
                     new LogRecordPageWriter().newLine().writeUTF(message).toByteArray());
 
         }
@@ -201,7 +201,7 @@ public class MTXAResourceLoggerTest {
                 for (int i = 0; i < countChunks; i++) {
                     if(i*chunkSize < message.length()) {
                         String messageChunk = message.substring(i * chunkSize, Math.min((i + 1) * chunkSize, message.length()));
-                        this.dataRecorder.writeData(XALogRecordType.USER, new LogRecordPageWriter().newLine().writeUTF(messageChunk).toByteArray());
+                        this.dataRecorder.createDataRecord(XALogRecordType.USER, new LogRecordPageWriter().newLine().writeUTF(messageChunk).toByteArray());
                     }
                 }
             } catch (Exception ex) {

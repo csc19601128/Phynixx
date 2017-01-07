@@ -20,6 +20,8 @@ package org.csc.phynixx.xa;
  * #L%
  */
 
+import java.io.File;
+
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
@@ -28,6 +30,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.csc.phynixx.common.TestUtils;
+import org.csc.phynixx.common.TmpDirectory;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.phynixx.testconnection.ITestConnection;
@@ -36,7 +39,6 @@ import org.csc.phynixx.phynixx.testconnection.TestConnectionStatusManager;
 import org.csc.phynixx.phynixx.testconnection.TestStatusStack;
 import org.csc.phynixx.watchdog.WatchdogRegistry;
 import org.csc.phynixx.xa.recovery.XidWrapper;
-import org.csc.phynixx.xa.transactionmanagers.AtomikosTransactionManagerProvider;
 import org.csc.phynixx.xa.transactionmanagers.ITransactionManagerProvider;
 import org.csc.phynixx.xa.transactionmanagers.JotmTransactionManagerProvider;
 import org.junit.After;
@@ -62,6 +64,8 @@ public class JotmIntegrationTest {
     private TestXAResourceFactory factory1 = null;
     private TestXAResourceFactory factory2 = null;
 
+   private TmpDirectory tmpDirectory;
+
     @Before 
     public void setUp() throws Exception {
 
@@ -71,10 +75,15 @@ public class JotmIntegrationTest {
         TestConnectionStatusManager.clear();
 
         this.transactionManagerProvider.start();
+      tmpDirectory = new TmpDirectory("./tmp");
+      File rf1Directory = tmpDirectory.assertExitsDirectory("rf1");
+      File rf2Directory = tmpDirectory.assertExitsDirectory("rf2");
 
-        this.factory1 = new TestXAResourceFactory("RF1", null, this.transactionManagerProvider.getTransactionManager());
+      this.factory1 = new TestXAResourceFactory("RF1", rf1Directory,
+               this.transactionManagerProvider.getTransactionManager());
 
-        this.factory2 = new TestXAResourceFactory("RF2", null, this.transactionManagerProvider.getTransactionManager());
+      this.factory2 = new TestXAResourceFactory("RF2", rf2Directory,
+               this.transactionManagerProvider.getTransactionManager());
     }
 
     @After
@@ -90,6 +99,8 @@ public class JotmIntegrationTest {
             this.factory2.close();
             this.factory2 = null;
         }
+
+      this.tmpDirectory.delete();
         TestConnectionStatusManager.clear();
 
         WatchdogRegistry.getTheRegistry().shutdown();
@@ -945,7 +956,7 @@ public class JotmIntegrationTest {
 
         IPhynixxXAConnection<ITestConnection> xaCon = factory1.getXAConnection();
 
-        // con 1in lo´cal transaction. Transactional context has transactional
+      // con 1in lo´cal transaction. Transactional context has transactional
         // data
 
         ITestConnection con1 = xaCon.getConnection();

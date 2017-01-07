@@ -50,8 +50,6 @@ public class PhynixxRecovery<C extends IPhynixxConnection> implements IPhynixxRe
         
         // Es werden alle Logger geschlossen
         this.loggerSystemStrategy.close();
-        
-        this.managedConnectionFactory.setLoggerSystemStrategy(loggerSystemStrategy);
     }
 
     private IPhynixxManagedConnection<C> getManagedConnection() {

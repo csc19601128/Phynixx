@@ -20,10 +20,6 @@ package org.csc.phynixx.xa;
  * #L%
  */
 
-import java.lang.ref.SoftReference;
-
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -49,7 +45,8 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends
 		PhynixxManagedConnectionListenerAdapter<C> implements
 		IPhynixxManagedConnectionListener<C> {
 
-	private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(XATransactionalBranch.class);
+	private static final IPhynixxLogger LOG = PhynixxLogManager
+			.getLogger(XATransactionalBranch.class);
 
 	private XAResourceProgressState progressState = XAResourceProgressState.ACTIVE;
 
@@ -64,23 +61,12 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends
 	private Xid xid;
 
 	private IPhynixxManagedConnection<C> managedConnection;
-	
-	private SoftReference<Transaction> transactionRef; 
-	
-	private XAResource xaResource; 
 
 	XATransactionalBranch(Xid xid,
-			             IPhynixxManagedConnection<C> managedConnection, 
-			             XAResource xaResource,
-			             Transaction transaction) {
+			IPhynixxManagedConnection<C> managedConnection) {
 		this.xid = xid;
-		this.transactionRef=new SoftReference<Transaction>(transaction);
 		this.managedConnection = managedConnection;
-		this.xaResource= xaResource;
-		
 		this.managedConnection.addConnectionListener(this);
-		
-		
 	}
 
 	Xid getXid() {
@@ -90,17 +76,7 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends
 	IPhynixxManagedConnection<C> getManagedConnection() {
 		return managedConnection;
 	}
-	
-	
-	boolean isSame(Transaction tx, XAResource xa) throws XAException {
-		Transaction transaction = this.transactionRef.get();
-		if( transaction==null) {
-			return false;
-		}		
-		return transaction.equals(tx) && (xa!=null && this.xaResource.isSameRM(xa));
-	}
-	
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -110,9 +86,8 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends
 
 		XATransactionalBranch that = (XATransactionalBranch) o;
 
-		if (!xid.equals(that.xid)) {
+		if (!xid.equals(that.xid))
 			return false;
-		}
 
 		return true;
 	}

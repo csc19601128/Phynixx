@@ -22,9 +22,10 @@ package org.csc.phynixx.loggersystem.logrecord;
 
 
 /**
- * a single record is consistent set logged data. this data is stored as byte[][].
+ * a single record is consistent set logged data. this data is stored as
+ * byte[][].
  * 
- * A data record gets an ordinla in the context of its owning message sequence
+ * A data record gets an ordinal in the context of its owning message sequence
  * 
  * The write order is kept.
  */

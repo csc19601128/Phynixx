@@ -35,11 +35,9 @@ public interface IPhynixxRecovery<C extends IPhynixxConnection> {
 
 
     /**
-     * recovers all connection that have incomplete transactions.
+     * recovers all connection that have not completed transactions.
      * The recovered connections are handed to the callback after recovering.
-     * All connections are closed after returning from this method.
-     * 
-     * In this method usually 
+     * All connections are closed after returning from this method
      *
      * @param recoveredManagedConnectionCallback callback accepting the recovered connections
      */

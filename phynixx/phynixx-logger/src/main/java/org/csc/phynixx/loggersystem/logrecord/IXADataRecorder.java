@@ -83,9 +83,9 @@ public interface IXADataRecorder extends IDataRecordSequence {
 	void replayRecords(IDataRecordReplay replay);
 
 
-	void writeData(XALogRecordType logRecordType,	byte[][] recordData);
+	IDataRecord createDataRecord(XALogRecordType logRecordType,	byte[][] recordData);
 
-	void writeData(XALogRecordType logRecordType,byte[] recordData);
+	IDataRecord createDataRecord(XALogRecordType logRecordType,byte[] recordData);
 
 	/**
 	 * true g.t.w. logger ist disqualified, destroyed or reset

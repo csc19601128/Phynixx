@@ -12,7 +12,7 @@ public class XADataLoggerFacade {
 	 * logs user data into the message sequence
 	 */
 	public static void logUserData(IXADataRecorder xaDataRecorder, byte[][] data) {
-		xaDataRecorder.writeData(XALogRecordType.USER, data);
+		xaDataRecorder.createDataRecord(XALogRecordType.USER, data);
 	}
 
 	public static void logUserData(IXADataRecorder sequence, byte[] data)
@@ -34,7 +34,7 @@ public class XADataLoggerFacade {
 	 * @throws InterruptedException
 	 */
 	public static  void preparedXA(IXADataRecorder dataRecorder) throws IOException {
-		dataRecorder.writeData(XALogRecordType.XA_PREPARED, EMPTY_DATA);
+		dataRecorder.createDataRecord(XALogRecordType.XA_PREPARED, EMPTY_DATA);
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class XADataLoggerFacade {
 	 */
 	public static void committingXA(IXADataRecorder dataRecorder, byte[][] data)
 			throws IOException {
-		dataRecorder.writeData(XALogRecordType.ROLLFORWARD_DATA, data);
+		dataRecorder.createDataRecord(XALogRecordType.ROLLFORWARD_DATA, data);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class XADataLoggerFacade {
 	 */
 	public static void startXA(IXADataRecorder dataRecorder, String resourceId,
 			byte[] xid) throws IOException {
-		dataRecorder.writeData(XALogRecordType.XA_START,
+		dataRecorder.createDataRecord(XALogRecordType.XA_START,
 				new byte[][] { xid });
 
 	}
@@ -85,7 +85,7 @@ public class XADataLoggerFacade {
 	 */
 	public static void doneXA(IXADataRecorder dataRecorder) throws IOException {
 
-		dataRecorder.writeData(XALogRecordType.XA_DONE, new byte[][] {});
+		dataRecorder.createDataRecord(XALogRecordType.XA_DONE, new byte[][] {});
 	}
 
 }

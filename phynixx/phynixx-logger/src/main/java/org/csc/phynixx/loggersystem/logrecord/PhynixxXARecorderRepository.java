@@ -27,7 +27,6 @@ import java.util.TreeMap;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
-import org.csc.phynixx.loggersystem.logger.channellogger.FileChannelDataLoggerStatistics;
 
 /**
  * XAResource logger is specialized to support the logging of a xaresource to
@@ -90,14 +89,11 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
 	@Override
 	public synchronized void close() {
 		this.dataRecorderPool.close();
-		
-		LOG.warn(FileChannelDataLoggerStatistics.printStatistics());
 	}
 
 	@Override
 	public synchronized void destroy() throws IOException, InterruptedException {
 		this.dataRecorderPool.destroy();
-		LOG.warn(FileChannelDataLoggerStatistics.printStatistics());
 	}
 
 	
