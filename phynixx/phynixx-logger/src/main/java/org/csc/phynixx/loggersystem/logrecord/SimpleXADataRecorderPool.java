@@ -1,217 +1,257 @@
 package org.csc.phynixx.loggersystem.logrecord;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Map;
 
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
+import org.csc.phynixx.common.exceptions.ExceptionUtils;
 import org.csc.phynixx.common.generator.IDGenerator;
 import org.csc.phynixx.common.generator.IDGenerators;
+import org.csc.phynixx.common.logger.IPhynixxLogger;
+import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logger.IDataLogger;
 import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
 
-public class SimpleXADataRecorderPool implements IXARecorderPool,
-		IXADataRecorderLifecycleListener {
+/**
+ * This provider doesn't reuse released and reset IXADataLogger
+ * 
+ * @author te_zf4iks2
+ *
+ */
+public class SimpleXADataRecorderPool implements IXARecorderProvider,
+         IXADataRecorderLifecycleListener {
+   private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(SimpleXADataRecorderPool.class);
 
-	private IDataLoggerFactory dataLoggerFactory = null;
+   private IDataLoggerFactory dataLoggerFactory = null;
 
-	private IDGenerator<Long> messageSeqGenerator = IDGenerators
-			.synchronizeGenerator(IDGenerators.createLongGenerator(1l));
+   private IDGenerator<Long> messageSeqGenerator = IDGenerators.synchronizeGenerator(IDGenerators
+            .createLongGenerator(1l));
 
-	/**
-	 * management of the registered XADataRecorder. This structure has to stand
-	 * heavy multithreaded read and write
-	 */
-	private SortedMap<Long, IXADataRecorder> xaDataRecorders = new TreeMap<Long, IXADataRecorder>();
+   static class DataRecordMemetor {
+      private final IXADataRecorder dataRecord;
+      private final Exception creationLocation;
 
-	private boolean closed = false;
+      public DataRecordMemetor(IXADataRecorder dataRecord) {
+         super();
+         this.dataRecord = dataRecord;
+         this.creationLocation = new Exception("" + Thread.currentThread() + ":  DataRecord "
+                  + dataRecord.getXADataRecorderId() + " created at " + new Date() + " :: ");
+      }
 
-	public SimpleXADataRecorderPool(IDataLoggerFactory dataLoggerFactory) {
-		this.dataLoggerFactory = dataLoggerFactory;
-		if (this.dataLoggerFactory == null) {
-			throw new IllegalArgumentException("No dataLoggerFactory set");
-		}
-	}
+      public final IXADataRecorder getDataRecord() {
+         return dataRecord;
+      }
 
-	public String getLoggerSystemName() {
-		return dataLoggerFactory.getLoggerSystemName();
-	}
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((dataRecord == null) ? 0 : dataRecord.hashCode());
+         return result;
+      }
 
-	/**
-	 * opens a new Recorder for writing. The recorder gets a new ID.
-	 * 
-	 * @return created dataRecorder
-	 */
-	private IXADataRecorder createXADataRecorder() {
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj) {
+            return true;
+         }
+         if (obj == null) {
+            return false;
+         }
+         if (!(obj instanceof DataRecordMemetor)) {
+            return false;
+         }
+         DataRecordMemetor other = (DataRecordMemetor) obj;
+         if (dataRecord == null) {
+            if (other.dataRecord != null) {
+               return false;
+            }
+         } else if (!dataRecord.equals(other.dataRecord)) {
+            return false;
+         }
+         return true;
+      }
 
-		try {
-			long xaDataRecorderId = this.messageSeqGenerator.generate();
+      @Override
+      public String toString() {
+         return "DataRecord [dataRecord=" + dataRecord + ExceptionUtils.getStackTrace(this.creationLocation) + "]";
+      }
 
-			// create a new Logger
-			IDataLogger dataLogger = this.dataLoggerFactory
-					.instanciateLogger(Long.toString(xaDataRecorderId));
+   }
 
-			// create a new XADataLogger
-			XADataLogger xaDataLogger = new XADataLogger(dataLogger);
+   /**
+    * management of the registered XADataRecorder. This structure has to stand
+    * heavy multithreaded read and write.
+    * 
+    * This management is important as all not closed/destroyed logger are
+    * tracked
+    */
+   private Map<Long, DataRecordMemetor> xaDataRecorders = new HashMap<Long, DataRecordMemetor>();
 
-			PhynixxXADataRecorder xaDataRecorder = PhynixxXADataRecorder
-					.openRecorderForWrite(xaDataRecorderId, xaDataLogger, this);
-			synchronized (this) {
-				addXADataRecorder(xaDataRecorder);
-			}
-			return xaDataRecorder;
+   private boolean closed = false;
 
-		} catch (Exception e) {
-			throw new DelegatedRuntimeException(e);
-		}
+   public SimpleXADataRecorderPool(IDataLoggerFactory dataLoggerFactory) {
+      this.dataLoggerFactory = dataLoggerFactory;
+      if (this.dataLoggerFactory == null) {
+         throw new IllegalArgumentException("No dataLoggerFactory set");
+      }
+   }
 
-	}
+   public String getLoggerSystemName() {
+      return dataLoggerFactory.getLoggerSystemName();
+   }
 
-	private void addXADataRecorder(IXADataRecorder xaDataRecorder) {
-		if (!this.xaDataRecorders.containsKey(xaDataRecorder
-				.getXADataRecorderId())) {
-			this.xaDataRecorders.put(xaDataRecorder.getXADataRecorderId(),
-					xaDataRecorder);
-		}
-	}
+   /**
+    * opens a new Recorder for writing. The recorder gets a new ID.
+    * 
+    * The lifecycle of the dataRecorder is managed by the current implementation of {@link 
+    * 
+    * @return created dataRecorder
+    */
+   private IXADataRecorder createXADataRecorder() {
 
-	private void removeXADataRecoder(IXADataRecorder xaDataRecorder) {
-		if (xaDataRecorder == null) {
-			return;
-		}
-		this.xaDataRecorders.remove(xaDataRecorder.getXADataRecorderId());
+      try {
+         long xaDataRecorderId = this.messageSeqGenerator.generate();
 
-	}
+         // create a new Logger
+         IDataLogger dataLogger = this.dataLoggerFactory.instanciateLogger(Long.toString(xaDataRecorderId));
 
-	@Override
-	public boolean isClosed() {
-		return closed;
-	}
+         // create a new XADataLogger
+         XADataLogger xaDataLogger = new XADataLogger(dataLogger);
 
-	@Override
-	public IXADataRecorder borrowObject() throws Exception,
-			NoSuchElementException {
-		if (this.isClosed()) {
-			throw new IllegalStateException("Pool already closed");
-		}
-		return this.createXADataRecorder();
-	}
+         PhynixxXADataRecorder xaDataRecorder = PhynixxXADataRecorder.openRecorderForWrite(xaDataRecorderId,
+                  xaDataLogger, this);
+         synchronized (this) {
+            addXADataRecorder(xaDataRecorder);
+         }
+         LOG.info("IXADataRecord " + xaDataRecorderId + " created in [" + Thread.currentThread() + "]");
+         return xaDataRecorder;
 
-	/**
-	 * Recorder is destroyed
-	 */
-	@Override
-	public void returnObject(IXADataRecorder dataRecorder) throws Exception {
-		if (this.isClosed()) {
-			throw new IllegalStateException("Pool already closed");
-		}
-		dataRecorder.destroy();
+      } catch (Exception e) {
+         throw new DelegatedRuntimeException(e);
+      }
 
-	}
+   }
 
-	@Override
-	public void invalidateObject(IXADataRecorder dataRecorder) throws Exception {
-		if (this.isClosed()) {
-			throw new IllegalStateException("Pool already closed");
-		}
-		dataRecorder.destroy();
+   private void addXADataRecorder(IXADataRecorder xaDataRecorder) {
+      if (!this.xaDataRecorders.containsKey(xaDataRecorder.getXADataRecorderId())) {
+         this.xaDataRecorders.put(xaDataRecorder.getXADataRecorderId(), new DataRecordMemetor(xaDataRecorder));
+      }
+   }
 
-	}
+   private void removeXADataRecoder(IXADataRecorder xaDataRecorder) {
+      if (xaDataRecorder == null) {
+         return;
+      }
+      this.xaDataRecorders.remove(xaDataRecorder.getXADataRecorderId());
 
-	@Override
-	public void clear() throws Exception {
-		if (this.isClosed()) {
-			throw new IllegalStateException("Pool already closed");
-		}
-		// TODO Auto-generated method stub
+   }
 
-	}
+   @Override
+   public boolean isClosed() {
+      return closed;
+   }
 
-	@Override
-	public void close() {
-		if (this.isClosed()) {
-			return;
-		}
+   @Override
+   public IXADataRecorder provideXADataRecorder() {
+      if (this.isClosed()) {
+         throw new IllegalStateException("Pool already closed");
+      }
+      return this.createXADataRecorder();
+   }
 
-		HashSet<IXADataRecorder> copy = new HashSet<IXADataRecorder>(this.xaDataRecorders.values());
-		for (IXADataRecorder dataRecorder : copy) {
-			dataRecorder.disqualify();
-		}
-		xaDataRecorders.clear();
-	}
 
-	@Override
-	public void destroy() {
+   @Override
+   public void close() {
+      if (this.isClosed()) {
+         return;
+      }
 
-		try {
-			this.close();
-		} catch (Exception e) {
-		}
+      HashSet<DataRecordMemetor> copy = new HashSet<DataRecordMemetor>(this.xaDataRecorders.values());
+      for (DataRecordMemetor dataRecorderMemento : copy) {
+         LOG.info("IXADataRecord destroyed during Shutdwon " + copy);
+         dataRecorderMemento.getDataRecord().disqualify();
+      }
+      xaDataRecorders.clear();
+   }
 
-		this.dataLoggerFactory.cleanup();
-		this.messageSeqGenerator = null;
+   @Override
+   public void destroy() {
 
-	}
+      try {
+         this.close();
+      } catch (Exception e) {
+      }
 
-	/**
-	 * a closed recorder is removed from the repository, but the content isn't
-	 * discard --> do nothing in the current implementation
-	 */
-	@Override
-	public void recorderDataRecorderClosed(IXADataRecorder xaDataRecorder) {
-		this.removeXADataRecoder(xaDataRecorder);
-	}
+      this.dataLoggerFactory.cleanup();
+      this.messageSeqGenerator = null;
 
-	@Override
-	public void recorderDataRecorderOpened(IXADataRecorder xaDataRecorder) {
-		this.addXADataRecorder(xaDataRecorder);
-	}
+   }
 
-	/**
-	 * a released recorder will not be re-used. It is destroyed
-	 */
-	@Override
-	public void recorderDataRecorderReleased(IXADataRecorder xaDataRecorder) {
-		xaDataRecorder.destroy();
-	}
+   /**
+    * a closed recorder is removed from the repository, but the content isn't
+    * discard. the logger is destroyed and is removed form the internal
+    * management
+    */
+   @Override
+   public void recorderDataRecorderClosed(IXADataRecorder xaDataRecorder) {
+      this.removeXADataRecoder(xaDataRecorder);
+   }
 
-	@Override
-	public void recorderDataRecorderDestroyed(IXADataRecorder xaDataRecorder) {
-		this.removeXADataRecoder(xaDataRecorder);
+   @Override
+   public void recorderDataRecorderOpened(IXADataRecorder xaDataRecorder) {
+      this.addXADataRecorder(xaDataRecorder);
+   }
 
-	}
+   /**
+    * A logger is rewinded and ready for re-use. But the current Implementation
+    * won't ruse logger but destroys them.
+    * 
+    */
+   @Override
+   public void recorderDataRecorderReleased(IXADataRecorder xaDataRecorder) {
+      xaDataRecorder.destroy();
+   }
 
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((getLoggerSystemName() == null) ? 0 : getLoggerSystemName()
-						.hashCode());
-		return result;
-	}
+   /**
+    * the logger is destroyed and is removed form the internal management
+    */
+   @Override
+   public void recorderDataRecorderDestroyed(IXADataRecorder xaDataRecorder) {
+      this.removeXADataRecoder(xaDataRecorder);
 
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final SimpleXADataRecorderPool other = (SimpleXADataRecorderPool) obj;
-		if (getLoggerSystemName() == null) {
-			if (other.getLoggerSystemName() != null)
-				return false;
-		} else if (!this.getLoggerSystemName().equals(
-				other.getLoggerSystemName()))
-			return false;
-		return true;
-	}
+   }
 
-	public String toString() {
-		return (this.dataLoggerFactory == null) ? "Closed Pool"
-				: this.dataLoggerFactory.toString();
-	}
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((getLoggerSystemName() == null) ? 0 : getLoggerSystemName().hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      final SimpleXADataRecorderPool other = (SimpleXADataRecorderPool) obj;
+      if (getLoggerSystemName() == null) {
+         if (other.getLoggerSystemName() != null)
+            return false;
+      } else if (!this.getLoggerSystemName().equals(other.getLoggerSystemName()))
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString() {
+      return (this.dataLoggerFactory == null) ? "Closed Pool" : this.dataLoggerFactory.toString();
+   }
 
 }

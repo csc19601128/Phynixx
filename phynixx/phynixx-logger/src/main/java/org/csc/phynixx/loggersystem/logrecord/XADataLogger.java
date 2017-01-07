@@ -51,271 +51,264 @@ import org.csc.phynixx.loggersystem.logger.channellogger.AccessMode;
  */
 class XADataLogger {
 
-	public boolean isClosed() {
-		return this.dataLogger.isClosed();
-	}
+   private static final IPhynixxLogger LOGGER = PhynixxLogManager.getLogger(XADataLogger.class);
 
-	public void destroy() throws IOException {
-		this.dataLogger.destroy();
-	}
+   private static final int HEADER_SIZE = 8 + 4;
 
-	/**
-	 * callback to recover the content of the xadataRecorder
-	 * 
-	 * @author christoph
-	 *
-	 */
-	private class RecoverReplayListener implements IDataLoggerReplay {
+   private final IDataLogger dataLogger;
 
-		private int count = 0;
+   XADataLogger(IDataLogger dataLogger) {
+      this.dataLogger = dataLogger;
+   }
 
-		private PhynixxXADataRecorder dataRecorder;
+   public boolean isClosed() {
+      return this.dataLogger.isClosed();
+   }
 
-		private RecoverReplayListener(PhynixxXADataRecorder dataRecorder) {
-			this.dataRecorder = dataRecorder;
-		}
+   public void destroy() throws IOException {
+      this.dataLogger.destroy();
+   }
 
-		public int getCountLogRecords() {
-			return count;
-		}
+   /**
+    * callback to recover the content of the xadataRecorder
+    * 
+    * @author christoph
+    *
+    */
+   private class RecoverReplayListener implements IDataLoggerReplay {
 
-		public void onRecord(XALogRecordType recordType, byte[][] fieldData) {
-			if (count == 0) {
-				// recovers the message sequence id
-				dataRecorder.setMessageSequenceId(XADataLogger.this.recoverMessageSequenceId(fieldData[0]));
-			} else {
-				short typeId = recordType.getType();
-				switch (typeId) {
-				case XALogRecordType.XA_START_TYPE:
-				case XALogRecordType.XA_PREPARED_TYPE:
-				case XALogRecordType.ROLLFORWARD_DATA_TYPE:
-				case XALogRecordType.XA_DONE_TYPE:
-				case XALogRecordType.USER_TYPE:
-				case XALogRecordType.ROLLBACK_DATA_TYPE:
-					XADataLogger.this.recoverData(dataRecorder, recordType,fieldData);
-					break;
-				default:
-					LOGGER.error("Unknown LogRecordtype " + recordType);
-					break;
-				}
-			}
+      private int count = 0;
 
-			count++;
-		}
+      private PhynixxXADataRecorder dataRecorder;
 
-	}
+      private RecoverReplayListener(PhynixxXADataRecorder dataRecorder) {
+         this.dataRecorder = dataRecorder;
+      }
 
-	private static final IPhynixxLogger LOGGER = PhynixxLogManager
-			.getLogger(XADataLogger.class);
+      public int getCountLogRecords() {
+         return count;
+      }
 
-	private static final int HEADER_SIZE = 8 + 4;
+      @Override
+      public void onRecord(XALogRecordType recordType, byte[][] fieldData) {
+         if (count == 0) {
+            // recovers the message sequence id
+            dataRecorder.setMessageSequenceId(XADataLogger.this.recoverMessageSequenceId(fieldData[0]));
+         } else {
+            short typeId = recordType.getType();
+            switch (typeId) {
+            case XALogRecordType.XA_START_TYPE:
+            case XALogRecordType.XA_PREPARED_TYPE:
+            case XALogRecordType.ROLLFORWARD_DATA_TYPE:
+            case XALogRecordType.XA_DONE_TYPE:
+            case XALogRecordType.USER_TYPE:
+            case XALogRecordType.ROLLBACK_DATA_TYPE:
+               XADataLogger.this.recoverData(dataRecorder, recordType, fieldData);
+               break;
+            default:
+               LOGGER.error("Unknown LogRecordtype " + recordType);
+               break;
+            }
+         }
 
-	private IDataLogger dataLogger;
+         count++;
+      }
 
-	XADataLogger(IDataLogger dataLogger) {
-		this.dataLogger = dataLogger;
-	}
+   }
 
-	/**
-	 * prepares the Logger for writing. The current content is removed.
-	 *
-	 * @param dataRecorder
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	void prepareForWrite(long xaDataRecorderId) throws IOException, InterruptedException {
-		this.dataLogger.reopen(AccessMode.WRITE);
-		this.writeStartSequence(xaDataRecorderId);
-	}
+   /**
+    * prepares the Logger for writing. The current content is removed.
+    *
+    * @param dataRecorder
+    * @throws IOException
+    * @throws InterruptedException
+    */
+   void prepareForWrite(long xaDataRecorderId) throws IOException, InterruptedException {
+      this.dataLogger.reopen(AccessMode.WRITE);
+      this.writeStartSequence(xaDataRecorderId);
+   }
 
-	/**
-	 * prepares the Logger for writing.
-	 * 
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	void prepareForAppend()
-			throws IOException, InterruptedException {
-		this.dataLogger.reopen(AccessMode.APPEND);
-	}
+   /**
+    * prepares the Logger for writing.
+    * 
+    * @throws IOException
+    * @throws InterruptedException
+    */
+   void prepareForAppend() throws IOException, InterruptedException {
+      this.dataLogger.reopen(AccessMode.APPEND);
+   }
 
-	/**
-	 * prepares the Logger for writing.
-	 *
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	void prepareForRead() throws IOException,
-			InterruptedException {
-		this.dataLogger.reopen(AccessMode.READ);
-	}
+   /**
+    * prepares the Logger for writing.
+    *
+    * @throws IOException
+    * @throws InterruptedException
+    */
+   void prepareForRead() throws IOException, InterruptedException {
+      this.dataLogger.reopen(AccessMode.READ);
+   }
 
-	/**
-	 *
-	 *
-	 * @param dataRecorder
-	 *            DataRecorder that uses /operates on the current physical
-	 *            logger
-	 *
-	 * @param message
-	 *            message to be written
-	 * @throws IOException
-	 */
-	void writeData(PhynixxXADataRecorder dataRecorder, IDataRecord message)	throws IOException {
-		DataOutputStream io = null;
-		try {
+   /**
+    *
+    *
+    * @param message
+    *           message to be written
+    * @throws IOException
+    */
+   void writeData(IDataRecord message) throws IOException {
+      DataOutputStream io = null;
+      try {
 
-			ByteArrayOutputStream byteIO = new ByteArrayOutputStream(HEADER_SIZE);
-			io = new DataOutputStream(byteIO);
+         ByteArrayOutputStream byteIO = new ByteArrayOutputStream(HEADER_SIZE);
+         io = new DataOutputStream(byteIO);
 
-			io.writeLong(message.getXADataRecorderId());
-			io.writeInt(message.getOrdinal().intValue());
-			byte[] header = byteIO.toByteArray();
+         io.writeLong(message.getXADataRecorderId());
+         io.writeInt(message.getOrdinal().intValue());
+         byte[] header = byteIO.toByteArray();
 
-			byte[][] data = message.getData();
-			byte[][] content = null;
-			if (data == null) {
-				content = new byte[][] { header };
-			} else {
-				content = new byte[data.length + 1][];
-				content[0] = header;
-				for (int i = 0; i < data.length; i++) {
-					content[i + 1] = data[i];
-				}
-			}
+         byte[][] data = message.getData();
+         byte[][] content = null;
+         if (data == null) {
+            content = new byte[][] { header };
+         } else {
+            content = new byte[data.length + 1][];
+            content[0] = header;
+            for (int i = 0; i < data.length; i++) {
+               content[i + 1] = data[i];
+            }
+         }
 
-			try {
-				this.dataLogger.write(message.getLogRecordType().getType(),	content);
-			} catch (Exception e) {
-				throw new DelegatedRuntimeException("writing message "
-						+ message + "\n" + ExceptionUtils.getStackTrace(e), e);
-			}
-		} finally {
-			if (io != null) {
-				io.close();
-			}
-		}
+         try {
+            this.dataLogger.write(message.getLogRecordType().getType(), content);
+         } catch (Exception e) {
+            throw new DelegatedRuntimeException("writing message " + message + "\n" + ExceptionUtils.getStackTrace(e),
+                     e);
+         }
+      } finally {
+         if (io != null) {
+            io.close();
+         }
+      }
+   }
 
-		// Add the messageSequence to the set og messageSequences ...
-	}
+   /**
+    *
+    *
+    * @param dataRecorder
+    *           DataRecorder that uses /operates on the current physical logger
+    *
+    * @throws IOException
+    * @throws InterruptedException
+    */
+   void recover(PhynixxXADataRecorder dataRecorder) throws IOException, InterruptedException {
+      RecoverReplayListener listener = new RecoverReplayListener(dataRecorder);
+      dataRecorder.rewind();
+      this.dataLogger.replay(listener);
+      if (LOGGER.isDebugEnabled()) {
+         LOGGER.debug("# Records=" + listener.getCountLogRecords());
+      }
+   }
 
-	/**
-	 *
-	 *
-	 * @param dataRecorder
-	 *            DataRecorder that uses /operates on the current physical
-	 *            logger
-	 *
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	void recover(PhynixxXADataRecorder dataRecorder) throws IOException,
-			InterruptedException {
-		RecoverReplayListener listener = new RecoverReplayListener(dataRecorder);
-		dataRecorder.rewind();
-		this.dataLogger.replay(listener);
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("# Records=" + listener.getCountLogRecords());
-		}
-	}
+   /**
+    *
+    * a new data record is created an added to dataRecorder. It's not checked if
+    * the record is permissable
+    *
+    * @param dataRecorder
+    *           DataRecorder that uses /operates on the current physical logger
+    *
+    * @param logRecordType
+    * @param fieldData
+    * 
+    * 
+    */
+   private void recoverData(PhynixxXADataRecorder dataRecorder, XALogRecordType logRecordType, byte[][] fieldData) {
+      if (LOGGER.isDebugEnabled()) {
+         if (fieldData == null || fieldData.length == 0) {
+            throw new IllegalArgumentException("Record fields are empty");
+         }
+      }
+      // field 0 is header
+      byte[] headerData = fieldData[0];
+      DataInputStream io = null;
+      try {
+         io = new DataInputStream(new ByteArrayInputStream(headerData));
+         // redundant , just read it an skip
+         io.readLong();
 
-	/**
-	 *
-	 * a new data record is created an added to dataRecorder. It's not checked if the record is permissable
-	 *
-	 * @param dataRecorder
-	 *            DataRecorder that uses /operates on the current physical
-	 *            logger
-	 *
-	 * @param logRecordType
-	 * @param fieldData
-	 */
-	private void recoverData(PhynixxXADataRecorder dataRecorder,XALogRecordType logRecordType, byte[][] fieldData) {
-		if (LOGGER.isDebugEnabled()) {
-			if (fieldData == null || fieldData.length == 0) {
-				throw new IllegalArgumentException("Record fields are empty");
-			}
-		}
-		// field 0 is header
-		byte[] headerData = fieldData[0];
-		DataInputStream io = new DataInputStream(new ByteArrayInputStream(headerData));
-		try {
-			// redundant , just read it an skip
-			io.readLong();
-			
-			int ordinal = io.readInt();
-			byte[][] content = null;
+         int ordinal = io.readInt();
+         byte[][] content = null;
 
-			if (fieldData.length > 1) {
-				content = new byte[fieldData.length - 1][];
-				for (int i = 0; i < fieldData.length - 1; i++) {
-					content[i] = fieldData[i + 1];
-				}
-			} else {
-				content = new byte[][] {};
-			}
+         if (fieldData.length > 1) {
+            content = new byte[fieldData.length - 1][];
+            for (int i = 0; i < fieldData.length - 1; i++) {
+               content[i] = fieldData[i + 1];
+            }
+         } else {
+            content = new byte[][] {};
+         }
 
-			PhynixxDataRecord msg = new PhynixxDataRecord(
-					dataRecorder.getXADataRecorderId(), ordinal, logRecordType,	content);
-			dataRecorder.recoverMessage(msg);
+         PhynixxDataRecord msg = new PhynixxDataRecord(dataRecorder.getXADataRecorderId(), ordinal, logRecordType,
+                  content);
+         dataRecorder.recoverMessage(msg);
 
-		} catch (Exception e) {
-			throw new DelegatedRuntimeException(e);
-		} finally {
-			if (io != null) {
-				IOUtils.closeQuietly(io);
-			}
-		}
-	}
+      } catch (Exception e) {
+         throw new DelegatedRuntimeException(e);
+      } finally {
+         if (io != null) {
+            IOUtils.closeQuietly(io);
+         }
+      }
+   }
 
-	void close() {
-		try {
-			this.dataLogger.close();
-		} catch (Exception e) {
-			throw new DelegatedRuntimeException(e);
-		}
+   void close() {
+      try {
+         this.dataLogger.close();
+      } catch (Exception e) {
+         throw new DelegatedRuntimeException(e);
+      }
 
-	}
+   }
 
-	/**
-	 * start sequence writes the ID of the XADataLogger to identify the content
-	 * of the logger
-	 *
-	 * @param dataRecorder
-	 *            DataRecorder that uses /operates on the current physical
-	 *            logger
-	 *
-	 *
-	 *            deprecated
-	 */
+   /**
+    * start sequence writes the ID of the XADataLogger to identify the content
+    * of the logger
+    *
+    * @param dataRecorder
+    *           DataRecorder that uses /operates on the current physical logger
+    *
+    */
+   private void writeStartSequence(long xaDataRecorderId) throws IOException, InterruptedException {
+      ByteArrayOutputStream byteOut = null;
+      try {
+         byteOut = new ByteArrayOutputStream();
+         DataOutputStream dos = new DataOutputStream(byteOut);
+         dos.writeLong(xaDataRecorderId);
+         dos.flush();
+      } finally {
+         if (byteOut != null) {
+            IOUtils.closeQuietly(byteOut);
+         }
+      }
+      byte[][] startSequence = new byte[1][];
+      startSequence[0] = byteOut.toByteArray();
 
-	private void writeStartSequence(long xaDataRecorderId)	throws IOException, InterruptedException {
-		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-		try {
-			DataOutputStream dos = new DataOutputStream(byteOut);
-			dos.writeLong(xaDataRecorderId);
-			dos.flush();
-		} finally {
-			if (byteOut != null) {
-				IOUtils.closeQuietly(byteOut);
-			}
-		}
+      this.dataLogger.write(XALogRecordType.USER.getType(), startSequence);
+   }
 
-		byte[][] startSequence = new byte[1][];
-		startSequence[0] = byteOut.toByteArray();
-
-		this.dataLogger.write(XALogRecordType.USER.getType(), startSequence);
-	}
-
-	private long recoverMessageSequenceId(byte[] bytes) {
-		byte[] headerData = bytes;
-		DataInputStream io = new DataInputStream(new ByteArrayInputStream(headerData));
-		try {
-			long messageSequenceId = io.readLong();
-			return messageSequenceId;
-		} catch (IOException e) {
-			throw new DelegatedRuntimeException(e);
-		}
-	}
+   private long recoverMessageSequenceId(byte[] bytes) {
+      byte[] headerData = bytes;
+      DataInputStream io = null;
+      try {
+         io = new DataInputStream(new ByteArrayInputStream(headerData));
+         return io.readLong();
+      } catch (IOException e) {
+         throw new DelegatedRuntimeException(e);
+      } finally {
+         if (io != null) {
+            IOUtils.closeQuietly(io);
+         }
+      }
+   }
 
 }

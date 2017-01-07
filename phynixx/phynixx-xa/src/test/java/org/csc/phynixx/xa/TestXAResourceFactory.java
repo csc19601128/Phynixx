@@ -84,6 +84,11 @@ public class TestXAResourceFactory extends PhynixxXAResourceFactory<ITestConnect
     }
     
     
+   @Override
+   public void close() {
+      this.getManagedConnectionFactory().close();
+      super.close();
+   }
     
 
 }

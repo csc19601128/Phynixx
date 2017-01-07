@@ -21,8 +21,6 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 
 import java.io.IOException;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
@@ -46,12 +44,12 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
 	private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(PhynixxXARecorderRepository.class);
 
 	
-	final IXARecorderPool dataRecorderPool; 
+	final IXARecorderProvider xaRecordProvider; 
 
 
-	public PhynixxXARecorderRepository(IXARecorderPool dataRecorderPool) {
-		this.dataRecorderPool = dataRecorderPool;
-		if (this.dataRecorderPool == null) {
+	public PhynixxXARecorderRepository(IXARecorderProvider dataRecorderPool) {
+		this.xaRecordProvider = dataRecorderPool;
+		if (this.xaRecordProvider == null) {
 			throw new IllegalArgumentException("No dataLoggerFactory set");
 		}
 	}
@@ -68,12 +66,12 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
 
 	@Override
 	public IXADataRecorder createXADataRecorder() throws Exception {
-		return this.dataRecorderPool.borrowObject();
+		return this.xaRecordProvider.provideXADataRecorder();
 	}
 
 	@Override
 	public boolean isClosed() {
-		return this.dataRecorderPool.isClosed();
+		return this.xaRecordProvider.isClosed();
 	}
 
 	
@@ -81,19 +79,19 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
 	
 
 	public synchronized void open() throws IOException, InterruptedException {
-		if (this.dataRecorderPool == null) {
-			throw new IllegalStateException("No pool set");
+		if (this.xaRecordProvider == null) {
+         throw new IllegalStateException("No XADataRecordProvider set");
 		}
 	}
 
 	@Override
 	public synchronized void close() {
-		this.dataRecorderPool.close();
+		this.xaRecordProvider.close();
 	}
 
 	@Override
 	public synchronized void destroy() throws IOException, InterruptedException {
-		this.dataRecorderPool.destroy();
+		this.xaRecordProvider.destroy();
 	}
 
 	
