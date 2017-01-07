@@ -22,6 +22,7 @@ package org.csc.phynixx.connection.loggersystem;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -69,9 +70,8 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 	 * @throws Exception
 	 */
 	public LoggerPerTransactionStrategy(IDataLoggerFactory loggerFactory) {
-		this.xaRecorderRepository = new PhynixxXARecorderRepository(
-				loggerFactory);
-		this.loggerFactory = loggerFactory;
+		this.xaRecorderRepository = new PhynixxXARecorderRepository(loggerFactory);
+		this.loggerFactory= loggerFactory;
 	}
 
 	@Override
@@ -148,16 +148,13 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 			return;
 		}
 
-		// if commit/rollback was performed, nothing happend.
-		// If there are uncommited trtansaction data, the logger ist closed
-		// (keeps data).
-		// , but not destroy. so it can be recovered
+		// if commit/rollback was performed, nothing happend. If no the logged
+		// data is closed but not destroy. So recovery can happen
+
 		if (event.getManagedConnection().hasTransactionalData()) {
-			xaDataRecorder.disqualify(); // close without removing the recover
+			xaRecorderRepository.close(); // close without removing the recover
 											// data
 		} else {
-			// something went really wrong -- destroy the logger to reset the
-			// failed situation
 			xaDataRecorder.destroy();
 		}
 		messageAwareConnection.setXADataRecorder(null);
@@ -189,10 +186,9 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 		}
 		// it's my logger ....
 
-		// the logger has to be destroyed. It's data aren't used any longer and
-		// the logger can be reused
+		// the logger has to be destroyed ...
 		else {
-			xaDataRecorder.release();
+			xaDataRecorder.destroy();
 			messageAwareConnection.setXADataRecorder(null);
 		}
 
@@ -215,8 +211,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 			return;
 		}
 
-		// if the rollback is completed and the rollback data isn't needed. The
-		// logger can be re-used
+		// if the rollback is completed the rollback data isn't needed
 		xaDataRecorder.release();
 		messageAwareConnection.setXADataRecorder(null);
 
@@ -239,9 +234,6 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 		if (xaDataRecorder == null) {
 			return;
 		}
-		// if the commit is completed and the data isn't needed. The logger can
-		// be re-used
-
 		xaDataRecorder.release();
 		messageAwareConnection.setXADataRecorder(null);
 
@@ -278,8 +270,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 				.getXADataRecorder();
 		// it's my logger ....
 
-		// Transaction is closed, but there are pending transaction data. The
-		// logger is closed (and the transaction state ist saved) ...
+		// Transaction is closed and the logger is destroyed ...
 		if (xaDataRecorder != null && xaDataRecorder.isClosed()) {
 
 			// pending transaction data --> ready for recover
@@ -288,12 +279,11 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 		}
 
 		// refresh the datarecorder , if
-		IXADataRecorder newXADataLogger = null;
 		if (xaDataRecorder == null) {
 			try {
-				newXADataLogger = this.xaRecorderRepository
+				IXADataRecorder xaLogger = this.xaRecorderRepository
 						.createXADataRecorder();
-				messageAwareConnection.setXADataRecorder(newXADataLogger);
+				messageAwareConnection.setXADataRecorder(xaLogger);
 			} catch (Exception e) {
 				// retry ...
 				try {
@@ -301,15 +291,14 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 				} catch (InterruptedException e1) {
 				}
 				try {
-					newXADataLogger = this.xaRecorderRepository
+					IXADataRecorder xaLogger = this.xaRecorderRepository
 							.createXADataRecorder();
+					messageAwareConnection.setXADataRecorder(xaLogger);
 				} catch (Exception ee) {
 					throw new DelegatedRuntimeException(
 							"creating new Logger for " + con, ee);
 				}
 			}
-
-			messageAwareConnection.setXADataRecorder(newXADataLogger);
 		}
 		event.getManagedConnection().addConnectionListener(this);
 
@@ -328,12 +317,14 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 		List<IXADataRecorder> messageSequences = new ArrayList<IXADataRecorder>();
 		// recover all loggers ....
 		try {
-
-			IXARecorderRecovery recorderRecovery = new XARecorderRecovery(this.loggerFactory);
+			
+			IXARecorderRecovery recorderRecovery= new XARecorderRecovery(this.loggerFactory);
 
 			Set<IXADataRecorder> xaDataRecorders = recorderRecovery.getRecoveredXADataRecorders();
 
-			for (IXADataRecorder dataRecorder : xaDataRecorders) {
+			for (Iterator<IXADataRecorder> iterator = xaDataRecorders.iterator(); iterator.hasNext();) {
+				IXADataRecorder dataRecorder = iterator.next();
+
 				if (!dataRecorder.isEmpty()) {
 					messageSequences.add(dataRecorder);
 				} else {
@@ -348,7 +339,8 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 	}
 
 	@Override
-	public IPhynixxManagedConnection<C> decorate(IPhynixxManagedConnection<C> managedConnection) {
+	public IPhynixxManagedConnection<C> decorate(
+			IPhynixxManagedConnection<C> managedConnection) {
 		managedConnection.addConnectionListener(this);
 		return managedConnection;
 	}
