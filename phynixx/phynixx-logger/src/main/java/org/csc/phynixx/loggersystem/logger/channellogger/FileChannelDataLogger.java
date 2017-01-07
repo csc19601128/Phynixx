@@ -292,7 +292,7 @@ public class FileChannelDataLogger implements IDataLogger {
 	 *    . . .
 	 *
 	 * </pre>
-	 * <p/>
+
 	 * this format ensures that the record could be recovered
 	 *
 	 * @param type

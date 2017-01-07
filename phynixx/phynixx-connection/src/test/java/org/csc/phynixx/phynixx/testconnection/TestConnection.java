@@ -37,25 +37,25 @@ import java.util.Map;
 /**
  * the initial value of the counter is the defines the rollback state. Every increrment of the counter via {@link #act} increases the counter.
  * The counter at commit are commitRollforward data.
- * <p/>
+
  * TestConnection provides a mechanism to activate predetermined points of interruption.
  * These points leads the current work to interrupt.
  * You can simulate abnormal situation like system crashes.
- * <p/>
- * <p/>
- * <p/>
+
+
+
  * The points of interruption are defined by the call of {@link #interrupt(org.csc.phynixx.phynixx.testconnection.TestInterruptionPoint)}.
  * You can define a gate value that define how often the interruption point is reached  till the exception is thrown.
- * <p/>
+
  * Feassable interruption pints are
- * <p/>
+
  * REQUIRES_TRANSACTION       - after the rollback data is written and before the counter is incremented
  * COMMIT    - after the rollforward dat is written
  * ROLLBACK  -
  * PREPARE
  * CLOSE
- * <p/>
- * <p/>
+
+
  *
  * @author christoph
  */

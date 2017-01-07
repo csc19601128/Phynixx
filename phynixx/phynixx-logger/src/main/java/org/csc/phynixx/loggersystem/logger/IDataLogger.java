@@ -41,7 +41,7 @@ public interface IDataLogger {
      * @param type a record type defined in LogRecordType.
      * @param data record data to be logged.
      * @return a log key that can be used to de-reference the record.
-     * <p/>
+
      */
     long write(short type, byte[][] data)
             throws InterruptedException, IOException;

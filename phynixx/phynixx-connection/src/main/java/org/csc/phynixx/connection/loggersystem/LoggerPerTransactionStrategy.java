@@ -66,8 +66,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 	 * per thread a new Logger cpould be instanciated with aid of the
 	 * loggerFacrory
 	 *
-	 * @param loggerFactory
-	 * @throws Exception
+	 * @param loggerFactory	 * @throws Exception
 	 */
 	public LoggerPerTransactionStrategy(IDataLoggerFactory loggerFactory) {
 		this.xaRecorderRepository = new PhynixxXARecorderRepository(loggerFactory);
@@ -306,7 +305,7 @@ public class LoggerPerTransactionStrategy<C extends IPhynixxConnection & IXAData
 
 	/**
 	 * recovers all incomplete dataRecorders
-	 * {@link org.csc.phynixx.loggersystem.logrecord.IXADataRecorder#isCompleted()}
+	 * {@link org.csc.phynixx.loggersystem.logrecord.IXADataRecorder#isEmpty()}
 	 * and destroys all complete dataRecorders
 	 *
 	 * @return incomplete dataRecorders

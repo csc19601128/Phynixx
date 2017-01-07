@@ -32,7 +32,6 @@ import java.util.*;
 /**
  * @author
  * @version $Revision: 1.6 $
- * @project phynixx
  * @see ThreadGroup
  */
 public class WatchdogRegistry {
@@ -515,7 +514,6 @@ public class WatchdogRegistry {
     /**
      * stops the the Watchdog with the given id
      * The executing thread of the watchdog is stopped and the watchdog is removed from the registry.
-     * <p/>
      * It can nor be restarted
      *
      * @throws IllegalStateException Watchdog does not exist,

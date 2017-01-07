@@ -62,7 +62,7 @@ public interface ITransactionBinding<C extends IPhynixxConnection> {
 
 	/**
 	 * 
-	 * Lid reference an Entry in the {@link LocalTransactionRepository}
+	 * Lid reference an Entry in the {@link LocalTransactionProxy}
 	 * 
 	 * @return
 	 * @throws IllegalStateException

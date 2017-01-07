@@ -32,7 +32,7 @@ public interface IPhynixxManagedConnectionFactory<C extends IPhynixxConnection> 
 
     /**
      *
-     * @return
+     * @return connection
      */
     C getConnection();
 
@@ -41,6 +41,7 @@ public interface IPhynixxManagedConnectionFactory<C extends IPhynixxConnection> 
      *
      *
      * Default ist true
+     * @param state
      */
     void setAutocommitAware(boolean state);
 

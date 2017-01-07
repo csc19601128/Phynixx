@@ -34,9 +34,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * <p/>
+
  * provided generic proxies on base of java DynaProxies
- * <p/>
+
  * This proxy
  *
  * @param <C>

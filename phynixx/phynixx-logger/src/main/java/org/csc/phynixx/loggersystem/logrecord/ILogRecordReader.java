@@ -29,7 +29,6 @@ public interface ILogRecordReader {
     /**
      * scans the logger and re-instanciates all LogMessage sequences
      *
-     * @return
      * @throws IOException
      */
     void readMessageSequences() throws IOException;

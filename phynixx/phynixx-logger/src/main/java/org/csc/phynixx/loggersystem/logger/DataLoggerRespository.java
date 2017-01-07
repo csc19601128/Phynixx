@@ -37,7 +37,7 @@ import org.csc.phynixx.loggersystem.logger.channellogger.AccessMode;
  *
  *
  * the current class managed the lifecycle instances of IDataLoggers.
- * <p/>
+
  * The current implementation do not re-use closed Logger, but further implementation can implement kind pof Caching/Polling strategies
  *
  * @author christoph

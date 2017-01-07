@@ -25,12 +25,12 @@ package org.csc.phynixx.connection;
  * a managed connection is managed by the phynixx system.
  * it takes care of integrating the connection into the phynixx XA Implementation
  * and/or provides persistent logger to store transaction data.
- * <p/>
+
  * It decorates the origin Connection with one or more aspects an. You can declare new decorators by {@link PhynixxManagedConnectionFactory}
- * <p/>
- * <p/>
+
+
  * this IF combines the role of a core connection and the role of a connection proxy.
- * <p/>
+
  * Impl. of this IF represents the access to the core connections in this FW
  *
  * h1. Thread Safeness
@@ -46,7 +46,7 @@ public interface IPhynixxManagedConnection<C extends IPhynixxConnection> extends
 {
     /**
      * set the thread safeness of the connection.
-     * @param state
+     * @param state State of synchronization
      */
     void setSynchronized(boolean state);
 

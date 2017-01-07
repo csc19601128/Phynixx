@@ -37,7 +37,7 @@ import java.util.List;
 
 /**
  * Basisklasse zur Verwaltung von Filezugriffen.
- * <p/>
+
  * A RandomAccessFile provides random access to the file's content.
  */
 public class TAEnabledUTFWriterImpl implements TAEnabledUTFWriter {

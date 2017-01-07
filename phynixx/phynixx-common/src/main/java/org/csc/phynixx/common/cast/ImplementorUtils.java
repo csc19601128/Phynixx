@@ -51,7 +51,7 @@ public class ImplementorUtils {
     /**
      * prueft, ob eine Objekt in den Zieltyp <code>targetClass</code> zu casten
      * ist.
-     * <p/>
+
      * Wird <code>null</code> uebergeben, so wird <code>false</code> geliefert.
      *
      * @param obj

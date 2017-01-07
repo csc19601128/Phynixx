@@ -52,14 +52,13 @@ public class TransactionAwareXAResource<C> {
 
     /**
      * Create a new TransactionAwareDataSourceProxy.
-     * @see #setTargetDataSource
      */
     public TransactionAwareXAResource() {
     }
 
     /**
      * Create a new TransactionAwareDataSourceProxy.
-     * @param targetDataSource the target DataSource
+     * @param connectionFactory wrapped physical connection
      */
     public TransactionAwareXAResource(Object connectionFactory) {
       this.targetConnectionFactory=connectionFactory;

@@ -350,7 +350,7 @@ class PhynixxManagedXAConnection<C extends IPhynixxConnection> implements IPhyni
 
     /**
      * if necessary the current xa resource is enlisted in the current TX.
-     * <p/>
+
      * The enlistment calls the
      * {@link javax.transaction.xa.XAResource#start(javax.transaction.xa.Xid, int)}
      * . This call associates the Xid with the current instance

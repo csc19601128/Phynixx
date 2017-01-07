@@ -36,7 +36,7 @@ import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
  * create DataLogger using Files to store data. A logger is qualified by its
  * name and a subsequent integer qualifier. It is possible to have more than one
  * log file for a given logger. The log files differ in the qualifier.
- * <p/>
+
  * 
  * <pre>
  *  A log file is named according to the follwing pattern
@@ -47,13 +47,13 @@ import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
  * 2.) loggername
  * 3.) qualifier pof the logfile for the logger
  * </pre>
- * <p/>
+
  * A logical logger name has to unique for all logfile of the current
  * loggerfactory. Diese Factory erzeugt FileChannelDataLogger . Es wird ein
  * logischer Name mitgegeben und es wird im Verzeichnis eine datei mit diesem
  * namen angelegt und auf dieser Datei eine TAEnabledRandomAccessFile
  * instanziert.
- * <p/>
+
  * The logic Name is unique concerning the loggerssytem
  */
 public class FileChannelDataLoggerFactory implements IDataLoggerFactory {

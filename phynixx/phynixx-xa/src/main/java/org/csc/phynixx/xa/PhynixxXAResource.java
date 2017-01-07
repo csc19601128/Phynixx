@@ -41,13 +41,13 @@ import org.csc.phynixx.xa.IPhynixxXAResourceListener.IPhynixxXAResourceEvent;
 /**
  * A transactional branch may be associated with differnt XAResources (TMJOIN)
  * or a XAResource may be shared with different transaction branches
- * <p/>
+ * 
  * Therefore a transactional branch might be associated to many XAResources or
  * to many transactions (==XIDs)
- * <p/>
+ * 
  * A XAresourec can be initialized with a connection. This connection is used,
  * the first time an TX is opened on the XAResource.
- * <p/>
+ * 
  * Any following TX get an new connection
  *
  * @author christoph
@@ -105,7 +105,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
      * called when the current XAresource is expired (time out occurred) The
      * current Impl. does nothing but marked the associated TX as rollback only
      * The underlying core connection are not treated ....
-     * <p/>
+     * 
      * There are two different situation that have to be handled If the
      * connection expires because of a long running method call the connection
      * isn't treated and the XAResource is marked as rollback only. The rollback
@@ -167,12 +167,12 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     /**
      * transaction branch is interchangeably with transaction context
-     * <p/>
+     * 
      * <p>
      * situation : XAResource is associtaed with XID(1) flags=TMNOFLAGS with
      * XID(1) result : XAResource creates a new transactional context
      * </p>
-     * <p/>
+     * 
      * <p>
      * situation : XAResource is associtaed with XID(1) flags=TMJOIN/TNRESUME
      * with XID(1) (may be different in branch) result : XAResource joins the
@@ -180,21 +180,21 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
      * If TMRESUME is specified, start is to resume a suspended transaction
      * branch specified in xid.
      * </p>
-     * <p/>
-     * <p/>
-     * <p/>
-     * <p/>
+     * 
+     * 
+     * 
+     * 
      * This method starts work on behalf of a transaction branch.
-     * <p/>
-     * <p/>
-     * <p/>
+     * 
+     * 
+     * 
      * If TMJOIN is specified, start is for joining an exisiting transaction
      * branch xid.
-     * <p/>
+     * 
      * If neither TMJOIN nor TMRESUME is specified and the transaction branch
      * specified in xid already exists, the resource manager throw the
      * XAException with XAER_DUPID error code.
-     * <p/>
+     * 
      * If the XAResource has a current connection and flags ==TMJOIN/TMRESUME,
      * the current connection is substituted by the connection of the existing
      * TX.
@@ -204,9 +204,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
      *            resource.
      * @param flags
      *            One of TMNOFLAGS, TMJOIN, or TMRESUME.
-     * @throws: XAException An error has occurred. Possible exceptions are
-     *          XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_DUPID, XAER_OUTSIDE,
-     *          XAER_NOTA, XAER_INVAL, or XAER_PROTO.
+     * @throws XAException An error has occurred. Possible exceptions are  XA_RB, XAER_RMERR, XAER_RMFAIL, XAER_DUPID, XAER_OUTSIDE,XAER_NOTA, XAER_INVAL, or XAER_PROTO.
      */
     @Override
     public void start(Xid xid, int flags) throws XAException {
@@ -294,10 +292,10 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     /**
      * finds the transactional branch of the current XAResource associated with
      * die XID
-     * <p/>
+     * 
      * Prepares to perform a commit. May actually perform a commit in the flag
      * commitOnPrepare is set to true.
-     * <p/>
+     * 
      * This method is called to ask the resource manager to prepare for a
      * transaction commit of the transaction specified in xid.
      *
@@ -309,7 +307,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
      *         should do so by throwing an appropriate XAException in the
      *         prepare method.
      * @throws XAException
-     *             An error has occurred. Possible exception values are: XA_RB*,
+     *             An error has occurred. Possible exception values are: XA_RB,
      *             XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
      *             XAER_PROTO.
      */
@@ -431,16 +429,16 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
 
     /**
      * This method ends the work performed on behalf of a transaction branch.
-     * <p/>
+     * 
      * The resource manager dissociates the XA resource from the transaction
      * branch specified and let the transaction be completed. If TMSUSPEND is
      * specified in flags, the transaction branch is temporarily suspended in
      * incomplete state. The transaction context is in suspended state and must
      * be resumed via start with TMRESUME specified.
-     * <p/>
+     * 
      * If TMFAIL is specified, the portion of work has failed. The resource
      * manager may mark the transaction as rollback only.
-     * <p/>
+     * 
      * <p>
      * the spec doesn't no fix the order of commit/rollback and end and we have
      * to take of both orders. If end comes before rollback/commit, the
@@ -455,9 +453,8 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
      * @param flags
      *            If true, the resource manager should use a one-phase commit
      *            protocol to commit the work done on behalf of xid.
-     * @throws: XAException An error has occurred. Possible XAException values
-     *          are XAER_RMERR, XAER_RMFAIL,XAER_NOTA, XAER_INVAL,
-     *          XAER_PROTO,XA_RB*.
+     *            
+     * @throws XAException An error has occurred. Possible XAException values are XAER_RMERR, XAER_RMFAIL,XAER_NOTA, XAER_INVAL, XAER_PROTO,XA_RB.
      */
     @Override
     public void end(Xid xid, int flags) throws XAException {
@@ -549,7 +546,7 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
      * This method is called to determine if the resource manager instance
      * represented by the target object is the same as the resource manager
      * instance represented by the parameter xares .
-     * <p/>
+     * 
      * The resource manager is reresented by the ResourceFactory.
      *
      * @param xaResource
@@ -593,7 +590,6 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
     /**
      * finds the transactional branch of the current XAResource associated with
      * die XID
-     * <p/>
      * Close this XA XAResourceProgressState. All depending Connection are
      * closed
      */
@@ -642,10 +638,9 @@ public class PhynixxXAResource<C extends IPhynixxConnection> implements IPhynixx
      *            Zero resets the transaction timeout value to the default one
      *            used by the resource manager. A negative value results in
      *            XAExceptio to be thrown with XAER_INVAL error code.
-     * @throws XAException
-     *             An error has occurred. Possible exception values are:
+     * @throws XAException    An error has occurred. Possible exception values are:
      *             XAER_RMERR, XAER_RMFAIL, or XAER_INVAL.
-     * @returns true if transaction timeout value is set successfully; otherwise
+     * @return true if transaction timeout value is set successfully; otherwise
      *          false.
      */
     @Override
