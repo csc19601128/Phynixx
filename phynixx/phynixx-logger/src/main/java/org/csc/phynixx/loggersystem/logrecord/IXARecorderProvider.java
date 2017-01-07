@@ -17,7 +17,7 @@ public interface IXARecorderProvider {
     * 
     * @return
     */
-   IXADataRecorder provideXADataRecorder();
+   IXADataRecorder  provideXADataRecorder();
 
    /**
     * Close this pool, and free any resources associated with it.
