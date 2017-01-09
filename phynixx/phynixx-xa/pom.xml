@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>phynixx</artifactId>
 		<groupId>org.csc</groupId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>3.0.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>phynixx-xa</artifactId>
@@ -69,20 +69,14 @@
 		</dependency>
 
 		<dependency>
-			<groupId>javax.transaction</groupId>
-			<artifactId>jta</artifactId>
-		</dependency>
-
-
-		<dependency>
 			<groupId>javax.resource</groupId>
 			<artifactId>connector-api</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>geronimo-spec</groupId>
-			<artifactId>geronimo-spec-jta</artifactId>
-			<scope>compile</scope>
+			<groupId>javax.transaction</groupId>
+			<artifactId>transaction-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Bitronix -->
@@ -101,26 +95,17 @@
 		<dependency>
 			<groupId>jotm</groupId>
 			<artifactId>jotm</artifactId>
-			<!-- 
-			<exclusions>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-			-->
+			<!-- <exclusions> <exclusion> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
+				</exclusion> <exclusion> <groupId>commons-logging</groupId> <artifactId>commons-logging</artifactId> 
+				</exclusion> </exclusions> -->
 			<scope>test</scope>
 		</dependency>
 
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.apache.commons</groupId> -->
-<!-- 			<artifactId>commons-pool2</artifactId> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.commons</groupId> -->
+		<!-- <artifactId>commons-pool2</artifactId> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>com.atomikos</groupId>
