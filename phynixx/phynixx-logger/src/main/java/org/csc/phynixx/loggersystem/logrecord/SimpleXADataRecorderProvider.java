@@ -207,7 +207,7 @@ public class SimpleXADataRecorderProvider implements IXARecorderProvider,
 
    /**
     * A logger is rewinded and ready for re-use. But the current Implementation
-    * won't ruse logger but destroys them.
+    * won't reuse logger but destroys them.
     * 
     */
    @Override
@@ -215,14 +215,6 @@ public class SimpleXADataRecorderProvider implements IXARecorderProvider,
       xaDataRecorder.destroy();
    }
 
-   /**
-    * the logger is destroyed and is removed form the internal management
-    */
-   @Override
-   public void recorderDataRecorderDestroyed(IXADataRecorder xaDataRecorder) {
-      this.removeXADataRecoder(xaDataRecorder);
-
-   }
 
    @Override
    public int hashCode() {

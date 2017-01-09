@@ -1,12 +1,12 @@
 package org.csc.phynixx.loggersystem.logrecord;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
+import org.apache.commons.pool2.BasePooledObjectFactory;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.PooledObjectFactory;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.common.exceptions.ExceptionUtils;
 import org.csc.phynixx.common.generator.IDGenerator;
 import org.csc.phynixx.common.generator.IDGenerators;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
@@ -20,165 +20,125 @@ import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
  * @author te_zf4iks2
  *
  */
-public class XADataRecorderPool implements IXARecorderProvider,
-         IXADataRecorderLifecycleListener {
+public class XADataRecorderPool implements IXARecorderProvider, IXADataRecorderLifecycleListener {
+
    private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(XADataRecorderPool.class);
 
-   private IDataLoggerFactory dataLoggerFactory = null;
+   private class XADataLoggerPooledObjectFactory extends BasePooledObjectFactory<IXADataRecorder> {
 
-   private static class XADataLoggerPooledObjectFactory extends BasePooledObjectFactory {
+      private IDataLoggerFactory dataLoggerFactory = null;
+      private IDGenerator<Long> messageSeqGenerator = IDGenerators.synchronizeGenerator(IDGenerators
+               .createLongGenerator(1l));
 
-   }
-
-   private IDGenerator<Long> messageSeqGenerator = IDGenerators.synchronizeGenerator(IDGenerators
-            .createLongGenerator(1l));
-
-   static class DataRecordMemetor {
-      private final IXADataRecorder dataRecord;
-      private final Exception creationLocation;
-
-      public DataRecordMemetor(IXADataRecorder dataRecord) {
+      public XADataLoggerPooledObjectFactory(IDataLoggerFactory dataLoggerFactory) {
          super();
-         this.dataRecord = dataRecord;
-         this.creationLocation = new Exception("" + Thread.currentThread() + ":  DataRecord "
-                  + dataRecord.getXADataRecorderId() + " created at " + new Date() + " :: ");
+         this.dataLoggerFactory = dataLoggerFactory;
+         if (this.dataLoggerFactory == null) {
+            throw new IllegalArgumentException("No dataLoggerFactory set");
+         }
       }
 
-      public final IXADataRecorder getDataRecord() {
-         return dataRecord;
+      public String getLoggerSystemName() {
+         return dataLoggerFactory.getLoggerSystemName();
+      }
+
+      void destroyResources() {
+         this.dataLoggerFactory.cleanup();
+         this.messageSeqGenerator = null;
+      }
+
+      /**
+       * 
+       * {@link PooledObjectFactory}
+       */
+
+      @Override
+      public IXADataRecorder create() throws Exception {
+         return this.createXADataRecorder();
       }
 
       @Override
-      public int hashCode() {
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + ((dataRecord == null) ? 0 : dataRecord.hashCode());
-         return result;
+      public PooledObject<IXADataRecorder> wrap(IXADataRecorder obj) {
+         return new DefaultPooledObject<>(obj);
+
       }
 
       @Override
-      public boolean equals(Object obj) {
-         if (this == obj) {
-            return true;
-         }
-         if (obj == null) {
-            return false;
-         }
-         if (!(obj instanceof DataRecordMemetor)) {
-            return false;
-         }
-         DataRecordMemetor other = (DataRecordMemetor) obj;
-         if (dataRecord == null) {
-            if (other.dataRecord != null) {
-               return false;
-            }
-         } else if (!dataRecord.equals(other.dataRecord)) {
-            return false;
-         }
-         return true;
+      public void destroyObject(PooledObject<IXADataRecorder> p) throws Exception {
+         // TODO Auto-generated method stub
+         super.destroyObject(p);
       }
 
       @Override
-      public String toString() {
-         return "DataRecord [dataRecord=" + dataRecord + ExceptionUtils.getStackTrace(this.creationLocation) + "]";
+      public boolean validateObject(PooledObject<IXADataRecorder> p) {
+         // TODO Auto-generated method stub
+         return super.validateObject(p);
+      }
+
+/**
+       * opens a new Recorder for writing. The recorder gets a new ID.
+       * 
+       * The lifecycle of the dataRecorder is managed by the current implementation of {@link 
+       * 
+       * @return created dataRecorder
+       */
+      private IXADataRecorder createXADataRecorder() {
+
+         try {
+            long xaDataRecorderId = this.messageSeqGenerator.generate();
+
+            // create a new Logger
+            IDataLogger dataLogger = this.dataLoggerFactory.instanciateLogger(Long.toString(xaDataRecorderId));
+
+            // create a new XADataLogger
+            XADataLogger xaDataLogger = new XADataLogger(dataLogger);
+
+            PhynixxXADataRecorder xaDataRecorder = PhynixxXADataRecorder.openRecorderForWrite(xaDataRecorderId,
+                     xaDataLogger, XADataRecorderPool.this);
+            LOG.info("IXADataRecord " + xaDataRecorderId + " created in [" + Thread.currentThread() + "]");
+            return xaDataRecorder;
+
+         } catch (Exception e) {
+            throw new DelegatedRuntimeException(e);
+         }
+
       }
 
    }
 
-   /**
-    * management of the registered XADataRecorder. This structure has to stand
-    * heavy multithreaded read and write.
-    * 
-    * This management is important as all not closed/destroyed logger are
-    * tracked
-    */
-   private Map<Long, DataRecordMemetor> xaDataRecorders = new HashMap<Long, DataRecordMemetor>();
+   private final XADataLoggerPooledObjectFactory dataLoggerPooledObjectFactory;
 
-   private boolean closed = false;
+   private final GenericObjectPool<IXADataRecorder> objectPool;
 
    public XADataRecorderPool(IDataLoggerFactory dataLoggerFactory) {
-      this.dataLoggerFactory = dataLoggerFactory;
-      if (this.dataLoggerFactory == null) {
-         throw new IllegalArgumentException("No dataLoggerFactory set");
-      }
-   }
-
-   public String getLoggerSystemName() {
-      return dataLoggerFactory.getLoggerSystemName();
-   }
-
-   /**
-    * opens a new Recorder for writing. The recorder gets a new ID.
-    * 
-    * The lifecycle of the dataRecorder is managed by the current implementation of {@link 
-    * 
-    * @return created dataRecorder
-    */
-   private IXADataRecorder createXADataRecorder() {
-
-      try {
-         long xaDataRecorderId = this.messageSeqGenerator.generate();
-
-         // create a new Logger
-         IDataLogger dataLogger = this.dataLoggerFactory.instanciateLogger(Long.toString(xaDataRecorderId));
-
-         // create a new XADataLogger
-         XADataLogger xaDataLogger = new XADataLogger(dataLogger);
-
-         PhynixxXADataRecorder xaDataRecorder = PhynixxXADataRecorder.openRecorderForWrite(xaDataRecorderId,
-                  xaDataLogger, this);
-         synchronized (this) {
-            addXADataRecorder(xaDataRecorder);
-         }
-         LOG.info("IXADataRecord " + xaDataRecorderId + " created in [" + Thread.currentThread() + "]");
-         return xaDataRecorder;
-
-      } catch (Exception e) {
-         throw new DelegatedRuntimeException(e);
-      }
-
-   }
-
-   private void addXADataRecorder(IXADataRecorder xaDataRecorder) {
-      if (!this.xaDataRecorders.containsKey(xaDataRecorder.getXADataRecorderId())) {
-         this.xaDataRecorders.put(xaDataRecorder.getXADataRecorderId(), new DataRecordMemetor(xaDataRecorder));
-      }
-   }
-
-   private void removeXADataRecoder(IXADataRecorder xaDataRecorder) {
-      if (xaDataRecorder == null) {
-         return;
-      }
-      this.xaDataRecorders.remove(xaDataRecorder.getXADataRecorderId());
-
+      this.dataLoggerPooledObjectFactory = new XADataLoggerPooledObjectFactory(dataLoggerFactory);
+      GenericObjectPoolConfig cfg = new GenericObjectPoolConfig();
+      cfg.setTestOnBorrow(true);
+      cfg.setTestOnReturn(true);
+      cfg.setMaxTotal(Integer.MAX_VALUE);
+      this.objectPool = new GenericObjectPool<>(this.dataLoggerPooledObjectFactory, cfg);
    }
 
    @Override
    public boolean isClosed() {
-      return closed;
+      return this.objectPool.isClosed();
    }
 
    @Override
    public IXADataRecorder provideXADataRecorder() {
-      if (this.isClosed()) {
-         throw new IllegalStateException("Pool already closed");
+      try {
+         return this.objectPool.borrowObject();
+      } catch (Exception e) {
+         throw new DelegatedRuntimeException(e);
       }
-      return this.createXADataRecorder();
    }
-
 
    @Override
    public void close() {
       if (this.isClosed()) {
          return;
       }
-
-      HashSet<DataRecordMemetor> copy = new HashSet<DataRecordMemetor>(this.xaDataRecorders.values());
-      for (DataRecordMemetor dataRecorderMemento : copy) {
-         LOG.info("IXADataRecord destroyed during Shutdwon " + copy);
-         dataRecorderMemento.getDataRecord().disqualify();
-      }
-      xaDataRecorders.clear();
+      this.objectPool.close();
    }
 
    @Override
@@ -189,73 +149,35 @@ public class XADataRecorderPool implements IXARecorderProvider,
       } catch (Exception e) {
       }
 
-      this.dataLoggerFactory.cleanup();
-      this.messageSeqGenerator = null;
+      this.dataLoggerPooledObjectFactory.destroyResources();
 
    }
 
    /**
-    * a closed recorder is removed from the repository, but the content isn't
-    * discard. the logger is destroyed and is removed form the internal
-    * management
+    * 
+    * {@link IXADataRecorderLifecycleListener}
     */
    @Override
    public void recorderDataRecorderClosed(IXADataRecorder xaDataRecorder) {
-      this.removeXADataRecoder(xaDataRecorder);
+      try {
+         this.objectPool.invalidateObject(xaDataRecorder);
+      } catch (Exception e) {
+         throw new DelegatedRuntimeException(e);
+      }
+
    }
 
    @Override
    public void recorderDataRecorderOpened(IXADataRecorder xaDataRecorder) {
-      this.addXADataRecorder(xaDataRecorder);
+      // dataRecorder is created by the pool; no further notification
+      // neccessary
    }
 
-   /**
-    * A logger is rewinded and ready for re-use. But the current Implementation
-    * won't ruse logger but destroys them.
-    * 
-    */
    @Override
    public void recorderDataRecorderReleased(IXADataRecorder xaDataRecorder) {
-      xaDataRecorder.destroy();
-   }
-
-   /**
-    * the logger is destroyed and is removed form the internal management
-    */
-   @Override
-   public void recorderDataRecorderDestroyed(IXADataRecorder xaDataRecorder) {
-      this.removeXADataRecoder(xaDataRecorder);
+      this.objectPool.returnObject(xaDataRecorder);
 
    }
 
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((getLoggerSystemName() == null) ? 0 : getLoggerSystemName().hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      final XADataRecorderPool other = (XADataRecorderPool) obj;
-      if (getLoggerSystemName() == null) {
-         if (other.getLoggerSystemName() != null)
-            return false;
-      } else if (!this.getLoggerSystemName().equals(other.getLoggerSystemName()))
-         return false;
-      return true;
-   }
-
-   @Override
-   public String toString() {
-      return (this.dataLoggerFactory == null) ? "Closed Pool" : this.dataLoggerFactory.toString();
-   }
 
 }

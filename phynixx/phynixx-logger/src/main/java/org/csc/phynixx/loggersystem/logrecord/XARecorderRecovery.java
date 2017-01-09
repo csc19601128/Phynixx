@@ -21,17 +21,12 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.csc.phynixx.common.exceptions.DelegatedRuntimeException;
-import org.csc.phynixx.common.generator.IDGenerator;
-import org.csc.phynixx.common.generator.IDGenerators;
 import org.csc.phynixx.common.logger.IPhynixxLogger;
 import org.csc.phynixx.common.logger.PhynixxLogManager;
 import org.csc.phynixx.loggersystem.logger.IDataLogger;
@@ -180,12 +175,6 @@ public class XARecorderRecovery implements IXADataRecorderLifecycleListener, IXA
 		xaDataRecorder.destroy();
 
 	}
-
-	@Override
-	public void recorderDataRecorderDestroyed(IXADataRecorder xaDataRecorder) {
-		this.removeXADataRecoder(xaDataRecorder);
-	}
-
 
 
 }

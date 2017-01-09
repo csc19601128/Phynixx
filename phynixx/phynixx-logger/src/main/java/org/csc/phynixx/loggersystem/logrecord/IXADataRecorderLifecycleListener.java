@@ -26,10 +26,13 @@ package org.csc.phynixx.loggersystem.logrecord;
  */
 public interface IXADataRecorderLifecycleListener {
 
-	/**
-	 * indicates a closed XADataRecorder 
-	 * @see IXADataRecorder#disqualify()
-	 */
+   /**
+    * indicates a closed XADataRecorder . This XADataRecorder cannot be used any
+    * longer.
+    * 
+    * @see IXADataRecorder#disqualify()
+    * @see IXADataRecorder#destroy()
+    */
     void recorderDataRecorderClosed(IXADataRecorder xaDataRecorder);
 
     /**
@@ -44,12 +47,6 @@ public interface IXADataRecorderLifecycleListener {
 	 */
 	void recorderDataRecorderReleased(IXADataRecorder phynixxXADataRecorder);
 
-	/**
-	 * indicates a destroyed XADataRecorder. The content of the logger is already destroyed. 
-	 * @see IXADataRecorder#destroy()
-	 * @param phynixxXADataRecorder
-	 * 
-	 */
-	void recorderDataRecorderDestroyed(IXADataRecorder phynixxXADataRecorder);
+
 
 }

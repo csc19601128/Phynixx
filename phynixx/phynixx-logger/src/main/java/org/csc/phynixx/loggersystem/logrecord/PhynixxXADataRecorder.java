@@ -404,7 +404,7 @@ public class PhynixxXADataRecorder implements IXADataRecorder {
     @Override
     public void destroy() {
     	 if (dataRecorderLifycycleListner != null) {
-             this.dataRecorderLifycycleListner.recorderDataRecorderDestroyed(this);
+         this.dataRecorderLifycycleListner.recorderDataRecorderClosed(this);
          }
         try {
             this.dataLogger.destroy();
