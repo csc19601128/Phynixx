@@ -34,9 +34,9 @@ import org.csc.phynixx.watchdog.log.ConditionViolatedLog;
  * this class starts both a thread and a watchdog watching itself.
  * It must be explicitly killed.
  * The watchdog is killed, if the C'tor parameter removeConditionOnExit is true.
- * <p/>
+
  * If not the registry waits to the condition to be finalized and the condition to become useless.
- * <p/>
+
  * Created by christoph on 09.06.2012.
  */
 public class WatchdogAware extends TimeoutCondition implements Runnable, IWatchedCondition {

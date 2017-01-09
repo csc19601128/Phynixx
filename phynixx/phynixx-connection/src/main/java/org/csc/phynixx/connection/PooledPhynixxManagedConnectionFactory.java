@@ -98,7 +98,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
     }
 
 
-    public PooledPhynixxManagedConnectionFactory(IPhynixxConnectionFactory connectionFactory) {
+    public PooledPhynixxManagedConnectionFactory(IPhynixxConnectionFactory<C> connectionFactory) {
         this(connectionFactory, null);
     }
 
@@ -109,7 +109,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
         if (cfg == null) {
             cfg = new GenericObjectPoolConfig();
         }
-        this.genericObjectPool = new GenericObjectPool(new MyPoolableObjectFactory<C>(this), cfg);
+        this.genericObjectPool = new GenericObjectPool<>(new MyPoolableObjectFactory<C>(this), cfg);
 
         this.setCloseStrategy(new PooledConnectionCloseStrategy<C>());
     }
@@ -127,7 +127,7 @@ public class PooledPhynixxManagedConnectionFactory<C extends IPhynixxConnection>
         if (cfg == null) {
             cfg = new GenericObjectPoolConfig();
         }
-        this.genericObjectPool = new GenericObjectPool(new MyPoolableObjectFactory<C>(this), cfg);
+        this.genericObjectPool = new GenericObjectPool<IPhynixxManagedConnection<C>>(new MyPoolableObjectFactory<C>(this), cfg);
     }
 
     @Override

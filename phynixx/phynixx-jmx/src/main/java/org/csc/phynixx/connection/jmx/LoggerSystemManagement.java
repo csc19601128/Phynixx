@@ -27,7 +27,8 @@ import org.csc.phynixx.loggersystem.logrecord.IXARecorderResourceListener;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * to keep the management up to date register the current class as listener to the {@link Logger} */
+ * to keep the management up to date register the current class as listener to the IXADataRecorder
+ * */
 public class LoggerSystemManagement implements LoggerSystemManagementMBean, IXARecorderResourceListener {
 
     private AtomicInteger openLoggerCounter = new AtomicInteger(0);

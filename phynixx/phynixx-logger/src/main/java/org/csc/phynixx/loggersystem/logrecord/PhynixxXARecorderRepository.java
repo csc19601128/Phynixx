@@ -60,7 +60,7 @@ public class PhynixxXARecorderRepository implements IXARecorderRepository {
 	 * @param dataLoggerFactory
 	 */
 	public PhynixxXARecorderRepository(IDataLoggerFactory dataLoggerFactory) {
-		this(new SimpleXADataRecorderPool(dataLoggerFactory));
+		this(new SimpleXADataRecorderProvider(dataLoggerFactory));
 	}
 
 

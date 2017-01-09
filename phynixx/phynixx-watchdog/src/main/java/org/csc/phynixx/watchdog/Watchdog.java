@@ -423,7 +423,7 @@ class Watchdog implements Runnable, IWatchdog {
 
     /**
      * evaluate the conditions
-     * <p/>
+
      * it's synchronized to prevent any other thread from changing the state of
      * the watchdog or of one of its conditions
      */

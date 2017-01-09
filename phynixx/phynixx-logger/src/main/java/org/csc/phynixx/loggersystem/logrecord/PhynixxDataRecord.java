@@ -23,7 +23,7 @@ package org.csc.phynixx.loggersystem.logrecord;
 
 /**
  * A LogRecord is an atomic piece of information.  This piece of Information ist qualified by an ordinal of an superior.
- * <p/>
+
  * The current class manages the content and is not responsible for writing/persisting the content
  */
 class PhynixxDataRecord implements IDataRecord, Comparable<PhynixxDataRecord> {

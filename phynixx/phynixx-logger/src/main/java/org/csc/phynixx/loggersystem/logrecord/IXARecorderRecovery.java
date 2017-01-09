@@ -1,5 +1,26 @@
 package org.csc.phynixx.loggersystem.logrecord;
 
+/*
+ * #%L
+ * phynixx-logger
+ * %%
+ * Copyright (C) 2014 - 2017 Christoph Schmidt-Casdorff
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+
 import java.io.IOException;
 import java.util.Set;
 
@@ -21,10 +42,6 @@ public interface IXARecorderRecovery {
 	/**
 	 * closes all open recorder. The recorder are
 	 * {@link IXADataRecorder#disqualify()} and removed from the repository.
-	 *
-	 * Depending on recording, closed recorder could recovered if it contains
-	 * relevant information and it is not destroyed but can be re-established by
-	 * {@link #recover}
 	 * 
 	 * 
 	 * They can not be recovered.

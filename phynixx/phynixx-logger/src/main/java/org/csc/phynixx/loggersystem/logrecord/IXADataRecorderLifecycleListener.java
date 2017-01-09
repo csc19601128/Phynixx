@@ -34,7 +34,7 @@ public interface IXADataRecorderLifecycleListener {
 
     /**
 	 * indicates a opended XADataRecorder 
-	 * @see IXADataRecorder#opened()
+	 * @see IXADataRecorder#createDataRecord(XALogRecordType, byte[][])
 	 */
     void recorderDataRecorderOpened(IXADataRecorder xaDataRecorder);
 
@@ -46,7 +46,9 @@ public interface IXADataRecorderLifecycleListener {
 
 	/**
 	 * indicates a destroyed XADataRecorder. The content of the logger is already destroyed. 
-	 * @see IXADataRecorder#destroyed()
+	 * @see IXADataRecorder#destroy()
+	 * @param phynixxXADataRecorder
+	 * 
 	 */
 	void recorderDataRecorderDestroyed(IXADataRecorder phynixxXADataRecorder);
 

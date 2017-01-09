@@ -312,8 +312,8 @@ public class TAEnabledRandomAccessFile {
      * Es wird die Read-methode des RandomAccessFiles genommen, da sich
      * herausgestellt hat, dass die Methode im Batchbetrieb etwas schneller
      * ist als die Channel-methode.
-     * Ee werden bytes gelesen fuer die gilt: <br>
-     * startPosition <= b < endPosition
+     * Ee werden bytes gelesen fuer die gilt: 
+     * startPosition &le; b &lt; endPosition
      *
      * @param length umber of bytes to be read
      * @return content

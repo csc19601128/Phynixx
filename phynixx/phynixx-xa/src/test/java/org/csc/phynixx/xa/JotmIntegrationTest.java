@@ -222,7 +222,7 @@ public class JotmIntegrationTest {
 
     /**
      * two different XAResourceProgressState Factories ( == resourceManagers)
-     * <p/>
+
      * There are two XAResource created but only one resource is enlisted in the
      * transaction
      *
@@ -599,7 +599,7 @@ public class JotmIntegrationTest {
 
     /**
      * two different XAResourceProgressState Factories ( == resourceManagers)
-     * <p/>
+
      * There are two XAResource created and both resources are enlisted in the
      * TX but only one has anything to commit.
      *
@@ -1128,7 +1128,7 @@ public class JotmIntegrationTest {
     /**
      * two different XAResourceProgressState Factories ( == resourceManagers)
      * instanciate two connections
-     * <p/>
+
      * If one of connection is closed, the 'commit' has to fail and the
      * XAResources have to be rollbacked
      *

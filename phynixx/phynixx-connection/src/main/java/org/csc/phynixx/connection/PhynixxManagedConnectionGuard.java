@@ -33,7 +33,7 @@ import java.util.List;
 
 /**
  * decorates a connection an takes care of calling the listener during the different phases of a transaction
- * <p/>
+
  * <pre>
  *
  *     Event
@@ -182,7 +182,7 @@ abstract class PhynixxManagedConnectionGuard<C extends IPhynixxConnection> imple
      * If this proxy is implemented by a DynProxy. If a referene to this object has to be propagated
      * ({@link #fireEvent(PhynixxManagedConnectionGuard.IEventDeliver)}, it would leads to invalid references
      * if <code>this</code> is returned but not the implementing DynaProxy.
-     * <p/>
+
      * See the implementation of a java proxy.
      *
      * @return he object via <code>this</code> is accessible

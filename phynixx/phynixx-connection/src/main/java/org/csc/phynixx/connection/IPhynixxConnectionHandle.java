@@ -29,8 +29,6 @@ public interface IPhynixxConnectionHandle<C extends IPhynixxConnection> {
 
     /**
      * @return the core connection
-     * @associates ICoreConnection
-     * @supplierCardinality 0..1
      */
     C getConnection();
 

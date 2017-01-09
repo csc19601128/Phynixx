@@ -36,9 +36,9 @@ import org.csc.phynixx.connection.PhynixxManagedConnectionListenerAdapter;
 /**
  * an XID represents a transaction branch. A transaction branch represents the
  * context a rollback/commit affects.
- * <p/>
+
  * A transactional branch corresponds to an physical connection
- * <p/>
+
  * Created by Christoph Schmidt-Casdorff on 10.02.14.
  */
 class XATransactionalBranch<C extends IPhynixxConnection> extends
@@ -168,7 +168,7 @@ class XATransactionalBranch<C extends IPhynixxConnection> extends
 
 	/**
 	 * maintains the state of the transactional branch if a commit is executed.
-	 * <p/>
+
 	 * The commit is executed
 	 *
 	 * @param onePhase

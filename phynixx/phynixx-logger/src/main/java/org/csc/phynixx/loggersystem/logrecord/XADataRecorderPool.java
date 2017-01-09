@@ -20,11 +20,15 @@ import org.csc.phynixx.loggersystem.logger.IDataLoggerFactory;
  * @author te_zf4iks2
  *
  */
-public class SimpleXADataRecorderPool implements IXARecorderProvider,
+public class XADataRecorderPool implements IXARecorderProvider,
          IXADataRecorderLifecycleListener {
-   private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(SimpleXADataRecorderPool.class);
+   private static final IPhynixxLogger LOG = PhynixxLogManager.getLogger(XADataRecorderPool.class);
 
    private IDataLoggerFactory dataLoggerFactory = null;
+
+   private static class XADataLoggerPooledObjectFactory extends BasePooledObjectFactory {
+
+   }
 
    private IDGenerator<Long> messageSeqGenerator = IDGenerators.synchronizeGenerator(IDGenerators
             .createLongGenerator(1l));
@@ -92,7 +96,7 @@ public class SimpleXADataRecorderPool implements IXARecorderProvider,
 
    private boolean closed = false;
 
-   public SimpleXADataRecorderPool(IDataLoggerFactory dataLoggerFactory) {
+   public XADataRecorderPool(IDataLoggerFactory dataLoggerFactory) {
       this.dataLoggerFactory = dataLoggerFactory;
       if (this.dataLoggerFactory == null) {
          throw new IllegalArgumentException("No dataLoggerFactory set");
@@ -240,7 +244,7 @@ public class SimpleXADataRecorderPool implements IXARecorderProvider,
          return false;
       if (getClass() != obj.getClass())
          return false;
-      final SimpleXADataRecorderPool other = (SimpleXADataRecorderPool) obj;
+      final XADataRecorderPool other = (XADataRecorderPool) obj;
       if (getLoggerSystemName() == null) {
          if (other.getLoggerSystemName() != null)
             return false;

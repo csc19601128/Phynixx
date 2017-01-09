@@ -60,9 +60,6 @@ public interface IXARecorderRepository  {
 	 * closes all open recorder. The recorder are
 	 * {@link IXADataRecorder#disqualify()} and removed from the repository.
 	 *
-	 * Depending on recording, closed recorder could recovered if it contains
-	 * relevant information and it is not destroyed but can be re-established by
-	 * {@link #recover}
 	 * 
 	 * 
 	 * They can not be recovered.
